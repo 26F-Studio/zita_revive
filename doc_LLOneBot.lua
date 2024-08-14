@@ -13,6 +13,14 @@
 
 
 
+---@class LLOneBot.SimpMes
+---@field group_id? number
+---@field user_id? number
+---
+---@field message string
+
+
+
 ---@class LLOneBot.Event.Base
 ---@field post_type 'message'|'notice'|'request'|'meta_event'
 ---@field time number
@@ -36,14 +44,14 @@
 ---@field font number
 ---@field message_id number
 
----@class LLOneBot.Event.GroupMessage : LLOneBot.Event.Base
+---@class LLOneBot.Event.GroupMessage : LLOneBot.Event.PrivateMessage
 ---@field message_type 'group'
 ---@field sub_type 'normal'|'anonymous'|'notice'
 ---@field group_id number
 ---@field sender LLOneBot.Sender.Group
 
 
----@class LLOneBot.Event.Request.Friend : LLOneBot.Event.Base
+---@class LLOneBot.Event.FriendRequest : LLOneBot.Event.Base
 ---@field post_type 'request'
 ---@field request_type 'friend'
 ---@field self_id number 自己的QQ号
@@ -51,7 +59,17 @@
 ---@field comment string 验证信息
 ---@field flag string 请求flag，处理时传回
 
----@class LLOneBot.Event.Request.Group : LLOneBot.Event.Request.Friend
+---@class LLOneBot.Event.GroupRequest : LLOneBot.Event.FriendRequest
 ---@field request_type 'group'
 ---@field sub_type 'add'|'invite'
 ---@field group_id number 群号
+
+---@class LLOneBot.Event.Notice : LLOneBot.Event.Base
+---@field TODO any
+
+---@class LLOneBot.Event.Response
+---@field retcode number
+---@field status 'ok'|'async'
+---@field wording string 未知
+---@field data table 未知
+---@field message string 未知
