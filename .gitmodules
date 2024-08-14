@@ -1,0 +1,6 @@
+[submodule "Zenitha"]
+	path = Zenitha
+	url = https://github.com/26F-Studio/Zenitha.git
+[submodule "onebot-11"]
+	path = onebot-11
+	url = https://github.com/botuniverse/onebot-11.git
