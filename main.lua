@@ -64,13 +64,6 @@ function Group:update()
     self.charge=math.min(self.charge+(Time()-self.lastUpdateTime),self.maxCharge)
     self.lastUpdateTime=Time()
 end
-function Group:canShowHint(opt,minDT)
-    self:update()
-    if Time()-(self.lastHintTimeMap[opt] or -1e99)>minDT then
-        self.lastHintTimeMap[opt]=Time()
-        return true
-    end
-end
 function Group:cost(pow)
     self:update()
     if self.charge>=pow then
@@ -141,8 +134,8 @@ Bot.plan={
         name="Arbitrary Code Execution",
         prio=-1,
         filter='friendMes',
-        ---@param M LLOneBot.Event.PrivateMessage
         func=function(M)
+            ---@cast M LLOneBot.Event.PrivateMessage
             if M.raw_message:sub(1,1)~='!' or not config.superAdmin[M.user_id] then return false end
 
             local func,err=loadstring(M.raw_message:sub(2))
@@ -166,8 +159,8 @@ Bot.plan={
         name="Zictionary",
         prio=1,
         filter='message',
-        ---@param M LLOneBot.Event.PrivateMessage|LLOneBot.Event.GroupMessage
         func=function(M)
+            ---@cast M LLOneBot.Event.PrivateMessage|LLOneBot.Event.GroupMessage
             local mes=M.raw_message
             if mes:sub(1,1)~='#' then return false end
 
@@ -178,7 +171,7 @@ Bot.plan={
             if not entry then return false end
 
             if (group_id and not user_id) and not free and not groupMap[group_id]:cost(62) then
-                if groupMap[group_id]:canShowHint('dictPower',26) then
+                if TASK.lock('dictPower_'..group_id,26) then
                     Bot.sendMes{
                         group=group_id,
                         user=user_id,
@@ -201,6 +194,25 @@ Bot.plan={
                 message=result,
             }
             return true
+        end,
+    },
+    {
+        name="Fun",
+        prio=2,
+        filter='groupMes',
+        func=function(M)
+            ---@cast M LLOneBot.Event.GroupMessage
+            local group_id=M.group_id
+            if M.raw_message:lower()=='techmino' then
+                if TASK.lock('haowan_'..group_id,26) then
+                    Bot.sendMes{
+                        group=group_id,
+                        message="好玩！",
+                    }
+                end
+                return true
+            end
+            return false
         end,
     },
 }
