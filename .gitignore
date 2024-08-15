@@ -1,0 +1,5 @@
+adminList.txt
+
+.vscode
+*.ini
+.DS_Store

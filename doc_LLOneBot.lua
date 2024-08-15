@@ -14,8 +14,8 @@
 
 
 ---@class LLOneBot.SimpMes
----@field group_id? number
----@field user_id? number
+---@field group? number
+---@field user? number
 ---
 ---@field message string
 

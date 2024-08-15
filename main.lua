@@ -1,99 +1,46 @@
 local Time=love.timer.getTime
 love._openConsole()
+local superENV={
+    math=math,
+    string=string,
+    table=table,
+    MATH=MATH,
+    STRING=STRING,
+    TABLE=TABLE,
+}
 --------------------------------------------------------------
 require'Zenitha'
 ZENITHA.setMaxFPS(30)
 ZENITHA.setDrawFreq(10)
 ZENITHA.setUpdateFreq(100)
 --------------------------------------------------------------
-local initCharge=620
-local maxCharge=620
 local ws=WS.new{
     host='localhost',
     port='3001',
     connTimeout=2.6,
     sleepInterval=0.26,
 }
-local botConf={
+local config={
     receiveDelay=0.26,
+    maxCharge=620,
+    debugLog=false,
+    superAdmin={},
 }
-local Bot={
-    receiveTimer=botConf.receiveDelay,
-}
----@param M LLOneBot.Event.Base
-function Bot.receiveMessage(M)
-    if M.post_type=='message' then
-        ---@cast M LLOneBot.Event.PrivateMessage
-        if M.message_type=='private' then
-            -- if M.sub_type=='friend' then
-            --     SearchDict(M.raw_message,nil,M.user_id)
-            -- elseif M.sub_type=='group' then
-            --     SearchDict(M.raw_message,M.group_id,M.user_id)
-            -- end
-        else
-            ---@cast M LLOneBot.Event.GroupMessage
-            SearchDict(M.raw_message,M.group_id,nil,M.sender.role~='member')
+print('--------------------------')
+if love.filesystem.getInfo('adminList.txt') then
+    print('Super Admins:')
+    for line in love.filesystem.lines('adminList.txt') do
+        local id=tonumber(line)
+        if id then
+            config.superAdmin[id]=true
+            print(id)
         end
-    elseif M.post_type=='notice' then
-        ---@cast M LLOneBot.Event.Notice
-    elseif M.post_type=='request' then
-        ---@cast M LLOneBot.Event.FriendRequest
-        if M.request_type=='friend' then
-        else
-            ---@cast M LLOneBot.Event.GroupRequest
-        end
-    else
-        print("Unknown post_type: "..M.post_type)
     end
+else
+    print("File 'adminList.txt' not found, no super admin")
 end
----@param data LLOneBot.SimpMes
-function Bot.sendMessage(data)
-    local mes={params={message=data.message}}
-    if data.group_id then
-        mes.action='send_group_msg'
-        mes.params.group_id=data.group_id
-    else
-        mes.action='send_private_msg'
-        mes.params.user_id=data.user_id
-    end
-    ws:send(JSON.encode(mes))
-end
-function Bot.mainLoop() -- Coroutine!
-    print("Connected to LLOneBot")
-    while true do
-        if ws.state=='dead' then return end
-        Bot.receiveTimer=Bot.receiveTimer-coroutine.yield()
-        if Bot.receiveTimer<=0 then
-            Bot.receiveTimer=botConf.receiveDelay
-            local pack,op=ws:receive()
-            if pack then
-                if op=='text' then
-                    local suc,res=pcall(JSON.decode,pack)
-                    if suc then
-                        if res.post_type=='meta_event' then
-                            ---@cast res LLOneBot.Event.Meta
-                            if res.meta_event_type=='lifecycle' then
-                                print("Lifecycle event: "..res.sub_type)
-                            end
-                        elseif res.retcode then
-                            ---@cast res LLOneBot.Event.Response
-                            -- print(TABLE.dump(res))
-                        else
-                            -- print(TABLE.dump(M))
-                            Bot.receiveMessage(res)
-                        end
-                    else
-                        print("Error decoding json: "..res)
-                    end
-                elseif op~='pong' then
-                    print("[inside: "..op.."]")
-                    if type(pack)=='string' and #pack>0 then print(pack) end
-                end
-            end
-        end
-        coroutine.yield()
-    end
-end
+--------------------------------------------------------------
+local function simpStr(s) return s:gsub('%s',''):lower() end
 --------------------------------------------------------------
 ---@class Group
 ---@field charge number
@@ -105,20 +52,14 @@ local Group={}
 ---@return Group
 function Group.new()
     local g={
-        charge=initCharge,
-        maxCharge=maxCharge,
+        charge=config.maxCharge,
+        maxCharge=config.maxCharge,
         lastUpdateTime=0,
         lastHintTimeMap={},
     }
     setmetatable(g,{__index=Group})
     return g
 end
-function Group.updateAll(map,dt)
-    for id,g in next,map do
-        g:update(dt)
-    end
-end
-
 function Group:update()
     self.charge=math.min(self.charge+(Time()-self.lastUpdateTime),self.maxCharge)
     self.lastUpdateTime=Time()
@@ -149,42 +90,174 @@ local groupMap=setmetatable({},{
     __index=function(t,id)
         t[id]=Group.new()
         return t[id]
-    end
+    end,
 })
-
 --------------------------------------------------------------
-local dictData=require'dict_zh'
-local function simpStr(s)
-    return s:gsub('%s',''):lower()
-end
-for i=1,#dictData do
-    dictData[simpStr(dictData[i][1])]=dictData[i]
-end
-function SearchDict(word,group_id,user_id,free)
-    if not group_id then return end
-    if word:sub(1,1)~='#' then return end
+local Bot={}
 
-    local entry=dictData[simpStr(word:sub(2))]
-    if not entry then return end
+---@enum (key) Task.filter
+local Filter={
+    any=function() return true end,
+    message=function(M)
+        return M.post_type=='message'
+    end,
+    friendMes=function(M)
+        return M.post_type=='message' and M.message_type=='private' and M.sub_type=='friend'
+    end,
+    privateMes=function(M)
+        return M.post_type=='message' and M.message_type=='private' and M.sub_type=='group'
+    end,
+    groupMes=function(M)
+        return M.post_type=='message' and M.message_type=='group' and M.sub_type=='normal'
+    end,
+    notice=function(M)
+        return M.post_type=='notice'
+    end,
+    request=function(M)
+        return M.post_type=='request'
+    end,
+}
 
-    if not free and not groupMap[group_id]:cost(62) then
-        if groupMap[group_id]:canShowHint('dictPower',26) then
-            Bot.sendMessage{
-                group_id=group_id,
-                message="达到查询频率限制，每十分钟只能查十次",
+---@class Task
+---@field name string
+---@field prio number
+---@field filter Task.filter
+---@field func fun(M: LLOneBot.Event.Base):boolean
+
+---@type Task[]
+Bot.plan={
+    {
+        name="Log",
+        prio=-1e99,
+        filter='any',
+        func=function(M)
+            if not config.debugLog then return false end
+            print(TABLE.dump(M))
+            -- TODO
+            return false
+        end,
+    },
+    {
+        name="Arbitrary Code Execution",
+        prio=-1,
+        filter='friendMes',
+        ---@param M LLOneBot.Event.PrivateMessage
+        func=function(M)
+            if M.raw_message:sub(1,1)~='!' or not config.superAdmin[M.user_id] then return false end
+
+            local func,err=loadstring(M.raw_message:sub(2))
+            local returnMes
+            if func then
+                setfenv(func,superENV)
+                local suc,res=pcall(func)
+                if suc then
+                    returnMes="Done"..(res~=nil and "\n"..tostring(res) or "")
+                else
+                    returnMes="Runtime Error:\n"..tostring(res)
+                end
+            elseif err then
+                returnMes="Compile Error:\n"..tostring(err)
+            end
+            Bot.sendMes{user=M.user_id,message=returnMes}
+            return true
+        end,
+    },
+    {
+        name="Zictionary",
+        prio=1,
+        filter='message',
+        ---@param M LLOneBot.Event.PrivateMessage|LLOneBot.Event.GroupMessage
+        func=function(M)
+            local mes=M.raw_message
+            if mes:sub(1,1)~='#' then return false end
+
+            local group_id,user_id=M.group_id,M.user_id
+            local free=group_id and M.sender and (M.sender.role=='owner' or M.sender.role=='admin')
+
+            local entry=Bot.dict[simpStr(mes:sub(2))]
+            if not entry then return false end
+
+            if (group_id and not user_id) and not free and not groupMap[group_id]:cost(62) then
+                if groupMap[group_id]:canShowHint('dictPower',26) then
+                    Bot.sendMes{
+                        group=group_id,
+                        user=user_id,
+                        message="达到查询频率限制，每十分钟只能查十次",
+                    }
+                end
+                return true
+            end
+
+            local result=entry.title..": \n"..entry.text
+            if entry.link then
+                result=result.."\n相关链接: "..entry.link
+            end
+            Bot.sendMes{
+                group=group_id,
+                user=user_id,
+                message=result,
             }
+            return true
+        end,
+    },
+}
+---@param data LLOneBot.SimpMes
+function Bot.sendMes(data)
+    local mes={params={message=data.message}}
+    if data.group and data.user then
+        mes.action='send_msg'
+        mes.params.group_id=data.group
+        mes.params.user_id=data.user
+    elseif data.group then
+        mes.action='send_group_msg'
+        mes.params.group_id=data.group
+    else
+        mes.action='send_private_msg'
+        mes.params.user_id=data.user
+    end
+    ws:send(JSON.encode(mes))
+end
+local receiveTimer=config.receiveDelay
+--- THIS IS Coroutine
+function Bot.mainLoop()
+    print("Connected to LLOneBot")
+    while true do
+        if ws.state=='dead' then return end
+        receiveTimer=receiveTimer-coroutine.yield()
+        if receiveTimer<=0 then
+            receiveTimer=config.receiveDelay
+            local pack,op=ws:receive()
+            if pack then
+                if op=='text' then
+                    local suc,res=pcall(JSON.decode,pack)
+                    if suc then
+                        if res.post_type=='meta_event' then
+                            ---@cast res LLOneBot.Event.Meta
+                            if res.meta_event_type=='lifecycle' then
+                                print("Lifecycle event: "..res.sub_type)
+                            end
+                        elseif res.retcode then
+                            ---@cast res LLOneBot.Event.Response
+                            -- print(TABLE.dump(res))
+                        else
+                            for i=1,#Bot.plan do
+                                local task=Bot.plan[i]
+                                if (Filter[task.filter] or NULL)(res) then
+                                    if task.func(res) then return end
+                                end
+                            end
+                        end
+                    else
+                        print("Error decoding json: "..res)
+                    end
+                elseif op~='pong' then
+                    print("[inside: "..op.."]")
+                    if type(pack)=='string' and #pack>0 then print(pack) end
+                end
+            end
         end
-        return
+        coroutine.yield()
     end
-
-    local result=entry[1]..": \n"..entry[2]
-    if entry[3] then
-        result=result.."\n相关链接: "..entry[3]
-    end
-    Bot.sendMessage{
-        group_id=group_id,
-        message=result,
-    }
 end
 --------------------------------------------------------------
 print('--------------------------')
@@ -222,3 +295,11 @@ function scene.unload() end
 
 SCN.add('main', scene)
 ZENITHA.setFirstScene('main')
+--------------------------------------------------------------
+Bot.dict=require'zictionary'
+--------------------------------------------------------------
+superENV.botConf=config
+superENV.groupMap=groupMap
+superENV.Bot=Bot
+superENV.Group=Group
+superENV._s=Bot.sendMes
