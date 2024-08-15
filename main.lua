@@ -188,7 +188,10 @@ Bot.plan={
                 return true
             end
 
-            local result=entry.title..": \n"..entry.text
+            local result=entry.title
+            if entry.text then
+                result=result..":\n"..entry.text
+            end
             if entry.link then
                 result=result.."\n相关链接: "..entry.link
             end
