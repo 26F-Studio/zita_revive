@@ -18,7 +18,7 @@ local ws=WS.new{
     host='localhost',
     port='3001',
     connTimeout=2.6,
-    sleepInterval=0.26,
+    sleepInterval=0.1,
 }
 local config={
     receiveDelay=0.26,
@@ -194,25 +194,6 @@ Bot.plan={
                 message=result,
             }
             return true
-        end,
-    },
-    {
-        name="Fun",
-        prio=2,
-        filter='groupMes',
-        func=function(M)
-            ---@cast M LLOneBot.Event.GroupMessage
-            local group_id=M.group_id
-            if M.raw_message:lower()=='techmino' then
-                if TASK.lock('haowan_'..group_id,26) then
-                    Bot.sendMes{
-                        group=group_id,
-                        message="好玩！",
-                    }
-                end
-                return true
-            end
-            return false
         end,
     },
 }
