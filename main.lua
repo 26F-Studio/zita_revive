@@ -273,7 +273,13 @@ function Bot.mainLoop()
                             for i=1,#Bot.plan do
                                 local task=Bot.plan[i]
                                 if (Filter[task.filter] or NULL)(res) then
-                                    if task.func(res) then break end
+                                    local suc2,res2=pcall(task.func,res)
+                                    if suc2 then
+                                        if res2==true then break end
+                                    else
+                                        print(STRING.repD("$1 Task Error:\n$2",task.name,res2))
+                                        break
+                                    end
                                 end
                             end
                         end
