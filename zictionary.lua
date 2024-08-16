@@ -52,6 +52,13 @@ local data={
         text="Techmino的GitHub仓库地址，欢迎Star",
         link="https://github.com/26F-Studio/Techmino",
     },
+    -- # 其他游戏
+    {
+        word="宝石;宝石迷阵;bej;bej3;bejeweled;bejeweled3",
+        title="Bejeweled",
+        text="三消系列神作，类比现代块相比经典块的进步，bej系列每一作都是前无古人后无来者的“现代三消”，bejT和bej3的三消玩法至今未被超越。",
+        link="https://b23.tv/BV1sE421P7dE",
+    },
     -- # 游戏（题库）
     {
         word="ttt",
@@ -562,7 +569,7 @@ local data={
         word="消失区",
         title="消失区",
         text="在缓冲区的基础上，指比40行缓冲区还高的区域。\n标准的死亡判定涉及了这个概念，在垃圾行升起后如果场地上有任何方块超出了40高的缓冲区（也就是达到了消失区）时游戏直接结束。\n但事实上这块区域在不同游戏中表现不同，甚至有设计者考虑不周导致方块挪到40行以上，但是程序没考虑导致方块接触消失区直接报错闪退的游戏。通常出现在玩家堆了c4w然后被打入大量垃圾行时才会考虑这个概念。其他游戏中方块进入消失区可能直接导致游戏结束，也有可能会出现一些奇怪的bug（附带链接是ppt的复制40行无限Ren视频）。\n\n另，Jstris中22行及以上可以理解为消失区，锁定在21行之外的格子会消失。",
-        link="https://www.bilibili.com/video/BV1ZE411Y7GD",
+        link="https://b23.tv/BV1ZE411Y7GD",
     },
     {
         word="等级;下落速度;重力;gravity",
