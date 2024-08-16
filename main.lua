@@ -161,6 +161,30 @@ Bot.plan={
         end,
     },
     {
+        name="Help",
+        prio=0,
+        filter='groupMes',
+        func=function(M)
+            ---@cast M LLOneBot.Event.PrivateMessage|LLOneBot.Event.GroupMessage
+            if not (M.raw_message:lower()=='小z在吗' or M.raw_message=='#help') then return false end
+            local lockID='help_'..M.group_id
+            if TASK.lock(lockID,62) then
+                Bot.sendMes{
+                    group=M.group_id,
+                    message="小Z词典-Revive 堂堂复活！\n遇到萌新有疑问时发送#[关键词]就可以召唤出Techmino中小Z词典的内容\n技术还在试验阶段，随时可能停机，对不起喵！",
+                }
+            elseif M.raw_message:lower()=='小z在吗' then
+                Bot.sendMes{
+                    group=M.group_id,
+                    message="不在",
+                }
+                TASK.unlock(lockID)
+                TASK.lock(lockID,62)
+            end
+            return true
+        end,
+    },
+    {
         name="Zictionary",
         prio=1,
         filter='message',
@@ -176,12 +200,16 @@ Bot.plan={
             if not entry then return false end
 
             if (group_id and not user_id) and not free and not groupMap[group_id]:cost(62) then
-                if TASK.lock('dictPower_'..group_id,26) then
+                local lockID='dictPower_'..group_id
+                if TASK.lock(lockID,26) then
                     Bot.sendMes{
                         group=group_id,
                         user=user_id,
                         message="达到查询频率限制，每十分钟只能查十次",
                     }
+                else
+                    TASK.unlock(lockID)
+                    TASK.lock(lockID,26)
                 end
                 return true
             end
@@ -245,7 +273,7 @@ function Bot.mainLoop()
                             for i=1,#Bot.plan do
                                 local task=Bot.plan[i]
                                 if (Filter[task.filter] or NULL)(res) then
-                                    if task.func(res) then return end
+                                    if task.func(res) then break end
                                 end
                             end
                         end
