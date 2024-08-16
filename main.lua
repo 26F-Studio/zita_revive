@@ -88,6 +88,11 @@ local groupMap=setmetatable({},{
 --------------------------------------------------------------
 local Bot={}
 
+Bot.stat={
+    connectTime=Time(),
+    sendCount=0,
+}
+
 ---@enum (key) Task.filter
 local Filter={
     any=function() return true end,
@@ -212,6 +217,7 @@ function Bot.sendMes(data)
         mes.params.user_id=data.user
     end
     ws:send(JSON.encode(mes))
+    Bot.stat.sendCount=Bot.stat.sendCount+1
 end
 local receiveTimer=config.receiveDelay
 --- THIS IS Coroutine
@@ -278,12 +284,16 @@ local scene={}
 function scene.load() end
 function scene.update() end
 function scene.keyDown(k)
-    if k=='space' then
+    if k=='g' then
         print('--------------------------\nGroups Info:')
         for id,g in next,groupMap do
             print('Group '..id..' :')
             for key,val in next,g do print(key,val) end
         end
+    elseif k=='s' then
+        print('--------------------------\nStatistics:')
+        print("Alive time: "..STRING.time(Time()-Bot.stat.connectTime))
+        print("Messages sent: "..Bot.stat.sendCount)
     end
 end
 function scene.draw() end
