@@ -98,9 +98,7 @@ end
 ---@type Task_raw
 return {
     func=function(S,M)
-
         ---@cast M LLOneBot.Event.PrivateMessage
-
         local mes=M.raw_message
         local args=STRING.split(mes,' ')
         if commands[args[1]] then

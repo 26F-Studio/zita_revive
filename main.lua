@@ -45,8 +45,10 @@ Bot={
     },
     taskGroup={
         {'log',-100},
+        {'admin_control',-99},
         {'help_public',1},
         {'zictionary',2},
+        {'repeater',3},
     },
     stat={
         connectAttempts=0,
