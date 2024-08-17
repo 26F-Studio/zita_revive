@@ -355,8 +355,8 @@ local data={
     {
         word="spin;tspin;t-spin",
         title="Spin",
-        text="使用旋转将方块卡进一些不能直接移动进入的位置（根据具体语境，可能会指同时消除行），通常会有额外的分数/攻击加成。\n另见 #Mini #All Spin",
-        detail="具体判定规则不同游戏不一样，在官方规则中，当T方块在锁定前的最后一个操作是旋转，并且锁定后旋转中心对应的四个斜角位置有三个不是空气，那么这就是一个T-spin。",
+        text="使用旋转将方块卡进一些不能直接移动进入的位置（根据具体语境也可能会指同时消行了的），通常会有额外的分数/攻击加成。\n另见 #Mini #All Spin",
+        detail="具体判定规则不同游戏不一样，例如一个常见的规则是当T方块在锁定前的最后一个操作是旋转，并且锁定后旋转中心对应的四个斜角位置有三个不是空气，那么这就是一个T-spin。",
     },
     {
         word="mini",
@@ -964,12 +964,11 @@ local data={
         title="喵？",
     },
 }
-local function simpStr(s) return s:gsub('%s',''):lower() end
 
 local dict={}
 for _,entry in next,data do
     for _,word in next,STRING.split(entry.word,";") do
-        word=simpStr(word)
+        word=SimpStr(word)
         if dict[word] then
             print("重复关键字："..word)
         else
