@@ -22,7 +22,7 @@ Config={
     safeMode=false,
     superAdmin={},
 }
-print('--------------------------')
+print("--------------------------")
 if love.filesystem.getInfo('adminList.txt') then
     print('Super Admins:')
     for line in love.filesystem.lines('adminList.txt') do
@@ -36,140 +36,37 @@ else
     print("File 'adminList.txt' not found, no super admin")
 end
 --------------------------------------------------------------
----@class Group
----@field charge number
----@field maxCharge number
----@field lastUpdateTime number
----@field lastHintTimeMap table<string,number>
-Group={}
+Bot={
+    taskPriv={
+        {'log',-100},
+        {'admin_control',-99},
+        {'help_public',1},
+        {'zictionary',2},
+    },
+    taskGroup={
+        {'log',-100},
+        {'help_public',1},
+        {'zictionary',2},
+    },
+    stat={
+        connectAttempts=0,
+        launchTime=Time(),
+        totalMessageSent=0,
 
----@return Group
-function Group.new()
-    local g={
-        charge=Config.maxCharge,
-        maxCharge=Config.maxCharge,
-        lastUpdateTime=0,
-        lastHintTimeMap={},
-    }
-    setmetatable(g,{__index=Group})
-    return g
-end
-function Group:update()
-    self.charge=math.min(self.charge+(Time()-self.lastUpdateTime),self.maxCharge)
-    self.lastUpdateTime=Time()
-end
-function Group:cost(pow)
-    self:update()
-    if self.charge>=pow then
-        self.charge=self.charge-pow
-        return true
-    else
-        return false
-    end
-end
-function Group:use(pow)
-    self:update()
-    self.charge=math.max(self.charge-pow,0)
-end
+        connectLogDelay=0,
+        connectLogDelaySum=0,
 
----@type table<number, Group>
-GroupMap=setmetatable({},{
-    __index=function(t,id)
-        t[id]=Group.new()
-        return t[id]
-    end,
-})
---------------------------------------------------------------
-Bot={}
-
-Bot.stat={
-    connectAttempts=0,
-    launchTime=Time(),
-    totalSendCount=0,
-
-    connectLogDelay=0,
-    connectLogDelaySum=0,
-
-    connectTime=Time(),
-    sendCount=0,
-}
-
----@enum (key) Task.filter
-local Filter={
-    any=function() return true end,
-    message=function(M)
-        return M.post_type=='message'
-    end,
-    friendMes=function(M)
-        return M.post_type=='message' and M.message_type=='private' and M.sub_type=='friend'
-    end,
-    privateMes=function(M)
-        return M.post_type=='message' and M.message_type=='private' and M.sub_type=='group'
-    end,
-    groupMes=function(M)
-        return M.post_type=='message' and M.message_type=='group' and M.sub_type=='normal'
-    end,
-    notice=function(M)
-        return M.post_type=='notice'
-    end,
-    request=function(M)
-        return M.post_type=='request'
-    end,
+        connectTime=Time(),
+        messageSent=0,
+    },
 }
 
 ---@class Task_raw
----@field filter Task.filter
----@field func fun(M: LLOneBot.Event.Base):boolean
+---@field func fun(S:Session, M: LLOneBot.Event.Message):boolean
 
 ---@class Task : Task_raw
 ---@field id string
 ---@field prio number
-
----@type Task[]
-Bot.tasks={}
-
----@param task Task_raw
----@param prio number
-function Bot.newTask(task,prio)
-    local insPos=1
-    for i=1,#Bot.tasks do
-        local t=Bot.tasks[i]
-        if t.id==task then
-            print("Task created failed: Task '"..task.."' already exists")
-            return
-        elseif t.prio==prio then
-            print("Task created failed: Prio '"..prio.."' already used by task '"..t.id.."'")
-            return
-        elseif t.prio>prio then
-            insPos=i
-            break
-        end
-    end
-    table.insert(Bot.tasks,insPos,{
-        prio=prio,
-        id=task,
-        filter=task.filter,
-        func=task.func,
-    })
-end
----@param id string
-function Bot.removeTask_id(id)
-    for i=1,#Bot.tasks do
-        if Bot.tasks[i].id==id then
-            print("Task removed: "..id)
-            table.remove(Bot.tasks,i)
-            return
-        end
-    end
-end
-function Bot.removeAllTask()
-    for id,task in next,Bot.tasks do
-        if task.prio>0 then
-            Bot.tasks[id]=nil
-        end
-    end
-    print("All user tasks cleared")
-end
 
 function Bot.isAdmin(id)
     return Config.superAdmin[id]
@@ -178,25 +75,21 @@ end
 ---@param data LLOneBot.SimpMes
 function Bot.sendMes(data)
     local mes={params={message=data.message}}
-    if data.group and data.user then
-        mes.action='send_msg'
-        mes.params.group_id=data.group
-        mes.params.user_id=data.user
-    elseif data.group then
-        if Config.safeMode and not TASK.lock('safemode_group_'..data.group,60) then
-            print("Interrupted because of safeMode: Group "..data.group)
-            return
-        else
-            mes.action='send_group_msg'
-            mes.params.group_id=data.group
-        end
-    else
+    if data.user then
         if Config.safeMode and not TASK.lock('safemode_private_'..data.user,26) then
             print("Interrupted because of safeMode: User "..data.user)
             return
         else
             mes.action='send_private_msg'
             mes.params.user_id=data.user
+        end
+    else
+        if Config.safeMode and not TASK.lock('safemode_group_'..data.group,60) then
+            print("Interrupted because of safeMode: Group "..data.group)
+            return
+        else
+            mes.action='send_group_msg'
+            mes.params.group_id=data.group
         end
     end
     local suc,res=pcall(JSON.encode,mes)
@@ -205,13 +98,21 @@ function Bot.sendMes(data)
     else
         print("Error encoding json:\n"..debug.traceback(res))
     end
-    Bot.stat.sendCount=Bot.stat.sendCount+1
-    Bot.stat.totalSendCount=Bot.stat.totalSendCount+1
+    Bot.stat.messageSent=Bot.stat.messageSent+1
+    Bot.stat.totalMessageSent=Bot.stat.totalMessageSent+1
 end
 function Bot.adminNotice(text)
     for id in next,Config.superAdmin do
         Bot.sendMes{user=id,message=text}
     end
+end
+function Bot.restart()
+    for id in next,SessionMap do
+        SessionMap[id]=nil
+    end
+end
+function Bot.disconnect()
+    ws:close()
 end
 
 function Bot.help()
@@ -225,6 +126,7 @@ function Bot._update()
     if not pack then return end
     if op=='text' then
         local suc,res=pcall(JSON.decode,pack)
+        ---@cast res LLOneBot.Event.Base
         if not suc then
             print("Error decoding json: "..res)
             print(pack)
@@ -240,25 +142,150 @@ function Bot._update()
             if Config.debugLog_response then
                 print(TABLE.dump(res))
             end
-        else
-            for i=1,#Bot.tasks do
-                local task=Bot.tasks[i]
-                if (Filter[task.filter] or NULL)(res) then
-                    local suc2,res2=pcall(task.func,res)
-                    if suc2 then
-                        if res2==true then break end
-                    else
-                        print(STRING.repD("$1 Task Error:\n$2",task.id,res2))
-                        break
-                    end
-                end
-            end
+        elseif res.post_type=='message' then
+            ---@cast res LLOneBot.Event.Message
+            local priv=res.message_type=='private'
+            local S=SessionMap[priv and res.user_id or res.group_id]
+            if not S then S=Session.new(priv and res.user_id or res.group_id,priv) end
+            S:receive(res)
+        elseif res.post_type=='notice' then
+            -- TODO
+        elseif res.post_type=='request' then
+            -- TODO
         end
     elseif op~='pong' then
         print("[inside: "..op.."]")
         if type(pack)=='string' and #pack>0 then print(pack) end
     end
     return true
+end
+--------------------------------------------------------------
+---@class Session
+---@field id number
+---@field priv boolean
+---@field group boolean #not priv
+---@field taskList Task[]
+---@field charge number
+---@field maxCharge number
+---@field lastUpdateTime number
+Session={}
+
+---@return Session
+function Session.new(id,priv)
+    ---@type Session
+    local s={
+        id=id,
+        priv=priv,
+        group=not priv,
+        taskList={},
+
+        createTime=Time(),
+        charge=Config.maxCharge,
+        maxCharge=Config.maxCharge,
+        lastUpdateTime=Time(),
+    }
+    setmetatable(s,{__index=Session})
+
+    local template=priv and Bot.taskPriv or Bot.taskGroup
+    for _,task in next,template do
+        s:newTask(task[1],task[2])
+    end
+    return s
+end
+
+---@param id string Task name
+---@param prio number Task priority
+function Session:newTask(id,prio)
+    ---@type Task_raw
+    local task=require('task.'..id)
+    local insPos=1
+    for i=1,#self.taskList do
+        local t=self.taskList[i]
+        if t.id==task then
+            print("Task created failed: Task '"..task.."' already exists")
+            return
+        elseif t.prio==prio then
+            print("Task created failed: Prio '"..prio.."' already used by task '"..t.id.."'")
+            return
+        elseif t.prio>prio then
+            insPos=i
+            break
+        end
+    end
+    table.insert(self.taskList,insPos,{
+        prio=prio,
+        id=id,
+        func=task.func,
+    })
+end
+---@param id string
+function Session:removeTask_id(id)
+    for i=1,#self.taskList do
+        if self.taskList[i].id==id then
+            print("Task removed: "..id)
+            table.remove(self.taskList,i)
+            return
+        end
+    end
+end
+function Session:removeAllTask()
+    for id,task in next,self.taskList do
+        if task.prio>0 then
+            self.taskList[id]=nil
+        end
+    end
+    print("All user tasks cleared")
+end
+
+function Session:update()
+    self.charge=math.min(self.charge+(Time()-self.lastUpdateTime),self.maxCharge)
+    self.lastUpdateTime=Time()
+end
+function Session:costCharge(charge)
+    self:update()
+    if self.charge>=charge then
+        self.charge=self.charge-charge
+        return true
+    else
+        return false
+    end
+end
+function Session:useCharge(charge)
+    self:update()
+    self.charge=math.max(self.charge-charge,0)
+end
+
+function Session:receive(M)
+    for _,task in next,self.taskList do
+        local suc2,res2=pcall(task.func,self,M)
+        if suc2 then
+            if res2==true then break end
+        else
+            print(STRING.repD("Session $1 Task Error:\n$2",self.id,task.id,res2))
+            break
+        end
+    end
+end
+function Session:send(text)
+    if self.priv then
+        Bot.sendMes{user=self.id,message=text}
+    else
+        Bot.sendMes{group=self.id,message=text}
+    end
+end
+
+---@type table<number, Session>
+SessionMap={}
+---@param id number
+---@param priv boolean
+---@return Session
+function GetSession(id,priv)
+    local S=SessionMap[id]
+    if not S then
+        S=Session.new(id,priv)
+        SessionMap[id]=S
+    end
+    return S
 end
 --------------------------------------------------------------
 ZENITHA.globalEvent.drawCursor=NULL
@@ -274,7 +301,7 @@ function scene.update()
         Bot.stat.connectLogDelaySum=0
         TASK.forceLock('connect_message',10)
         ws:connect()
-        print('--------------------------')
+        print("--------------------------")
         print("Connecting to LLOneBot...")
     elseif ws.state=='connecting' then
         ws:update()
@@ -295,16 +322,11 @@ function scene.update()
     end
 end
 function scene.keyDown(k)
-    if k=='g' then
-        print('--------------------------\nGroups Info:')
-        for id,g in next,GroupMap do
-            print('Group '..id..' :')
-            for key,val in next,g do print(key,val) end
-        end
-    elseif k=='s' then
-        print('--------------------------\nStatistics:')
+    if k=='s' then
+        print("--------------------------")
+        print("Statistics:")
         print("Alive time: "..STRING.time(Time()-Bot.stat.connectTime))
-        print("Messages sent: "..Bot.stat.sendCount)
+        print("Messages sent: "..Bot.stat.messageSent)
     end
 end
 function scene.draw() end
@@ -312,7 +334,3 @@ function scene.unload() end
 
 SCN.add('main', scene)
 ZENITHA.setFirstScene('main')
---------------------------------------------------------------
-Bot.newTask(require('task.admin_control'),-100)
-Bot.newTask(require('task.help_public'),1)
-Bot.newTask(require('task.zictionary'),2)

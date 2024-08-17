@@ -50,6 +50,8 @@
 ---@field group_id number
 ---@field sender LLOneBot.Sender.Group
 
+---@alias LLOneBot.Event.Message LLOneBot.Event.PrivateMessage|LLOneBot.Event.GroupMessage
+
 
 ---@class LLOneBot.Event.FriendRequest : LLOneBot.Event.Base
 ---@field post_type 'request'
