@@ -9,7 +9,8 @@ local data={
     {
         word="新人;萌新",
         title="新人学习/练习路线",
-        text="以下是关于提升真正打块能力的指引，如果在以下任何项目练习过程中感到有困难，可以适当回去玩玩自己喜欢的项目。别忘了你是来 “玩” 游戏的，兴趣最重要。\n以下给出几个新手时期的主线任务树，前期主要就应该练习以下内容，学定式和T-Spin什么的对实力帮助很小（我们不认为靠定式对战秒其他萌新是有效实力）：\n（注意，三段应当同时进行，不是A→B→C）\nA. 堆叠能力练习方法\n\tA1. 手上的块可以放的时候先别急着放，看看下一块有没有地方，如果放不下去就看看手上的能不能换个地方\n\tA2. 尝试把地形尽量控制得平整，因为大多数情况比较平的地形来啥块都比较容易放得下去\n\tA3. 允许hold的时候可以多想想手里和hold的块和后续几块应该怎么安排顺序，长远地使地形平整\nB. 操作效率与速度练习方法\n\tB1. 不要每一块都拿影子去对形状对位置，要自己想象这个块转一下是什么方向，想好了再开始按按键\n\tB2. 学习双旋，能逆时针转一次就不要顺时针转三次，费手\n\tB3. 学习极简，刚开始不用管速度，保证正确率最重要，养成良好习惯以后再提速快得很\nC. 堆叠能力考核\n\tC1. 稳定完成40行不死（可以用hold）\n\tC2. 稳定完成40行不死（不能用hold）\n\tC3. 稳定全程消四完成40行（可以用hold）\n\tC4. 稳定全程消四完成40行（不能用hold）\n以上都是根据社区和个人经验总结的模糊方法与目标，所以C的考核可以根据自身情况调整严格程度（例如 “稳定” 的具体成功率）。\n注：完成C的考核后，需要在未来一直注意没有上限的A1，这是方块的根本元素之一，强大的读next能力可以让你快速上手任何变种玩法。",
+        text="（使用 ##新人 查看完整词条内容）",
+        detail="以下给出几个新手时期的主线任务树，前期应主要练习这些内容而不是定式和T-Spin，对实力帮助并不大（注意，ABC三段应当同时进行，没有顺序）：\nA. 堆叠能力练习方法\n\tA1. 手上的块可以放的时候先别急着放，看看下一块有没有地方，如果放不下去就看看手上的能不能换个地方\n\tA2. 尝试把地形尽量控制得平整，因为大多数情况比较平的地形来啥块都比较容易放得下去\n\tA3. 允许hold的时候可以多想想手里和hold的块和后续几块应该怎么安排顺序，长远地使地形平整\nB. 操作效率与速度练习方法\n\tB1. 不要每一块都拿影子去对形状对位置，要自己想象这个块转一下是什么方向，想好了再开始按按键\n\tB2. 学习双旋，能逆时针转一次就不要顺时针转三次，费手\n\tB3. 学习极简，刚开始不用管速度，保证正确率最重要，养成良好习惯以后再提速快得很\nC. 堆叠能力考核\n\tC1. 稳定完成40行不死（可以用hold）\n\tC2. 稳定完成40行不死（不能用hold）\n\tC3. 稳定全程消四完成40行（可以用hold）\n\tC4. 稳定全程消四完成40行（不能用hold）\n以上都是根据社区和个人经验总结的模糊方法与目标，所以C的考核可以根据自身情况调整严格程度（例如“稳定”的具体成功率）。\n注：完成C的考核后，需要在未来一直注意没有上限的A1，这是方块的根本元素之一，强大的读next能力可以让你快速上手任何变种玩法。",
     },
     {
         word="学习tspin",
@@ -25,19 +26,19 @@ local data={
     {
         word="harddrop wiki",
         title="HardDrop Wiki",
-        text="（英文）位于Hard Drop全球俄罗斯方块社区的Wiki百科",
+        text="（英文）位于Hard Drop全球俄罗斯方块社区的Wiki百科。",
         link="https://harddrop.com/wiki/Tetris_Wiki",
     },
     {
         word="tetris wiki",
         title="Tetris Wiki",
-        text="（英文）一个专注于创建俄罗斯方块相关内容的Wiki百科，由Myndzi在 2015创办。年复一年，上千玩家贡献了一系列的官块和自制块的说明，游戏的隐藏机制，和提升游戏体验的教程",
+        text="（英文）一个专注于创建俄罗斯方块相关内容的Wiki百科，由Myndzi在2015创办。",
         link="https://tetris.wiki",
     },
     {
         word="tetris wiki fandom",
         title="Tetris Wiki Fandom",
-        text="（英文）一个俄罗斯方块维基",
+        text="（英文）一个俄罗斯方块维基。",
         link="https://tetris.fandom.com/wiki/Tetris_Wiki",
     },
     {
@@ -46,18 +47,23 @@ local data={
         text="一个方块版面编辑器，可以用于分享定式，PC解法等，用处很多。设置里可以启用英文版。",
         link="http://fumen.zui.jp  https://knewjade.github.io/fumen-for-mobile",
     },
+    -- # 略无关
     {
         word="github",
         title="GitHub",
-        text="Techmino的GitHub仓库地址，欢迎Star",
+        text="Techmino的GitHub仓库地址，欢迎Star！",
         link="https://github.com/26F-Studio/Techmino",
     },
-    -- # 其他游戏
     {
         word="宝石;宝石迷阵;bej;bej3;bejeweled;bejeweled3",
         title="Bejeweled",
         text="三消系列神作，类比现代块相比经典块的进步，bej系列每一作都是前无古人后无来者的“现代三消”，bejT和bej3的三消玩法至今未被超越。",
         link="https://b23.tv/BV1sE421P7dE",
+    },
+    {
+        word="气泡;魔法气泡;噗哟;噗哟噗哟;puyo;puyopuyo",
+        title="魔法气泡",
+        text="（不熟，有请其他群友解释）",
     },
     -- # 游戏（题库）
     {
@@ -243,7 +249,7 @@ local data={
     {
         word="touhoumino",
         title="Touhoumino",
-        text="Windows | 单机\n块圈玩家自制方块，一个Nullpomino的自带资源包的改版，将东方Project元素与俄罗斯方块结合。马拉松模式结合了东方Project里的 “符卡” 机制，需要在一定时间内达成目标分数才能击破。\n[难度较大，适合有方块基础并且各项能力都较强的玩家游玩（不然都不知道自己怎么死的）。]",
+        text="Windows | 单机\n块圈玩家自制方块，一个Nullpomino的自带资源包的改版，将东方Project元素与俄罗斯方块结合。马拉松模式结合了东方Project里的“符卡”机制，需要在一定时间内达成目标分数才能击破。\n[难度较大，适合有方块基础并且各项能力都较强的玩家游玩（不然都不知道自己怎么死的）。]",
     },
     {
         word="tetris blitz",
@@ -258,7 +264,7 @@ local data={
     {
         word="tetris beat",
         title="Tetris Beat",
-        text="iOS | 单机\nN3TWORK代理的一款移动端方块。除了马拉松以外游戏还有一个 “Beat” 模式，但只需根据BGM的节奏落块就可以得到额外分数。\n[特效比较瞎眼，不支持自定义键位，而且默认的按钮也很小导致控制也不是很舒服]",
+        text="iOS | 单机\nN3TWORK代理的一款移动端方块。除了马拉松以外游戏还有一个“Beat”模式，但只需根据BGM的节奏落块就可以得到额外分数。\n[特效比较瞎眼，不支持自定义键位，而且默认的按钮也很小导致控制也不是很舒服]",
     },
     {
         word="tetris n3twork;tetris n3t",
@@ -273,7 +279,7 @@ local data={
     {
         word="jj;jj块",
         title="JJ块",
-        text="Android | 单机/多人\nJJ棋牌平台下一个休闲游戏，Android端百度 “JJ比赛” 官网下载平台后可以找到（找不到的原因是iOS系统或者没在官网下载或者被限制不可直接访问游戏）。竖屏，输入延迟很小，可自定义DAS/ARR/20G软降，简单自定义键位，无Hold，没有B2B，无攻击缓冲不可抵消，每次攻击上限为4，连击较强，其他同现代方块。",
+        text="Android | 单机/多人\nJJ棋牌平台下一个休闲游戏，Android端百度“JJ比赛”官网下载平台后可以找到（找不到的原因是iOS系统或者没在官网下载或者被限制不可直接访问游戏）。竖屏，输入延迟很小，可自定义DAS/ARR/20G软降，简单自定义键位，无Hold，没有B2B，无攻击缓冲不可抵消，每次攻击上限为4，连击较强，其他同现代方块。",
     },
     {
         word="火拼;火拼俄罗斯",
@@ -284,74 +290,78 @@ local data={
     {
         word="lpm;bpm;ppm;pps",
         title="速度",
-        text="Line Per Minute：行每分，体现玩家下块速度。\nBlock/Piece Per Minute/Second：块每分/秒，体现玩家下块速度。\n注：不同游戏中的“LPM”含义可能不同，虽然写的是行数但可能实际用的是块数/2.5，以此忽略掉对战模式中垃圾行带来的干扰",
+        text="Line Per Minute：行每分，体现玩家下块速度。\nBlock/Piece Per Minute/Second：块每分/秒，体现玩家下块速度。",
+        detail="不同游戏中的“LPM”含义可能不同，虽然写的是行数但可能实际用的是块数/2.5，以此忽略掉对战模式中垃圾行带来的干扰",
     },
     {
         word="kpm",
         title="KPM",
-        text="Key Per Minute\n按键每分，体现玩家按键速度。",
+        text="Key Per Minute，按键每分，体现玩家按键速度。",
     },
     {
         word="kpp",
         title="KPP",
-        text="Key Per Piece\n按键每块，体现玩家操作是否繁琐。\n学会极简提升操作效率以降低此数字。",
+        text="Key Per Piece，按键每块，体现玩家操作是否繁琐，学习 #极简操作 提升操作效率以降低此数字。",
     },
     {
         word="apm;spm",
         title="攻击",
-        text="Attack Per Minute：攻击每分。\nSent per minute：送出每分\n一定程度体现玩家攻击力。其中Sent指送出的垃圾行，如果对手先打来垃圾行自己抵消时就不计入Sent，但仍然计Attack。",
+        text="Attack Per Minute：攻击每分\nSent per minute：送出每分\n一定程度体现玩家的攻击力。其中Sent指送出的垃圾行，如果对手先打来垃圾行自己抵消时就不计入Sent，但仍然计Attack。",
     },
     {
         word="dpm",
         title="DPM",
-        text="Dig Per Minute\n挖掘每分，玩家每分钟向下挖掘的垃圾行数。\n一定程度体现玩家生存能力。",
+        text="Dig Per Minute，挖掘每分，玩家每分钟向下挖掘的垃圾行数，一定程度体现玩家的生存能力。",
     },
     {
         word="adpm;vs",
         title="ADPM",
-        text="Atk & Dig Per Minute\n攻击+挖掘每分，用于在同一局游戏内对比玩家间水平差距，比APM更准确一些。在TETR.IO中叫 “VS” 的数据就是ADPM（调整过比例，具体是Atk & Dig per 100s）",
+        text="Atk & Dig Per Minute，攻击+挖掘每分，用于在同一局游戏内对比玩家间水平差距，比APM更准确一些。在TETR.IO中叫“VS”的数据实质就是ADPM（考虑到数据大小调整了比例，其实是Atk & Dig per 100s）",
     },
     {
         word="apl;效率",
         title="APL",
-        text="Attack Per Line\n攻击每行（效率通常指此），体现玩家攻击的行利用率。例如消四（4行4攻）和T旋（2行4攻）的效率就比消二（2行1攻）和消三（3行2攻）高。",
+        text="Attack Per Line，攻击每行（效率通常指此），体现玩家攻击的行利用率。例如消四（4行4攻）和T旋（2行4攻）的效率就比消二（2行1攻）和消三（3行2攻）高。",
     },
     -- # 术语（消除名）
     {
         word="quad;techrash;消四",
         title="消四",
-        text="一次消除四行。\nTetris中的消四有特殊的名称Tetris，非官方游戏中有的考虑到版权问题抛弃了这个习惯称其为Quad，也有一些游戏保留了这个传统，会给消四安排一个特殊的名称，例如在Techmino称消四为Techrash。",
+        text="一次消除四行。",
+        detail="Tetris中的消四有特殊的名称Tetris，非官方游戏中有的考虑到版权问题抛弃了这个习惯称其为Quad，也有一些游戏保留了这个传统，会给消四安排一个特殊的名称，例如在Techmino称消四为Techrash。",
     },
     {
         word="tetris",
         title="Tetris",
-        text="商标，Tetris游戏名，同时也是“消四行”的名字。\n含义是Tetra（古希腊语, 四 <τέτταρες>）+ Tennis（网球 游戏原作者喜欢的运动）。\n现在版权在TTC（The Tetris Company）手上，任天堂和世嘉开发游戏是 TTC 授权的， 它们自己并没有Tetris的版权。\n另见 #消四",
+        text="商标，Tetris游戏名，同时也是“消四行”的名字。\n另见 #消四",
+        detail="含义是Tetra（古希腊语，四 <τέτταρες>）+ Tennis（网球 游戏原作者喜欢的运动）。\n现在版权在TTC（The Tetris Company）手上，任天堂和世嘉开发游戏是 TTC 授权的，他们并没有Tetris的版权。",
     },
     {
         word="全消;全清;ac;pc;all clear;perfect clear",
         title="All Clear",
-        text="消除场地上所有的方块。\n也叫Perfect Clear，全消，或全清。",
+        text="消除场地上所有的方块，也叫Perfect Clear，全消，或全清。\n另见 #Half Clear #Color Clear",
     },
     {
         word="半全消;半全清;hc;hpc;half clear",
         title="Half Clear",
-        text="Techmino限定，All Clear的外延\n“下方有剩余方块” 的全消（特别地，如果只消1行则必须不剩余玩家放置的方块），能打出一些攻击和防御（）。\n另见 #Color Clear",
+        text="Techmino限定，All Clear的外延，“下方有剩余方块”的全消（特别地，如果只消1行则必须不剩余玩家放置的方块），能打出一些攻击和防御（）。\n另见 #Color Clear",
     },
     {
         word="color clear;颜色消除;颜色清除",
         title="Color Clear",
-        text="TETR.IO限定，All Clear的外延\n消除场地上所有彩色的方块（垃圾行通常是灰色的）。\n另见 #Half Clear",
+        text="TETR.IO限定，All Clear的外延，消除场地上所有彩色的方块（垃圾行通常是灰色的）。\n另见 #Half Clear",
     },
     -- # 术语（旋转相关）
     {
         word="spin;tspin;t-spin",
         title="Spin",
-        text="使用旋转将方块卡进一些不能直接移动进入的位置（根据具体语境，可能会指同时消除行），具体判定规则不同游戏不一样，通常会有额外的分数/攻击加成。\n在官方规则中，当T方块在锁定前的最后一个操作是旋转，并且锁定后旋转中心对应的四个斜角位置有三个不是空气，那么这就是一个T-spin。\n另见 #Mini #All Spin",
+        text="使用旋转将方块卡进一些不能直接移动进入的位置（根据具体语境，可能会指同时消除行），通常会有额外的分数/攻击加成。\n另见 #Mini #All Spin",
+        detail="具体判定规则不同游戏不一样，在官方规则中，当T方块在锁定前的最后一个操作是旋转，并且锁定后旋转中心对应的四个斜角位置有三个不是空气，那么这就是一个T-spin。",
     },
     {
         word="mini",
         title="Mini Spin",
-        text="一些游戏会使用Mini标签来对部分Spin进行弱化。\n不同游戏的判定差异很大且通常很复杂，建议只记住常见形状即可。",
+        text="一些游戏会使用Mini标签来对部分Spin进行弱化，不同游戏的判定差异很大且通常很复杂，建议只记住常见形状即可。",
     },
     {
         word="all spin",
@@ -366,57 +376,41 @@ local data={
     {
         word="ospin;o-spin",
         title="O-spin",
-        text="由于O方块旋转后形状不变，只能左右移动，所以经常被卡住，于是就有了O-spin这个梗：\n后来有个人做了T99/TF中的O块变形的特效视频广为流传；\nT-ex设计的旋转系统可以用spin使O传送进坑；\nTech设计的变形系统中可以旋转O来变形/传送进入一些特定形状的洞。",
+        text="由于O方块旋转后形状不变，只能左右移动，所以经常被卡住，于是就有了O-spin这个梗；\n有人做了T99/TF中的O块变形的特效视频广为流传；\n一些旋转系统允许O块旋进坑；\nTech设计的变形系统中可以旋转O来变形/传送进入一些特定形状的洞。",
     },
     {
         word="旋转系统;rs;rotation system",
         title="旋转系统",
-        text="现代方块游戏中，方块能绕着旋转中心（Techmino中可见）旋转（部分游戏没有固定中心），如果旋转后和场地或墙壁有重合，会根据<从哪个方向转到哪个方向>进行一些偏移测试（这个偏移称为踢墙），不会卡住转不动，同时也可以让方块钻进入一些特定形状的洞。不同的旋转系统偏移位置顺序都不一样，具体数据去各大Wiki上查，一堆数字这里就不放了",
+        text="现代方块游戏中，方块一般能绕着固定的旋转中心旋转。如果旋转后和场地或墙壁有重合，会根据一些规则尝试移动方块到附近的空位来让旋转成立而不是卡住转不动。",
+        detail="（类）SRS旋转系统通常根据<从哪个方向转到哪个方向>选取一个偏移列表（也叫踢墙表），方块根据这个列表进行位置偏移（这个过程叫踢墙），于是就可以钻进入一些特定形状的洞。不同旋转系统的具体踢墙表可以在各大Wiki查到。",
     },
     {
         word="朝向;方块朝向;direction",
         title="方块朝向",
-        text="在SRS或者类SRS的旋转系统中需要说明方块朝向的时候，“朝下” “竖着” 等词描述太模糊。\nSRS中每种方块的初始状态固定，所以我们使用0（原位）、R（右，即顺时针转一次）、2（转两下，即180°）、L（左，即逆时针转一次）四个字符表示方块的四种状态，从原位（0）开始顺时针转一圈四个状态是0R2L。\n最早见于SRS踢墙表的行首，0→L表示原位逆时针转一次到L状态，0→R表示原位顺时针转一次到R状态，2→R代表从180°状态逆时针转一次到R状态。",
-    },
-    {
-        word="arika rs",
-        title="ARS",
-        text="Arika Rotation System，TGM系列使用的旋转系统（3代中的C模式）\n或者\nAtari Rotation System，一个左上对齐旋转系统。",
+        text="在（类）SRS旋转系统中需要说明方块朝向的时候，“朝下”“竖着”等词描述太模糊，所以使用0-R-2-L来表示方块从原位开始顺时针转一圈的四个状态。",
+        detail="通常见于SRS踢墙表的行首，0→L表示原位逆时针转一次到L状态，0→R表示原位顺时针转一次到R状态，2→R代表从180°状态逆时针转一次到R状态。",
     },
     {
         word="asc rs;ascension rs",
         title="ASC RS",
-        text="ASC Rotation System\nASC块使用的旋转系统，所有块所有形状只根据旋转方向（顺时针和逆时针）使用两个对称的表，踢墙范围大概是±2, ±2。",
-    },
-    {
-        word="brs;bps rs",
-        title="BRS",
-        text="BPS Rotation System\nBPS块使用的旋转系统。",
+        text="ASC Rotation System，ASC块使用的旋转系统，所有块所有形状只根据旋转方向（顺时针和逆时针）使用两个对称的表，可达范围大致是两个方向±2",
     },
     {
         word="birs;bias rs",
         title="BiRS",
-        text="Bias Rotation System\nTechmino原创旋转系统，基于XRS和SRS设计。\n当左/右/下（软降）被按下并且那个方向顶住了墙，会在旋转时添加一个额外偏移（三个键朝各自方向加1格），和基础踢墙表叠加（额外偏移和叠加偏移的水平方向不能相反，且叠加偏移的位移大小不能超过√5）。如果失败，会取消向左右的偏移然后重试，还不行就取消向下的偏移。\nBiRS相比XRS只使用一个踢墙表更容易记忆，并且保留了SRS翻越地形的功能。",
+        text="Bias Rotation System，Techmino原创旋转系统，基于XRS和SRS设计，有“指哪打哪”的特性。",
+        detail="当左/右/下（软降）被按下并且那个方向顶住了墙，会在旋转时添加一个额外偏移（三个键朝各自方向加1格），和基础踢墙表叠加（额外偏移和叠加偏移的水平方向不能相反，且叠加偏移的位移大小不能超过√5）。如果失败，会取消向左右的偏移然后重试，还不行就取消向下的偏移。\nBiRS相比XRS只使用一个踢墙表更容易记忆，并且保留了SRS翻越地形的功能。",
     },
     {
         word="c2rs;cultris2 rs",
         title="C2RS",
-        text="Cultris II Rotation System\nCultris II原创的旋转系统，所有旋转共用一个表，顺序是：\n左1→右1→下1→左下→右下→左2→右2\n注意，左优先于右。",
-    },
-    {
-        word="drs;dtet rs",
-        title="DRS",
-        text="DTET Rotation System.",
-    },
-    {
-        word="nrs;nes rs;nitendo rs",
-        title="NRS",
-        text="Nintendo Rotation System，NES和GB块使用的旋转系统。NRS有两个互为镜像的版本，左旋版用于GB，右旋版用于NES。",
+        text="Cultris II Rotation System，Cultris II原创的旋转系统，所有旋转共用一个表：左1→右1→下1→左下→右下→左2→右2（注意左永远优先于右）",
     },
     {
         word="srs;super rs;super rotation system",
         title="SRS",
-        text="Super Rotation System\n现代方块最常用的旋转系统，也是不少自制旋转系统的设计模板。\n对于SRS，每个方块有四个方向，可以朝两边转（180°不算，最开始没有这个设计），所以总共8种，对应8个偏移表，具体数据去Wiki上查，这里就不放了。",
+        text="Super Rotation System，现代方块最常用的旋转系统，也是不少自制旋转系统的设计模板。",
+        detail="在SRS中，每个方块有四个朝向，每个朝向时可以向顺逆两个方向旋转（SRS并不包含180°旋转），总共4*2=8种动作对应8个偏移表，方块旋转失败时会根据偏移表的内容尝试移动方块让旋转成立，具体数据可以去各大Wiki查。",
         link="https://tetris.wiki/Super_Rotation_System",
     },
     {
@@ -427,23 +421,20 @@ local data={
     {
         word="trs;tech rs;techmino rs",
         title="TRS",
-        text="Techmino Rotation System\nTechmino原创旋转系统，基于SRS设计，修补了一些常见SZ卡死的地形，增加了不少实用踢墙。\n每个五连块也基本按照SRS的Spin逻辑单独设计了踢墙表。\n更有神奇O-spin等你探索！",
+        text="Techmino Rotation System，Techmino原创旋转系统，基于SRS增加了不少实用踢墙，还修补了SZ卡死等小问题。",
+        detail="每个五连块也基本按照SRS的Spin逻辑单独设计了踢墙表，更有神奇O-spin等你探索！",
     },
     {
         word="xrs",
         title="XRS",
-        text="X Rotation System\nT-ex原创旋转系统，引入了 “按住方向键换一套踢墙表” 的设定（在对应的方向需要顶住墙），让 “想去哪” 能被游戏捕获从而转到玩家希望到达的位置。\n\n其他旋转系统无论踢墙表怎么设计，块处在某个位置时旋转后最终只能按固定顺序测试，这导致不同的踢墙是竞争的，若存在两个可能想去的位置就只能二选一，XRS解决了这个问题。",
+        text="X Rotation System，T-ex原创旋转系统，引入了“按住方向键换一套踢墙表”的设定（在对应的方向需要顶住墙），让“想去哪”能被游戏捕获从而转到玩家希望到达的位置。",
+        detail="其他旋转系统无论踢墙表怎么设计，块处在某个位置时旋转后最终只能按固定顺序测试，这导致不同的踢墙是竞争的，若存在两个可能想去的位置就只能二选一，XRS解决了这个问题。",
     },
     -- # 术语（其他）
     {
         word="b2b;back to back",
         title="B2B",
-        text="Back to Back\n连续打出两次特殊消行（Spin或消四），中间不夹杂普通消行，可以提供额外的攻击（在Techmino中B2B为满贯，大满贯是B3B）。连续PC/HPC在Techmino中也算B2B/B3B。",
-    },
-    {
-        word="b2b2b;b3b;back to back to back",
-        title="B2B2B",
-        text="Back to Back to Back\nB2B的加强版，缩写B3B，大量B2B后连续B2B会变成B2B2B，提供更强的攻击（仅Techmino中有）。",
+        text="Back to Back，连续打出两次特殊消行（Spin或消四），中间不夹杂普通消行。",
     },
     {
         word="fin;neo;iso;特殊t2;可移动t2",
@@ -451,49 +442,56 @@ local data={
         text="三类特殊T2的名字，受不同具体规则影响，在不同的游戏内的效果可能不一样，通常没有实战价值。",
     },
     {
-        word="现代块;现代方块；modern tetris",
+        word="现代块;现代方块;modern tetris",
         title="现代方块",
-        text="现代方块是一个模糊的概念，这里列出一部分 “标准” 规则，满足大部分的都可以认为是现代方块：\n1.可见场地大小是10×20，不过上方空间也是存在的，上限可以自己定，一些游戏用的是40；\n2.七种方块从顶部正中间出现（奇数宽方块偏左，高度可以是方块底部或顶部贴着场地顶），同一种方块的朝向（一般是平的面朝下）和颜色都一致；\n3.一个合适的随机出块机制（常见的详见Bag7词条和His词条）；\n4.一个合适的的旋转系统（至少有双旋，详见双旋词条）（最好是SRS或类SRS，详见SRS词条）；\n5.一个合适的锁定延迟系统，详见锁定延迟词条；\n6.一个合适的死亡判定，详见死亡判定词条；\n7.有Next功能（一般是3~6个，也有1个的），详见Next词条，并且方向和出现时候的方向一致；\n8.有Hold功能，详见Hold词条；\n9.有DAS系统负责精密并且快速的左右移动，详见DAS词条；\n10.如果有出块延迟和消行延迟，那么需要有提前旋转/Hold系统，详见IRS和IHS词条，IMS是Techmino特有。",
+        text="“现代方块”是一个模糊概念，满足一些“标准”规则就可以说是现代方块。",
+        detail="1.可见场地大小是10×20；\n2.七种块从顶部正中间出现（3格宽的块偏左），同种方块的颜色和朝向一致；\n3.合适的随机出块机制，另见 #7-Bag；\n4.至少有两个旋转键和合适的旋转系统，另见 #SRS；\n5.合适的 #锁定延迟 系统；\n6.合适的 #死亡判定 系统；\n7.有 #Next 系统；\n8.有 #Hold 系统；\n9.有类似 #ASD/ASP 且可调参数的控制系统；\n10.有 #预输入 系统",
+    },
+    {
+        word="经典块;经典方块;classical tetris;classic tetris",
+        title="经典方块",
+        text="“经典方块”是一个模糊概念，指设计比较简单（通常是因为早）的方块游戏，和“现代方块”对立。\n另见 #现代方块",
     },
     {
         word="tetrimino;tetromino;tetramino;四连块;四联块;形状;方块形状",
         title="四连块",
-        text="在公认的“标准方块游戏”中，用到的形状是所有的 “四连块”，即四个正方形共用边连接成的形状。\n在不允许翻转，只允许旋转的情况下，四连块一共有七种，根据它们的形状一般分别叫做Z、S、J、L、T、O、I。",
+        text="四个正方形共用边连接成的形状，在不允许翻转的情况下共有七种，根据形状命名为Z、S、J、L、T、O、I。",
     },
     {
         word="配色;颜色;方块颜色;标准配色;方块配色",
         title="方块配色",
-        text="在公认的“标准方块游戏”中，七种块的颜色会使用同一套彩虹配色：\nZ：红 S：绿 J：蓝 L：橙 T：紫 O：黄 I：青",
+        text="七种块的颜色通常使用同一套彩虹配色：Z-红 S-绿 J-蓝 L-橙 T-紫 O-黄 I-青",
     },
     {
         word="预输入;buffered input;提前旋转;提前暂存;提前移动;irs;ihs;ims",
         title="预输入",
-        text="Buffered Input 预输入 / Initial ** System 提前**系统\n优秀的操作密集型游戏通常会考虑给控制系统加入预输入的功能，当一些操作哪怕在无法执行时按键动作最终也会被执行出来（比如在方块还没有出现的时候就按旋转键，方块会在出现后立刻旋转），降低了对玩家操作准确度的要求，扩大了“完美操作”的输入窗口，设计得当时可以显著提升游戏的手感。",
+        text="Buffered Input（也叫Initial ** System 提前操作系统），优秀的操作密集型游戏通常会考虑给控制系统加入预输入的功能，可以显著提升游戏的手感。",
+        detail="比如在方块还没有出现的时候就按旋转键，方块会在出现后立刻旋转，降低了对玩家操作准确度的要求，扩大了“完美操作”的输入窗口",
     },
     {
         word="预览;下一个;next",
         title="预览",
-        text="指示后边几个块的顺序。\n提前思考手上这块怎么摆可以让后面轻松是玩家提升的必需技能。\n\n关于玩家玩的时候到底看了几个Next：这个数字并不固定，不同玩家、不同模式、不同局面，计算next的数量都不一样，通过调整可见Next数量打40L比较时间等方式测得的数据并不准确。\n\n具体例如，一个比较熟练的玩家几乎永远会提前算好一个Next，不然不会锁定手里的块；场地上将要出现或可以构造消四洞（T坑）的时候会找最近的I（T）什么时候来，如果太远了就会直接挖掉放弃本次攻击以防被对手偷袭。这两种情况并不独立，有很多介于中间的情况。所以，一个玩家看的Next数量是时刻在变的，“某人看几个Next” 没有精确答案，必须在指明情况的时候数字才能作为参考。",
+        text="场地旁边的一个区域，显示了后边几个即将出现的块。",
     },
     {
         word="暂存;交换;hold",
         title="暂存",
-        text="将手里的方块和Hold槽中的交换，用来调整块序，更容易摆出你想要的形状。（一般不允许连续使用）\n用不用Hold各有好处，不用的话看到序列是什么就是什么，减少了思考量；并且减少了按键的种类，操作简单容易提升KPS，有些人的40L记录就是不用Hold打出的。用Hold可以灵活地调整序列，减少高重力等规则带来的难度，算力足够的情况下可以达成更复杂的目标，甚至反过来显著减少总按键数。",
+        text="将手里的方块和Hold槽中的交换，用来调整块序，更容易摆出你想要的形状。",
     },
     {
         word="深降;deepdrop",
         title="深降",
-        text="开启该规则后，允许方块向下穿越地形进入地下的空洞\n该规则较偏向技术研究，对于AI来说有了它可以完全不用再考虑旋转系统，只要形状能容得下的地方就一定能到达。",
+        text="允许方块向下穿越地形进入地下的空洞",
     },
     {
         word="md;misdrop;mishold",
         title="Misdrop",
-        text="误放，就是不小心放错了地方。简称MD。\n另有Mishold（误hold），指不小心按到Hold导致失去PC机会甚至直接导致游戏结束。",
+        text="误放，由于各种原因导致不小心把块放错了地方，简称MD。",
     },
     {
         word="捐赠;donate;donation",
         title="捐赠",
-        text="指刻意临时堵住（可以消四的）洞做T-spin，打出T-spin后就会解开，是比较进阶的保持/提升火力的技巧。\n不标准用法：有时候只要堵住了个坑，即使不是消四洞也会用这个词。",
+        text="指刻意临时堵住（可以消四的）洞做T-spin，打出T-spin后就会解开，是比较进阶的保持/提升火力的技巧。\n注：有时候只要堵住了个坑，即使不是消四的洞也会用这个词。",
     },
     {
         word="攻击;进攻;防守;防御;攻防",
@@ -503,52 +501,58 @@ local data={
     {
         word="连击;combo;ren",
         title="连击",
-        text="连续的消除从第二次起称为 1 Combo，攻击数取决于具体哪一款游戏。“REN” 这个名称来源于日语中的 “連”（れん）。",
+        text="连续的消除从第二次起称为 1 Combo，攻击数取决于具体哪一款游戏。“REN”这个名称来源于日语中的“連”（れん）。",
     },
     {
         word="spike",
         title="Spike",
-        text="爆发攻击\n指短时间内打出大量的攻击，Techmino和TETR.IO中有Spike计数器，可以看到自己短时间内打出了多少攻击。",
+        text="爆发攻击，指短时间内打出大量的攻击，一些游戏有Spike计数器，可以看到自己短时间内打出了多少攻击。",
     },
     {
         word="s1w",
         title="S1W",
-        text="Side 1 Wide\n旁边空1列，是传统方块游戏里常见的消四打法。\n在现代方块对战中新手可以使用，短时间能打出大量攻击，但在高手场出场率不高，因为效率低，容易被对面一波打死，故只在极少数情况合适的时候用。",
+        text="Side 1 Wide，旁边空1列，是传统方块游戏里常见的消四打法。",
+        detail="在现代方块对战中新手可以使用，是基础的达到1apl的方法，不过在高手场出场率不高，因为效率低，容易被对面一波打死，故只在极少数情况合适的时候用。",
     },
     {
         word="s2w",
         title="S2W",
-        text="Side 2 Wide\n旁边空2列，是常见的连击打法。\n难度很低，现代方块对战中新手可以使用，结合Hold可以很轻松地打出大连击。高手场使用不多，因为准备时间太长，会被对面提前打进垃圾行，导致连击数减少或者直接Top Out，效率也没有特别高，故一套打完也不一定能杀人。",
+        text="Side 2 Wide，旁边空2列，是常见的连击打法。",
+        detail="难度很低，现代方块对战中新手可以使用，结合Hold可以很轻松地打出大连击。高手场使用不多，因为准备时间太长，会被对面提前打进垃圾行，导致连击数减少或者直接Top Out，效率也没有特别高，故一套打完也不一定能杀人。",
     },
     {
         word="s3w",
         title="S3W",
-        text="Side 3 Wide\n旁边空3列，比2w少见一些的连击打法。能打出的连击数比2w多，但是难度略大容易断连。",
+        text="Side 3 Wide，旁边空3列，比2w少见一些的连击打法。",
+        detail="能打出的连击数比2w多，但是难度略大容易断连。",
     },
     {
         word="s4w",
         title="S4W",
-        text="Side 4 Wide\n旁边空4列，一种特殊的连击打法，能打出很高的连击（需要熟练旋转系统，否则会大幅降低连击成功概率），并且准备时间比别的Wide打法短，故动作快的话可以抢在对手打进垃圾之前堆很高然后打出超大连击。\n（因为可能会被提前打死，风险挺大，所以没有c4w那么不平衡）。",
+        text="Side 4 Wide，旁边空4列，一种特殊的连击打法。",
+        detail="能打出很高的连击（需要熟练旋转系统，否则会大幅降低连击成功概率），并且准备时间比别的Wide打法短，故动作快的话可以抢在对手打进垃圾之前堆很高然后打出超大连击。（因为可能会被提前打死，风险挺大，所以没有c4w那么不平衡）。",
     },
     {
         word="c1w",
         title="C1W",
-        text="Center 1 Wide\n中间空1列，一种实战里消4同时辅助打TSD的打法，需要玩家理解<平衡法>，熟练之后可以轻松消四+T2输出。",
+        text="Center 1 Wide，中间空1列，一种实战里消4同时辅助打TSD的打法，需要玩家理解<平衡法>，熟练之后可以轻松消四+T2输出。",
     },
     {
         word="c2w;c3w",
         title="C2W/C3W",
-        text="Center 2/3 Wide\n中间空2列，一种可能的连击打法（不常见）。",
+        text="Center 2/3 Wide，中间空2列，一种可能的连击打法（不常见）。",
     },
     {
         word="c4w;吃四碗",
         title="C4W",
-        text="Center 4 Wide\n中间空四列，一种连击打法，能打出很高的连击，利用了大多数专业对战方块游戏的死亡判定机制，可以放心堆高不担心被顶死，然后开始连击。是一种利用游戏机制的不平衡策略（尤其在开局时），观赏性不是很强还可以以弱胜强，成本太低所以成为了部分游戏中约定的类似 “禁招” 的东西，请在了解情况后再使用，不然可能会被别人骂。\nTechmino中虑到了平衡问题，所以c4w的强度没有别的游戏那么夸张。\n另见 #N-Res",
+        text="Center 4 Wide，中间空四列，一种连击打法，能打出很高的连击。",
+        detail="利用了大多数专业对战方块游戏的死亡判定机制，可以放心堆高不担心被顶死，然后开始连击。是一种利用游戏机制的不平衡策略（尤其在开局时），观赏性不是很强还可以以弱胜强，成本太低所以成为了部分游戏中约定的类似“禁招”的东西，请在了解情况后再使用，不然可能会被别人骂。\nTechmino中虑到了平衡问题，所以c4w的强度没有别的游戏那么夸张。\n另见 #N-Res",
     },
     {
         word="n-res",
         title="N-Res",
-        text="N-Residual\nN-剩余，指4w连击楼底部留几个方格，常用的是3-Res和6-Res。\n3-Res路线少比较好学，成功率也很高，实战完全够用\n6-Res路线多更难用，但是计算力很强的话比3-Res更稳，也可以用来完成特殊挑战（比如Techmino的c4w练习要求100连击通关）。\n\n注：优先使用6-Res，然后是3-res和5-Res，最后是4-Res",
+        text="N-Residual，N-剩余，指4w连击楼底部留几个方格，常用的是3-Res和6-Res。",
+        detail="3-Res路线少比较好学，成功率也很高，实战完全够用，6-Res路线多更难用，但是计算力很强的话比3-Res更稳。\n注：如果不用3/6-Res，次选是5-Res，最后才是4-Res",
     },
     {
         word="63;63堆;63堆叠;6–3堆叠",
@@ -558,7 +562,8 @@ local data={
     {
         word="block out;lock out;top out;死亡;死亡判定",
         title="死亡判定",
-        text="现代方块普遍使用的死亡判定：\n1. 新出现的方块和场地方块有重叠（窒息，Block Out）（c4w比s4w强的原因，因为被打进18行都不会窒息）；\n2. 方块锁定时完全在场地的外面（Lock Out）；\n3. 场地内现存方块总高度大于40。（超高，Top Out）\n\n注：Techmino使用的死亡判定默认不开启第二、三条。",
+        text="现代方块普遍使用几条死亡判定：窒息/锁定在外/超高",
+        detail="窒息（Block Out）：新出现的方块和场地方块有重叠（c4w比s4w强的原因，因为被打进18行都不会窒息）；\n锁定在外（Lock Out）：方块锁定时完全在场地的外面；\n3. 超高（Top Out）：场地内现存方块总高度大于40\n注：窒息几乎在所有游戏中都被使用，其他的就不一定",
     },
     {
         word="缓冲区",
@@ -574,12 +579,12 @@ local data={
     {
         word="等级;下落速度;重力;gravity",
         title="下落速度",
-        text="一般用*G表示方块的下落速度，意思是每一帧方块往下移动多少格，一秒下落一格就是1/60G（默认60fps），可以看出G是一个很大的单位。因为场地就20格，所以一般认为20G即为上限，详见20G词条。\n在Techmino中描述重力的方式是 “每过多少帧下落一格”，例如一秒落一格就对应60（默认60fps）",
+        text="一般用*G表示方块的下落速度，意思是每一帧方块往下移动多少格，一秒下落一格就是1/60G（默认60fps），可以看出G是一个很大的单位。因为场地就20格，所以一般认为20G即为上限，详见20G词条。\n在Techmino中描述重力的方式是“每过多少帧下落一格”，例如一秒落一格就对应60（默认60fps）",
     },
     {
         word="20g",
         title="20G",
-        text="现代方块的最高下落速度，表观就是方块瞬间到底，不存在中间的下落过程，可能会让方块无法跨越壕沟/从山谷爬出。\n20G一般指的其实是 “无限下落速度” ，就算场地不止20格，“20G” 也会让方块瞬间到底。\nTechmino（和部分其他游戏，推荐这么设计）中20G的优先级比其他玩家操作都高，即使是0arr的水平方向 “瞬间移动” 中途也会受到20G的影响。",
+        text="现代方块的最高下落速度，表观就是方块瞬间到底，不存在中间的下落过程，可能会让方块无法跨越壕沟/从山谷爬出。\n20G一般指的其实是“无限下落速度”，就算场地不止20格，“20G”也会让方块瞬间到底。\nTechmino（和部分其他游戏，推荐这么设计）中20G的优先级比其他玩家操作都高，即使是0arr的水平方向“瞬间移动”中途也会受到20G的影响。",
     },
     {
         word="锁定延迟;lock delay",
@@ -614,7 +619,8 @@ local data={
     {
         word="手感",
         title="手感",
-        text="决定手感的几个主要因素：\n1. 输入延迟受设备配置或者设备状况影响。可以重启/换设备解决；\n2. 程序运行稳定性程序设计或.实现）得不好，时不时会卡一下。把设置画面效果拉低可能可以缓解；\n3. 游戏设计故意的。自己适应；\n4. 参数设置设置不当。去改设置；\n5. 游玩姿势姿势不当。不便用力，换个姿势；\n6. 换键位或者换设备后不适应，操作不习惯。多习惯习惯，改改设置；\n7. 肌肉疲劳反应和协调能力下降。睡一觉或者做点体育运动，过段时间（也可能要几天）再来玩。",
+        text="决定手感因素的有很多，包括设备/程序bug/设计故意/设置不当/姿势不当/新条件不适应/身体疲劳",
+        detail="1. 输入延迟受设备配置或者设备状况影响。可以重启/换设备解决；\n2. 程序运行稳定性程序设计或.实现）得不好，时不时会卡一下。把设置画面效果拉低可能可以缓解；\n3. 游戏设计故意的。自己适应；\n4. 参数设置设置不当。去改设置；\n5. 游玩姿势姿势不当。不便用力，换个姿势；\n6. 换键位或者换设备后不适应，操作不习惯。多习惯习惯，改改设置；\n7. 肌肉疲劳反应和协调能力下降。睡一觉或者做点体育运动，过段时间（也可能要几天）再来玩。",
     },
     {
         word="das通俗;asd通俗",
@@ -632,9 +638,9 @@ local data={
         text="对于不是刚入门的并且了解极简操作的玩家来说推荐ASP=0，ASD=4~6（具体看个人手部协调性，只要能控制区别就不大）。\n新人如果实在觉得太快可以适当增加一点ASD，ASP要改的话强烈建议不要超过2\n\n最佳调整方法：ASD越小越好，小到依然能准确区分单点/长按为止；ASP能0就0，游戏不允许的话就能拉多小拉多小。",
     },
     {
-        word="asd打断;das打断;dcd;das cut",
+        word="asd打断;das打断;dcd;das cut;das cut delay",
         title="ASD打断",
-        text="Techmino中指玩家的操作焦点转移到新方块的瞬间，此时减小（重置）ASD计时器，让自动移动不会立刻生效，减少 “移动键松开晚了导致下一块一出来就立即开始移动” 的情况\n注：不同游戏中的具体机制可能不同，会在不同的时机影响ASD计时器，本词条仅供示意。",
+        text="Techmino中指玩家的操作焦点转移到新方块的瞬间，此时减小（重置）ASD计时器，让自动移动不会立刻生效，减少“移动键松开晚了导致下一块一出来就立即开始移动”的情况\n注：不同游戏中的具体机制可能不同，会在不同的时机影响ASD计时器，本词条仅供示意。",
     },
     {
         word="误硬降打断",
@@ -665,32 +671,33 @@ local data={
         word="c2出块;cultris2出块",
         title="C2出块",
         text="（七个块初始权重设为0）把七个块的权重都除以2然后加上0~1的随机数，哪个权重最大就出哪个块，然后将其权重除以3.5\n循环。",
-        -- _comment: 原Lua文件中包含此注释："Discovered by zxc"
     },
     {
         word="hypertap;超连点",
         title="Hypertap",
-        text="快速震动手指，实现比长按更快速+灵活的高速单点移动，主要在经典块的高难度下（因为ASD不可调而且特别慢，高速下很容易md导致失败，此时手动连点就比自动移动更快）或者受特殊情况限制不适合用自动移动时使用。会使用这个技术的人称为 “Hypertapper”。",
+        text="快速震动手指，实现比长按更快速+灵活的高速单点移动。",
+        detail="主要在经典块的高难度下（因为ASD不可调而且特别慢，高速下很容易md导致失败，此时手动连点就比自动移动更快）或者受特殊情况限制不适合用自动移动时使用。",
     },
     {
         word="rolling;轮指",
         title="Rolling",
-        text="另一种快速连点方法，用于ASD/ASP设置非常慢时的高重力（1G左右）模式。\n先把手柄（键盘……可能也行吧）悬空摆好，比如架在腿上，要连点某个键的时候一只手虚按按键，另外一只手的几根手指轮流敲打手柄背面， “反向按键” 实现连点。这种控制方法可以让玩家更轻松地获得比直接抖动手指的Hypertap（详见超连点词条）更快的控制速度。\n此方法最先由Cheez-fish发明，他本人则使用Rolling达到过超过20Hz的点击频率。",
+        text="另一种快速连点方法，用于ASD/ASP设置非常慢时的高重力（1G左右）模式。",
+        detail="先把手柄（键盘……可能也行吧）悬空摆好，比如架在腿上，要连点某个键的时候一只手虚按按键，另外一只手的几根手指轮流敲打手柄背面，“反向按键”实现连点。这种控制方法可以让玩家更轻松地获得比直接抖动手指的Hypertap（详见超连点词条）更快的控制速度。\n此方法最先由Cheez-fish发明，他本人则使用Rolling达到过超过20Hz的点击频率。",
     },
     {
         word="堆叠;stacl",
         title="堆叠",
-        text="将方块无缝隙地堆起来，需要玩家有预读Next的能力，可以通过不使用Hold并且用十个消四完成40L模式进行练习。\n这项能力从入坑到封神都是非常重要的。",
+        text="一般指将方块无缝隙地堆起来。需要玩家有预读Next的能力，可以练习不使用Hold同时用十个消四完成40L模式。",
     },
     {
         word="双旋",
         title="双旋",
-        text="指能够使用顺时针+逆时针两个旋转键的技术，原来要转三下的情况可以反向转一下就够，减少烦琐操作。\n同时双旋也是学习Finesse的必要前提。\n另见 #三旋",
+        text="会使用顺时针/逆时针两个旋转键，原来要转三下的情况可以反向转一下就够，减少烦琐操作，这也是学习Finesse的必要前提。\n另见 #三旋",
     },
     {
         word="三旋",
         title="三旋",
-        text="指能够使用顺+逆时针+180°旋转三个旋转键的技术，任何方块放哪只需要旋转一次即可（Spin不算）。\n但由于只有部分游戏有180°旋转所以改操作并不通用，而且对速度提升的效果不如从单旋转双旋显著，不追求极限速度的玩家可不学。\n另见 #双旋",
+        text="会使用顺/逆时针/180°旋转三个旋转键，任何方块只需要旋转一次即可。\n但由于180°旋转并不是所有游戏都有，且对速度提升的效果不如从单旋转双旋显著，所以也可以不学。\n另见 #双旋",
     },
     {
         word="干旱;drought",
@@ -705,17 +712,17 @@ local data={
     {
         word="半隐",
         title="半隐",
-        text="指方块锁定经过一段时间后会变隐形的规则\n注：从锁定开始到消失的具体时长不定，可以描述为 “过几秒种后消失”。",
+        text="指方块锁定经过一段时间后会变隐形的规则\n注：从锁定开始到消失的具体时长不定，可以描述为“过几秒种后消失”。",
     },
     {
         word="全隐;invis;invisible",
         title="全隐",
-        text="指方块锁定后会马上完全隐藏\n注：锁定时有消失动画的话也可以叫全隐，但其实难度会小一点，故Techmino中没有动画的隐形模式叫瞬隐。",
+        text="指方块锁定后会马上完全隐藏\n注：锁定时有消失动画的话也可以叫全隐，但其实难度会小一点。",
     },
     {
         word="场地重力",
         title="场地重力",
-        text="（由于 “重力” 有歧义所以本词典里称为场地重力，也有重力连锁等叫法。）\n部分游戏的部分模式可能包含此规则。此规则下玩家的四格方块四个方向有连接关系，连起来的几个格整体会受到重力影响，悬空了会往下落。在这个规则下可以构造复杂的连锁消除，一个主打连锁消除对战的游戏是Qudra（老游戏，现在基本没人玩）。",
+        text="（仅小部分游戏可能包含此规则）四格方块每一小格和相邻的格子有连接关系，连起来的几个格整体会受到重力影响，悬空时会往下落，可以像游戏Puyopuyo一样构造复杂的连锁消除。",
     },
     {
         word="mph",
@@ -725,12 +732,12 @@ local data={
     {
         word="输入延迟",
         title="输入延迟",
-        text="用任何设备玩任何游戏时，所有的操作（按键盘，点鼠标等）都会晚一点点（很短，几毫秒到几十毫秒）才到达游戏，如果过长就会很影响游戏手感，作用效果类似于你拿QQ远程控制打FPS游戏\nTOP、TE等游戏比较明显\n这个延迟一般由硬件性能，硬件状态影响，通常来说不可设置，开启性能模式（或者关闭节能模式）可能会好一点。",
+        text="玩家按下键盘到游戏接收到信号其实一定会有几毫秒到几十毫秒不等的延迟，如果过大就会很影响游戏手感\n这个延迟会受各种因素影响，若出现临时的增大，可以尝试重启设备/关闭后台城区/接通电源等操作缓解。",
     },
     {
-        word="秘密段位;secret grade",
+        word="秘密段位;大于号;secret grade",
         title="秘密段位",
-        text="出自TGM系列的彩蛋玩法。不按照TGM的一般目标去玩，而是去拼图拼出 “每行仅有一个洞的大于号” 图形（不能是小于号），拼得越多获得的秘密段位越高（没特殊功能，只是好玩），最高目标是完成19行并封顶\n更多内容见Hard Drop Wiki。",
+        text="出自TGM系列的彩蛋玩法。拼图拼出“每行仅有一个洞且排成大于号的图形”。最高目标是完成19行并封口",
         link="https://harddrop.com/wiki?search=Secret_Grade_Techniques",
     },
     {
@@ -745,86 +752,87 @@ local data={
     },
     -- # 定式
     {
-        word="开局定式",
+        word="定式;开局定式",
         title="开局定式",
-        text="开局定式，定式一般指开局定式这个概念。\n指开局后可以使用的套路摆法。局中情况合适的时候也可以摆出同样的形状，但是和摆法开局一般都不一样。\n\n能称为定式的摆法要尽量满足以下至少2~3条：\n能适应大多数块序\n输出高，尽量不浪费T块\n很多方块无需软降，极简操作数少\n有明确后续，分支尽量少。\n\n注：绝大多数定式基于bag7，序列规律性强才有发明定式的可能。",
+        text="定式一般指开局定式，是开局后可选使用的套路堆叠方法。\n另见 #中局定式",
+        detail="能称为定式的摆法要尽量满足以下至少2~3条：\n能适应大多数块序\n输出高，尽量不浪费T块\n很多方块无需软降，极简操作数少\n有明确后续，分支尽量少。\n\n注：绝大多数定式基于bag7，序列规律性强才有发明定式的可能。",
     },
     {
-        word="dt炮",
+        word="dt;dt炮",
         title="DT炮",
-        text="Double-Triple Cannon。\n更多内容见Hard Drop Wiki。",
+        text="Double-Triple Cannon。",
         link="https://harddrop.com/wiki?search=dt",
     },
     {
         word="dtpc",
         title="DTPC",
-        text="DT炮一个能接PC的分支。\n更多内容见Hard Drop Wiki。",
+        text="DT炮一个能接PC的分支。",
         link="https://harddrop.com/wiki?search=dt",
     },
     {
-        word="bt炮",
+        word="bt;t炮",
         title="BT炮",
-        text="β炮（Beta炮）。\n更多内容见Hard Drop Wiki。",
+        text="β炮（Beta炮）。",
         link="https://harddrop.com/wiki?search=bt_cannon",
     },
     {
         word="btpc",
         title="BTPC",
-        text="BT炮一个能接PC的分支。\n更多内容见Hard Drop Wiki。",
+        text="BT炮一个能接PC的分支。",
         link="https://harddrop.com/wiki?search=bt_cannon",
     },
     {
         word="ddpc",
         title="DDPC",
-        text="开局TSD的一个能接Double-Double-PC的分支。\n更多内容见Hard Drop Wiki。",
+        text="开局TSD的一个能接Double-Double-PC的分支。",
         link="https://harddrop.com/wiki?search=TKI_3_Perfect_Clear",
     },
     {
-        word="qt炮",
+        word="qt;qt炮",
         title="QT炮",
-        text="一种能以更高的概率搭出开局DT Attack的类似DT炮的定式。\n更多内容见Hard Drop Wiki。",
+        text="一种能以更高的概率搭出开局DT Attack的类似DT炮的定式。",
         link="https://harddrop.com/wiki?search=dt",
     },
     {
-        word="mt",
+        word="mt;mt炮",
         title="MT",
-        text="Mini-Triple\n一个TSM+TST的结构。",
+        text="Mini-Triple，一个TSM+TST的结构。",
         link="https://harddrop.com/wiki?search=mt",
     },
     {
         word="trinity",
         title="Trinity",
-        text="Trinity\n一个TSD+TSD+TSD或TSM+TST+TSD的结构。",
+        text="Trinity，一个TSD+TSD+TSD或TSM+TST+TSD的结构。",
         link="https://harddrop.com/wiki?search=trinity",
     },
     {
         word="狼月炮",
         title="狼月炮",
-        text="狼月炮。\n更多内容见Hard Drop Wiki。",
+        text="狼月炮。",
         link="https://harddrop.com/wiki?search=wolfmoon_cannon",
     },
     {
         word="sewer",
         title="Sewer",
-        text="Sewer开局。\n更多内容见Hard Drop Wiki。",
+        text="Sewer开局。",
         link="https://harddrop.com/wiki?search=sewer",
     },
     {
-        word="tki",
+        word="tki;tki3;tki-3",
         title="TKI",
-        text="TKI-3开局\n有两种解释，一个是TSD开局的TKI-3，另一个是TST开局的TKI堆积（C-Spin）。\n更多内容见Hard Drop Wiki。",
+        text="TKI-3开局，有两种解释，一个是TSD开局的TKI-3，另一个是TST开局的TKI堆积（C-Spin）。",
         link="https://harddrop.com/wiki?search=TKI_3_Opening",
     },
     {
         word="god spin",
         title="God Spin",
-        text="God Spin\nwindkey发明的一个观赏性很强但实战没啥用的炫酷特殊T2+T3开局定式。\n更多内容见Hard Drop Wiki。",
+        text="God Spin，windkey发明的一个观赏性很强但实战没啥用的炫酷特殊T2+T3开局定式。",
         link="https://harddrop.com/wiki?search=godspin",
     },
     {
         word="信天翁",
         title="信天翁",
-        text="一种高观赏性几乎不浪费T的快节奏强力T2-T3-T2-PC开局。\n更多内容见Hard Drop Wiki。",
+        text="一种高观赏性几乎不浪费T的快节奏强力T2-T3-T2-PC开局。",
         link="https://harddrop.com/wiki?search=Albatross_Special",
     },
     {
@@ -836,7 +844,7 @@ local data={
     {
         word="全清开局",
         title="全清开局",
-        text="Perfect Clear Opener，一种极大概率能摆出来，有概率（hold I约84.6%，不hold I约61.2%）能做到PC的定式，Techmino中的pc练习中空出不规则区域的那个就是PCO。\n更多内容见Hard Drop Wiki。",
+        text="Perfect Clear Opener，一种极大概率能摆出来，有概率（hold I约84.6%，不hold I约61.2%）能做到PC的定式，Techmino中的pc练习中空出不规则区域的那个就是PCO。",
         link="https://harddrop.com/wiki?search=Perfect_Clear_Opener",
     },
     {
@@ -854,72 +862,72 @@ local data={
     {
         word="中局定式",
         title="中局定式",
-        text="指一些特定的能打出较高伤害的常见典型形状，是中局输出的途径之一，部分也可以在开局做不过不是很有必要，主要见于中局\n另见 #开局定式",
+        text="指一些特定的能打出较高伤害的常见典型形状，是中局输出的途径之一，部分也可以在开局做不过不是很有必要，主要见于中局。\n另见 #开局定式",
     },
     {
         word="c-spin",
         title="C-Spin",
-        text="也被称为TKI堆积，TD-Attack。\n更多内容见Hard Drop Wiki。",
+        text="也被称为TKI堆积，TD-Attack。",
         link="https://harddrop.com/wiki?search=c-spin",
     },
     {
         word="stsd",
         title="STSD",
-        text="Super T-spin Double\n一种能做两个T2的形状。\n如果垃圾行正好空在STSD正下方会暴毙。\n更多内容见Hard Drop Wiki。",
+        text="Super T-spin Double，一种能做两个T2的形状。\n如果垃圾行正好空在STSD正下方会暴毙。",
         link="https://harddrop.com/wiki?search=stsd",
     },
     {
         word="stmb",
         title="STMB",
-        text="STMB cave\n在3宽坑架SZ捐一个T2的形状。\n更多内容见Hard Drop Wiki。",
+        text="STMB cave，在3宽坑架SZ捐一个T2的形状。",
         link="https://harddrop.com/wiki?search=stmb_cave",
     },
     {
         word="双刃剑",
         title="双刃剑",
-        text="两个T2形状叠在一起。\n更多内容见Hard Drop Wiki。",
+        text="两个T2形状叠在一起。",
         link="https://harddrop.com/wiki?search=Fractal",
     },
     {
-        word="lst堆叠",
+        word="lst;lst堆叠",
         title="LST堆叠",
         text="一种不断b2b一直做T2的堆叠方法。",
         link="https://www.bilibili.com/read/cv7946210",
     },
     {
-        word="汉堡包",
+        word="汉堡;汉堡包",
         title="汉堡包",
-        text="一种边缘捐T不影响消四的堆叠法。\n更多内容见Hard Drop Wiki。",
+        text="一种边缘捐T不影响消四的堆叠法。",
         link="https://harddrop.com/wiki?search=hamburger",
     },
     {
-        word="皇家十字",
+        word="皇十;皇家十字",
         title="皇家十字",
-        text="在一个十字形洞口盖屋檐后可以做两个T2的形状。\n更多内容见Hard Drop Wiki。",
+        text="在一个十字形洞口盖屋檐后可以做两个T2的形状。",
         link="https://harddrop.com/wiki?search=imperial_cross",
     },
     {
-        word="阶梯捐",
+        word="阶梯;阶梯捐",
         title="阶梯捐",
-        text="一种在看起来像阶梯的洞口捐一个T2的形状。\n更多内容见Hard Drop Wiki。",
+        text="一种在看起来像阶梯的洞口捐一个T2的形状。",
         link="https://harddrop.com/wiki?search=kaidan",
     },
     {
         word="社畜train",
         title="社畜train",
-        text="一种在常见T3屋檐上捐两个T2的形状。\n更多内容见Hard Drop Wiki。",
+        text="一种在常见T3屋檐上捐两个T2的形状。",
         link="https://harddrop.com/wiki?search=Shachiku_Train",
     },
     {
-        word="千鸟格子",
+        word="千鸟;千鸟格子",
         title="千鸟格子",
-        text="一种在小洞上捐一个T2后还能做一个T2的形状。\n更多内容见Hard Drop Wiki。",
+        text="一种在小洞上捐一个T2后还能做一个T2的形状。",
         link="https://harddrop.com/wiki?search=Cut_copy",
     },
     {
         word="绯红之王",
         title="绯红之王",
-        text="在STSD上叠若干个T3的形状。\n更多内容见Hard Drop Wiki。",
+        text="在STSD上叠若干个T3的形状。",
         link="https://harddrop.com/wiki?search=King_Crimson",
     },
     {
@@ -942,7 +950,8 @@ local data={
     {
         word="sub",
         title="sub",
-        text="在……之下\n用于表示成绩，单位一般可不写，比如40L成绩Sub 30是秒，1000行Sub 15是分钟，不写项目默认是40L\n\n例：39.95s是Sub 40，40.###s不是Sub 40。\n请不要使用Sub 62之类的词，因为sub本身就是表示大约， 一分钟左右的成绩精确到5~10s就可以了，一般30s以内的成绩用sub## 的时候才会精确到1s。",
+        text="在……之下\n用于表示成绩，不说项目默认是40L，单位一般可不写，比如40L成绩Sub 30是秒，1000行Sub 15是分钟",
+        detail="例：39.95s是Sub 40，40.###s不是Sub 40。\n请不要使用Sub 62之类的词，因为sub本身就是表示大约，一分钟左右的成绩精确到5~10s就可以了，一般30s以内的成绩用sub## 的时候才会精确到1s。",
     },
     {
         word="freestyle",
