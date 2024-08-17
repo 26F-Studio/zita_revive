@@ -35,7 +35,7 @@ return {
             S:update()
             local chargeNeed=26+#result/6.2
             if S.charge<math.min(62,chargeNeed) then
-                if TASK.forceLock('dictCharge_'..S.id,26) then S:send("词典能量耗尽！请稍后再试") end
+                if S:forceLock('dictCharge',26) then S:send("词典能量耗尽！请稍后再试") end
                 return true
             end
             S:useCharge(chargeNeed)

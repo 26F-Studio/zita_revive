@@ -165,11 +165,16 @@ end
 ---@field priv boolean
 ---@field group boolean #not priv
 ---@field taskList Task[]
+---@field locks Map<number>
 ---@field charge number
 ---@field maxCharge number
 ---@field lastUpdateTime number
 Session={}
 
+local lockMapMeta={
+    __index=function(self,k) rawset(self,k,-1e99) return -1e99 end,
+    __newindex=function(self,k) rawset(self,k,-1e99) end,
+}
 ---@return Session
 function Session.new(id,priv)
     ---@type Session
@@ -178,6 +183,7 @@ function Session.new(id,priv)
         priv=priv,
         group=not priv,
         taskList={},
+        locks=setmetatable({},lockMapMeta),
 
         createTime=Time(),
         charge=Config.maxCharge,
@@ -235,6 +241,46 @@ function Session:removeAllTask()
         end
     end
     print("All user tasks cleared")
+end
+
+---@param name any
+---@param time? number
+---@return boolean
+function Session:lock(name,time)
+    if Time()>=self.locks[name] then
+        self.locks[name]=Time()+(time or 1e99)
+        return true
+    else
+        return false
+    end
+end
+---@param name any
+---@param time? number
+---@return boolean
+function Session:forceLock(name,time)
+    local res=Time()>=self.locks[name]
+    self.locks[name]=Time()+(time or 1e99)
+    return res
+end
+---@param name any
+function Session:unlock(name)
+    self.locks[name]=-1e99
+end
+---@param name any
+---@return number|false
+function Session:getLock(name)
+    local v=self.locks[name]-Time()
+    return v>0 and v
+end
+function Session:freshLock()
+    for k,v in next,self.locks do
+        if Time()>v then self.locks[k]=nil end
+    end
+end
+function Session:clearLock()
+    for k in next,self.locks do
+        self.locks[k]=nil
+    end
 end
 
 function Session:update()
@@ -334,3 +380,15 @@ function scene.unload() end
 
 SCN.add('main', scene)
 ZENITHA.setFirstScene('main')
+
+TASK.new(function()
+    while true do
+        TASK.yieldT(10*60)
+        if TASK.getlock('bot_running') then
+            TASK.freshLock()
+            for _,S in next,SessionMap do
+                S:freshLock()
+            end
+        end
+    end
+end)
