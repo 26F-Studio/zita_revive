@@ -1,6 +1,5 @@
 ---@type Task_raw
 return {
-    filter='privateMes',
     func=function(S,M)
         -- Log
         if Config.debugLog_message then

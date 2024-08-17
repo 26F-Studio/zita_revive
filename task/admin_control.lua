@@ -14,6 +14,7 @@ codeEnv.SessionMap=SessionMap
 codeEnv.Bot=Bot
 codeEnv.Session=Session
 
+---@type table<string,fun(S:Session,args:string[])|string>
 local commands={
     ['#stop']=function(S)
         print('[STOP]')
@@ -25,19 +26,23 @@ local commands={
         S:send("小z断开了连接了喵！")
         Bot.disconnect()
     end,
-    ['#log on']=function(S)
-        print('Log: on')
-        S:send("小z开始日志了喵！")
-        Config.debugLog_message=true
+    ['#tasks']=function(S)
+        local result="群里有这些任务喵："
+        for _,task in next,S.taskList do
+            result=result..'\n'..task.id
+        end
+        S:send(result)
     end,
-    ['#log off']=function(S)
-        print('Log: off')
-        S:send("小z停止日志了喵！")
-        Config.debugLog_message=false
+    ['#task']="#tasks",
+    ['#log']=function(S,args)
+        local on=args[1]=='on'
+        print('Log: '..(on and 'on' or 'off'))
+        S:send(on and "小z开始日志了喵！" or "小z停止日志了喵！")
+        Config.debugLog_message=on
     end,
     ['#stat']=function(S)
         local result=STRING.repD(STRING.trimIndent[[
-            【统计信息】
+            我做了这些事情喵：
             本次运行时间:$1
             本次发消息数:$2
 
@@ -55,7 +60,7 @@ local commands={
     end,
     ['#help']=function(S)
         local result=STRING.trimIndent([[
-            【管理员帮助】
+            Z酱可以做这些事情喵：
             #help 帮助
             #stop 急停
             #log on 开启日志
@@ -70,6 +75,7 @@ local commands={
         S:send(result)
     end,
 }
+TABLE.reIndex(commands)
 
 local texts={
     {
@@ -96,12 +102,13 @@ return {
         ---@cast M LLOneBot.Event.PrivateMessage
 
         local mes=M.raw_message
-        if commands[mes] then
+        local args=STRING.split(mes,' ')
+        if commands[args[1]] then
             if not Bot.isAdmin(M.user_id) then
                 no_permission(S,1)
                 return true
             end
-            commands[mes](S)
+            commands[args[1]](S,TABLE.sub(args,2))
             return true
         elseif mes:sub(1,1)=='!' then
             if not Bot.isAdmin(M.user_id) then

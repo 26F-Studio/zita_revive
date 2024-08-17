@@ -204,20 +204,20 @@ end
 function Session:newTask(id,prio)
     ---@type Task_raw
     local task=require('task.'..id)
-    local insPos=1
+    local insPos
     for i=1,#self.taskList do
         local t=self.taskList[i]
-        if t.id==task then
+        if id==t.id then
             print("Task created failed: Task '"..task.."' already exists")
             return
-        elseif t.prio==prio then
+        elseif prio==t.prio then
             print("Task created failed: Prio '"..prio.."' already used by task '"..t.id.."'")
             return
-        elseif t.prio>prio then
+        elseif not insPos and prio<t.prio then
             insPos=i
-            break
         end
     end
+    if not insPos then insPos=#self.taskList+1 end
     table.insert(self.taskList,insPos,{
         prio=prio,
         id=id,
@@ -384,7 +384,7 @@ ZENITHA.setFirstScene('main')
 TASK.new(function()
     while true do
         TASK.yieldT(10*60)
-        if TASK.getlock('bot_running') then
+        if TASK.getLock('bot_running') then
             TASK.freshLock()
             for _,S in next,SessionMap do
                 S:freshLock()
