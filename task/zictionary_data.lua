@@ -6,6 +6,10 @@
 ]]
 local meta={
     {
+        word="词典;小z词典;zict;zictionary",
+        title="本词(字?)典是收集方块游戏相关词汇并加以解释供人检查参考的工具",
+    },
+    {
         word="新人;萌新",
         title="新人学习/练习路线",
         text="（使用 ##新人 查看完整词条内容）",
@@ -21,43 +25,43 @@ local meta={
         word="灰机;huiji;灰机wiki",
         title="灰机Wiki",
         text="俄罗斯方块中文维基，由一群来自俄罗斯方块研究群及下属群的方块同好建立的关于俄罗斯方块的中文百科全书\n\n目前其大部分页面翻译和参考来自Hard Drop Wiki和Tetris Wiki",
-        link="https://tetris.huijiwiki.com",
+        link="tetris.huijiwiki.com",
     },
     {
         word="harddrop wiki",
         title="HardDrop Wiki",
         text="（英文）位于Hard Drop全球俄罗斯方块社区的Wiki百科",
-        link="https://harddrop.com/wiki/Tetris_Wiki",
+        link="harddrop.com/wiki/Tetris_Wiki",
     },
     {
         word="tetris wiki",
         title="Tetris Wiki",
         text="（英文）一个专注于创建俄罗斯方块相关内容的Wiki百科，由Myndzi在2015创办",
-        link="https://tetris.wiki",
+        link="tetris.wiki",
     },
     {
         word="tetris wiki fandom",
         title="Tetris Wiki Fandom",
         text="（英文）一个俄罗斯方块维基",
-        link="https://tetris.fandom.com/wiki/Tetris_Wiki",
+        link="tetris.fandom.com/wiki/Tetris_Wiki",
     },
     {
         word="fumen",
         title="Fumen",
         text="一个方块版面编辑器，可以用于分享定式，PC解法等，用处很多。设置里可以启用英文版",
-        link="http://fumen.zui.jp  https://knewjade.github.io/fumen-for-mobile",
+        link="fumen.zui.jp  knewjade.github.io/fumen-for-mobile",
     },
     {
         word="github",
         title="GitHub",
         text="Techmino的GitHub仓库地址，欢迎Star！",
-        link="https://github.com/26F-Studio/Techmino",
+        link="github.com/26F-Studio/Techmino",
     },
     {
         word="宝石;宝石迷阵;bej;bej3;bejeweled;bejeweled3",
         title="Bejeweled",
         text="三消系列神作，类比现代块相比经典块的进步，Bej系列每一作都是前无古人后无来者的“现代三消”，BejT和Bej3的三消玩法至今未被超越",
-        link="https://b23.tv/BV1sE421P7dE",
+        link="b23.tv/BV1sE421P7dE",
     },
     {
         word="气泡;魔法气泡;噗哟;噗哟噗哟;puyo;puyopuyo",
@@ -192,7 +196,7 @@ local main={
         title="SRS",
         text="Super Rotation System，现代方块最常用的旋转系统，也是不少自制旋转系统的设计模板",
         detail="在SRS中，每个方块有四个朝向，每个朝向时可以向顺逆两个方向旋转（SRS并不包含180°旋转），总共4*2=8种动作对应8个偏移表，方块旋转失败时会根据偏移表的内容尝试移动方块让旋转成立，具体数据可以去各大Wiki查",
-        link="https://tetris.wiki/Super_Rotation_System",
+        link="tetris.wiki/Super_Rotation_System",
     },
     {
         word="srs plus;srs+",
@@ -522,7 +526,7 @@ local main={
         word="秘密段位;大于号;secret grade",
         title="秘密段位",
         text="出自TGM系列的彩蛋玩法。拼图拼出“每行仅有一个洞且排成大于号的图形”。最高目标是完成19行并封口",
-        link="https://harddrop.com/wiki?search=Secret_Grade_Techniques",
+        link="harddrop.com/wiki?search=Secret_Grade_Techniques",
     },
     {
         word="cold clear",
@@ -546,91 +550,91 @@ local pattern={
         word="dt;dt炮",
         title="DT炮",
         text="Double-Triple Cannon",
-        link="https://harddrop.com/wiki?search=dt",
+        link="harddrop.com/wiki?search=dt",
     },
     {
         word="dtpc",
         title="DTPC",
         text="DT炮一个能接PC的分支",
-        link="https://harddrop.com/wiki?search=dt",
+        link="harddrop.com/wiki?search=dt",
     },
     {
         word="bt;t炮",
         title="BT炮",
         text="β炮（Beta炮）",
-        link="https://harddrop.com/wiki?search=bt_cannon",
+        link="harddrop.com/wiki?search=bt_cannon",
     },
     {
         word="btpc",
         title="BTPC",
         text="BT炮一个能接PC的分支",
-        link="https://harddrop.com/wiki?search=bt_cannon",
+        link="harddrop.com/wiki?search=bt_cannon",
     },
     {
         word="ddpc",
         title="DDPC",
         text="开局TSD的一个能接Double-Double-PC的分支",
-        link="https://harddrop.com/wiki?search=TKI_3_Perfect_Clear",
+        link="harddrop.com/wiki?search=TKI_3_Perfect_Clear",
     },
     {
         word="qt;qt炮",
         title="QT炮",
         text="一种能以更高的概率搭出开局DT Attack的类似DT炮的定式",
-        link="https://harddrop.com/wiki?search=dt",
+        link="harddrop.com/wiki?search=dt",
     },
     {
         word="mt;mt炮",
         title="MT",
         text="Mini-Triple，一个TSM+TST的结构",
-        link="https://harddrop.com/wiki?search=mt",
+        link="harddrop.com/wiki?search=mt",
     },
     {
         word="trinity",
         title="Trinity",
         text="Trinity，一个TSD+TSD+TSD或TSM+TST+TSD的结构",
-        link="https://harddrop.com/wiki?search=trinity",
+        link="harddrop.com/wiki?search=trinity",
     },
     {
         word="狼月炮",
         title="狼月炮",
         text="狼月炮",
-        link="https://harddrop.com/wiki?search=wolfmoon_cannon",
+        link="harddrop.com/wiki?search=wolfmoon_cannon",
     },
     {
         word="sewer",
         title="Sewer",
         text="Sewer开局",
-        link="https://harddrop.com/wiki?search=sewer",
+        link="harddrop.com/wiki?search=sewer",
     },
     {
         word="tki;tki3;tki-3",
         title="TKI",
         text="TKI-3开局，有两种解释，一个是TSD开局的TKI-3，另一个是TST开局的TKI堆积（C-Spin）",
-        link="https://harddrop.com/wiki?search=TKI_3_Opening",
+        link="harddrop.com/wiki?search=TKI_3_Opening",
     },
     {
         word="god spin",
         title="God Spin",
         text="God Spin，windkey发明的一个观赏性很强但实战没啥用的炫酷特殊T2+T3开局定式",
-        link="https://harddrop.com/wiki?search=godspin",
+        link="harddrop.com/wiki?search=godspin",
     },
     {
         word="信天翁",
         title="信天翁",
         text="一种高观赏性几乎不浪费T的快节奏强力T2-T3-T2-PC开局",
-        link="https://harddrop.com/wiki?search=Albatross_Special",
+        link="harddrop.com/wiki?search=Albatross_Special",
     },
     {
         word="鹈鹕",
         title="鹈鹕",
         text="一种类似信天翁的定式，在块序不能信天翁的时候可以用",
-        link="https://harddrop.com/wiki?search=Pelican",
+        link="harddrop.com/wiki?search=Pelican",
     },
     {
         word="全消开局;全清开局",
         title="全消开局",
         text="Perfect Clear Opener，一种极大概率能摆出来，有概率（hold I约84.6%，不hold I约61.2%）能做到PC的定式，Techmino中的pc练习中空出不规则区域的那个就是PCO",
-        link="https://harddrop.com/wiki?search=Perfect_Clear_Opener",
+        link="harddrop.com/wiki?search=Perfect_Clear_Opener",
     },
     {
         word="六巧板",
@@ -641,7 +645,7 @@ local pattern={
         word="dpc",
         title="DPC",
         text="在场地空白，7bag还剩一块的情况下，能在很多情况下达到100%搭建率的TSD+PC的定式。更多信息见tetristemplate.info",
-        link="https://tetristemplate.info/dpc",
+        link="tetristemplate.info/dpc",
     },
     -- 形状
     {
@@ -653,73 +657,73 @@ local pattern={
         word="c-spin",
         title="C-Spin",
         text="也被称为TKI堆积，TD-Attack",
-        link="https://harddrop.com/wiki?search=c-spin",
+        link="harddrop.com/wiki?search=c-spin",
     },
     {
         word="stsd",
         title="STSD",
         text="Super T-spin Double，一种能做两个T2的形状\n如果垃圾行正好空在STSD正下方会暴毙",
-        link="https://harddrop.com/wiki?search=stsd",
+        link="harddrop.com/wiki?search=stsd",
     },
     {
         word="stmb",
         title="STMB",
         text="STMB cave，在3宽坑架SZ捐一个T2的形状",
-        link="https://harddrop.com/wiki?search=stmb_cave",
+        link="harddrop.com/wiki?search=stmb_cave",
     },
     {
         word="双刃剑",
         title="双刃剑",
         text="两个T2形状叠在一起",
-        link="https://harddrop.com/wiki?search=Fractal",
+        link="harddrop.com/wiki?search=Fractal",
     },
     {
         word="lst;lst堆叠",
         title="LST堆叠",
         text="一种不断b2b一直做T2的堆叠方法",
-        link="https://www.bilibili.com/read/cv7946210",
+        link="www.bilibili.com/read/cv7946210",
     },
     {
         word="汉堡;汉堡包",
         title="汉堡包",
         text="一种边缘捐T不影响消四的堆叠法",
-        link="https://harddrop.com/wiki?search=hamburger",
+        link="harddrop.com/wiki?search=hamburger",
     },
     {
         word="皇十;皇家十字",
         title="皇家十字",
         text="在一个十字形洞口盖屋檐后可以做两个T2的形状",
-        link="https://harddrop.com/wiki?search=imperial_cross",
+        link="harddrop.com/wiki?search=imperial_cross",
     },
     {
         word="阶梯;阶梯捐",
         title="阶梯捐",
         text="一种在看起来像阶梯的洞口捐一个T2的形状",
-        link="https://harddrop.com/wiki?search=kaidan",
+        link="harddrop.com/wiki?search=kaidan",
     },
     {
         word="社畜train",
         title="社畜train",
         text="一种在常见T3屋檐上捐两个T2的形状",
-        link="https://harddrop.com/wiki?search=Shachiku_Train",
+        link="harddrop.com/wiki?search=Shachiku_Train",
     },
     {
         word="千鸟;千鸟格子",
         title="千鸟格子",
         text="一种在小洞上捐一个T2后还能做一个T2的形状",
-        link="https://harddrop.com/wiki?search=Cut_copy",
+        link="harddrop.com/wiki?search=Cut_copy",
     },
     {
         word="绯红之王",
         title="绯红之王",
         text="在STSD上叠若干个T3的形状",
-        link="https://harddrop.com/wiki?search=King_Crimson",
+        link="harddrop.com/wiki?search=King_Crimson",
     },
     {
         word="连续pc",
         title="连续PC",
         text="研究群群友加加编写的一份连续PC教程",
-        link="https://docs.qq.com/sheet/DRmxvWmt3SWxwS2tV",
+        link="docs.qq.com/sheet/DRmxvWmt3SWxwS2tV",
     },
 }
 local game={
@@ -728,80 +732,80 @@ local game={
         word="ttt",
         title="TTT",
         text="Tetris Trainer Très-Bien (by こな)。现代方块特殊操作手把手教程（只能键盘操作）\n\t推荐能纯消四完成40L挑战的人学习\n\t内含T-spin、极简、SRS、部分对战定式介绍等教程\n注：提供的链接是翻译后挂在茶服的版本",
-        link="https://teatube.cn/ttt",
+        link="teatube.cn/ttt",
     },
     {
         word="ttpc",
         title="TTPC",
         text="TETRIS Perfect Clear Challenge (by chokotia)。SRS+Bag7方块游戏Perfect Clear Opener教程（只能键盘操作）。推荐完成了TTT的人学习（必须先学会SRS）\n\n注：提供的链接是翻译后挂在茶服的版本",
-        link="https://teatube.cn/ttpc",
+        link="teatube.cn/ttpc",
     },
     {
         word="nazo",
         title="NAZO",
         text="各类SRS试题\n\t推荐能通过TTT的玩家尝试\n\t内含各种T-spin/All spin题目，简单到极难题目都有\n\n注：提供的链接是翻译后挂在茶服的版本",
-        link="https://teatube.cn/nazo",
+        link="teatube.cn/nazo",
     },
     {
         word="tpo",
         title="TPO",
         text="Tetris Puzzle O。由TCV100制作的题库网站，内含nazo的部分题库",
-        link="http://47.92.33.38/tpo",
+        link="47.92.33.38/tpo",
     },
     -- 网页
     {
         word="kos;king of stackers",
         title="King of Stackers",
         text="网页游戏 | 多人 | 支持移动端\n简称KoS。网页版回合制对战方块点击即玩（可能很卡），主要规则为：以7块为一个回合，双方轮流在自己场地中放置方块，任何的攻击只在对方回合放一块不消行后生效，策略性很强。有不同的伤害表设置",
-        link="https://kingofstackers.com/games.php",
+        link="kingofstackers.com/games.php",
     },
     {
         word="屁块;tetr.js",
         title="Tetr.js",
         text="网页游戏 | 单机 | 支持移动端\n简称屁块（因为作者网名叫Farter）。设置内容足够专业，模式很多，但画面很简单，几乎没有动画，而且移动端只有几套固定的按键组合（不能自由拖放）",
-        link="http://farter.cn/t",
+        link="farter.cn/t",
     },
     {
         word="tl;tetra legends",
         title="Tetra Legends",
         text="网页游戏 | 单机 | [服务器在国外可能卡]\n简称TL。单机模式比较丰富，有两个隐藏的节奏模式，并且将一些其他游戏中不可见的机制进行了可视化，动效也很多。在2020年12月，基本确定由于各种原因不再继续开发",
-        link="https://tetralegends.app",
+        link="tetralegends.app",
     },
     {
         word="asc;ascension",
         title="Ascension",
         text="网页游戏 | 单机/多人 | [服务器在国外可能卡]\n简称ASC，使用自己的ASC旋转系统，有不少单机模式（Techmino的堆积模式就来自ASC），对战模式目前处在测试阶段（2022/04/16）",
-        link="https://asc.winternebs.com",
+        link="asc.winternebs.com",
     },
     {
         word="js;jstris",
         title="Jstris",
         text="网页游戏 | 单机/多人 | 支持移动端 | [服务器在国外可能卡]\n简称JS，有常用的科研向单机模式和自定义各种参数的功能，允许拖放固定尺寸的正方形虚拟按键，没有任何动画效果",
-        link="https://jstris.jezevec10.com",
+        link="jstris.jezevec10.com",
     },
     {
         word="io;tetrio;tetr.io",
         title="TETR.IO",
         text="网页游戏 | 单机/多人 | [服务器在国外可能卡]\n简称IO，有排位系统和功能全面的自定义模式，单机模式只有三个。有电脑客户端下载（优化性能）\n[Safari浏览器似乎打不开]\n另见#io s2",
-        link="https://tetr.io",
+        link="tetr.io",
     },
     {
         word="nuke;nuketris",
         title="Nuketris",
         text="网页游戏 | 单机/多人 | [服务器在国外可能卡]\n有几个基础单机模式和1V1排位",
-        link="https://nuketris.com",
+        link="nuketris.com",
     },
     {
         word="wwc;worldwide combos",
         title="Worldwide Combos",
         text="网页游戏 | 单机/多人 | [服务器在国外可能卡]\n简称WWC，全世界匹配制1V1。特色：有录像战，匹配的对手可以不是真人；几种不同风格的大规则；炸弹垃圾行对战",
-        link="https://worldwidecombos.com",
+        link="worldwidecombos.com",
     },
     {
         word="tf;tetris friends",
         title="Tetris Friends",
         text="网页游戏 | 单机/多人\n简称TF，已经关服了的网页版方块。以前人比较多，后来官服倒闭了热度下去了，不过现在有人架了私服还可以体验到",
-        link="https://notrisfoes.com",
+        link="notrisfoes.com",
     },
     {
         word="tetris.com",
@@ -823,7 +827,7 @@ local game={
         word="tech;techmino;铁壳;铁壳米诺",
         title="Techmino",
         text="跨平台 | 单机/多人\n简称Tech，使用LÖVE引擎开发的一款方块游戏，单机模式和各种设置都很齐全\n目前最新版本0.17.21，可以和约好友联机对战",
-        link="http://studio26f.org",
+        link="studio26f.org",
     },
     {
         word="falling lightblocks",
@@ -846,7 +850,7 @@ local game={
         title="TGM",
         text="Windows | 单机/本地双人\nTetris The Grand Master，一个街机方块系列（有Windows移植版），S13/GM等称号都出自该作，其中TGM3比较普遍，部分模式说明见完整词条 ##tgm",
         detail="Master：大师模式，有段位评价，拿到更高段位点的要求：非消一的连击和消四，字幕战中消除和通关，每100的前70小于【标准时间，上一个0~70秒数+2】中小的一个，每100总用时不能超过限定值（不然取消上一个方法的加分并反扣点数）；到500若没有进标准时间会强制结束游戏（称为铁门）；字幕战有两个难度，半隐和全隐，后者必须拿到几乎全部的段位点才能进，消除奖励的段位点也更多\n\nShirase：死亡模式，类似于techmino中的20G-极限，开局就是高速20G，500和1000有铁门，500开始底下开始涨垃圾行，1000开始出现骨块，1300通关进入大方块字幕战；段位结算：每通100加1段从S1到S13，若通关了字幕战就会有金色的S13",
-        link="https://teatube.cn/TGMGUIDE",
+        link="teatube.cn/TGMGUIDE",
     },
     {
         word="dtet",
@@ -888,7 +892,7 @@ local game={
         word="tetra online",
         title="Tetra Online",
         text="Windows/macOS/Linux | 单机/多人\n简称TO，由Dr Ocelot和Mine两人开发\n故意设计为延迟较多，平时玩无延迟方块的玩家可能会不习惯\n2020年12月9日收到来自TTC的DMCA警告信于是被迫停止开发，在一段时间后关服并下架Steam\n现在在GitHub上面还可以下到Windows的Offline Build\n[UI部分模仿了PPT，音乐不错，攻击特效好看。]",
-        link="https://github.com/Juan-Cartes/Tetra-Offline/releases/tag/1.0",
+        link="github.com/Juan-Cartes/Tetra-Offline/releases/tag/1.0",
     },
     {
         word="c2;cultris2;cultris ii",
@@ -988,40 +992,12 @@ local abbr={
         title="ggs的整活版本",
     },
 }
-local people={
-    {
-        word="zict;zictionary",
-        title="本词(字?)典是收集方块游戏相关词汇并加以解释供人检查参考的工具",
-    },
-    {
-        word="小z;zita",
-        title="喵喵？是我哦",
-    },
-    {
-        word="mrz;z酱",
-        title="Techmino的作者和另一个我喵！",
-    },
-    {
-        word="fkmrz;fkz;fkz酱",
-        title="Z酱快来禁言他",
-    },
-    {
-        word="osk",
-        title="OSK",
-        text="Tetr.io的主创",
-    },
-    {
-        word="fkosk",
-        title="OSK",
-        text="Tetr.io的主创，请尊重本人意愿不要在他面前发这个喵",
-    },
-}
 local extra_tetrio={
     {
         word="qp2;io s2",
         title="Tetr.io QP2",
         text="随开随打不需要等待的第二代快速游戏，发送攻击打败对手来爬升高度达到 #十层 ！\n另见 #Surge #推进器 #速通模式 #疲劳时间 #QP2 Mod",
-        link="https://github.com/MrZ626/io_qp2_rule",
+        link="github.com/MrZ626/io_qp2_rule",
     },
     {
         word="十层;f10;floor;floors",
@@ -1100,6 +1076,102 @@ local extra_tetrio={
         text="双人 （塔罗牌：恋人 The Lovers）\n会员玩家可以邀请其他人和自己两个人一起玩此模式，两个人发送出去给别人的伤害数值减半，一个人死了后另一个人可以做任务复活队友",
     },
 }
+local people={
+    {
+        word="小z;zita",
+        title="喵喵？是我哦",
+    },
+    {
+        word="26f studio;26f;26楼;26楼工作室",
+        title="是我家喵",
+        link="studio26f.org",
+    },
+    {
+        word="mrz;z酱",
+        title="T026.MrZ，Techmino的主创、主程、音乐、音效、主美(?)\n也是另一个我喵！",
+        link="space.bilibili.com/225238922",
+    },
+    {
+        word="T1080;Particle_G;ParticleG;pg",
+        title="T1080.Particle_G，Techmino的CI、主后端、程序",
+    },
+    {
+        word="T0812;T812;scdhh;呵呵",
+        title="T0812.呵呵，开发了好几个块群bot，Techmino的CI、后端",
+    },
+    {
+        word="T114;flyz;flaribbit;小飞翔;fxg",
+        title="T114.flyz，Techmino的CI、后端",
+        link="space.bilibili.com/787096",
+    },
+    {
+        word="T1379;Trebor",
+        title="T1379.Trebor，Techmino的CI、后端、程序、音乐",
+        link="space.bilibili.com/502473020",
+    },
+    {
+        word="chno;C29H25N3O5;芙兰喵",
+        title="Techmino的UI/UX、音乐、周边美术",
+    },
+    {
+        word="T7023;Miya",
+        title="T7023，块群吉祥物猫猫，Techmino的插图、配音",
+        link="space.bilibili.com/846180",
+    },
+    {
+        word="T0210;T210;Mono",
+        title="T0210，Techmino的插图、配音",
+    },
+    {
+        word="T056;Flore;妈妈",
+        title="T056.Flore，经常组织块群比赛和编辑灰机wiki，Techmino的配音",
+        link="space.bilibili.com/1223403016",
+    },
+    {
+        word="T283;模电;模电283;modian;modian283",
+        title="T283.模电，上过最强大脑，擅长20G和隐形，Techmino的演出",
+        link="space.bilibili.com/17583394",
+    },
+    {
+        word="T0325;T325;幻灭",
+        title="T0325.幻灭，制作了tetr.io汉化插件",
+        link="space.bilibili.com/8933681",
+    },
+    {
+        word="TTTT;farter;屁;屁爷",
+        title="TTTT.屁，创研究群的【写乐Tetr.js(屁块)【哦还有写T-ex的【然并无人玩【【",
+        link="space.bilibili.com/132966",
+    },
+    {
+        word="T022;teatube;茶叶子;茶管;茶;茶娘",
+        title="T022.Teatube，前群宠，曾组织过块群赛事，开发过块群bot，架设了Tetris Online Study研究服",
+        link="space.bilibili.com/834903  space.bilibili.com/271332633",
+    },
+    {
+        word="T042;42;思竣",
+        title="T042.思竣，有一堆铁壳only的世界纪录，找到了Techmino的一万个bug和记住了它们所在的版本号",
+        link="space.bilibili.com/403250559",
+    },
+    {
+        word="T043;xb",
+        title="T043.xb，前wiki编辑者，曾组织过块群赛事",
+    },
+    {
+        word="osk",
+        title="OSK",
+        text="Tetr.io的主创",
+    },
+    -- 神秘
+    {
+        word="fkmrz;fkz;fkz酱",
+        title="Z酱快来禁言他",
+    },
+    {
+        word="fkosk",
+        title="OSK",
+        text="Tetr.io的主创，请尊重本人意愿不要在他面前发这个喵",
+    },
+}
 
 local zict={}
 local function checkWords(entry)
@@ -1121,11 +1193,11 @@ local function loadData(data)
     end
 end
 loadData(meta)
-loadData(abbr)
 loadData(main)
 loadData(pattern)
 loadData(game)
-loadData(people)
+loadData(abbr)
 loadData(extra_tetrio)
+loadData(people)
 
 return zict
