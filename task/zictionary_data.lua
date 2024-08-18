@@ -14,7 +14,8 @@ local meta={
     {
         word="学习tspin",
         title="关于T-spin学习",
-        text="首先指出：要能熟练做出各种T-spin并不是只看着T-spin的那一小部分地形就可以玩好的，对玩家堆叠能力和计算next能力同样也有较高的要求\n\n如果不只是出于娱乐、随便玩玩的目的，是真的想不断提升T-spin能力变强，请在基础能力达到一定要求前不要刻意去学习太多的T-spin，而先把重点放在堆叠等基本功上\n\n参考学T门槛水平：40L达到60s以内（可以视个人情况调整为40~120s）、能够轻松完成全程消四的40L、不使用Hold不降太多速度的前提下比较轻松完成全程消四的40L（培养看next的意识和算力）",
+        text="适合开始学Tspin门槛水平参考：40L达到60s以内（速度够说明堆叠基本功过关）、能够轻松完成全程消四的40L（能稳定平整堆叠）、不使用Hold不降太多速度的前提下比较轻松完成全程消四的40L（有足够的看next的意识和算力）",
+        detail="需要指出，要能熟练做出各种T-spin并不是只看着T-spin的那一小部分地形就可以玩好的，对玩家堆叠能力和计算next能力同样也有较高的要求。故如果目的主要是提升打块能力、没什么娱乐随便玩玩的成分时，推荐在基础能力没达到上述要求前不用去详细了解具体的T-spin构造知识，把重点放在前置基本功的练习上就可以了",
     },
     {
         word="灰机;huiji;灰机wiki",
@@ -55,7 +56,7 @@ local meta={
     {
         word="宝石;宝石迷阵;bej;bej3;bejeweled;bejeweled3",
         title="Bejeweled",
-        text="三消系列神作，类比现代块相比经典块的进步，bej系列每一作都是前无古人后无来者的“现代三消”，bejT和bej3的三消玩法至今未被超越",
+        text="三消系列神作，类比现代块相比经典块的进步，Bej系列每一作都是前无古人后无来者的“现代三消”，BejT和Bej3的三消玩法至今未被超越",
         link="https://b23.tv/BV1sE421P7dE",
     },
     {
@@ -69,38 +70,38 @@ local main={
     {
         word="lpm;bpm;ppm;pps",
         title="速度",
-        text="Line Per Minute，行每分，体现玩家下块速度\nBlock/Piece Per Minute/Second，块每分/秒，体现玩家下块速度",
+        text="Line per Min，行每分\nBlock/Piece per Min/Sec，块每分/秒",
         detail="不同游戏中的“LPM”含义可能不同，虽然写的是行数但可能实际用的是块数/2.5，以此忽略掉对战模式中垃圾行带来的干扰",
     },
     {
         word="kpm",
         title="KPM",
-        text="Key Per Minute，按键每分，体现玩家按键速度",
+        text="Key per Min，按键每分",
     },
     {
         word="kpp",
         title="KPP",
-        text="Key Per Piece，按键每块，体现玩家操作是否繁琐，学习 #极简操作 提升操作效率以降低此数字",
+        text="Key per Piece，按键每块，体现玩家操作是否繁琐，学习 #极简操作 提升操作效率以降低此数字",
     },
     {
         word="apm;spm",
         title="攻击",
-        text="Attack Per Minute，攻击每分\nSent per minute，送出每分\n一定程度体现玩家的攻击力。其中Sent指送出的垃圾行，如果对手先打来垃圾行自己抵消时就不计入Sent，但仍然计Attack",
+        text="Attack per Min，攻击每分\nSent per Min，送出每分\n其中Sent指送出的垃圾行，若对手先打来垃圾行自己抵消时就不计入Sent，但仍然计Attack",
     },
     {
         word="dpm",
         title="DPM",
-        text="Dig Per Minute，挖掘每分，玩家每分钟向下挖掘的垃圾行数，一定程度体现玩家的生存能力",
+        text="Dig per Min，挖掘每分，玩家每分钟向下挖掘的垃圾行数",
     },
     {
         word="adpm;vs",
         title="ADPM",
-        text="Atk & Dig Per Minute，攻击+挖掘每分，用于在同一局游戏内对比玩家间水平差距，比APM更准确一些。在TETR.IO中叫“VS”的数据实质就是ADPM（考虑到数据大小调整了比例，其实是Atk & Dig per 100s）",
+        text="Atk & Dig per Min，攻击+挖掘每分，用于在同一局游戏内对比玩家间水平差距，比APM更准确一些。在TETR.IO中叫“VS”的数据实质就是ADPM（考虑到数据大小调整了比例，其实是Atk & Dig per 100s）",
     },
     {
         word="apl;效率",
         title="APL",
-        text="Attack Per Line，攻击每行（效率通常指此），体现玩家攻击的行利用率。例如消四的效率就比消二（（消四4行打4，1效；消二2行打1，0.5效）高",
+        text="Attack per Line，攻击每行（效率通常指APL）。例如消四的效率就比消二高（消四打4➗4行=1效；消二打1➗2行=0.5效）",
     },
     -- 消除名
     {
@@ -113,12 +114,12 @@ local main={
         word="tetris",
         title="Tetris",
         text="商标，Tetris游戏名，同时也是“消四行”的名字\n另见 #消四",
-        detail="含义是Tetra（古希腊语，四 <τέτταρες>）+ Tennis（网球 游戏原作者喜欢的运动）\n现在版权在TTC (The Tetris Company)手上，任天堂和世嘉开发游戏是 TTC 授权的，他们并没有Tetris的版权",
+        detail="含义是Tetra（四，古希腊语词根）+Tennis（网球 游戏原作者喜欢的运动）\n现在版权在TTC (The Tetris Company)手上，其他公司比如任天堂和世嘉是获得TTC授权才开发方块游戏的，并不持有Tetris的版权",
     },
     {
         word="全消;全清;ac;pc;all clear;perfect clear",
         title="All Clear",
-        text="消除场地上所有的方块，也叫Perfect Clear，全消，或全清\n另见 #Half Clear #Color Clear",
+        text="消除场地上所有的方块，也叫Perfect Clear，全消，或全清\n另见 #Half Clear #Color Clear #全消开局",
     },
     {
         word="半全消;半全清;hc;hpc;half clear",
@@ -440,7 +441,7 @@ local main={
     {
         word="his;his4;h4r6",
         title="History出块",
-        text="一种的出块方式，例如h4r6 (His4 Roll6)是在随机新块的时候如果和最近4次已经生成的Next中有一样的就重新随机，直到和那4个都不一样或者重roll了6次",
+        text="一种的出块方式，例如h4r6 (His4 Roll6)是在随机新块的时候若和最近4次已经生成的Next中有一样的就重新随机，直到和那4个都不一样或者重roll了6次",
         detail="这是早期对纯随机出块的一大改进，大大减小了连续出几个SZ（洪水）的概率，但偶尔还是会很久不出现某一块比如I，导致发生干旱",
     },
     {
@@ -515,7 +516,7 @@ local main={
     {
         word="输入延迟",
         title="输入延迟",
-        text="玩家按下键盘到游戏接收到信号其实一定会有几毫秒到几十毫秒不等的延迟，如果过大就会很影响游戏手感\n这个延迟会受各种因素影响，若出现临时的增大，可以尝试重启设备/关闭后台城区/接通电源等操作缓解",
+        text="玩家按下键盘到游戏接收到信号其实一定会有几毫秒到几十毫秒不等的延迟，若过大就会很影响游戏手感\n这个延迟会受各种因素影响，若出现临时的增大，可以尝试重启设备/关闭后台城区/接通电源等操作缓解",
     },
     {
         word="秘密段位;大于号;secret grade",
@@ -626,8 +627,8 @@ local pattern={
         link="https://harddrop.com/wiki?search=Pelican",
     },
     {
-        word="全清开局",
-        title="全清开局",
+        word="全消开局;全清开局",
+        title="全消开局",
         text="Perfect Clear Opener，一种极大概率能摆出来，有概率（hold I约84.6%，不hold I约61.2%）能做到PC的定式，Techmino中的pc练习中空出不规则区域的那个就是PCO",
         link="https://harddrop.com/wiki?search=Perfect_Clear_Opener",
     },
@@ -843,8 +844,8 @@ local game={
     {
         word="tgm;tetris the grand master;tetris grand master",
         title="TGM",
-        text="Windows | 单机/本地双人\nTetris The Grand Master，一个街机方块系列（有Windows移植版），S13/GM等称号都出自该作，其中TGM3比较普遍，部分模式说明见完整词条##tgm",
-        detail="Master：大师模式，有段位评价，拿到更高段位点的要求：非消一的连击和消四，字幕战中消除和通关，每100的前70小于【标准时间，上一个0~70秒数+2】中小的一个，每100总用时不能超过限定值（不然取消上一个方法的加分并反扣点数）；到500若没有进标准时间会强制结束游戏（称为铁门）；字幕战有两个难度，半隐和全隐，后者必须拿到几乎全部的段位点才能进，消除奖励的段位点也更多\n\nShirase：死亡模式，类似于techmino中的20G-极限，开局就是高速20G，500和1000有铁门，500开始底下开始涨垃圾行，1000开始出现骨块，1300通关进入大方块字幕战；段位结算：每通100加1段从S1到S13，如果通关了字幕战就会有金色的S13",
+        text="Windows | 单机/本地双人\nTetris The Grand Master，一个街机方块系列（有Windows移植版），S13/GM等称号都出自该作，其中TGM3比较普遍，部分模式说明见完整词条 ##tgm",
+        detail="Master：大师模式，有段位评价，拿到更高段位点的要求：非消一的连击和消四，字幕战中消除和通关，每100的前70小于【标准时间，上一个0~70秒数+2】中小的一个，每100总用时不能超过限定值（不然取消上一个方法的加分并反扣点数）；到500若没有进标准时间会强制结束游戏（称为铁门）；字幕战有两个难度，半隐和全隐，后者必须拿到几乎全部的段位点才能进，消除奖励的段位点也更多\n\nShirase：死亡模式，类似于techmino中的20G-极限，开局就是高速20G，500和1000有铁门，500开始底下开始涨垃圾行，1000开始出现骨块，1300通关进入大方块字幕战；段位结算：每通100加1段从S1到S13，若通关了字幕战就会有金色的S13",
         link="https://teatube.cn/TGMGUIDE",
     },
     {
@@ -961,7 +962,7 @@ local abbr={
         word="sub",
         title="sub",
         text="在……之下\n用于表示成绩，不说项目默认是40L，单位一般可不写，比如40L成绩Sub 30是秒，1000行Sub 15是分钟",
-        detail="例：39.95s是Sub 40，40.###s不是Sub 40\n请不要使用Sub 62之类的词，因为sub本身就是表示大约，一分钟左右的成绩精确到5~10s就可以了，一般30s以内的成绩用sub## 的时候才会精确到1s",
+        detail="例：39.95s是Sub 40，40.1s不是Sub 40\n不建议使用Sub 62之类的词，因为sub本身就是表示大约，一分钟左右的成绩精确到5~10s就可以了，一般30s以内的成绩用sub## 的时候才会精确到1s",
     },
     {
         word="freestyle;free",
@@ -1045,8 +1046,8 @@ local extra_tetrio={
     {
         word="疲劳;疲劳时间",
         title="QP2 疲劳时间",
-        text="为了防止一局游戏过长，8分钟时每分钟会多一个负面效果，总共五个：(8分钟)+2行实心垃圾，(9分钟)+25%受击倍率，(10分钟)+3行实心垃圾，(11分钟)+25%受击倍率，(12分钟)+5行实心垃圾",
-        detail="疲劳开始侵蚀… FATIGUE SETS IN… +2 PERMANENT LINES\n你的身体变得虚弱… YOUR BODY GROWS WEAK… receive 25% more garbage\n所有感官混为一团… ALL SENSES BLUR TOGETHER… +3 PERMANENT LINES\n你的意识开始消逝… YOUR CONSCIOUSNESS FADES… receive 25% more garbage\n结束了。 THIS IS THE END. +5 PERMANENT LINES",
+        text="为了防止一局游戏过长，8分钟开始每分钟会多一个共五个负面效果：(8分钟)+2行实心垃圾，(9分钟)+25%受击倍率，(10分钟)+3行实心垃圾，(11分钟)+25%受击倍率，(12分钟)+5行实心垃圾",
+        detail="完整文本：\n疲劳开始侵蚀… FATIGUE SETS IN… +2 PERMANENT LINES\n你的身体变得虚弱… YOUR BODY GROWS WEAK… receive 25% more garbage\n所有感官混为一团… ALL SENSES BLUR TOGETHER… +3 PERMANENT LINES\n你的意识开始消逝… YOUR CONSCIOUSNESS FADES… receive 25% more garbage\n结束了。 THIS IS THE END. +5 PERMANENT LINES",
     },
     {
         word="qp2 mod;qp mod;io mod;tarot",
@@ -1091,7 +1092,7 @@ local extra_tetrio={
     {
         word="mod AS; allspin mod ; magician ; the magician",
         title="QP2 Allspin mod",
-        text="All （塔罗牌：魔法师 The Magician）\n非T块spin也有2*消行数的攻击，但“消除文本区”文本变化时如果和上次相同，会出现一行实心行",
+        text="All （塔罗牌：魔法师 The Magician）\n非T块spin也有2*消行数的攻击，但“消除文本区”文本变化时若和上次相同，会出现一行实心行，需要做若干次符合条件的消除才能解除",
     },
     {
         word="mod 2P; duo ; duo mod ; lover ; lovers ; the lovers",
