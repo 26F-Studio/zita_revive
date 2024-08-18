@@ -4,8 +4,7 @@
     text是词条的正文
     link可选，如果有的话会在最后一行显示为“相关链接：xxx.com”
 ]]
-local data={
-    -- # 元
+local meta={
     {
         word="新人;萌新",
         title="新人学习/练习路线",
@@ -47,7 +46,6 @@ local data={
         text="一个方块版面编辑器，可以用于分享定式，PC解法等，用处很多。设置里可以启用英文版。",
         link="http://fumen.zui.jp  https://knewjade.github.io/fumen-for-mobile",
     },
-    -- # 略无关
     {
         word="github",
         title="GitHub",
@@ -65,228 +63,9 @@ local data={
         title="魔法气泡",
         text="（不熟，有请其他群友解释）",
     },
-    -- # 游戏（题库）
-    {
-        word="ttt",
-        title="TTT",
-        text="全称Tetris Trainer Très-Bien (by こな)。现代方块特殊操作手把手教程（只能键盘操作）\n\t推荐能纯消四完成40L挑战的人学习\n\t内含T-spin、极简、SRS、部分对战定式介绍等教程\n注：提供的链接是翻译后挂在茶服的版本",
-        link="https://teatube.cn/ttt",
-    },
-    {
-        word="ttpc",
-        title="TTPC",
-        text="全称TETRIS Perfect Clear Challenge (by chokotia)。SRS+Bag7方块游戏Perfect Clear Opener教程（只能键盘操作）。推荐完成了TTT的人学习（必须先学会SRS）\n\n注：提供的链接是翻译后挂在茶服的版本。",
-        link="https://teatube.cn/ttpc",
-    },
-    {
-        word="nazo",
-        title="NAZO",
-        text="各类SRS试题\n\t推荐能通过TTT的玩家尝试。\n\t内含各种T-spin/All spin题目，简单到极难题目都有。\n\n注：提供的链接是翻译后挂在茶服的版本。",
-        link="https://teatube.cn/nazo",
-    },
-    {
-        word="tpo",
-        title="TPO",
-        text="全称Tetris Puzzle O。由TCV100制作的题库网站，内含nazo的部分题库。",
-        link="http://47.92.33.38/tpo",
-    },
-    -- # 游戏（网页）
-    {
-        word="kos;king of stackers",
-        title="King of Stackers",
-        text="网页游戏 | 多人 | 支持移动端\n简称KoS。网页版回合制对战方块点击即玩（可能很卡），主要规则为：以7块为一个回合，双方轮流在自己场地中放置方块，任何的攻击只在对方回合放一块不消行后生效，策略性很强。有不同的伤害表设置。",
-        link="https://kingofstackers.com/games.php",
-    },
-    {
-        word="屁块;tetr.js",
-        title="Tetr.js",
-        text="网页游戏 | 单机 | 支持移动端\n简称屁块（因为作者网名叫Farter）。设置内容足够专业，模式很多，但画面很简单，几乎没有动画，而且移动端只有几套固定的按键组合（不能自由拖放）。",
-        link="http://farter.cn/t",
-    },
-    {
-        word="tl;tetra legends",
-        title="Tetra Legends",
-        text="网页游戏 | 单机 | [服务器在国外可能卡]\n简称TL。单机模式比较丰富，有两个隐藏的节奏模式，并且将一些其他游戏中不可见的机制进行了可视化，动效也很多。在2020年12月，基本确定由于各种原因不再继续开发。",
-        link="https://tetralegends.app",
-    },
-    {
-        word="asc;ascension",
-        title="Ascension",
-        text="网页游戏 | 单机/多人 | [服务器在国外可能卡]\n简称ASC，使用自己的ASC旋转系统，有不少单机模式（Techmino的堆积模式就来自ASC），对战模式目前处在测试阶段（2022/04/16）",
-        link="https://asc.winternebs.com",
-    },
-    {
-        word="js;jstris",
-        title="Jstris",
-        text="网页游戏 | 单机/多人 | 支持移动端 | [服务器在国外可能卡]\n简称JS，有常用的科研向单机模式和自定义各种参数的功能，允许拖放固定尺寸的正方形虚拟按键，没有任何动画效果",
-        link="https://jstris.jezevec10.com",
-    },
-    {
-        word="io;tetrio;tetr.io",
-        title="TETR.IO",
-        text="网页游戏 | 单机/多人 | [服务器在国外可能卡]\n简称IO，有排位系统和功能全面的自定义模式，单机模式只有三个。有电脑客户端下载（优化性能，无广告）。\n[Safari浏览器似乎打不开]",
-        link="https://tetr.io",
-    },
-    {
-        word="nuke;nuketris",
-        title="Nuketris",
-        text="网页游戏 | 单机/多人 | [服务器在国外可能卡]\n有几个基础单机模式和1V1排位。",
-        link="https://nuketris.com",
-    },
-    {
-        word="wwc;worldwide combos",
-        title="Worldwide Combos",
-        text="网页游戏 | 单机/多人 | [服务器在国外可能卡]\n简称WWC，全世界匹配制1V1。特色：有录像战，匹配的对手可以不是真人；几种不同风格的大规则；炸弹垃圾行对战。",
-        link="https://worldwidecombos.com",
-    },
-    {
-        word="tf;tetris friends",
-        title="Tetris Friends",
-        text="网页游戏 | 单机/多人\n简称TF，已经关服了的网页版方块。以前人比较多，后来官服倒闭了热度下去了，不过现在有人架了私服还可以体验到。",
-        link="https://notrisfoes.com",
-    },
-    {
-        word="tetris.com",
-        title="tetris.com",
-        text="网页游戏 | 单机 | 支持移动端\ntetris.com官网上的俄罗斯方块，只有马拉松一种模式，特色是支持基于鼠标指针位置的智能控制。",
-    },
-    {
-        word="tetris gems",
-        title="Tetris Gems",
-        text="网页游戏 | 单机\ntetris.com官网上的俄罗斯方块，限时1分钟挖掘，有重力机制。\n有三种消除后可以获得不同功能的宝石方块。",
-    },
-    {
-        word="tetris mind bender",
-        title="Tetris Mind Bender",
-        text="网页游戏 | 单机\ntetris.com官网上的俄罗斯方块，在马拉松基础上添加了技能，场地上会随机冒出技能方块，消除后会得到各种各样或好或坏的技能。",
-    },
-    -- # 游戏（跨平台）
-    {
-        word="tech;techmino;铁壳;铁壳米诺",
-        title="Techmino",
-        text="跨平台 | 单机/多人\n简称Tech，使用LÖVE引擎开发的一款方块游戏，单机模式和各种设置都很齐全，联机正在逐渐开发中。",
-        link="http://studio26f.org",
-    },
-    {
-        word="falling lightblocks",
-        title="Falling Lightblocks",
-        text="网页游戏/iOS/Android | 单机/多人\n一个全平台块，横竖屏，有延迟并且不可调。手机支持自定义键位，主要玩法基于NES块设计，也有现代模式。对战为半即时半回合制，无攻击缓冲不可抵消。",
-    },
-    {
-        word="剑桥;cambridge",
-        title="Cambridge",
-        text="跨平台 | 单机\n使用LÖVE引擎开发的一款方块游戏，致力于创建一个轻松高度自定义新模式的方块平台。最初由Joe Zeng开发，于2020/10/08的0.1.5版开始Milla接管了开发。 — Tetris Wiki.",
-    },
-    {
-        word="nanamino",
-        title="Nanamino",
-        text="Windows/Android | 单机\n块圈玩家自制方块，正在开发中，有一个原创旋转系统。",
-    },
-    -- # 游戏（街机/类街机）
-    {
-        word="tgm;tetris the grand master;tetris grand master",
-        title="TGM",
-        text="Windows | 单机/本地双人\n全称Tetris The Grand Master，一个街机方块系列（有修改过的版本可以在大多数Windows电脑运行），S13/GM等称号都出自该作。\n\n其中TGM3目前玩得最普遍，部分模式说明：\n\nMaster：大师模式，有段位评价，拿到更高段位点的要求：非消一的连击和消四，字幕战中消除和通关，每100的前70小于【标准时间，上一个0~70秒数+2】中小的一个，每100总用时不能超过限定值（不然取消上一个方法的加分并反扣点数）；到500若没有进标准时间会强制结束游戏（称为铁门）；字幕战有两个难度，半隐和全隐，后者必须拿到几乎全部的段位点才能进，消除奖励的段位点也更多。\n\nShirase：死亡模式，类似于techmino中的20G-极限，开局就是高速20G，500和1000有铁门，500开始底下开始涨垃圾行，1000开始出现骨块，1300通关进入大方块字幕战；段位结算：每通100加1段从S1到S13，如果通关了字幕战就会有金色的S13\n\n更多内容详见链接",
-        link="https://teatube.cn/TGMGUIDE",
-    },
-    {
-        word="dtet",
-        title="DTET",
-        text="Windows | 单机\n单机方块游戏，基于经典规则加入了20G和一个强大的旋转系统，但是除了键位其他参数都不可自定义。有点难找到，而且找到后可能还要自己补齐缺的DLL文件。",
-    },
-    {
-        word="hebo;heboris",
-        title="Heboris",
-        text="Windows | 单机\n一个仿街机方块游戏，可以模拟多个方块游戏的部分模式。",
-    },
-    {
-        word="texmaster",
-        title="Texmaster",
-        text="Windows | 单机\n简称Tex，包含TGM的所有模式，可以用来练习TGM，但World规则不完全一样（如软降到底无锁延，踢墙表有细节不同等）。",
-    },
-    -- # 游戏（其他）
-    {
-        word="tec;tetris effect;tetris effect connected",
-        title="Tetris Effect: Connected",
-        text="PS/Oculus Quest/Xbox/NS/Windows | 单机/多人\n简称TEC，特效方块游戏。\n相比早期的Tetris Effect单机游戏，TEC增加了联网对战，包含Boss战、Zone对战、经典块对战和分数对战四个模式。",
-    },
-    {
-        word="t99;tetris 99",
-        title="Tetris 99",
-        text="NS | 单机/多人\n简称T99，主玩99人混战的吃鸡模式，战术比重比较大，胜率不只由玩家在平时1V1时的水平决定。\n也有一些常用单机模式如马拉松等。",
-    },
-    {
-        word="ppt;puyo puyo tetris",
-        title="Puyo Puyo Tetris",
-        text="PS/NS/Xbox/Windows | 单机/多人\n简称PPT，将方块和 Puyo Puyo 两个下落消除游戏放到一个游戏里，二者可以对战，联机单机模式都很多。另有一拓展版本Puyo Puyo Tetris 2。\n[Steam PC版相对NS版手感和网络等都不太好]",
-    },
-    {
-        word="to;top;toj;tos;tetris online",
-        title="Tetris Online",
-        text="Windows | 单机/多人\n简称TO，主要用来6人内对战/单挑/刷每日40L榜/挖掘模式/打机器人。支持自定义DAS/ARR但都不能到0。\n现在还开着的服务器有：\nTO-P（波兰服，服务器在波兰，可能会卡顿）\nTO-S（研究服，研究群群友自己开的服，很稳定，需要进群注册）",
-    },
-    {
-        word="tetra online",
-        title="Tetra Online",
-        text="Windows/macOS/Linux | 单机/多人\n简称TO，由Dr Ocelot和Mine两人开发\n故意设计为延迟较多，平时玩无延迟方块的玩家可能会不习惯。\n2020年12月9日收到来自TTC的DMCA警告信于是被迫停止开发，在一段时间后关服并下架Steam。\n现在在GitHub上面还可以下到Windows的Offline Build。\n[UI部分模仿了PPT，音乐不错，攻击特效好看。]",
-        link="https://github.com/Juan-Cartes/Tetra-Offline/releases/tag/1.0",
-    },
-    {
-        word="c2;cultris2;cultris ii",
-        title="Cultris II",
-        text="Windows/OS X | 单机/多人\n简称C2，设计基于经典规则出发，支持自定义DAS/ARR，对战的主要玩法是基于时间的连击，考验玩家速度/Wide打法/挖掘。",
-    },
-    {
-        word="np;nullpomino",
-        title="Nullpomino",
-        text="Windows/macOS/Linux | 单机/多人\n简称NP，整个游戏自定义程度极高，几乎任何参数都可以自己设置，是一个专业级方块。\n[不过UI风格比较老，需要全键盘操作，刚开始可能不习惯。macOS Monterey貌似无法运行。]",
-    },
-    {
-        word="misamino",
-        title="Misamino",
-        text="Windows | 单机\n块圈玩家自制方块，单机1v1，主玩回合制模式，可以自定义AI（自己写的话需要了解接口）。",
-    },
-    {
-        word="touhoumino",
-        title="Touhoumino",
-        text="Windows | 单机\n块圈玩家自制方块，一个Nullpomino的自带资源包的改版，将东方Project元素与俄罗斯方块结合。马拉松模式结合了东方Project里的“符卡”机制，需要在一定时间内达成目标分数才能击破。\n[难度较大，适合有方块基础并且各项能力都较强的玩家游玩（不然都不知道自己怎么死的）。]",
-    },
-    {
-        word="tetris blitz",
-        title="Tetris Blitz",
-        text="iOS/Android | 单机/多人\n简称闪电战，EA代理的一款移动端方块，有重力连锁机制，限时2分钟，游戏开始会掉下一堆小方块；持续消行会进入Frenzy模式（场地下方会不断冒出垃圾行，帮助玩家制造大连锁，如果多次落块没有消行会强制结束Frenzy）。有非常多的道具。\n当新出现的方块与场地现有方块重叠时，场地最上方的几行会被自动清除，游戏不结束。已于2020年4月下架。",
-    },
-    {
-        word="tetris ea",
-        title="Tetris (EA)",
-        text="iOS/Android | 单机/多人?\nEA代理的一款宇宙主题的移动端方块。有滑动操控和单点触控两种操作模式；除经典的马拉松外还有一个星系模式（地图挖掘），有重力连锁机制，目标是在限定块数内消除所有地图块。\n已于2020年4月下架。",
-    },
-    {
-        word="tetris beat",
-        title="Tetris Beat",
-        text="iOS | 单机\nN3TWORK代理的一款移动端方块。除了马拉松以外游戏还有一个“Beat”模式，但只需根据BGM的节奏落块就可以得到额外分数。\n[特效比较瞎眼，不支持自定义键位，而且默认的按钮也很小导致控制也不是很舒服]",
-    },
-    {
-        word="tetris n3twork;tetris n3t",
-        title="Tetris (N3TWORK)",
-        text="iOS/Android | 单机/多人\nN3TWORK代理的一款移动端方块，有马拉松、3分钟限时打分和Royale（最多100人对战）模式。\n[UI设计比较不错，但不支持自定义键位，而且默认的按钮也很小导致控制也不是很舒服]",
-    },
-    {
-        word="环游记;俄罗斯方块环游记;journey;tetris journey",
-        title="俄罗斯方块环游记",
-        text="iOS/Android | 单机/多人\n简称环游记，国内第一款正版授权手游方块。有闯关模式、对战模式和几个单机模式。闯关模式有各种各样有趣规则大多数有重力连锁，对战规则同现代方块，可以自定义虚拟按键的大小和位置，但是不能自定义DAS/ARR。已于2023年2月15日停服。",
-    },
-    {
-        word="jj;jj块",
-        title="JJ块",
-        text="Android | 单机/多人\nJJ棋牌平台下一个休闲游戏，Android端百度“JJ比赛”官网下载平台后可以找到（找不到的原因是iOS系统或者没在官网下载或者被限制不可直接访问游戏）。竖屏，输入延迟很小，可自定义DAS/ARR/20G软降，简单自定义键位，无Hold，没有B2B，无攻击缓冲不可抵消，每次攻击上限为4，连击较强，其他同现代方块。",
-    },
-    {
-        word="火拼;火拼俄罗斯",
-        title="火拼俄罗斯",
-        text="Windows | 多人\n腾讯游戏大厅的方块，场地12列，打字的 DAS 和 ARR，1 Next无 Hold，攻击途径只有消4打3、 消3打2，垃圾行为国际象棋棋盘式，几乎不可能挖掘。",
-    },
-    -- # 术语（缩写）
+}
+local main={
+    -- 缩写
     {
         word="lpm;bpm;ppm;pps",
         title="速度",
@@ -323,7 +102,7 @@ local data={
         title="APL",
         text="Attack Per Line，攻击每行（效率通常指此），体现玩家攻击的行利用率。例如消四（4行4攻）和T旋（2行4攻）的效率就比消二（2行1攻）和消三（3行2攻）高。",
     },
-    -- # 术语（消除名）
+    -- 消除名
     {
         word="quad;techrash;消四",
         title="消四",
@@ -351,7 +130,7 @@ local data={
         title="Color Clear",
         text="TETR.IO限定，All Clear的外延，消除场地上所有彩色的方块（垃圾行通常是灰色的）。\n另见 #Half Clear",
     },
-    -- # 术语（旋转相关）
+    -- 旋转相关
     {
         word="spin;tspin;t-spin",
         title="Spin",
@@ -430,7 +209,7 @@ local data={
         text="X Rotation System，T-ex原创旋转系统，引入了“按住方向键换一套踢墙表”的设定（在对应的方向需要顶住墙），让“想去哪”能被游戏捕获从而转到玩家希望到达的位置。",
         detail="其他旋转系统无论踢墙表怎么设计，块处在某个位置时旋转后最终只能按固定顺序测试，这导致不同的踢墙是竞争的，若存在两个可能想去的位置就只能二选一，XRS解决了这个问题。",
     },
-    -- # 术语（其他）
+    -- 其他
     {
         word="b2b;back to back",
         title="B2B",
@@ -630,10 +409,10 @@ local data={
     {
         word="asd;asp;asd/asp;das;arr",
         title="ASD/ASP",
-        text="ASD（Auto-Shift-Delay，自动移动延迟，曾叫DAS）指从<按下移动键时动了一格>到<开始自动移动>之间的时间。\nASP（Auto-Shift-Period，自动移动间隔，曾叫ARR），指<每次自动移动>之间的时间\n单位都是f（帧，1帧=1/60秒）\n别的游戏里用的单位可能是ms（毫秒），乘16.7就可得出大约的对应数值，例如4f≈67ms。",
+        text="ASD（Auto-Shift-Delay，自动移动延迟，曾叫DAS）指从<按下移动键时动了一格>到<开始自动移动>之间的时间。\nASP（Auto-Shift-Period，自动移动间隔，曾叫ARR），指<每次自动移动>之间的时间\n单位都是f（帧，1帧=1/60秒）\n别的游戏里用的单位可能是ms（毫秒），乘16.7就可得出大约的对应数值，例如4f≈67ms。\n另见 #ASD通俗 #ASD设置引导",
     },
     {
-        word="asd设置引导;asd设置;asd引导;asd教程;asd调节",
+        word="asd设置引导;asd设置;asd引导;asd教程;asd调节;das设置引导;das设置;das引导;das教程;das调节",
         title="ASD设置引导",
         text="对于不是刚入门的并且了解极简操作的玩家来说推荐ASP=0，ASD=4~6（具体看个人手部协调性，只要能控制区别就不大）。\n新人如果实在觉得太快可以适当增加一点ASD，ASP要改的话强烈建议不要超过2\n\n最佳调整方法：ASD越小越好，小到依然能准确区分单点/长按为止；ASP能0就0，游戏不允许的话就能拉多小拉多小。",
     },
@@ -685,7 +464,7 @@ local data={
         detail="先把手柄（键盘……可能也行吧）悬空摆好，比如架在腿上，要连点某个键的时候一只手虚按按键，另外一只手的几根手指轮流敲打手柄背面，“反向按键”实现连点。这种控制方法可以让玩家更轻松地获得比直接抖动手指的Hypertap（详见超连点词条）更快的控制速度。\n此方法最先由Cheez-fish发明，他本人则使用Rolling达到过超过20Hz的点击频率。",
     },
     {
-        word="堆叠;stacl",
+        word="堆叠;stack",
         title="堆叠",
         text="一般指将方块无缝隙地堆起来。需要玩家有预读Next的能力，可以练习不使用Hold同时用十个消四完成40L模式。",
     },
@@ -750,7 +529,8 @@ local data={
         title="ZZZbot",
         text="一个AI的名字\n由研究群群友zzz（奏之章）开发，重新调参后在各个游戏平台上的表现都很不错。",
     },
-    -- # 定式
+}
+local pattern={
     {
         word="定式;开局定式",
         title="开局定式",
@@ -858,7 +638,7 @@ local data={
         text="在场地空白，7bag还剩一块的情况下，能在很多情况下达到100%搭建率的TSD+PC的定式。更多信息见tetristemplate.info",
         link="https://tetristemplate.info/dpc",
     },
-    -- # 形状
+    -- 形状
     {
         word="中局定式",
         title="中局定式",
@@ -936,7 +716,231 @@ local data={
         text="研究群群友加加编写的一份连续PC教程",
         link="https://docs.qq.com/sheet/DRmxvWmt3SWxwS2tV",
     },
-    -- # 英文
+}
+local game={
+    -- 题库
+    {
+        word="ttt",
+        title="TTT",
+        text="全称Tetris Trainer Très-Bien (by こな)。现代方块特殊操作手把手教程（只能键盘操作）\n\t推荐能纯消四完成40L挑战的人学习\n\t内含T-spin、极简、SRS、部分对战定式介绍等教程\n注：提供的链接是翻译后挂在茶服的版本",
+        link="https://teatube.cn/ttt",
+    },
+    {
+        word="ttpc",
+        title="TTPC",
+        text="全称TETRIS Perfect Clear Challenge (by chokotia)。SRS+Bag7方块游戏Perfect Clear Opener教程（只能键盘操作）。推荐完成了TTT的人学习（必须先学会SRS）\n\n注：提供的链接是翻译后挂在茶服的版本。",
+        link="https://teatube.cn/ttpc",
+    },
+    {
+        word="nazo",
+        title="NAZO",
+        text="各类SRS试题\n\t推荐能通过TTT的玩家尝试。\n\t内含各种T-spin/All spin题目，简单到极难题目都有。\n\n注：提供的链接是翻译后挂在茶服的版本。",
+        link="https://teatube.cn/nazo",
+    },
+    {
+        word="tpo",
+        title="TPO",
+        text="全称Tetris Puzzle O。由TCV100制作的题库网站，内含nazo的部分题库。",
+        link="http://47.92.33.38/tpo",
+    },
+    -- 网页
+    {
+        word="kos;king of stackers",
+        title="King of Stackers",
+        text="网页游戏 | 多人 | 支持移动端\n简称KoS。网页版回合制对战方块点击即玩（可能很卡），主要规则为：以7块为一个回合，双方轮流在自己场地中放置方块，任何的攻击只在对方回合放一块不消行后生效，策略性很强。有不同的伤害表设置。",
+        link="https://kingofstackers.com/games.php",
+    },
+    {
+        word="屁块;tetr.js",
+        title="Tetr.js",
+        text="网页游戏 | 单机 | 支持移动端\n简称屁块（因为作者网名叫Farter）。设置内容足够专业，模式很多，但画面很简单，几乎没有动画，而且移动端只有几套固定的按键组合（不能自由拖放）。",
+        link="http://farter.cn/t",
+    },
+    {
+        word="tl;tetra legends",
+        title="Tetra Legends",
+        text="网页游戏 | 单机 | [服务器在国外可能卡]\n简称TL。单机模式比较丰富，有两个隐藏的节奏模式，并且将一些其他游戏中不可见的机制进行了可视化，动效也很多。在2020年12月，基本确定由于各种原因不再继续开发。",
+        link="https://tetralegends.app",
+    },
+    {
+        word="asc;ascension",
+        title="Ascension",
+        text="网页游戏 | 单机/多人 | [服务器在国外可能卡]\n简称ASC，使用自己的ASC旋转系统，有不少单机模式（Techmino的堆积模式就来自ASC），对战模式目前处在测试阶段（2022/04/16）",
+        link="https://asc.winternebs.com",
+    },
+    {
+        word="js;jstris",
+        title="Jstris",
+        text="网页游戏 | 单机/多人 | 支持移动端 | [服务器在国外可能卡]\n简称JS，有常用的科研向单机模式和自定义各种参数的功能，允许拖放固定尺寸的正方形虚拟按键，没有任何动画效果",
+        link="https://jstris.jezevec10.com",
+    },
+    {
+        word="io;tetrio;tetr.io",
+        title="TETR.IO",
+        text="网页游戏 | 单机/多人 | [服务器在国外可能卡]\n简称IO，有排位系统和功能全面的自定义模式，单机模式只有三个。有电脑客户端下载（优化性能，无广告）。\n[Safari浏览器似乎打不开]",
+        link="https://tetr.io",
+    },
+    {
+        word="nuke;nuketris",
+        title="Nuketris",
+        text="网页游戏 | 单机/多人 | [服务器在国外可能卡]\n有几个基础单机模式和1V1排位。",
+        link="https://nuketris.com",
+    },
+    {
+        word="wwc;worldwide combos",
+        title="Worldwide Combos",
+        text="网页游戏 | 单机/多人 | [服务器在国外可能卡]\n简称WWC，全世界匹配制1V1。特色：有录像战，匹配的对手可以不是真人；几种不同风格的大规则；炸弹垃圾行对战。",
+        link="https://worldwidecombos.com",
+    },
+    {
+        word="tf;tetris friends",
+        title="Tetris Friends",
+        text="网页游戏 | 单机/多人\n简称TF，已经关服了的网页版方块。以前人比较多，后来官服倒闭了热度下去了，不过现在有人架了私服还可以体验到。",
+        link="https://notrisfoes.com",
+    },
+    {
+        word="tetris.com",
+        title="tetris.com",
+        text="网页游戏 | 单机 | 支持移动端\ntetris.com官网上的俄罗斯方块，只有马拉松一种模式，特色是支持基于鼠标指针位置的智能控制。",
+    },
+    {
+        word="tetris gems",
+        title="Tetris Gems",
+        text="网页游戏 | 单机\ntetris.com官网上的俄罗斯方块，限时1分钟挖掘，有重力机制。\n有三种消除后可以获得不同功能的宝石方块。",
+    },
+    {
+        word="tetris mind bender",
+        title="Tetris Mind Bender",
+        text="网页游戏 | 单机\ntetris.com官网上的俄罗斯方块，在马拉松基础上添加了技能，场地上会随机冒出技能方块，消除后会得到各种各样或好或坏的技能。",
+    },
+    -- 跨平台
+    {
+        word="tech;techmino;铁壳;铁壳米诺",
+        title="Techmino",
+        text="跨平台 | 单机/多人\n简称Tech，使用LÖVE引擎开发的一款方块游戏，单机模式和各种设置都很齐全。\n目前最新版本0.17.21，可以和约好友联机对战",
+        link="http://studio26f.org",
+    },
+    {
+        word="falling lightblocks",
+        title="Falling Lightblocks",
+        text="网页游戏/iOS/Android | 单机/多人\n一个全平台块，横竖屏，有延迟并且不可调。手机支持自定义键位，主要玩法基于NES块设计，也有现代模式。对战为半即时半回合制，无攻击缓冲不可抵消。",
+    },
+    {
+        word="剑桥;cambridge",
+        title="Cambridge",
+        text="跨平台 | 单机\n使用LÖVE引擎开发的一款方块游戏，致力于创建一个轻松高度自定义新模式的方块平台。最初由Joe Zeng开发，于2020/10/08的0.1.5版开始Milla接管了开发。 — Tetris Wiki.",
+    },
+    {
+        word="nanamino",
+        title="Nanamino",
+        text="Windows/Android | 单机\n块圈玩家自制方块，正在开发中，有一个原创旋转系统。",
+    },
+    -- 街机/类街机
+    {
+        word="tgm;tetris the grand master;tetris grand master",
+        title="TGM",
+        text="Windows | 单机/本地双人\n全称Tetris The Grand Master，一个街机方块系列（有修改过的版本可以在大多数Windows电脑运行），S13/GM等称号都出自该作。\n\n其中TGM3目前玩得最普遍，部分模式说明：\n\nMaster：大师模式，有段位评价，拿到更高段位点的要求：非消一的连击和消四，字幕战中消除和通关，每100的前70小于【标准时间，上一个0~70秒数+2】中小的一个，每100总用时不能超过限定值（不然取消上一个方法的加分并反扣点数）；到500若没有进标准时间会强制结束游戏（称为铁门）；字幕战有两个难度，半隐和全隐，后者必须拿到几乎全部的段位点才能进，消除奖励的段位点也更多。\n\nShirase：死亡模式，类似于techmino中的20G-极限，开局就是高速20G，500和1000有铁门，500开始底下开始涨垃圾行，1000开始出现骨块，1300通关进入大方块字幕战；段位结算：每通100加1段从S1到S13，如果通关了字幕战就会有金色的S13\n\n更多内容详见链接",
+        link="https://teatube.cn/TGMGUIDE",
+    },
+    {
+        word="dtet",
+        title="DTET",
+        text="Windows | 单机\n单机方块游戏，基于经典规则加入了20G和一个强大的旋转系统，但是除了键位其他参数都不可自定义。有点难找到，而且找到后可能还要自己补齐缺的DLL文件。",
+    },
+    {
+        word="hebo;heboris",
+        title="Heboris",
+        text="Windows | 单机\n一个仿街机方块游戏，可以模拟多个方块游戏的部分模式。",
+    },
+    {
+        word="texmaster",
+        title="Texmaster",
+        text="Windows | 单机\n简称Tex，包含TGM的所有模式，可以用来练习TGM，但World规则不完全一样（如软降到底无锁延，踢墙表有细节不同等）。",
+    },
+    -- 其他
+    {
+        word="tec;tetris effect;tetris effect connected",
+        title="Tetris Effect: Connected",
+        text="PS/Oculus Quest/Xbox/NS/Windows | 单机/多人\n简称TEC，特效方块游戏。\n相比早期的Tetris Effect单机游戏，TEC增加了联网对战，包含Boss战、Zone对战、经典块对战和分数对战四个模式。",
+    },
+    {
+        word="t99;tetris 99",
+        title="Tetris 99",
+        text="NS | 单机/多人\n简称T99，主玩99人混战的吃鸡模式，战术比重比较大，胜率不只由玩家在平时1V1时的水平决定。\n也有一些常用单机模式如马拉松等。",
+    },
+    {
+        word="ppt;puyo puyo tetris",
+        title="Puyo Puyo Tetris",
+        text="PS/NS/Xbox/Windows | 单机/多人\n简称PPT，将方块和 Puyo Puyo 两个下落消除游戏放到一个游戏里，二者可以对战，联机单机模式都很多。另有一拓展版本Puyo Puyo Tetris 2。\n[Steam PC版相对NS版手感和网络等都不太好]",
+    },
+    {
+        word="to;top;toj;tos;tetris online",
+        title="Tetris Online",
+        text="Windows | 单机/多人\n简称TO，主要用来6人内对战/单挑/刷每日40L榜/挖掘模式/打机器人。支持自定义DAS/ARR但都不能到0。\n现在还开着的服务器有：\nTO-P（波兰服，服务器在波兰，可能会卡顿）\nTO-S（研究服，研究群群友自己开的服，很稳定，需要进群注册）",
+    },
+    {
+        word="tetra online",
+        title="Tetra Online",
+        text="Windows/macOS/Linux | 单机/多人\n简称TO，由Dr Ocelot和Mine两人开发\n故意设计为延迟较多，平时玩无延迟方块的玩家可能会不习惯。\n2020年12月9日收到来自TTC的DMCA警告信于是被迫停止开发，在一段时间后关服并下架Steam。\n现在在GitHub上面还可以下到Windows的Offline Build。\n[UI部分模仿了PPT，音乐不错，攻击特效好看。]",
+        link="https://github.com/Juan-Cartes/Tetra-Offline/releases/tag/1.0",
+    },
+    {
+        word="c2;cultris2;cultris ii",
+        title="Cultris II",
+        text="Windows/OS X | 单机/多人\n简称C2，设计基于经典规则出发，支持自定义DAS/ARR，对战的主要玩法是基于时间的连击，考验玩家速度/Wide打法/挖掘。",
+    },
+    {
+        word="np;nullpomino",
+        title="Nullpomino",
+        text="Windows/macOS/Linux | 单机/多人\n简称NP，整个游戏自定义程度极高，几乎任何参数都可以自己设置，是一个专业级方块。\n[不过UI风格比较老，需要全键盘操作，刚开始可能不习惯。macOS Monterey貌似无法运行。]",
+    },
+    {
+        word="misamino",
+        title="Misamino",
+        text="Windows | 单机\n块圈玩家自制方块，单机1v1，主玩回合制模式，可以自定义AI（自己写的话需要了解接口）。",
+    },
+    {
+        word="touhoumino",
+        title="Touhoumino",
+        text="Windows | 单机\n块圈玩家自制方块，一个Nullpomino的自带资源包的改版，将东方Project元素与俄罗斯方块结合。马拉松模式结合了东方Project里的“符卡”机制，需要在一定时间内达成目标分数才能击破。\n[难度较大，适合有方块基础并且各项能力都较强的玩家游玩（不然都不知道自己怎么死的）。]",
+    },
+    {
+        word="tetris blitz",
+        title="Tetris Blitz",
+        text="iOS/Android | 单机/多人\n简称闪电战，EA代理的一款移动端方块，有重力连锁机制，限时2分钟，游戏开始会掉下一堆小方块；持续消行会进入Frenzy模式（场地下方会不断冒出垃圾行，帮助玩家制造大连锁，如果多次落块没有消行会强制结束Frenzy）。有非常多的道具。\n当新出现的方块与场地现有方块重叠时，场地最上方的几行会被自动清除，游戏不结束。已于2020年4月下架。",
+    },
+    {
+        word="tetris ea",
+        title="Tetris (EA)",
+        text="iOS/Android | 单机/多人?\nEA代理的一款宇宙主题的移动端方块。有滑动操控和单点触控两种操作模式；除经典的马拉松外还有一个星系模式（地图挖掘），有重力连锁机制，目标是在限定块数内消除所有地图块。\n已于2020年4月下架。",
+    },
+    {
+        word="tetris beat",
+        title="Tetris Beat",
+        text="iOS | 单机\nN3TWORK代理的一款移动端方块。除了马拉松以外游戏还有一个“Beat”模式，但只需根据BGM的节奏落块就可以得到额外分数。\n[特效比较瞎眼，不支持自定义键位，而且默认的按钮也很小导致控制也不是很舒服]",
+    },
+    {
+        word="tetris n3twork;tetris n3t",
+        title="Tetris (N3TWORK)",
+        text="iOS/Android | 单机/多人\nN3TWORK代理的一款移动端方块，有马拉松、3分钟限时打分和Royale（最多100人对战）模式。\n[UI设计比较不错，但不支持自定义键位，而且默认的按钮也很小导致控制也不是很舒服]",
+    },
+    {
+        word="环游记;俄罗斯方块环游记;journey;tetris journey",
+        title="俄罗斯方块环游记",
+        text="iOS/Android | 单机/多人\n简称环游记，国内第一款正版授权手游方块。有闯关模式、对战模式和几个单机模式。闯关模式有各种各样有趣规则大多数有重力连锁，对战规则同现代方块，可以自定义虚拟按键的大小和位置，但是不能自定义DAS/ARR。已于2023年2月15日停服。",
+    },
+    {
+        word="jj;jj块",
+        title="JJ块",
+        text="Android | 单机/多人\nJJ棋牌平台下一个休闲游戏，Android端百度“JJ比赛”官网下载平台后可以找到（找不到的原因是iOS系统或者没在官网下载或者被限制不可直接访问游戏）。竖屏，输入延迟很小，可自定义DAS/ARR/20G软降，简单自定义键位，无Hold，没有B2B，无攻击缓冲不可抵消，每次攻击上限为4，连击较强，其他同现代方块。",
+    },
+    {
+        word="火拼;火拼俄罗斯",
+        title="火拼俄罗斯",
+        text="Windows | 多人\n腾讯游戏大厅的方块，场地12列，打字的 DAS 和 ARR，1 Next无 Hold，攻击途径只有消4打3、 消3打2，垃圾行为国际象棋棋盘式，几乎不可能挖掘。",
+    },
+}
+local abbr={
     {
         word="tas",
         title="TAS",
@@ -958,22 +962,32 @@ local data={
         title="Freestyle",
         text="自由发挥，常用于freestyle TSD（T2），指不用固定的堆叠方式而是随机应变完成20TSD。比用LST或者垃圾分类完成的20 TSD的难度要大，成绩也更能代表实战水平。",
     },
-    -- # 整活
+}
+local random={
     {
         word="小z;mrz;z酱",
         title="喵？",
     },
 }
 
-local dict={}
-for _,entry in next,data do
-    for _,word in next,STRING.split(entry.word,";") do
-        word=SimpStr(word)
-        if dict[word] then
-            print("重复关键字："..word)
-        else
-            dict[word]=entry
+local zict={}
+local function loadData(data)
+    for _,entry in next,data do
+        for _,word in next,STRING.split(entry.word,";") do
+            word=SimpStr(word)
+            if zict[word] then
+                print("重复关键字："..word)
+            else
+                zict[word]=entry
+            end
         end
     end
 end
-return dict
+loadData(meta)
+loadData(abbr)
+loadData(main)
+loadData(pattern)
+loadData(game)
+loadData(random)
+
+return zict
