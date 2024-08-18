@@ -559,7 +559,7 @@ local pattern={
         link="harddrop.com/wiki?search=dt",
     },
     {
-        word="bt;t炮",
+        word="bt;bt炮",
         title="BT炮",
         text="β炮（Beta炮）",
         link="harddrop.com/wiki?search=bt_cannon",
@@ -1012,7 +1012,7 @@ local extra_tetrio={
     {
         word="推进器",
         title="QP2 推进器",
-        text="爬塔增加高度时有一个倍率的加成，这个倍率从0开始每次升级+0.25，但等级会随着时间流失，级别越高流失越快\n每一级的颜色：无/红/橙/黄绿/蓝/紫/亮橙/青绿/青蓝/亮紫/白/白/…\n可能致敬了Bejeweled Twist中的倍乘器系统\n另见#速通模式",
+        text="爬塔增加高度时有一个倍率的加成，这个倍率从0.25开始每次升级+0.25，但等级会随着时间流失，级别越高流失越快\n每一级的颜色：无/红/橙/黄绿/蓝/紫/亮橙/青绿/青蓝/亮紫/白/白/…\n可能致敬了Bejeweled Twist中的倍乘器系统\n另见#速通模式",
     },
     {
         word="hyperspeed;速通模式",
@@ -1097,7 +1097,7 @@ local people={
     },
     {
         word="T0812;T812;scdhh;呵呵",
-        title="T0812.呵呵，开发了好几个块群bot，Techmino的CI、后端",
+        title="T0812.呵呵，写了好几个块群bot，Techmino的CI、后端",
     },
     {
         word="T114;flyz;flaribbit;小飞翔;fxg",
@@ -1123,8 +1123,8 @@ local people={
         title="T0210，Techmino的插图、配音",
     },
     {
-        word="T056;Flore;妈妈",
-        title="T056.Flore，经常组织块群比赛和编辑灰机wiki，Techmino的配音",
+        word="T056;flore;風洛霊;風洛霊flore;妈妈",
+        title="T056.flore，组织各项块群方块赛事，主办年度奖项活动，活跃编辑方块中文wiki，Techmino的配音",
         link="space.bilibili.com/1223403016",
     },
     {
@@ -1144,17 +1144,25 @@ local people={
     },
     {
         word="T022;teatube;茶叶子;茶管;茶;茶娘",
-        title="T022.Teatube，前群宠，曾组织过块群赛事，开发过块群bot，架设了Tetris Online Study研究服",
+        title="T022.Teatube，前群宠，组织过块群赛事，写了块群bot，架设了Tetris Online Study研究服",
         link="space.bilibili.com/834903  space.bilibili.com/271332633",
     },
     {
         word="T042;42;思竣",
-        title="T042.思竣，有一堆铁壳only的世界纪录，找到了Techmino的一万个bug和记住了它们所在的版本号",
+        title="T042.思竣，有一堆铁壳only的世界纪录，找到了Techmino的一万个bug并记住了所在版本号",
         link="space.bilibili.com/403250559",
+    },
+    -- {
+    --     word="T872;Diao;nmdtql;nmdtql030",
+    --     title="T872.Diao，写过一些zzzbot的胶水程序",
+    -- },
+    {
+        word="T1069;苏云;suyuna;苏云云;苏云云云",
+        title="T1069.苏云，组织过不少块群赛事和活动",
     },
     {
         word="T043;xb",
-        title="T043.xb，前wiki编辑者，曾组织过块群赛事",
+        title="T043.xb，前wiki编辑者，组织过块群赛事",
     },
     {
         word="osk",
