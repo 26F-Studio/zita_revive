@@ -21,10 +21,10 @@ local commands={
     ['#restart']=function(S,args)
         print("[RESTART]")
         if args[1]=='all' then
-            S:send("（喷一下）这是什么？")
+            S:send("这是什么，喷一下（对着自己）")
             Bot.restart()
         elseif tonumber(args[1]) then
-            S:send("好的，小z忘记那里了喵！")
+            S:send("小z忘记那里的事情了喵！")
             SessionMap[tonumber(args[1])]=nil
         else
             S:send("（咚）\n……\n小z失忆了喵！")
