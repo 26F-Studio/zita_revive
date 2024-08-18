@@ -33,8 +33,8 @@ return {
 
         if S.group and not (M.sender and (M.sender.role=='owner' or M.sender.role=='admin')) then
             S:update()
-            local chargeNeed=26+#result/6.2
-            if S.charge<math.min(62,chargeNeed) then
+            local chargeNeed=62+#result/4.2
+            if S.charge<math.min(94.2,chargeNeed) then
                 if S:forceLock('dictCharge',26) then S:send("词典能量耗尽！请稍后再试") end
                 return true
             end
