@@ -4,17 +4,29 @@ assert(Dict,"Dict data not found")
 return {
     func=function(S,M)
         ---@cast M LLOneBot.Event.PrivateMessage|LLOneBot.Event.GroupMessage
+
         local mes=M.raw_message
-        if mes:sub(1,1)~='#' then return false end
-        local word,detail
-        if mes:sub(2,2)=='#' then
-            word=SimpStr(mes:sub(3))
+        mes=STRING.trim(mes)
+        local phrase=mes:match('#.+')
+        if not phrase then return false end
+        phrase=phrase:lower()
+        local detail
+        if phrase:sub(1,2)=='##' then
+            phrase=phrase:sub(3)
             detail=true
         else
-            word=SimpStr(mes:sub(2))
+            phrase=phrase:sub(2)
         end
 
-        local entry=Dict[word]
+        local words=STRING.split(phrase,'%s+',true)
+        while #words[#words]>26 do table.remove(words) end
+
+        local entry
+        while #words>0 do
+            entry=Dict[table.concat(words,'')]
+            if entry then break end
+            table.remove(words)
+        end
         if not entry then return false end
 
         local result=entry.title
