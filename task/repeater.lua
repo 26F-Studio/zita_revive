@@ -1,5 +1,5 @@
 local utf8=require('utf8')
-local badWords=STRING.split("cq: zita z酱 mrz 我 傻 逼 菜 弱 典 孝 急 色"," ")
+local badWords=STRING.split("& cq: zita z酱 mrz tech 我 傻 逼 菜 弱 典 孝 急 色"," ")
 local signs=TABLE.getValueSet(STRING.split([[` ~ ! @ # $ % ^ & * ( ) _ + - = [ ] \ { } | ; ' : " , . / < > ?]]," "))
 ---@type Task_raw
 return {

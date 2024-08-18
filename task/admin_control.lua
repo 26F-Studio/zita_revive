@@ -103,7 +103,7 @@ end
 return {
     func=function(S,M)
         ---@cast M LLOneBot.Event.PrivateMessage
-        local mes=M.raw_message
+        local mes=RawStr(M.raw_message)
         local args=STRING.split(mes,' ')
         if commands[args[1]] then
             if not Bot.isAdmin(M.user_id) then

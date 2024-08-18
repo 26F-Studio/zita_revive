@@ -7,6 +7,8 @@ ZENITHA.setDrawFreq(10)
 ZENITHA.setUpdateFreq(100)
 ZENITHA.setVersionText('')
 function SimpStr(s) return s:gsub('%s',''):lower() end
+local esc={{'&amp;','&'},{'&#91;','['},{'&#93;',']'},{'&#44;',','}}
+function RawStr(s) for _,v in next,esc do s=s:gsub(v[1],v[2]) end return s end
 --------------------------------------------------------------
 local ws=WS.new{
     host='localhost',
