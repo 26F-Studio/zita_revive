@@ -781,7 +781,7 @@ local game={
     {
         word="io;tetrio;tetr.io",
         title="TETR.IO",
-        text="网页游戏 | 单机/多人 | [服务器在国外可能卡]\n简称IO，有排位系统和功能全面的自定义模式，单机模式只有三个。有电脑客户端下载（优化性能，无广告）\n[Safari浏览器似乎打不开]",
+        text="网页游戏 | 单机/多人 | [服务器在国外可能卡]\n简称IO，有排位系统和功能全面的自定义模式，单机模式只有三个。有电脑客户端下载（优化性能）\n[Safari浏览器似乎打不开]\n另见#io s2",
         link="https://tetr.io",
     },
     {
@@ -1015,6 +1015,90 @@ local people={
         text="Tetr.io的主创，请尊重本人意愿不要在他面前发这个喵",
     },
 }
+local extra_tetrio={
+    {
+        word="qp2;io s2",
+        title="Tetr.io QP2",
+        text="随开随打不需要等待的第二代快速游戏，发送攻击打败对手来爬升高度达到 #十层 ！\n另见 #Surge #推进器 #速通模式 #疲劳时间 #QP2 Mod",
+        link="https://github.com/MrZ626/io_qp2_rule",
+    },
+    {
+        word="十层;f10;floor;floors",
+        title="QP2楼层",
+        text="十层分别是：初始大厅、酒店(50m)、赌场(150m)、竞技场(300m)、博物馆(450m)、废弃办公楼(650m)、实验室(850m)、核心(1100m)、污染区(1350m)、神之境(1650m)",
+    },
+    {
+        word="surge;surge b2b",
+        title="Surge B2B",
+        text="充能B2B系统，达到b2b×4后b2b中断时会打出一发和b2b数同样的超大攻击（分成三节）\n目前Tetr.io的TL第二赛季和QP2都使用此新系统",
+    },
+    {
+        word="推进器",
+        title="QP2 推进器",
+        text="爬塔增加高度时有一个倍率的加成，这个倍率从0开始每次升级+0.25，但等级会随着时间流失，级别越高流失越快\n每一级的颜色：无/红/橙/黄绿/蓝/紫/亮橙/青绿/青蓝/亮紫/白/白/…\n可能致敬了Bejeweled Twist中的倍乘器系统\n另见#速通模式",
+    },
+    {
+        word="hyperspeed;速通模式",
+        title="QP2 Hyperspeed",
+        text="当玩家在1/2/3/4/5层时推进器等级就达到8/8/9/9/10时会进入速通模式，掉到6级时会退出速通模式\n进入速通模式时会出现致敬Bejeweled Twist的动画和专属速通音乐，达到十层时完成速通模式可以获得一个隐藏成就",
+    },
+    {
+        word="疲劳;疲劳时间",
+        title="QP2 疲劳时间",
+        text="为了防止一局游戏过长，8分钟时每分钟会多一个负面效果，总共五个：(8分钟)+2行实心垃圾，(9分钟)+25%受击倍率，(10分钟)+3行实心垃圾，(11分钟)+25%受击倍率，(12分钟)+5行实心垃圾",
+        detail="疲劳开始侵蚀… FATIGUE SETS IN… +2 PERMANENT LINES\n你的身体变得虚弱… YOUR BODY GROWS WEAK… receive 25% more garbage\n所有感官混为一团… ALL SENSES BLUR TOGETHER… +3 PERMANENT LINES\n你的意识开始消逝… YOUR CONSCIOUSNESS FADES… receive 25% more garbage\n结束了。 THIS IS THE END. +5 PERMANENT LINES",
+    },
+    {
+        word="qp2 mod;qp mod;io mod;tarot",
+        title="QP2 Mod",
+        text="Mod列表：专家(EX)、无暂存(NH)、混乱垃圾行(MS)、高重力(GV)、不稳定垃圾行(VL)、双洞垃圾行(DH)、隐形(IN)、All-Spin(AS)、双人2P\n另见 #mod EX/NH/...",
+    },
+    {
+        word="mod EX; expert ; expert mod ; emperor",
+        title="QP2 Expert mod",
+        text="专家 （塔罗牌：皇帝 Emperor）\n各方面都变难一些：垃圾行瞬间出现、增加垃圾混乱度、失去“危急时降低受击概率”的保护",
+    },
+    {
+        word="mod NH; nohold ; nohold mod ; temperance",
+        title="QP2 Nohold mod",
+        text="无暂存 （塔罗牌：节制 Temperance）\n禁用暂存",
+    },
+    {
+        word="mod MS; messy ; messy mod ; wheel of fortune",
+        title="QP2 Messy mod",
+        text="混乱垃圾行 （塔罗牌：命运之轮 Wheel of Fortune）\n垃圾混乱度显著增加",
+    },
+    {
+        word="mod GV; gravity mod ; tower ; the tower",
+        title="QP2 Gravity mod",
+        text="高重力 （塔罗牌：塔 The Tower）\n重力显著增加",
+    },
+    {
+        word="mod VL; volatile ; volatile mod ; strength",
+        title="QP2 Volatile mod",
+        text="不稳定垃圾行 （塔罗牌：力量 Strength）\n升起的垃圾行数量翻倍",
+    },
+    {
+        word="mod DH; doublehole ; doublehole mod ; devil ; the devil",
+        title="QP2 Doublehole mod",
+        text="双洞垃圾行 （塔罗牌：恶魔 The Devil）\n垃圾行可能会有两个洞",
+    },
+    {
+        word="mod IN; invisible mod; hermit ; the hermit",
+        title="QP2 Invisible mod",
+        text="隐形 （塔罗牌：隐士 The Hermit）\n自己放下的方块会隐形，每5秒全场地闪烁一次",
+    },
+    {
+        word="mod AS; allspin mod ; magician ; the magician",
+        title="QP2 Allspin mod",
+        text="All （塔罗牌：魔法师 The Magician）\n非T块spin也有2*消行数的攻击，但“消除文本区”文本变化时如果和上次相同，会出现一行实心行",
+    },
+    {
+        word="mod 2P; duo ; duo mod ; lover ; lovers ; the lovers",
+        title="QP2 Duo mod",
+        text="双人 （塔罗牌：恋人 The Lovers）\n会员玩家可以邀请其他人和自己两个人一起玩此模式，两个人发送出去给别人的伤害数值减半，一个人死了后另一个人可以做任务复活队友",
+    },
+}
 
 local zict={}
 local function checkWords(entry)
@@ -1041,5 +1125,6 @@ loadData(main)
 loadData(pattern)
 loadData(game)
 loadData(people)
+loadData(extra_tetrio)
 
 return zict
