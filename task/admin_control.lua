@@ -7,18 +7,18 @@ end
 
 ---@type table<string,fun(S:Session,args:string[])|string>
 local commands={
-    ['#stop']=function(S)
+    ['%stop']=function(S)
         print("[STOP]")
         S:send("小z紧急停止了喵！")
         Bot.stop(1800)
-    end,['#s']="#stop",
-    ['#sleep']=function(S,args)
+    end,['%s']="%stop",
+    ['%sleep']=function(S,args)
         local time=tonumber(args[1]) or 600
         print("[DISCONNECT] "..time)
         S:send("小z准备睡觉了喵！")
         Bot.stop(time)
     end,
-    ['#restart']=function(S,args)
+    ['%restart']=function(S,args)
         print("[RESTART]")
         if args[1]=='all' then
             S:send("这是什么，喷一下（对着自己）")
@@ -31,20 +31,20 @@ local commands={
             SessionMap[S.id]=nil
         end
     end,
-    ['#tasks']=function(S)
+    ['%tasks']=function(S)
         local result="群里有这些任务喵："
         for _,task in next,S.taskList do
             result=result..'\n'..task.id
         end
         S:send(result)
-    end,['#task']="#tasks",
-    ['#log']=function(S,args)
+    end,['%task']="%tasks",
+    ['%log']=function(S,args)
         local on=args[1]==''
         print("Log: "..(on and "on" or "off"))
         S:send(on and "小z开始日志了喵！" or "小z停止日志了喵！")
         Config.debugLog_message=on
     end,
-    ['#stat']=function(S)
+    ['%stat']=function(S)
         local result=STRING.repD(STRING.trimIndent[[
             我做了这些事情喵：
             本次运行时间:$1
@@ -62,18 +62,17 @@ local commands={
         )
         S:send(result)
     end,
-    ['#h']=function(S)
+    ['%help']=function(S)
         local result=STRING.trimIndent([[
             小z可以做这些事情喵：
-            #h 帮助
-            #stop 急停  #sleep 睡觉
-            #restart 失忆  #log on/off 日志
-            #task 任务列表  #stat 统计
-            ![lua代码] 运行代码
+            %help 帮助  %task 任务列表
+            %stop 急停  %sleep 睡觉
+            %restart 失忆  %log on/off 日志
+            %stat 统计  ![lua代码] 运行代码
         ]],true)
         S:send(result)
     end,
-    ['#!']=function(S)
+    ['%!']=function(S)
         local vars=TABLE.getKeys(codeEnv)
         table.sort(vars)
         S:send("有这些变量喵："..table.concat(vars,', '))
@@ -94,7 +93,7 @@ local texts={
     },
 }
 local function no_permission(S,i)
-    if S:forceLock('no_permission',6.26) then
+    if S:forceLock('no_permission',12) then
         S:send(texts[i][math.random(#texts[i])])
     end
 end
