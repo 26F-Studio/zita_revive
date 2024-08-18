@@ -113,7 +113,7 @@ local main={
         word="tetris",
         title="Tetris",
         text="商标，Tetris游戏名，同时也是“消四行”的名字。\n另见 #消四",
-        detail="含义是Tetra（古希腊语，四 <τέτταρες>）+ Tennis（网球 游戏原作者喜欢的运动）。\n现在版权在TTC（The Tetris Company）手上，任天堂和世嘉开发游戏是 TTC 授权的，他们并没有Tetris的版权。",
+        detail="含义是Tetra（古希腊语，四 <τέτταρες>）+ Tennis（网球 游戏原作者喜欢的运动）。\n现在版权在TTC (The Tetris Company)手上，任天堂和世嘉开发游戏是 TTC 授权的，他们并没有Tetris的版权。",
     },
     {
         word="全消;全清;ac;pc;all clear;perfect clear",
@@ -145,7 +145,7 @@ local main={
     {
         word="all spin",
         title="All Spin",
-        text="规则名，指用所有方块进行Spin消除都能获得奖励，而不是通常仅T-spin才能打出攻击（T-Spin Only）。",
+        text="规则名，指用所有方块进行Spin消除都能获得奖励，而不是通常仅T-spin才能打出攻击(T-Spin Only)。",
     },
     {
         word="tss;tsd;tst",
@@ -342,7 +342,7 @@ local main={
         word="block out;lock out;top out;死亡;死亡判定",
         title="死亡判定",
         text="现代方块普遍使用几条死亡判定：窒息/锁定在外/超高",
-        detail="窒息（Block Out）：新出现的方块和场地方块有重叠（c4w比s4w强的原因，因为被打进18行都不会窒息）；\n锁定在外（Lock Out）：方块锁定时完全在场地的外面；\n3. 超高（Top Out）：场地内现存方块总高度大于40\n注：窒息几乎在所有游戏中都被使用，其他的就不一定",
+        detail="窒息 (Block Out)：新出现的方块和场地方块有重叠（c4w比s4w强的原因，因为被打进18行都不会窒息）；\n锁定在外 (Lock Out)：方块锁定时完全在场地的外面；\n3. 超高 (Top Out)：场地内现存方块总高度大于40\n注：窒息几乎在所有游戏中都被使用，其他的就不一定",
     },
     {
         word="缓冲区",
@@ -439,7 +439,7 @@ local main={
     {
         word="his;his4;h4r6",
         title="History出块",
-        text="一种的出块方式，例如His4 Roll6 （h4r6）就是在随机生成新的 Next 的时候，随机一个跟最后4次生成的Next中有一样的，就重新随机，直到已经尝试6次或和那4个都不一样。\nTechmino的His序列模式中最大Roll次数为序列长度的一半（向上取整）\n\n是纯随机出块的一大改进，大大减小了连续出几个SZ（洪水）的概率。",
+        text="一种的出块方式，例如His4 Roll6 (h4r6)就是在随机生成新的 Next 的时候，随机一个跟最后4次生成的Next中有一样的，就重新随机，直到已经尝试6次或和那4个都不一样。\nTechmino的His序列模式中最大Roll次数为序列长度的一半（向上取整）\n\n是纯随机出块的一大改进，大大减小了连续出几个SZ（洪水）的概率。",
     },
     {
         word="hispool",
@@ -944,7 +944,7 @@ local abbr={
     {
         word="tas",
         title="TAS",
-        text="Tool-Assisted Speedrun（Supergaming）\n使用特殊工具在仅仅不破坏游戏规则（游戏程序层面的规则）的条件下进行游戏。\n一般用于冲击理论值或者达成各种有趣的目标用来观赏。",
+        text="Tool-Assisted Speedrun (Supergaming)\n使用特殊工具在仅仅不破坏游戏规则（游戏程序层面的规则）的条件下进行游戏。\n一般用于冲击理论值或者达成各种有趣的目标用来观赏。",
     },
     {
         word="timing",
@@ -958,21 +958,67 @@ local abbr={
         detail="例：39.95s是Sub 40，40.###s不是Sub 40。\n请不要使用Sub 62之类的词，因为sub本身就是表示大约，一分钟左右的成绩精确到5~10s就可以了，一般30s以内的成绩用sub## 的时候才会精确到1s。",
     },
     {
-        word="freestyle",
+        word="freestyle;free",
         title="Freestyle",
-        text="自由发挥，常用于freestyle TSD（T2），指不用固定的堆叠方式而是随机应变完成20TSD。比用LST或者垃圾分类完成的20 TSD的难度要大，成绩也更能代表实战水平。",
+        text="自由发挥，常用于freestyle TSD (T2)，指不用固定的堆叠方式而是随机应变完成20TSD。比用LST或者垃圾分类完成的20 TSD的难度要大，成绩也更能代表实战水平。",
+    },
+    {
+        word="glhf",
+        title="glhf",
+        text="Good luck (and) have fun，祝好运 玩得开心。\n打招呼用语，可以原样回复",
+    },
+    {
+        word="golf",
+        title="glhf的整活版本",
+    },
+    {
+        word="gg;ggs",
+        title="gg(s)",
+        text="Good game (s)，打得不错。\n游戏结束时的常用语，可以原样回复",
+    },
+    {
+        word="eggs",
+        title="ggs的整活版本",
     },
 }
-local random={
+local people={
     {
-        word="小z;mrz;z酱",
-        title="喵？",
+        word="zict;zictionary",
+        title="词(字?)典，是收集词汇并加以解释供人检查参考的工具书。",
+    },
+    {
+        word="小z;zita",
+        title="喵喵？是我哦",
+    },
+    {
+        word="mrz;z酱",
+        title="Techmino的作者和另一个我喵！",
+    },
+    {
+        word="fkmrz;fkz;fkz酱",
+        title="Z酱快来禁言他",
+    },
+    {
+        word="osk",
+        title="OSK",
+        text="Tetr.io的主创",
+    },
+    {
+        word="fkosk",
+        title="OSK",
+        text="Tetr.io的主创，请尊重本人意愿不要在他面前发这个喵",
     },
 }
 
 local zict={}
+local function checkWords(entry)
+    if entry.word:find("；") then
+        print("Fullwidth semicolon found in entry '"..entry.title.."'")
+    end
+end
 local function loadData(data)
     for _,entry in next,data do
+        checkWords(entry)
         for _,word in next,STRING.split(entry.word,";") do
             word=SimpStr(word)
             if zict[word] then
@@ -988,6 +1034,6 @@ loadData(abbr)
 loadData(main)
 loadData(pattern)
 loadData(game)
-loadData(random)
+loadData(people)
 
 return zict
