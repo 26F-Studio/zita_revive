@@ -48,7 +48,7 @@ Bot={
         {'admin_control',-99},
         {'help_public',1},
         {'zictionary',2},
-        {'repeater',3},
+        {'repeater',100},
     },
     stat={
         connectAttempts=0,

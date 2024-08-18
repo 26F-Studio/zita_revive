@@ -9,10 +9,11 @@ return {
         if len>=26 or not S:lock('repeater_fastFilter',4.2) then return false end
         local dt=S:getTimeCheckpoint('repeater')
         local startRate=.0626+MATH.cLerp(0,1,dt/626)*.042
-        if MATH.roll(MATH.interpolate(1,startRate,26,.0126,len)) then return false end
-        S:setTimeCheckpoint('repeater')
-        S:lock('repeater_silence',26)
-        S:send(M.raw_message)
+        if MATH.roll(MATH.interpolate(1,startRate,26,.0126,len)) then
+            S:setTimeCheckpoint('repeater')
+            S:lock('repeater_silence',26)
+            S:send(M.raw_message)
+        end
         return true
     end,
 }
