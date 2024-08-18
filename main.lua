@@ -168,6 +168,9 @@ end
 ---@field group boolean #not priv
 ---@field taskList Task[]
 ---@field locks Map<number>
+---@field checkpoints Map<number>
+---
+---@field createTime number
 ---@field charge number
 ---@field maxCharge number
 ---@field lastUpdateTime number
@@ -186,6 +189,7 @@ function Session.new(id,priv)
         group=not priv,
         taskList={},
         locks=setmetatable({},lockMapMeta),
+        checkpoints={},
 
         createTime=Time(),
         charge=Config.maxCharge,
@@ -283,6 +287,13 @@ function Session:clearLock()
     for k in next,self.locks do
         self.locks[k]=nil
     end
+end
+
+function Session:setTimeCheckpoint(name)
+    self.checkpoints[name]=Time()
+end
+function Session:getTimeCheckpoint(name)
+    return Time()-(self.checkpoints[name] or self.createTime)
 end
 
 function Session:update()
