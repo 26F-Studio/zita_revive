@@ -1,8 +1,10 @@
+local wordList=TABLE.getValueSet({"小z在吗","#help","#帮助"})
 ---@type Task_raw
 return {
     func=function(S,M)
         ---@cast M LLOneBot.Event.PrivateMessage|LLOneBot.Event.GroupMessage
-        if not (M.raw_message:lower()=="小z在吗" or M.raw_message=="#help") then return false end
+        local mes=M.raw_message:lower()
+        if not wordList[mes] then return false end
         if S:forceLock('help_public',62) then
             S:send("【Zita-Revive】 小z回来啦！\n萌新有疑问时发送#[关键词]就可以查询小Z词典精简版\n技术还处于试验阶段，随时可能停机，对不起喵！")
         else

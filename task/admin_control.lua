@@ -1,5 +1,7 @@
+local envValues={'next','print','tonumber','tostring','ipairs','pairs','math','string','table','MATH','STRING','TABLE','Config','SessionMap','Bot','Session'}
+table.sort(envValues)
 local codeEnv={}
-for _,v in next,{'next','print','tonumber','tostring','ipairs','pairs','math','string','table','MATH','STRING','TABLE','Config','SessionMap','Bot','Session'} do
+for _,v in next,envValues do
     codeEnv[v]=_G[v]
 end
 
@@ -60,23 +62,19 @@ local commands={
         )
         S:send(result)
     end,
-    ['#help']=function(S)
+    ['#h']=function(S)
         local result=STRING.trimIndent([[
-            zita可以做这些事情喵：
-            #help 帮助
-            #stop 急停
-            #sleep 睡觉
-            #restart 失忆
-            #task 任务列表
-            #log on/off 日志
-            #stat 统计
-            ![lua代码] 执行代码
-                Config
-                SessionMap
-                Bot
-                Session
+            小z可以做这些事情喵：
+            #h 帮助
+            #stop 急停  #sleep 睡觉
+            #restart 失忆  #log on/off 日志
+            #task 任务列表  #stat 统计
+            ![lua代码] 运行代码
         ]],true)
         S:send(result)
+    end,
+    ['#!']=function(S)
+        S:send("有这些变量喵："..table.concat(envValues,', '))
     end,
 }
 TABLE.reIndex(commands)
