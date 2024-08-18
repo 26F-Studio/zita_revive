@@ -74,7 +74,9 @@ local commands={
         S:send(result)
     end,
     ['#!']=function(S)
-        S:send("有这些变量喵："..table.concat(envValues,', '))
+        local vars=TABLE.getKeys(codeEnv)
+        table.sort(vars)
+        S:send("有这些变量喵："..table.concat(vars,', '))
     end,
 }
 TABLE.reIndex(commands)
