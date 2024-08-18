@@ -24,7 +24,7 @@ Config={
 }
 print("--------------------------")
 if love.filesystem.getInfo('adminList.txt') then
-    print('Super Admins:')
+    print("Super Admins:")
     for line in love.filesystem.lines('adminList.txt') do
         local id=tonumber(line)
         if id then
@@ -113,7 +113,8 @@ function Bot.restart()
         SessionMap[id]=nil
     end
 end
-function Bot.disconnect()
+function Bot.stop(time)
+    TASK.forceLock('bot_lock',time or 600)
     ws:close()
 end
 
@@ -354,11 +355,12 @@ local scene={}
 function scene.load() end
 function scene.update()
     if ws.state=='dead' then
+        if TASK.getLock('bot_lock') then return end
         TASK.unlock('bot_running')
         Bot.stat.connectAttempts=Bot.stat.connectAttempts+1
         Bot.stat.connectLogDelay=10
         Bot.stat.connectLogDelaySum=0
-        TASK.forceLock('connect_message',10)
+        TASK.forceLock('connect_message',Bot.stat.connectLogDelay)
         ws:connect()
         print("--------------------------")
         print("Connecting to LLOneBot...")

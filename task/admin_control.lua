@@ -1,30 +1,33 @@
-local codeEnv={
-    next=next,
-    print=print,
-    math=math,
-    string=string,
-    table=table,
-    MATH=MATH,
-    STRING=STRING,
-    TABLE=TABLE,
-}
-codeEnv.Config=Config
-codeEnv.SessionMap=SessionMap
-
-codeEnv.Bot=Bot
-codeEnv.Session=Session
+local codeEnv={}
+for _,v in next,{'next','print','tonumber','tostring','ipairs','pairs','math','string','table','MATH','STRING','TABLE','Config','SessionMap','Bot','Session'} do
+    codeEnv[v]=_G[v]
+end
 
 ---@type table<string,fun(S:Session,args:string[])|string>
 local commands={
     ['#stop']=function(S)
-        print('[STOP]')
+        print("[STOP]")
         S:send("小z紧急停止了喵！")
-        Bot.restart()
+        Bot.stop(1800)
+    end,['#s']="#stop",
+    ['#sleep']=function(S,args)
+        local time=tonumber(args[1]) or 600
+        print("[DISCONNECT] "..time)
+        S:send("小z准备睡觉了喵！")
+        Bot.stop(time)
     end,
-    ['#disconnect']=function(S)
-        print('[DISCONNECT]')
-        S:send("小z断开了连接了喵！")
-        Bot.disconnect()
+    ['#restart']=function(S,args)
+        print("[RESTART]")
+        if args[1]=='all' then
+            S:send("（喷一下）这是什么？")
+            Bot.restart()
+        elseif tonumber(args[1]) then
+            S:send("好的，小z忘记那里了喵！")
+            SessionMap[tonumber(args[1])]=nil
+        else
+            S:send("（咚）\n……\n小z失忆了喵！")
+            SessionMap[S.id]=nil
+        end
     end,
     ['#tasks']=function(S)
         local result="群里有这些任务喵："
@@ -32,11 +35,10 @@ local commands={
             result=result..'\n'..task.id
         end
         S:send(result)
-    end,
-    ['#task']="#tasks",
+    end,['#task']="#tasks",
     ['#log']=function(S,args)
-        local on=args[1]=='on'
-        print('Log: '..(on and 'on' or 'off'))
+        local on=args[1]==''
+        print("Log: "..(on and "on" or "off"))
         S:send(on and "小z开始日志了喵！" or "小z停止日志了喵！")
         Config.debugLog_message=on
     end,
@@ -60,11 +62,13 @@ local commands={
     end,
     ['#help']=function(S)
         local result=STRING.trimIndent([[
-            Z酱可以做这些事情喵：
+            zita可以做这些事情喵：
             #help 帮助
             #stop 急停
-            #log on 开启日志
-            #log off 关闭日志
+            #sleep 睡觉
+            #restart 失忆
+            #task 任务列表
+            #log on/off 日志
             #stat 统计
             ![lua代码] 执行代码
                 Config
