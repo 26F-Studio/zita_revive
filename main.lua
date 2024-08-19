@@ -22,7 +22,7 @@ Config={
     debugLog_send=false,
     debugLog_receive=false,
     debugLog_response=false,
-    safeMode=true,
+    safeMode=false,
     superAdmin={},
     safeID={},
 }
