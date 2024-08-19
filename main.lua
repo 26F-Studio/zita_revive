@@ -23,34 +23,48 @@ Config={
     debugLog_receive=false,
     debugLog_response=false,
     safeMode=false,
-    superAdmin={},
-    safeID={},
+    adminID={},
+    groupManaging={},
+    safeSessionID={},
 }
 print("--------------------------")
-if love.filesystem.getInfo('adminList.txt') then
+if love.filesystem.getInfo('admin.txt') then
     print("Super Admins:")
-    for line in love.filesystem.lines('adminList.txt') do
+    for line in love.filesystem.lines('admin.txt') do
         local id=tonumber(line)
         if id then
-            Config.superAdmin[id]=true
+            Config.adminID[id]=true
             print(id)
         end
     end
 else
-    print("File 'adminList.txt' not found, no super admin")
+    print("File 'admin.txt' not found, no super admin")
 end
 print("--------------------------")
-if love.filesystem.getInfo('safeID.txt') then
-    print("Safe IDs:")
-    for line in love.filesystem.lines('safeID.txt') do
+if love.filesystem.getInfo('groupManaging.txt') then
+    print("Managing groups:")
+    for line in love.filesystem.lines('groupManaging.txt') do
         local id=tonumber(line)
         if id then
-            Config.safeID[id]=true
+            Config.groupManaging[id]=true
             print(id)
         end
     end
 else
-    print("File 'safeID.txt' not found, no messages will be sent in safe mode")
+    print("File 'groupManaging.txt' not found, no groups in Config.manageGroup")
+end
+print("--------------------------")
+if love.filesystem.getInfo('safeModeSession.txt') then
+    print("Safe IDs:")
+    for line in love.filesystem.lines('safeModeSession.txt') do
+        local id=tonumber(line)
+        if id then
+            Config.safeSessionID[id]=true
+            print(id)
+        end
+    end
+else
+    print("File 'safeModeSession.txt' not found, no messages will be sent in safe mode")
 end
 --------------------------------------------------------------
 Bot={
@@ -89,7 +103,7 @@ Bot={
 ---@field prio number
 
 function Bot.isAdmin(id)
-    return Config.superAdmin[id]
+    return Config.adminID[id]
 end
 
 ---@param data LLOneBot.SimpMes
@@ -102,7 +116,7 @@ function Bot.send(data)
             message=data.message,
         }
     }
-    if Config.safeMode and not Config.safeID[data.user or data.group] then
+    if Config.safeMode and not Config.safeSessionID[data.user or data.group] then
         if TASK.lock('safeModeBlock',10) then
             print("Message blocked in safe mode")
         end
@@ -121,7 +135,7 @@ function Bot.send(data)
     end
 end
 function Bot.adminNotice(text)
-    for id in next,Config.superAdmin do
+    for id in next,Config.adminID do
         Bot.send{user=id,message=text}
     end
 end
@@ -212,6 +226,7 @@ function Session.new(id,priv)
         uid=(priv and 'p' or 'g')..id,
         priv=priv,
         group=not priv,
+        admin=not priv and Config.groupManaging[id],
         taskList={},
         locks=setmetatable({},lockMapMeta),
         checkpoints={},

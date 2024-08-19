@@ -1,5 +1,6 @@
-adminList.txt
-safeID.txt
+admin.txt
+groupManaging.txt
+safeModeSession.txt
 
 .vscode
 *.ini
