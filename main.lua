@@ -1,4 +1,4 @@
-local Time=love.timer.getTime
+Time=love.timer.getTime
 love._openConsole()
 --------------------------------------------------------------
 require'Zenitha'
@@ -23,6 +23,7 @@ Config={
     debugLog_response=false,
     safeMode=false,
     superAdmin={},
+    safeID={},
 }
 print("--------------------------")
 if love.filesystem.getInfo('adminList.txt') then
@@ -36,6 +37,19 @@ if love.filesystem.getInfo('adminList.txt') then
     end
 else
     print("File 'adminList.txt' not found, no super admin")
+end
+print("--------------------------")
+if love.filesystem.getInfo('safeID.txt') then
+    print("Safe IDs:")
+    for line in love.filesystem.lines('safeID.txt') do
+        local id=tonumber(line)
+        if id then
+            Config.safeID[id]=true
+            print(id)
+        end
+    end
+else
+    print("File 'safeID.txt' not found, no messages will be sent in safe mode")
 end
 --------------------------------------------------------------
 Bot={
@@ -67,6 +81,7 @@ Bot={
 
 ---@class Task_raw
 ---@field func fun(S:Session, M: LLOneBot.Event.Message):boolean
+---@field init fun(S:Session)?
 
 ---@class Task : Task_raw
 ---@field id string
@@ -77,37 +92,32 @@ function Bot.isAdmin(id)
 end
 
 ---@param data LLOneBot.SimpMes
-function Bot.sendMes(data)
-    local mes={params={message=data.message}}
-    if data.user then
-        if Config.safeMode and not TASK.lock('safemode_private_'..data.user,26) then
-            print("Interrupted because of safeMode: User "..data.user)
-            return
-        else
-            mes.action='send_private_msg'
-            mes.params.user_id=data.user
+function Bot.send(data)
+    local mes={action='send_msg',
+        params={
+            user_id=data.user,
+            group_id=data.group,
+            message=data.message,
+        }
+    }
+    if Config.safeMode and not Config.safeID[data.user or data.group] then
+        if TASK.lock('safeModeBlock',10) then
+            print("Message blocked in safe mode")
         end
-    else
-        if Config.safeMode and not TASK.lock('safemode_group_'..data.group,60) then
-            print("Interrupted because of safeMode: Group "..data.group)
-            return
-        else
-            mes.action='send_group_msg'
-            mes.params.group_id=data.group
-        end
+        return
     end
     local suc,res=pcall(JSON.encode,mes)
     if suc then
         ws:send(res)
+        Bot.stat.messageSent=Bot.stat.messageSent+1
+        Bot.stat.totalMessageSent=Bot.stat.totalMessageSent+1
     else
         print("Error encoding json:\n"..debug.traceback(res))
     end
-    Bot.stat.messageSent=Bot.stat.messageSent+1
-    Bot.stat.totalMessageSent=Bot.stat.totalMessageSent+1
 end
 function Bot.adminNotice(text)
     for id in next,Config.superAdmin do
-        Bot.sendMes{user=id,message=text}
+        Bot.send{user=id,message=text}
     end
 end
 function Bot.restart()
@@ -172,6 +182,7 @@ end
 ---@field taskList Task[]
 ---@field locks Map<number>
 ---@field checkpoints Map<number>
+---@field data table
 ---
 ---@field createTime number
 ---@field charge number
@@ -193,6 +204,7 @@ function Session.new(id,priv)
         taskList={},
         locks=setmetatable({},lockMapMeta),
         checkpoints={},
+        data={},
 
         createTime=Time(),
         charge=Config.maxCharge,
@@ -232,6 +244,7 @@ function Session:newTask(id,prio)
         id=id,
         func=task.func,
     })
+    if task.init then task.init(self) end
 end
 ---@param id string
 function Session:removeTask_id(id)
@@ -330,9 +343,9 @@ function Session:receive(M)
 end
 function Session:send(text)
     if self.priv then
-        Bot.sendMes{user=self.id,message=text}
+        Bot.send{user=self.id,message=text}
     else
-        Bot.sendMes{group=self.id,message=text}
+        Bot.send{group=self.id,message=text}
     end
 end
 
