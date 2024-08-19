@@ -19,7 +19,10 @@ return {
         end
 
         local words=STRING.split(phrase,'%s+',true)
-        while #words[#words]>26 do table.remove(words) end
+        while #words[#words]>26 do
+            table.remove(words)
+            if not words[1] then return false end
+        end
 
         local entry
         while #words>0 do
