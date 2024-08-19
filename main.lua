@@ -77,8 +77,8 @@ Bot={
 }
 
 ---@class Task_raw
----@field func fun(S:Session, M: LLOneBot.Event.Message):boolean
----@field init fun(S:Session)?
+---@field func fun(S:Session, M: LLOneBot.Event.Message, D:Session.data):boolean
+---@field init fun(S:Session, D:Session.data)?
 
 ---@class Task : Task_raw
 ---@field id string
@@ -180,6 +180,7 @@ function Bot._update()
     return true
 end
 --------------------------------------------------------------
+---@alias Session.data table
 ---@class Session
 ---@field id number
 ---@field uid string just 'p' or 'g' + id, for being used as unique key in SessionMap
@@ -188,7 +189,7 @@ end
 ---@field taskList Task[]
 ---@field locks Map<number>
 ---@field checkpoints Map<number>
----@field data table
+---@field data Map<Session.data>
 ---
 ---@field createTime number
 ---@field charge number
@@ -252,7 +253,8 @@ function Session:newTask(id,prio)
         id=id,
         func=task.func,
     })
-    if task.init then task.init(self) end
+    self.data[id]={}
+    if task.init then task.init(self,self.data[id]) end
 end
 ---@param id string
 function Session:removeTask_id(id)
@@ -340,7 +342,7 @@ end
 
 function Session:receive(M)
     for _,task in next,self.taskList do
-        local suc2,res2=pcall(task.func,self,M)
+        local suc2,res2=pcall(task.func,self,M,self.data[task.id])
         if suc2 then
             if res2==true then break end
         else

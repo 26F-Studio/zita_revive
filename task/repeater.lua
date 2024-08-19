@@ -3,22 +3,19 @@ local goodWords=STRING.split("太强了 厉害 牛逼 大神 好玩"," ")
 local signs=TABLE.getValueSet(STRING.split([[` ~ ! @ # $ % ^ & * ( ) _ + - = [ ] \ { } | ; ' : " , . / < > ?]]," "))
 ---@type Task_raw
 return {
-    init=function(S)
-        S.data.repeater={
-            messageCharge=0,
+    init=function(_,D)
+            D.messageCharge=0
 
-            lastmes="",
-            repMesCount=0,
-            repeaters={},
-        }
+            D.lastmes=""
+            D.repMesCount=0
+            D.repeaters={}
     end,
-    func=function(S,M)
+    func=function(S,M,D)
         -- Filter not-simple messages
         if S:getLock('repeater_cooldown') then return false end
         local mes=M.raw_message
         if #mes>62 then return false end
         if signs[mes:sub(1,1)] then return false end
-        local D=S.data.repeater
         if mes==D.lastmes and D.repMesCount<0 then return false end
         for _,word in next,badWords do if mes:lower():find(word) then return false end end
 
