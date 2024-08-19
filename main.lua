@@ -19,7 +19,8 @@ local ws=WS.new{
 Config={
     receiveDelay=0.26,
     maxCharge=620,
-    debugLog_message=false,
+    debugLog_send=false,
+    debugLog_receive=false,
     debugLog_response=false,
     safeMode=true,
     superAdmin={},
@@ -93,14 +94,14 @@ end
 
 ---@param data LLOneBot.SimpMes
 function Bot.send(data)
-    local mes={action='send_msg',
+    local mes={
+        action='send_msg',
         params={
             user_id=data.user,
             group_id=data.group,
             message=data.message,
         }
     }
-    print(data.user or data.group)
     if Config.safeMode and not Config.safeID[data.user or data.group] then
         if TASK.lock('safeModeBlock',10) then
             print("Message blocked in safe mode")
@@ -109,6 +110,9 @@ function Bot.send(data)
     end
     local suc,res=pcall(JSON.encode,mes)
     if suc then
+        if Config.debugLog_send then
+            print(TABLE.dump(mes))
+        end
         ws:send(res)
         Bot.stat.messageSent=Bot.stat.messageSent+1
         Bot.stat.totalMessageSent=Bot.stat.totalMessageSent+1
@@ -161,7 +165,7 @@ function Bot._update()
         elseif res.post_type=='message' then
             ---@cast res LLOneBot.Event.Message
             local priv=res.message_type=='private'
-            local id=res.user_id or res.group_id
+            local id=priv and res.user_id or res.group_id
             local S=SessionMap[(priv and 'p' or 'g')..id]
             if not S then
                 S=Session.new(id,priv)

@@ -68,7 +68,7 @@ local commands={
         local on=args[1]==''
         print("Log: "..(on and "on" or "off"))
         S:send(on and "小z开始日志了喵！" or "小z停止日志了喵！")
-        Config.debugLog_message=on
+        Config.debugLog_receive=on
     end,
     ['%stat']=function(S)
         local result=STRING.repD(STRING.trimIndent[[
