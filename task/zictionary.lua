@@ -55,9 +55,10 @@ return {
         end
         if entry.detail then
             S:lock('detailedEntry',420)
-            D.lastDetailEntry=entry
             if showDetail then
                 result=result.."\n"..entry.detail
+            else
+                D.lastDetailEntry=entry
             end
         end
         if entry.link then
