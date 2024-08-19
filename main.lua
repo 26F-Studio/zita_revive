@@ -421,5 +421,7 @@ TASK.new(function()
         end
     end
 end)
+
+print("--------------------------")
 for i=1,#Bot.taskPriv do require('task.'..Bot.taskPriv[i][1]) end
 for i=1,#Bot.taskGroup do require('task.'..Bot.taskGroup[i][1]) end

@@ -4,13 +4,25 @@ assert(Dict,"Dict data not found")
 return {
     init=function(_,D)
         D.lastDetailEntry=false
+        D.entries=Dict.entries
+        Dict.entries=nil
     end,
     func=function(S,M,D)
         ---@cast M LLOneBot.Event.PrivateMessage|LLOneBot.Event.GroupMessage
 
         local mes=M.raw_message
+        local daily
         mes=STRING.trim(mes)
-        if mes=='##' then
+        if mes=='#' then
+            if S:lock('dailyEntry',600) then
+                math.randomseed(tonumber(os.date('%Y%m%d')) or 26)
+                for _=1,42 do math.random() end
+                mes='#'..D.entries[math.random(#D.entries)].word
+                if mes:find(';') then mes=mes:match('(.-);') end
+                math.randomseed(os.time())
+                daily=true
+            end
+        elseif mes=='##' then
             if S:getLock('detailedEntry') then
                 S:send("##"..D.lastDetailEntry.title.." (续)\n"..D.lastDetailEntry.detail)
                 D.lastDetailEntry=false
@@ -49,7 +61,7 @@ return {
         end
         if not entry then return false end
 
-        local result=(entry.detail and "##" or "#")..entry.title
+        local result=(daily and "【今日词条】\n" or "")..(entry.detail and "##" or "#")..entry.title
         if entry.text then
             result=result.."\n"..entry.text
         end

@@ -1016,7 +1016,7 @@ local contributor={
     },
 }
 
-local zict={}
+local zict={entries={}}
 local function checkWords(entry)
     if entry.word:find("；") then
         print("Fullwidth semicolon found in entry '"..entry.title.."'")
@@ -1033,6 +1033,7 @@ local function loadData(data)
                 zict[word]=entry
             end
         end
+        table.insert(zict.entries,entry)
     end
 end
 loadData(meta)
@@ -1042,5 +1043,6 @@ loadData(game)
 loadData(abbr)
 loadData(extra_tetrio)
 loadData(contributor)
+print("Zictionary Data Loaded, total "..#zict.entries.." entries,")
 
 return zict
