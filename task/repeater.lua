@@ -40,14 +40,14 @@ return {
         end
 
         local repChance=
-            0.005*(2-#mes/62)
-            +math.min(D.messageCharge*0.001,0.005)
+            0.005*(1-#mes/62)
+            +math.min(D.messageCharge*0.001,0.01)
             +D.repMesCount*.1
 
         if repChance>-.01 then
             for _,word in next,goodWords do
                 if mes:find(word) then
-                    repChance=repChance+.01
+                    repChance=repChance+.062
                     break
                 end
             end
