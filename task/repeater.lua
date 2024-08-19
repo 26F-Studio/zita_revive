@@ -9,24 +9,34 @@ return {
 
             lastmes="",
             repMesCount=0,
+            repeaters={},
         }
     end,
     func=function(S,M)
         -- Filter not-simple messages
-        if S.priv or S:getLock('repeater_cooldown') then return false end
+        if S:getLock('repeater_cooldown') then return false end
         local mes=M.raw_message
         if #mes>62 then return false end
         if signs[mes:sub(1,1)] then return false end
+        local D=S.data.repeater
+        if mes==D.lastmes and D.repMesCount<0 then return false end
         for _,word in next,badWords do if mes:lower():find(word) then return false end end
 
         -- Prepare
-        local D=S.data.repeater
         D.messageCharge=D.messageCharge+1
         if mes==D.lastmes then
-            D.repMesCount=D.repMesCount+1
+            if not TABLE.find(D.repeaters,M.user_id) then
+                table.insert(D.repeaters,M.user_id)
+                D.repMesCount=D.repMesCount+1
+            end
         else
             D.lastmes=mes
             D.repMesCount=0
+            if D.repeaters[2] then
+                D.repeaters={M.user_id}
+            else
+                D.repeaters[1]=M.user_id
+            end
         end
 
         local repChance=
@@ -50,6 +60,7 @@ return {
 
         if repChance>0 and MATH.roll(repChance) then
             D.messageCharge=0
+            D.repMesCount=-1 -- Mark current round as repeated
             S:lock('repeater_cooldown',26)
             S:send(mes)
         end
