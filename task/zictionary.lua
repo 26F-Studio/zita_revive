@@ -10,6 +10,24 @@ return {
         local phrase=mes:match('#.+')
         if not phrase then return false end
         phrase=phrase:lower()
+
+        local entry
+        if mes:find(phrase,1,true)==1 then
+            entry=Dict[phrase]
+        else
+            local words=STRING.split(phrase,'%s+',true)
+            while #words[#words]>26 do
+                table.remove(words)
+                if not words[1] then return false end
+            end
+            while #words>0 do
+                entry=Dict[table.concat(words,'')]
+                if entry then break end
+                table.remove(words)
+            end
+        end
+        if not entry then return false end
+
         local detail
         if phrase:sub(1,2)=='##' then
             phrase=phrase:sub(3)
@@ -17,20 +35,6 @@ return {
         else
             phrase=phrase:sub(2)
         end
-
-        local words=STRING.split(phrase,'%s+',true)
-        while #words[#words]>26 do
-            table.remove(words)
-            if not words[1] then return false end
-        end
-
-        local entry
-        while #words>0 do
-            entry=Dict[table.concat(words,'')]
-            if entry then break end
-            table.remove(words)
-        end
-        if not entry then return false end
 
         local result=entry.title
         if entry.detail then
