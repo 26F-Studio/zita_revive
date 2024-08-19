@@ -1,4 +1,13 @@
-local envValues={'next','print','tonumber','tostring','ipairs','pairs','math','string','table','MATH','STRING','TABLE','Config','SessionMap','Bot','Session'}
+local envValues={
+    'next','print',
+    'tonumber','tostring',
+    'ipairs','pairs',
+    'pcall','xpcall',
+    'math','string','table',
+    'MATH','STRING','TABLE',
+    'Config','SessionMap','Bot','Session',
+    'Time',
+}
 table.sort(envValues)
 local codeEnv={}
 for _,v in next,envValues do
