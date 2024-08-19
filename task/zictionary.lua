@@ -2,14 +2,35 @@ local Dict=FILE.load('task/zictionary_data.lua','-lua')
 assert(Dict,"Dict data not found")
 ---@type Task_raw
 return {
-    func=function(S,M)
+    init=function(_,D)
+        D.lastDetailEntry=false
+    end,
+    func=function(S,M,D)
         ---@cast M LLOneBot.Event.PrivateMessage|LLOneBot.Event.GroupMessage
 
         local mes=M.raw_message
         mes=STRING.trim(mes)
+        if mes=='##' then
+            if S:getLock('detailedEntry') then
+                S:send("##"..D.lastDetailEntry.title.." (续)\n"..D.lastDetailEntry.detail)
+                D.lastDetailEntry=false
+                S:unlock('detailedEntry')
+            else
+                if S:forceLock('doubleSharp',26) then S:send("最近没查过含有补充信息的词条喵~") end
+            end
+            return true
+        end
         local phrase=mes:match('#.+')
         if not phrase then return false end
         phrase=phrase:lower()
+
+        local showDetail
+        if phrase:sub(1,2)=='##' then
+            phrase=phrase:sub(3)
+            showDetail=true
+        else
+            phrase=phrase:sub(2)
+        end
 
         local entry
         if mes:find(phrase,1,true)==1 then
@@ -28,23 +49,16 @@ return {
         end
         if not entry then return false end
 
-        local detail
-        if phrase:sub(1,2)=='##' then
-            phrase=phrase:sub(3)
-            detail=true
-        else
-            phrase=phrase:sub(2)
-        end
-
-        local result=entry.title
-        if entry.detail then
-            result="*"..result
-        end
+        local result=(entry.detail and "##" or "#")..entry.title
         if entry.text then
-            result=result..":\n"..entry.text
+            result=result.."\n"..entry.text
         end
-        if detail and entry.detail then
-            result=result.."\n"..entry.detail
+        if entry.detail then
+            S:lock('detailedEntry',420)
+            D.lastDetailEntry=entry
+            if showDetail then
+                result=result.."\n"..entry.detail
+            end
         end
         if entry.link then
             result=result.."\n相关链接: "..entry.link
