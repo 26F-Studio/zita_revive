@@ -1,6 +1,4 @@
-admin.txt
-groupManaging.txt
-safeModeSession.txt
+conf.luaon
 
 .vscode
 *.ini

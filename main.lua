@@ -17,55 +17,37 @@ local ws=WS.new{
     sleepInterval=0.1,
 }
 Config={
+    adminName="管理员",
     receiveDelay=0.26,
     maxCharge=620,
     debugLog_send=false,
     debugLog_receive=false,
     debugLog_response=false,
     safeMode=false,
-    adminID={},
+    superAdminID={},
     groupManaging={},
     safeSessionID={},
 }
+xpcall(function()
+    local data=FILE.load('conf.luaon','-luaon')
+    Config.adminName=data.adminName
+    Config.superAdminID=TABLE.getValueSet(data.superAdminID)
+    Config.groupManaging=TABLE.getValueSet(data.groupManaging)
+    Config.safeSessionID=TABLE.getValueSet(data.safeSessionID)
+    Config.extraData=data.extraData
+    print("conf.luaon successfully loaded")
+end,function(mes)
+    print("Error in loading conf.luaon: "..mes)
+    print("Some settings may not be loaded correctly")
+end)
 print("--------------------------")
-if love.filesystem.getInfo('admin.txt') then
-    print("Super Admins:")
-    for line in love.filesystem.lines('admin.txt') do
-        local id=tonumber(line)
-        if id then
-            Config.adminID[id]=true
-            print(id)
-        end
-    end
-else
-    print("File 'admin.txt' not found, no super admin")
-end
-print("--------------------------")
-if love.filesystem.getInfo('groupManaging.txt') then
-    print("Managing groups:")
-    for line in love.filesystem.lines('groupManaging.txt') do
-        local id=tonumber(line)
-        if id then
-            Config.groupManaging[id]=true
-            print(id)
-        end
-    end
-else
-    print("File 'groupManaging.txt' not found, no groups in Config.manageGroup")
-end
-print("--------------------------")
-if love.filesystem.getInfo('safeModeSession.txt') then
-    print("Safe IDs:")
-    for line in love.filesystem.lines('safeModeSession.txt') do
-        local id=tonumber(line)
-        if id then
-            Config.safeSessionID[id]=true
-            print(id)
-        end
-    end
-else
-    print("File 'safeModeSession.txt' not found, no messages will be sent in safe mode")
-end
+print("Admin name: "..Config.adminName)
+print("# Super admin ID:")
+for id in next,Config.superAdminID do print(id) end
+print("# Group managing:")
+for id in next,Config.groupManaging do print(id) end
+print("# Safe session ID:")
+for id in next,Config.safeSessionID do print(id) end
 --------------------------------------------------------------
 Bot={
     taskPriv={
@@ -103,7 +85,7 @@ Bot={
 ---@field prio number
 
 function Bot.isAdmin(id)
-    return Config.adminID[id]
+    return Config.superAdminID[id]
 end
 
 ---@param data LLOneBot.SimpMes
@@ -135,7 +117,7 @@ function Bot.send(data)
     end
 end
 function Bot.adminNotice(text)
-    for id in next,Config.adminID do
+    for id in next,Config.superAdminID do
         Bot.send{user=id,message=text}
     end
 end

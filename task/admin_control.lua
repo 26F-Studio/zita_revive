@@ -108,14 +108,14 @@ TABLE.reIndex(commands)
 
 local texts={
     {
-        "Z酱才能这样做喵",
+        Config.adminName.."才能这样做喵",
         "你没有足够的权限喵",
         "Permission Denied喵",
     },
     {
         "你是谁！（后跳）",
         "听不懂喵！！！！！",
-        "只有Z酱才能这样命令我喵！！",
+        "只有"..Config.adminName.."才能这样命令我喵！！",
     },
 }
 local function no_permission(S,i)
