@@ -30,13 +30,30 @@ local commands={
     ['%restart']=function(S,args)
         print("[RESTART]")
         if args[1]=='all' then
-            S:send("这是什么，喷一下（对着自己）")
+            S:send("（咚）\n……\n我是谁来着喵？")
             Bot.restart()
-        elseif tonumber(args[1]) then
-            S:send("小z忘记那里的事情了喵！")
-            SessionMap[tonumber(args[1])]=nil
+        elseif args[1] then
+            local uid=args[1]
+            if not SessionMap[uid] then
+                local privS=SessionMap['p'..uid]
+                local groupS=SessionMap['g'..uid]
+                if privS and groupS then
+                    print("Twin Session: "..uid)
+                    S:send("有两个会话奇迹般地id一样喵！小z不知道是指哪个喵！")
+                elseif privS or groupS then
+                    uid=privS and privS.uid or groupS.uid
+                end
+            end
+            if SessionMap[uid] then
+                print("Delete Session: "..uid)
+                S:send("小z忘记那里的事情了喵！")
+                SessionMap[uid]=nil
+            else
+                print("No Session: "..uid)
+                S:send("小z不知道那是哪里喵…？")
+            end
         else
-            S:send("（咚）\n……\n小z失忆了喵！")
+            S:send("（咚）\n……\n这里是哪里喵？")
             SessionMap[S.id]=nil
         end
     end,

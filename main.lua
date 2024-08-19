@@ -21,7 +21,7 @@ Config={
     maxCharge=620,
     debugLog_message=false,
     debugLog_response=false,
-    safeMode=false,
+    safeMode=true,
     superAdmin={},
     safeID={},
 }
@@ -100,6 +100,7 @@ function Bot.send(data)
             message=data.message,
         }
     }
+    print(data.user or data.group)
     if Config.safeMode and not Config.safeID[data.user or data.group] then
         if TASK.lock('safeModeBlock',10) then
             print("Message blocked in safe mode")
@@ -160,8 +161,12 @@ function Bot._update()
         elseif res.post_type=='message' then
             ---@cast res LLOneBot.Event.Message
             local priv=res.message_type=='private'
-            local S=SessionMap[priv and res.user_id or res.group_id]
-            if not S then S=Session.new(priv and res.user_id or res.group_id,priv) end
+            local id=res.user_id or res.group_id
+            local S=SessionMap[(priv and 'p' or 'g')..id]
+            if not S then
+                S=Session.new(id,priv)
+                SessionMap[S.uid]=S
+            end
             S:receive(res)
         elseif res.post_type=='notice' then
             -- TODO
@@ -177,6 +182,7 @@ end
 --------------------------------------------------------------
 ---@class Session
 ---@field id number
+---@field uid string just 'p' or 'g' + id, for being used as unique key in SessionMap
 ---@field priv boolean
 ---@field group boolean #not priv
 ---@field taskList Task[]
@@ -199,6 +205,7 @@ function Session.new(id,priv)
     ---@type Session
     local s={
         id=id,
+        uid=(priv and 'p' or 'g')..id,
         priv=priv,
         group=not priv,
         taskList={},
@@ -349,19 +356,8 @@ function Session:send(text)
     end
 end
 
----@type table<number, Session>
+---@type table<string, Session>
 SessionMap={}
----@param id number
----@param priv boolean
----@return Session
-function GetSession(id,priv)
-    local S=SessionMap[id]
-    if not S then
-        S=Session.new(id,priv)
-        SessionMap[id]=S
-    end
-    return S
-end
 --------------------------------------------------------------
 ZENITHA.globalEvent.drawCursor=NULL
 ZENITHA.globalEvent.clickFX=NULL
