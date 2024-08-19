@@ -547,183 +547,13 @@ local pattern={
         detail="能称为定式的摆法要尽量满足以下至少2~3条：\n能适应大多数块序\n输出高，尽量不浪费T块\n很多方块无需软降，极简操作数少\n有明确后续，分支尽量少\n\n注：bag7序列的规律性太强，才让定式称为可能",
     },
     {
-        word="dt;dt炮",
-        title="DT炮",
-        text="Double-Triple Cannon",
-        link="harddrop.com/wiki?search=dt",
-    },
-    {
-        word="dtpc",
-        title="DTPC",
-        text="DT炮一个能接PC的分支",
-        link="harddrop.com/wiki?search=dt",
-    },
-    {
-        word="bt;bt炮",
-        title="BT炮",
-        text="β炮（Beta炮）",
-        link="harddrop.com/wiki?search=bt_cannon",
-    },
-    {
-        word="btpc",
-        title="BTPC",
-        text="BT炮一个能接PC的分支",
-        link="harddrop.com/wiki?search=bt_cannon",
-    },
-    {
-        word="ddpc",
-        title="DDPC",
-        text="开局TSD的一个能接Double-Double-PC的分支",
-        link="harddrop.com/wiki?search=TKI_3_Perfect_Clear",
-    },
-    {
-        word="qt;qt炮",
-        title="QT炮",
-        text="一种能以更高的概率搭出开局DT Attack的类似DT炮的定式",
-        link="harddrop.com/wiki?search=dt",
-    },
-    {
-        word="mt;mt炮",
-        title="MT",
-        text="Mini-Triple，一个TSM+TST的结构",
-        link="harddrop.com/wiki?search=mt",
-    },
-    {
-        word="trinity",
-        title="Trinity",
-        text="Trinity，一个TSD+TSD+TSD或TSM+TST+TSD的结构",
-        link="harddrop.com/wiki?search=trinity",
-    },
-    {
-        word="狼月炮",
-        title="狼月炮",
-        text="狼月炮",
-        link="harddrop.com/wiki?search=wolfmoon_cannon",
-    },
-    {
-        word="sewer",
-        title="Sewer",
-        text="Sewer开局",
-        link="harddrop.com/wiki?search=sewer",
-    },
-    {
-        word="tki;tki3;tki-3",
-        title="TKI",
-        text="TKI-3开局，有两种解释，一个是TSD开局的TKI-3，另一个是TST开局的TKI堆积（C-Spin）",
-        link="harddrop.com/wiki?search=TKI_3_Opening",
-    },
-    {
-        word="god spin",
-        title="God Spin",
-        text="God Spin，windkey发明的一个观赏性很强但实战没啥用的炫酷特殊T2+T3开局定式",
-        link="harddrop.com/wiki?search=godspin",
-    },
-    {
-        word="信天翁",
-        title="信天翁",
-        text="一种高观赏性几乎不浪费T的快节奏强力T2-T3-T2-PC开局",
-        link="harddrop.com/wiki?search=Albatross_Special",
-    },
-    {
-        word="鹈鹕",
-        title="鹈鹕",
-        text="一种类似信天翁的定式，在块序不能信天翁的时候可以用",
-        link="harddrop.com/wiki?search=Pelican",
-    },
-    {
-        word="全消开局;全清开局",
-        title="全消开局",
-        text="Perfect Clear Opener，一种极大概率能摆出来，有概率（hold I约84.6%，不hold I约61.2%）能做到PC的定式，Techmino中的pc练习中空出不规则区域的那个就是PCO",
-        link="harddrop.com/wiki?search=Perfect_Clear_Opener",
-    },
-    {
-        word="六巧板",
-        title="六巧板",
-        text="Grace System，大约有88.57%概率能做到PC的定式，Techmino中的PC练习中空出4×4方形区域就是六巧板",
-    },
-    {
-        word="dpc",
-        title="DPC",
-        text="在场地空白，7bag还剩一块的情况下，能在很多情况下达到100%搭建率的TSD+PC的定式。更多信息见tetristemplate.info",
-        link="tetristemplate.info/dpc",
-    },
-    -- 形状
-    {
         word="中局定式",
         title="中局定式",
         text="指一些特定的能打出较高伤害的常见典型形状，是中局输出的途径之一，部分也可以在开局做不过不是很有必要，主要见于中局\n另见 #开局定式",
     },
     {
-        word="c-spin",
-        title="C-Spin",
-        text="也被称为TKI堆积，TD-Attack",
-        link="harddrop.com/wiki?search=c-spin",
-    },
-    {
-        word="stsd",
-        title="STSD",
-        text="Super T-spin Double，一种能做两个T2的形状\n如果垃圾行正好空在STSD正下方会暴毙",
-        link="harddrop.com/wiki?search=stsd",
-    },
-    {
-        word="stmb",
-        title="STMB",
-        text="STMB cave，在3宽坑架SZ捐一个T2的形状",
-        link="harddrop.com/wiki?search=stmb_cave",
-    },
-    {
-        word="双刃剑",
-        title="双刃剑",
-        text="两个T2形状叠在一起",
-        link="harddrop.com/wiki?search=Fractal",
-    },
-    {
-        word="lst;lst堆叠",
-        title="LST堆叠",
-        text="一种不断b2b一直做T2的堆叠方法",
-        link="www.bilibili.com/read/cv7946210",
-    },
-    {
-        word="汉堡;汉堡包",
-        title="汉堡包",
-        text="一种边缘捐T不影响消四的堆叠法",
-        link="harddrop.com/wiki?search=hamburger",
-    },
-    {
-        word="皇十;皇家十字",
-        title="皇家十字",
-        text="在一个十字形洞口盖屋檐后可以做两个T2的形状",
-        link="harddrop.com/wiki?search=imperial_cross",
-    },
-    {
-        word="阶梯;阶梯捐",
-        title="阶梯捐",
-        text="一种在看起来像阶梯的洞口捐一个T2的形状",
-        link="harddrop.com/wiki?search=kaidan",
-    },
-    {
-        word="社畜train",
-        title="社畜train",
-        text="一种在常见T3屋檐上捐两个T2的形状",
-        link="harddrop.com/wiki?search=Shachiku_Train",
-    },
-    {
-        word="千鸟;千鸟格子",
-        title="千鸟格子",
-        text="一种在小洞上捐一个T2后还能做一个T2的形状",
-        link="harddrop.com/wiki?search=Cut_copy",
-    },
-    {
-        word="绯红之王",
-        title="绯红之王",
-        text="在STSD上叠若干个T3的形状",
-        link="harddrop.com/wiki?search=King_Crimson",
-    },
-    {
-        word="连续pc",
-        title="连续PC",
-        text="研究群群友加加编写的一份连续PC教程",
-        link="docs.qq.com/sheet/DRmxvWmt3SWxwS2tV",
+        word="dt;dt炮;dtpc;bt;bt炮;btpc;ddpc;qt;qt炮;mt;mt炮;trinity;狼月炮;sewer;tki;tki3;tki-3;god spin;信天翁;鹈鹕;全消开局;全清开局;六巧板;dpc;c-spin;stsd;stmb;双刃剑;lst;lst堆叠;汉堡;汉堡包;皇十;皇家十字;阶梯;阶梯捐;社畜train;千鸟;千鸟格子;绯红之王;连续pc",
+        title="定式相关信息正在维护，请到 #灰机wiki 查看",
     },
 }
 local game={
@@ -1076,7 +906,7 @@ local extra_tetrio={
         text="双人 （塔罗牌：恋人 The Lovers）\n会员玩家可以邀请其他人和自己两个人一起玩此模式，两个人发送出去给别人的伤害数值减半，一个人死了后另一个人可以做任务复活队友",
     },
 }
-local people={
+local contributor={
     {
         word="小z;zita",
         title="喵喵？是我哦",
@@ -1206,6 +1036,6 @@ loadData(pattern)
 loadData(game)
 loadData(abbr)
 loadData(extra_tetrio)
-loadData(people)
+loadData(contributor)
 
 return zict
