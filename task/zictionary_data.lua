@@ -112,6 +112,46 @@ local main={
         title="APL",
         text="Attack per Line，攻击每行（效率通常指APL）。例如消四的效率就比消二高（消四打4➗4行=1效；消二打1➗2行=0.5效）",
     },
+    {
+        word="tas",
+        title="TAS",
+        text="Tool-Assisted Speedrun (Supergaming)\n使用特殊工具在仅仅不破坏游戏规则（游戏程序层面的规则）的条件下进行游戏\n一般用于冲击理论值或者达成各种有趣的目标用来观赏",
+    },
+    {
+        word="timing",
+        title="Timing",
+        text="Time作动词时的动名词形式，意为抓时机。在方块中基本是根据双方形势决定自己的策略选择时机攻击，或者故意吃下对手的攻击来给对手输出更多伤害",
+        detail="Timing可以一定程度上提高对战的优势，但这是偏后期的内容，有看双方场框分析形势的精力不如把自己的场地看明白，提速提效的收益更大",
+    },
+    {
+        word="sub",
+        title="sub",
+        text="在……之下\n用于表示成绩，不说项目默认是40L，单位一般可不写，比如40L成绩Sub 30是秒，1000行Sub 15是分钟",
+        detail="例：39.95s是Sub 40，40.1s不是Sub 40\n不建议使用Sub 62之类的词，因为sub本身就是表示大约，一分钟左右的成绩精确到5~10s就可以了，大约30s内的成绩用sub表示的时候精确到1s才比较合适",
+    },
+    {
+        word="freestyle;free",
+        title="Freestyle",
+        text="自由发挥，常用于freestyle TSD (T2)，指不用固定的堆叠方式而是随机应变完成20TSD。比用LST或者垃圾分类完成的20 TSD的难度要大，成绩也更能代表实战水平",
+    },
+    {
+        word="glhf",
+        title="glhf",
+        text="Good luck (and) have fun，祝好运 玩得开心\n打招呼用语，可以原样回复",
+    },
+    {
+        word="golf",
+        title="glhf的整活版本",
+    },
+    {
+        word="gg;ggs",
+        title="gg(s)",
+        text="Good game (s)，打得不错\n游戏结束时的常用语，可以原样回复",
+    },
+    {
+        word="eggs",
+        title="ggs的整活版本",
+    },
     -- 消除名
     {
         word="quad;techrash;消四",
@@ -797,48 +837,6 @@ local game={
         text="Windows | 多人\n腾讯游戏大厅的方块，场地12列，打字的 DAS 和 ARR，1 Next无 Hold，攻击途径只有消4打3、 消3打2，垃圾行为国际象棋棋盘式，几乎不可能挖掘",
     },
 }
-local abbr={
-    {
-        word="tas",
-        title="TAS",
-        text="Tool-Assisted Speedrun (Supergaming)\n使用特殊工具在仅仅不破坏游戏规则（游戏程序层面的规则）的条件下进行游戏\n一般用于冲击理论值或者达成各种有趣的目标用来观赏",
-    },
-    {
-        word="timing",
-        title="Timing",
-        text="Time作动词时的动名词形式，意为抓时机。在方块中基本是根据双方形势决定自己的策略选择时机攻击，或者故意吃下对手的攻击来给对手输出更多伤害",
-        detail="Timing可以一定程度上提高对战的优势，但这是偏后期的内容，有看双方场框分析形势的精力不如把自己的场地看明白，提速提效的收益更大",
-    },
-    {
-        word="sub",
-        title="sub",
-        text="在……之下\n用于表示成绩，不说项目默认是40L，单位一般可不写，比如40L成绩Sub 30是秒，1000行Sub 15是分钟",
-        detail="例：39.95s是Sub 40，40.1s不是Sub 40\n不建议使用Sub 62之类的词，因为sub本身就是表示大约，一分钟左右的成绩精确到5~10s就可以了，大约30s内的成绩用sub表示的时候精确到1s才比较合适",
-    },
-    {
-        word="freestyle;free",
-        title="Freestyle",
-        text="自由发挥，常用于freestyle TSD (T2)，指不用固定的堆叠方式而是随机应变完成20TSD。比用LST或者垃圾分类完成的20 TSD的难度要大，成绩也更能代表实战水平",
-    },
-    {
-        word="glhf",
-        title="glhf",
-        text="Good luck (and) have fun，祝好运 玩得开心\n打招呼用语，可以原样回复",
-    },
-    {
-        word="golf",
-        title="glhf的整活版本",
-    },
-    {
-        word="gg;ggs",
-        title="gg(s)",
-        text="Good game (s)，打得不错\n游戏结束时的常用语，可以原样回复",
-    },
-    {
-        word="eggs",
-        title="ggs的整活版本",
-    },
-}
 local extra_tetrio={
     {
         word="qp2;io s2",
@@ -1048,13 +1046,14 @@ local function loadData(data)
         table.insert(zict.entries,entry)
     end
 end
+
 loadData(meta)
 loadData(main)
 loadData(pattern)
 loadData(game)
-loadData(abbr)
 loadData(extra_tetrio)
 loadData(contributor)
-print("Zictionary Data Loaded, total "..#zict.entries.." entries,")
+
+print("Zictionary Data Loaded, total "..#zict.entries.." entries")
 
 return zict
