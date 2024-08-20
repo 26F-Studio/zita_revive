@@ -1,14 +1,14 @@
-local badWords=STRING.split("& cq: zita z酱 mrz tech 我 傻 逼 菜 弱 典 孝 急 色"," ")
+local badWords=STRING.split("& cq: zita z酱 mrz tech 我 妈 丁 傻 逼 菜 弱 典 孝 急 绷 色 操 屄 吐"," ")
 local goodWords=STRING.split("太强了 厉害 牛逼 大神 好玩"," ")
 local signs=TABLE.getValueSet(STRING.split([[` ~ ! @ # $ % ^ & * ( ) _ + - = [ ] \ { } | ; ' : " , . / < > ?]]," "))
 ---@type Task_raw
 return {
     init=function(_,D)
-            D.messageCharge=0
+        D.messageCharge=0
 
-            D.lastmes=""
-            D.repMesCount=0
-            D.repeaters={}
+        D.lastmes=""
+        D.repMesCount=0
+        D.repeaters={}
     end,
     func=function(S,M,D)
         -- Filter not-simple messages
@@ -17,7 +17,8 @@ return {
         if #mes>62 then return false end
         if signs[mes:sub(1,1)] then return false end
         if mes==D.lastmes and D.repMesCount<0 then return false end
-        for _,word in next,badWords do if mes:lower():find(word) then return false end end
+        local lmes=mes:lower()
+        for _,word in next,badWords do if lmes:find(word) then return false end end
 
         -- Prepare
         D.messageCharge=D.messageCharge+1
