@@ -1,9 +1,20 @@
+---@class ZictEntry
+---@field word string
+---@field title string
+---@field text string
+---@field detail? string
+---@field link? string
+---@field func? fun(words:string[]):string
+
 --[[
     word是每个词条的查询关键词，多个名称用分号分隔，目前访问词条必须完全匹配其中的一个（不过英文字母大小写和空格会被忽略，例如a b c和ABC视为同一个东西）。
-    title是词条第一行内容
-    text是词条的正文
-    link可选，如果有的话会在最后一行显示为“相关链接：xxx.com”
+    title，第一行内容
+    text，正文
+    detail，可选，补充内容（用##来查询）
+    link，可选，如果有的话会在最后一行显示为“相关链接：xxx.com”
+    func，可选，用于实现特殊词条
 ]]
+
 local meta={
     {
         word="词典;小z词典;zict;zictionary",
@@ -11,8 +22,8 @@ local meta={
     },
     {
         word="复读",
-        title="？竟然对这个感兴趣吗…\n初始概率0.5%，随消息长度逐渐减小到0%\n每一条没复读的消息+0.1%最多1%，每一条其他人的复读临时+10%",
-        detail="每次复读26秒后进入冷静期，所有消息无效\n超过62B和包含坏词的消息视为无效\n包含好词的消息+6.2%\n同一轮复读不会多次参与，多次参与的人也不计数",
+        text="？竟然对这个感兴趣吗…\n初始概率0.5%，随消息长度逐渐减小到0%\n每一条没复读的消息+0.1%最多1%，每一条其他人的复读临时+10%",
+        detail="每次复读26秒后进入冷静期，所有消息无效\n超过62字节和包含坏词的消息视为无效\n包含好词的消息+6.2%\n同一轮复读不会多次参与，多次参与的人也不计数",
     },
     {
         word="新人;萌新",
@@ -193,7 +204,7 @@ local main={
         text="一些游戏会使用Mini标签来对部分Spin进行弱化，不同游戏的判定差异很大且通常很复杂，建议只记住常见形状即可",
     },
     {
-        word="all spin",
+        word="all spin;all-spin",
         title="All Spin",
         text="规则名，指用所有方块进行Spin消除都能获得奖励，而不是通常仅T-spin才能打出攻击(T-Spin Only)",
     },
@@ -924,105 +935,103 @@ local extra_tetrio={
 local contributor={
     {
         word="小z;zita",
-        title="喵喵？是我哦",
+        text="喵喵？是我哦",
     },
     {
         word="26f studio;26f;26楼;26楼工作室",
-        title="是我家喵",
+        text="是我家喵",
         link="studio26f.org",
     },
     {
         word="mrz;z酱",
-        title="T026.MrZ，Techmino的主创、主程、音乐、音效、主美(?)\n也是另一个我喵！",
+        text="T026.MrZ，Techmino的主创、主程、音乐、音效、主美(?)\n也是另一个我喵！",
         link="space.bilibili.com/225238922",
     },
     {
         word="T1080;Particle_G;ParticleG;pg",
-        title="T1080.Particle_G，Techmino的CI、主后端、程序",
+        text="T1080.Particle_G，Techmino的CI、主后端、程序",
     },
     {
         word="T0812;T812;scdhh;呵呵",
-        title="T0812.呵呵，写了好几个块群bot，Techmino的CI、后端",
+        text="T0812.呵呵，写了好几个块群bot，Techmino的CI、后端",
     },
     {
         word="T114;flyz;flaribbit;小飞翔;fxg",
-        title="T114.flyz，Techmino的CI、后端",
+        text="T114.flyz，Techmino的CI、后端",
         link="space.bilibili.com/787096",
     },
     {
         word="T1379;Trebor",
-        title="T1379.Trebor，Techmino的CI、后端、程序、音乐",
+        text="T1379.Trebor，Techmino的CI、后端、程序、音乐",
         link="space.bilibili.com/502473020",
     },
     {
         word="chno;C29H25N3O5;芙兰喵",
-        title="Techmino的UI/UX、音乐、周边美术",
+        text="Techmino的UI/UX、音乐、周边美术",
     },
     {
         word="T7023;Miya",
-        title="T7023，块群吉祥物猫猫，Techmino的插图、配音",
+        text="T7023，块群吉祥物猫猫，Techmino的插图、配音",
         link="space.bilibili.com/846180",
     },
     {
         word="T0210;T210;Mono",
-        title="T0210，Techmino的插图、配音",
+        text="T0210，Techmino的插图、配音",
     },
     {
         word="T056;flore;風洛霊;風洛霊flore;妈妈",
-        title="T056.flore，组织各项块群方块赛事，主办年度奖项活动，活跃编辑方块中文wiki，Techmino的配音",
+        text="T056.flore，组织各项块群方块赛事，主办年度奖项活动，活跃编辑方块中文wiki，Techmino的配音",
         link="space.bilibili.com/1223403016",
     },
     {
         word="T283;模电;模电283;modian;modian283",
-        title="T283.模电，上过最强大脑，擅长20G和隐形，Techmino的演出",
+        text="T283.模电，上过最强大脑，擅长20G和隐形，Techmino的演出",
         link="space.bilibili.com/17583394",
     },
     {
         word="T0325;T325;幻灭",
-        title="T0325.幻灭，制作了tetr.io汉化插件",
+        text="T0325.幻灭，制作了tetr.io汉化插件",
         link="space.bilibili.com/8933681",
     },
     {
         word="TTTT;farter;屁;屁爷",
-        title="TTTT.屁，创研究群的【写乐Tetr.js(屁块)【哦还有写T-ex的【然并无人玩【【",
+        text="TTTT.屁，创研究群的【写乐Tetr.js(屁块)【哦还有写T-ex的【然并无人玩【【",
         link="space.bilibili.com/132966",
     },
     {
         word="T022;teatube;茶叶子;茶管;茶;茶娘",
-        title="T022.Teatube，前群宠，组织过块群赛事，写了块群bot，架设了Tetris Online Study研究服",
+        text="T022.Teatube，前群宠，组织过块群赛事，写了块群bot，架设了Tetris Online Study研究服",
         link="space.bilibili.com/834903  space.bilibili.com/271332633",
     },
     {
         word="T042;42;思竣",
-        title="T042.思竣，有一堆铁壳only的世界纪录，找到了Techmino的一万个bug并记住了所在版本号",
+        text="T042.思竣，有一堆铁壳only的世界纪录，找到了Techmino的一万个bug并记住了所在版本号",
         link="space.bilibili.com/403250559",
     },
     -- {
     --     word="T872;Diao;nmdtql;nmdtql030",
-    --     title="T872.Diao，写过一些zzzbot的胶水程序",
+    --     text="T872.Diao，写过一些zzzbot的胶水程序",
     -- },
     {
         word="T1069;苏云;suyuna;苏云云;苏云云云",
-        title="T1069.苏云，组织过不少块群赛事和活动",
+        text="T1069.苏云，组织过不少块群赛事和活动",
     },
     {
         word="T043;xb",
-        title="T043.xb，前wiki编辑者，组织过块群赛事",
+        text="T043.xb，前wiki编辑者，组织过块群赛事",
     },
     {
         word="osk",
-        title="OSK",
-        text="Tetr.io的主创",
+        text="OSK，Tetr.io的主创",
     },
     -- 神秘
     {
         word="fkmrz;fkz;fkz酱",
-        title="Z酱快来禁言他",
+        text="Z酱快来禁言他",
     },
     {
         word="fkosk",
-        title="OSK",
-        text="Tetr.io的主创，请尊重本人意愿不要在他面前发这个喵",
+        title="OSK，Tetr.io的主创，请尊重本人意愿不要在他面前发这个喵",
     },
 }
 

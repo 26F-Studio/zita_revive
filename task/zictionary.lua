@@ -1,3 +1,4 @@
+local ins=table.insert
 local Dict=FILE.load('task/zictionary_data.lua','-lua')
 assert(Dict,"Dict data not found")
 ---@type Task_raw
@@ -10,19 +11,10 @@ return {
     func=function(S,M,D)
         ---@cast M LLOneBot.Event.PrivateMessage|LLOneBot.Event.GroupMessage
 
-        local mes=M.raw_message
-        local daily
-        mes=STRING.trim(mes)
-        if mes=='#' then
-            if S:lock('dailyEntry',600) then
-                math.randomseed(tonumber(os.date('%Y%m%d')) or 26)
-                for _=1,42 do math.random() end
-                mes='#'..D.entries[math.random(#D.entries)].word
-                if mes:find(';') then mes=mes:match('(.-);') end
-                math.randomseed(os.time())
-                daily=true
-            end
-        elseif mes=='##' then
+        local mes=STRING.trim(M.raw_message)
+
+        -- Detail of last entry
+        if mes=='##' then
             if S:getLock('detailedEntry') then
                 S:send("##"..D.lastDetailEntry.title.." (续)\n"..D.lastDetailEntry.detail)
                 D.lastDetailEntry=false
@@ -32,11 +24,27 @@ return {
             end
             return true
         end
+
+        -- Daily
+        local daily
+        if mes=='#' then
+            if S:lock('dailyEntry',600) then
+                math.randomseed(tonumber(os.date('%Y%m%d')) or 26)
+                for _=1,42 do math.random() end
+                mes='#'..D.entries[math.random(#D.entries)].word
+                if mes:find(';') then mes=mes:match('(.-);') end
+                math.randomseed(os.time())
+                daily=true
+            end
+        end
+
+        -- Get searching phrase
         local phrase=mes:match('#.+')
         if not phrase then return false end
         local startPos=mes:find(phrase,1,true)
         phrase=phrase:lower()
 
+        -- Remove '#'
         local showDetail
         if phrase:sub(1,2)=='##' then
             phrase=phrase:sub(3)
@@ -45,6 +53,8 @@ return {
             phrase=phrase:sub(2)
         end
 
+        -- Get entry from dict data
+        ---@type ZictEntry
         local entry
         if startPos==1 then
             entry=Dict[phrase]
@@ -62,36 +72,42 @@ return {
         end
         if not entry then return false end
 
-        local result=(daily and "【今日词条】\n" or "")..(entry.detail and "##" or "#")..entry.title
+        -- Response
+        local result={}
+        if daily then ins(result,"【今日词条】") end
+        if entry.title then
+            ins(result,(entry.detail and "##" or "#")..entry.title)
+        end
         if entry.text then
-            result=result.."\n"..entry.text
+            ins(result,entry.text)
         end
         if entry.detail then
             S:lock('detailedEntry',420)
             if showDetail then
-                result=result.."\n"..entry.detail
+                ins(result,entry.detail)
             else
                 D.lastDetailEntry=entry
             end
         end
         if entry.link then
-            result=result.."\n相关链接: "..entry.link
+            ins(result,"相关链接: "..entry.link)
         end
+        local resultStr=table.concat(result,'\n')
 
         if S.group and not (M.sender and (M.sender.role=='owner' or M.sender.role=='admin')) then
             S:update()
-            local chargeNeed=62+#result/4.2
+            local chargeNeed=62+#resultStr/4.2
             if S.charge<math.min(94.2,chargeNeed) then
                 if S:forceLock('dictCharge',26) then S:send("词典能量耗尽！请稍后再试") end
                 return true
             end
             S:useCharge(chargeNeed)
             if S.charge<=120 then
-                result=result..STRING.repD("\n能量低($1/$2)，请勿刷屏",math.floor(S.charge),S.maxCharge)
+                resultStr=resultStr..STRING.repD("\n能量低($1/$2)，请勿刷屏",math.floor(S.charge),S.maxCharge)
             end
         end
 
-        S:send(result)
+        S:send(resultStr)
         return true
     end,
 }
