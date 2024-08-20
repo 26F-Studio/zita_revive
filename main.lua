@@ -55,6 +55,7 @@ Bot={
         {'admin_control',-99},
         {'help_public',1},
         {'zictionary',2},
+        {'phtool',3},
     },
     taskGroup={
         {'log',-100},

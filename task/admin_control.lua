@@ -129,13 +129,14 @@ return {
     func=function(S,M)
         ---@cast M LLOneBot.Event.PrivateMessage
         local mes=RawStr(M.raw_message)
-        local args=STRING.split(mes,' ')
-        if commands[args[1]] then
+        local args=STRING.split(STRING.trim(mes),' ')
+        local cmd=table.remove(args,1)
+        if commands[cmd] then
             if not Bot.isAdmin(M.user_id) then
                 no_permission(S,1)
                 return true
             end
-            commands[args[1]](S,TABLE.sub(args,2))
+            commands[cmd](S,args)
             return true
         elseif mes:sub(1,1)=='!' then
             if not Bot.isAdmin(M.user_id) then
