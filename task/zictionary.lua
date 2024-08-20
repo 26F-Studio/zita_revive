@@ -34,6 +34,7 @@ return {
         end
         local phrase=mes:match('#.+')
         if not phrase then return false end
+        local startPos=mes:find(phrase,1,true)
         phrase=phrase:lower()
 
         local showDetail
@@ -45,7 +46,7 @@ return {
         end
 
         local entry
-        if mes:find(phrase,1,true)==1 then
+        if startPos==1 then
             entry=Dict[phrase]
         else
             local words=STRING.split(phrase,'%s+',true)
