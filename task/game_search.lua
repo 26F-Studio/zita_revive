@@ -1,4 +1,4 @@
-local tags="电脑 手机 主机 网页 键盘 触屏 鼠标 单人 多人 快速 慢速 题库 新人"
+local tags="热门 电脑 手机 主机 网页 键盘 触屏 鼠标 单人 多人 快速 慢速 题库 新人"
 local tagRedirect={
     ["电脑版"]="电脑",["手机版"]="手机",
     ["浏览器"]="网页",["网页版"]="网页",
@@ -7,20 +7,24 @@ local tagRedirect={
 }
 local gameData={
     -- 多人（热）
-    {name="tech",        tags="电脑 手机 键盘 触屏 单人 多人 快速 慢速 新人"},
-    {name="io",          tags="电脑 网页 单人 多人 键盘 快速 新人"},
-    {name="js",          tags="电脑 手机 网页 单人 多人 键盘 触屏 快速 新人"},
-    {name="tec",         tags="电脑 主机 单人 多人 键盘 鼠标 慢速 新人"},
+    {name="tech",        tags="热门 电脑 手机 键盘 触屏 单人 多人 快速 慢速 新人"},
+    {name="io",          tags="热门 电脑 网页 单人 多人 键盘 快速 新人"},
+    {name="js",          tags="热门 电脑 手机 网页 单人 多人 键盘 触屏 快速 新人"},
+    {name="tec",         tags="热门 电脑 主机 单人 多人 键盘 鼠标 慢速 新人"},
 
     -- 单机（热）
-    {name="tetrjs",      tags="电脑 手机 网页 单人 键盘 触屏 快速 慢速 新人"},
-    {name="tgm",         tags="电脑 单人 键盘 快速"},
-    {name="tl",          tags="电脑 网页 单人 键盘 快速 慢速"},
-    {name="asc",         tags="电脑 网页 单人 键盘 快速 慢速"},
-    {name="np",          tags="电脑 单人 键盘 快速 慢速"},
-    {name="misa",        tags="电脑 单人 键盘 慢速"},
-    {name="touhoumino",  tags="电脑 单人 键盘 快速"},
-    {name="royale",      tags="手机 单人 触屏 快速 慢速"},
+    {name="tetrjs",      tags="热门 电脑 手机 网页 单人 键盘 触屏 快速 慢速 新人"},
+    {name="tgm",         tags="热门 电脑 单人 键盘 快速"},
+    {name="tl",          tags="热门 电脑 网页 单人 键盘 快速 慢速"},
+    {name="asc",         tags="热门 电脑 网页 单人 键盘 快速 慢速"},
+    {name="np",          tags="热门 电脑 单人 键盘 快速 慢速"},
+    {name="misa",        tags="热门 电脑 单人 键盘 慢速"},
+    {name="touhoumino",  tags="热门 电脑 单人 键盘 快速"},
+    {name="royale",      tags="热门 手机 单人 触屏 快速 慢速"},
+
+    -- 主机
+    {name="ppt",         tags="热门 电脑 主机 单人 多人 键盘 慢速"},
+    {name="t99",         tags="热门 主机 单人 多人 慢速"},
 
     -- 单机（冷）
     {name="mind bender", tags="电脑 手机 网页 单人 键盘 触屏 鼠标 快速 慢速"},
@@ -42,11 +46,9 @@ local gameData={
     {name="jj",          tags="手机 单人 多人 触屏 快速"},
     -- {name="fl",          tags="电脑 手机 网页 键盘 触屏 单人 多人 经典 现代 快速 慢速"},-- 目前好像上不去
 
-    -- 主机 & 题库
-    {name="ppt",         tags="电脑 主机 单人 多人 键盘 慢速"},
-    {name="t99",         tags="主机 单人 多人 键盘 慢速"},
-    {name="ttt",         tags="电脑 网页 单人 键盘 题库"},
-    {name="ttpc",        tags="电脑 网页 单人 键盘 题库"},
+    -- 题库
+    {name="ttt",         tags="热门 电脑 网页 单人 键盘 题库"},
+    {name="ttpc",        tags="热门 电脑 网页 单人 键盘 题库"},
     {name="tpo",         tags="电脑 网页 单人 键盘 题库"},
     {name="nazo",        tags="电脑 网页 单人 键盘 题库"},
 }
@@ -62,7 +64,7 @@ return {
         table.remove(words,1)
         if #words==0 then
             if S:lock('game_search_help',26) then
-                S:send("发送“#游戏 标签1 标签2…”来筛选你能接受的方块游戏，可用的tag："..tags)
+                S:send("发送“#游戏 标签1 标签2…”来寻找你能接受的方块游戏，可用的tag："..tags)
             end
         else
             if not S:lock('game_search',6.26) then return true end
