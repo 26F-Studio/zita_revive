@@ -735,13 +735,13 @@ local game={
     {
         word="tech;techmino;铁壳;铁壳米诺",
         title="Techmino",
-        text="简称Tech，使用LÖVE引擎开发的一款方块游戏，单机模式和各种设置都很齐全\n目前最新版本0.17.21，可以和约好友联机对战",
+        text="简称Tech，使用LÖVE引擎开发，单机模式和各种设置都很齐全\n目前最新版本0.17.21，可以和约好友联机对战",
         link="studio26f.org",
     },
     {
         word="aqm;aquamino",
         title="Aquamino",
-        text="使用LÖVE引擎开发的一款方块游戏，有基础的和几个创意单机模式",
+        text="使用LÖVE引擎开发，除了基础的单机模式外还有冰风暴、多线程、激光、雷暴等创意模式",
         link="aqua6623.itch.io/aquamino",
     },
     {
@@ -752,7 +752,7 @@ local game={
     {
         word="剑桥;cambridge",
         title="Cambridge",
-        text="使用LÖVE引擎开发的一款方块游戏，致力于创建一个轻松高度自定义新模式的方块平台。最初由Joe Zeng开发，于2020/10/08的0.1.5版开始Milla接管了开发。 — Tetris Wiki.",
+        text="使用LÖVE引擎开发，致力于创建一个轻松高度自定义新模式的方块平台。最初由Joe Zeng开发，于2020/10/08的0.1.5版开始Milla接管了开发。 — Tetris Wiki.",
     },
     -- 街机/类街机
     {
