@@ -98,7 +98,7 @@ return {
             S:update()
             local chargeNeed=62+#resultStr/4.2
             if S.charge<math.min(94.2,chargeNeed) then
-                if S:forceLock('dictCharge',26) then S:send("词典能量耗尽！请稍后再试") end
+                if S:forceLock('dictCharge',26) then S:send("词典能量耗尽！请稍后再试喵") end
                 return true
             end
             S:useCharge(chargeNeed)
