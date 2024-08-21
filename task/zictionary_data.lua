@@ -682,7 +682,7 @@ local game={
     {
         word="asc;ascension",
         title="Ascension",
-        text="简称ASC，使用自己的ASC旋转系统，有不少单机模式（Techmino的堆积模式就来自ASC），对战模式目前处在测试阶段（2022/04/16）",
+        text="简称ASC，使用自己的ASC旋转系统，有不少单机模式，对战模式目前处在测试阶段",
         link="asc.winternebs.com",
     },
     {
@@ -739,6 +739,12 @@ local game={
         link="studio26f.org",
     },
     {
+        word="aqm;aquamino",
+        title="Aquamino",
+        text="使用LÖVE引擎开发的一款方块游戏，有基础的和几个创意单机模式",
+        link="aqua6623.itch.io/aquamino",
+    },
+    {
         word="fl;falling lightblocks",
         title="Falling Lightblocks",
         text="一个全平台块，横竖屏，有延迟并且不可调。手机支持自定义键位，主要玩法基于NES块设计，也有现代模式。对战为半即时半回合制，无攻击缓冲不可抵消",
@@ -747,11 +753,6 @@ local game={
         word="剑桥;cambridge",
         title="Cambridge",
         text="使用LÖVE引擎开发的一款方块游戏，致力于创建一个轻松高度自定义新模式的方块平台。最初由Joe Zeng开发，于2020/10/08的0.1.5版开始Milla接管了开发。 — Tetris Wiki.",
-    },
-    {
-        word="nanamino",
-        title="Nanamino",
-        text="块圈玩家自制方块，正在开发中，有一个原创旋转系统",
     },
     -- 街机/类街机
     {
@@ -774,7 +775,7 @@ local game={
     {
         word="tex;texmaster",
         title="Texmaster",
-        text="TGM的fanmade游戏，包含TGM的所有模式，可以用来练习TGM，但World规则不完全一样（如软降到底无锁延，踢墙表有细节不同等）",
+        text="TGM的社区自制游戏，包含TGM的所有模式，可以用来练习TGM，但World规则不完全一样（如软降到底无锁延，踢墙表有细节不同等）",
     },
     -- 其他
     {
@@ -816,12 +817,12 @@ local game={
     {
         word="misa;misamino",
         title="Misamino",
-        text="块圈玩家自制方块，单机1v1，主玩回合制模式，可以自定义AI（自己写的话需要了解接口）",
+        text="单机1v1，主玩回合制模式，可以自定义AI（自己写的话需要了解接口）",
     },
     {
         word="touhoumino",
         title="Touhoumino",
-        text="块圈玩家自制方块，一个Nullpomino的自带资源包的改版，将东方Project元素与俄罗斯方块结合。马拉松模式结合了东方Project里的“符卡”机制，需要在一定时间内达成目标分数才能击破\n[难度较大，适合有方块基础并且各项能力都较强的玩家游玩（不然都不知道自己怎么死的）。]",
+        text="一个Nullpomino的自带资源包的改版，将东方Project元素与俄罗斯方块结合。马拉松模式结合了东方Project里的“符卡”机制，需要在一定时间内达成目标分数才能击破\n[难度较大，适合有方块基础并且各项能力都较强的玩家游玩（不然都不知道自己怎么死的）。]",
     },
     {
         word="tetris blitz",
