@@ -1,8 +1,15 @@
 local tags="热门 电脑 手机 主机 网页 键盘 触屏 鼠标 单人 多人 快速 慢速 题库 新人"
 local tagRedirect={
+    ["热"]="热门",
+    ["pc"]="电脑",["pe"]="手机",["web"]="网页",
+    ["键"]="键盘",["触"]="触屏",["鼠"]="鼠标",
+    ["单"]="单人",["多"]="多人",["联"]="多人",
+    ["快"]="快速",["慢"]="慢速",
+    ["题"]="题库",["新"]="新人",
+
     ["电脑版"]="电脑",["手机版"]="手机",
     ["浏览器"]="网页",["网页版"]="网页",
-    ["单机"]="单人",["对战"]="多人",
+    ["单机"]="单人",["对战"]="多人",["联机"]="多人",["联网"]="多人",
     ["无延迟"]="快速",["延迟块"]="慢速",
 }
 local gameData={
@@ -77,6 +84,8 @@ return {
             for i=#words,1,-1 do
                 if #words[i]>=10 then
                     table.remove(words,i)
+                elseif tagRedirect[words[i]] then
+                    words[i]=tagRedirect[words[i]]
                 end
             end
 
@@ -94,13 +103,15 @@ return {
                 end
             end
 
+            if #words==0 then
+                S:send("没有有效标签喵，发送“#游戏”查看帮助")
+                return true
+            end
+
             local results={}
             for _,game in next,gameData do
                 local available=true
                 for _,word in next,words do
-                    if tagRedirect[word] then
-                        word=tagRedirect[word]
-                    end
                     if not game.tags:find(word) then
                         available=false
                         break
