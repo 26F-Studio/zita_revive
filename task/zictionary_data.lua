@@ -735,13 +735,13 @@ local game={
     {
         word="tech;techmino;铁壳;铁壳米诺",
         title="Techmino",
-        text="简称Tech，使用LÖVE引擎开发，单机模式和各种设置都很齐全\n目前最新版本0.17.21，可以和约好友联机对战",
+        text="简称Tech，单机模式和各种设置都很齐全\n目前最新版本0.17.21，可以和约好友联机对战",
         link="studio26f.org",
     },
     {
         word="aqm;aquamino",
         title="Aquamino",
-        text="使用LÖVE引擎开发，除了基础的单机模式外还有冰风暴、多线程、激光、雷暴等创意模式",
+        text="除了基础的单机模式外还有冰风暴、多线程、激光、雷暴等创意模式",
         link="aqua6623.itch.io/aquamino",
     },
     {
@@ -752,7 +752,7 @@ local game={
     {
         word="剑桥;cambridge",
         title="Cambridge",
-        text="使用LÖVE引擎开发，致力于创建一个轻松高度自定义新模式的方块平台。最初由Joe Zeng开发，于2020/10/08的0.1.5版开始Milla接管了开发。 — Tetris Wiki.",
+        text="致力于创建一个轻松高度自定义新模式的方块平台。最初由Joe Zeng开发，于2020/10/08的0.1.5版开始Milla接管了开发。 — Tetris Wiki.",
     },
     -- 街机/类街机
     {
@@ -766,6 +766,11 @@ local game={
         word="dtet",
         title="DTET",
         text="单机方块游戏，基于经典规则加入了20G和一个强大的旋转系统，但是除了键位其他参数都不可自定义。有点难找到，而且找到后可能还要自己补齐缺的DLL文件",
+    },
+    {
+        word="mob;master of block",
+        title="Master of Block",
+        text="一个仿街机方块游戏",
     },
     {
         word="hebo;heboris",
@@ -810,9 +815,19 @@ local game={
         text="简称C2，设计基于经典规则出发，支持自定义DAS/ARR，对战的主要玩法是基于时间的连击，考验玩家速度/Wide打法/挖掘",
     },
     {
+        word="poly;polyform",
+        title="Polyform",
+        text="单机方块游戏，只有几个经典的模式，但单元格不是正方形，有三角形和六边形",
+    },
+    {
+        word="sd;spirit drop",
+        title="Spirit Drop",
+        text="主要内容为单机，除了几个经典的模式外有一大堆类似炫酷的还在开发中",
+    },
+    {
         word="np;nullpomino",
         title="Nullpomino",
-        text="简称NP，整个游戏自定义程度极高，几乎任何参数都可以自己设置，是一个专业级方块\n[不过UI风格比较老，需要全键盘操作，刚开始可能不习惯。macOS Monterey貌似无法运行。]",
+        text="简称NP，整个游戏自定义程度极高，几乎任何参数都可以自己设置，是一个专业级方块\n[不过UI风格比较老，需要全键盘操作，刚开始可能不习惯]",
     },
     {
         word="misa;misamino",
@@ -825,7 +840,7 @@ local game={
         text="一个Nullpomino的自带资源包的改版，将东方Project元素与俄罗斯方块结合。马拉松模式结合了东方Project里的“符卡”机制，需要在一定时间内达成目标分数才能击破\n[难度较大，适合有方块基础并且各项能力都较强的玩家游玩（不然都不知道自己怎么死的）。]",
     },
     {
-        word="tetris blitz",
+        word="闪电战;tetris blitz",
         title="Tetris Blitz",
         text="简称闪电战，EA代理的一款移动端方块，有重力连锁机制，限时2分钟，游戏开始会掉下一堆小方块；持续消行会进入Frenzy模式（场地下方会不断冒出垃圾行，帮助玩家制造大连锁，如果多次落块没有消行会强制结束Frenzy）。有非常多的道具\n当新出现的方块与场地现有方块重叠时，场地最上方的几行会被自动清除，游戏不结束。已于2020年4月下架",
     },
