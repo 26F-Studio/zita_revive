@@ -674,8 +674,6 @@ local game={
     },
     {
         cat='game',
-        shortname="T-ex",
-        tags="非官方 电脑 网页 单人 键盘 快速 延迟",
         word="T-ex",
         title="T-ex",
         text="Farter早年制作的一个基于flash的仿TGM游戏，包含一个创新旋转系统 #XRS",
@@ -718,8 +716,6 @@ local game={
     },
     {
         cat='game',
-        shortname="nuke",
-        tags="非官方 电脑 网页 单人 多人 键盘 慢速 延迟",
         word="nuke;nuketris",
         title="Nuketris",
         text="有几个基础单机模式和1V1排位",
@@ -762,11 +758,10 @@ local game={
     },
     {
         cat='game',
-        shortname="mindbender",
-        tags="官方 电脑 手机 网页 单人 键盘 触屏 鼠标 慢速 延迟",
         word="mind bender;tetris mind bender",
         title="Tetris Mind Bender",
         text="tetris.com官网上的俄罗斯方块，在马拉松基础上添加了效果，场地上会随机冒出效果方块，消除后会得到各种各样或好或坏的效果",
+        link="https://tetris.com/play-tetrismindbender",
     },
     -- 跨平台
     {
@@ -789,16 +784,12 @@ local game={
     },
     {
         cat='game',
-        shortname="fl",
-        tags="非官方 电脑 手机 网页 单人 多人 键盘 触屏 快速 慢速 无延迟 延迟 创新",
         word="fl;falling lightblocks",
         title="Falling Lightblocks",
         text="（现在疑似上不去）一个全平台块，横竖屏，有延迟并且不可调。手机支持自定义键位，主要玩法基于NES块设计，也有现代模式。对战为半即时半回合制，无攻击缓冲不可抵消",
     },
     {
         cat='game',
-        shortname="剑桥",
-        tags="非官方 电脑 单人 键盘 快速 慢速 无延迟 延迟",
         word="剑桥;cambridge",
         title="Cambridge",
         text="致力于创建一个轻松高度自定义新模式的方块平台。最初由Joe Zeng开发，于2020/10/08的0.1.5版开始Milla接管了开发。 — Tetris Wiki.",
@@ -807,7 +798,7 @@ local game={
     {
         cat='game',
         shortname="tgm",
-        tags="热门 官方 电脑 单人 键盘 快速 延迟",
+        tags="热门 官方 电脑 主机 单人 键盘 快速 延迟",
         word="tgm;tetris the grand master;tetris grand master",
         title="TGM",
         text="Tetris The Grand Master，一个街机方块系列（有Windows移植版），S13/GM等称号都出自该作，其中TGM3比较普遍，部分模式说明发送“##”查看",
@@ -816,43 +807,33 @@ local game={
     },
     {
         cat='game',
-        shortname="dtet",
-        tags="非官方 电脑 单人 键盘 快速 无延迟",
         word="dtet",
         title="DTET",
         text="单机方块游戏，基于经典规则加入了20G和强大的人体工学方块控制系统",
     },
     {
         cat='game',
-        shortname="mob",
-        tags="非官方 电脑 单人 键盘 快速 延迟",
         word="mob;master of block",
         title="Master of Block",
         text="一个仿街机方块游戏",
     },
     {
         cat='game',
-        shortname="hebo",
-        tags="非官方 电脑 单人 键盘 快速 无延迟",
         word="hebo;heboris",
         title="Heboris",
         text="一个仿街机方块游戏，可以模拟多个方块游戏的部分模式",
     },
     {
         cat='game',
-        shortname="tex",
-        tags="非官方 电脑 单人 键盘 快速 无延迟",
         word="tex;texmaster",
         title="Texmaster",
         text="TGM的社区自制游戏，包含TGM的所有模式，可以用来练习TGM，但World规则不完全一样（如软降到底无锁延，踢墙表有细节不同等）",
     },
     {
         cat='game',
-        shortname="sega",
-        tags="官方 电脑 主机 单人 键盘 慢速 延迟",
         word="sega;sega tetris",
-        title="Sega's Tetris",
-        text="Tetris (Sega)：1988年发行的街机游戏，虽然是经典块但已经有了一些现代块特性，在日本影响深远\nSega Tetris：1999年发行的主机游戏，有双人道具战，六种不同的消除方式能发送特殊效果",
+        title="Sega Tetris",
+        text="1999年发行的主机游戏，有1v1道具战，六种不同的消除方式能发送特殊效果",
     },
     -- 其他
     {
@@ -909,36 +890,28 @@ local game={
         tags="热门 非官方 电脑 单人 多人 键盘 快速 慢速 无延迟 延迟 创新",
         word="sd;spirit drop",
         title="Spirit Drop",
-        text="主要内容为单机，除了几个经典的模式外有一大堆类似炫酷的还在开发中",
+        text="主要内容为单机，除了几个经典的模式外有一大堆炫酷的还在开发中",
     },
     {
         cat='game',
-        shortname="np",
-        tags="热门 非官方 电脑 单人 键盘 快速 慢速 无延迟 延迟",
         word="np;nullpomino",
         title="Nullpomino",
         text="简称NP，整个游戏自定义程度极高，几乎任何参数都可以自己设置，是一个专业级方块\n[不过UI风格比较老，需要全键盘操作，刚开始可能不习惯]",
     },
     {
         cat='game',
-        shortname="misa",
-        tags="热门 非官方 电脑 单人 键盘 慢速 无延迟",
         word="misa;misamino",
         title="Misamino",
         text="单机1v1，主玩回合制模式，可以自定义AI（自己写的话需要了解接口）",
     },
     {
         cat='game',
-        shortname="thm",
-        tags="热门 非官方 电脑 单人 键盘 快速 慢速 无延迟 延迟 创新",
         word="thm;touhoumino",
         title="Touhoumino",
         text="一个Nullpomino的自带资源包的改版，将东方Project元素与俄罗斯方块结合。马拉松模式结合了东方Project里的“符卡”机制，需要在一定时间内达成目标分数才能击破\n[难度较大，适合有方块基础并且各项能力都较强的玩家游玩（不然都不知道自己怎么死的）。]",
     },
     {
         cat='game',
-        shortname="beat",
-        tags="官方 手机 单人 触屏 快速 慢速 无延迟 延迟 创新",
         word="beat;tetris beat",
         title="Tetris Beat",
         text="ios限定，N3TWORK代理的一款移动端方块。除了马拉松以外游戏还有一个“Beat”模式，但只需根据BGM的节奏落块就可以得到额外分数\n[特效比较瞎眼，不支持自定义键位，而且默认的按钮也很小导致控制也不是很舒服]",
@@ -953,16 +926,12 @@ local game={
     },
     {
         cat='game',
-        shortname="jj",
-        tags="非官方 手机 单人 多人 触屏 快速 无延迟",
         word="jj;jj块",
         title="JJ块",
         text="JJ棋牌平台下的“JJ比赛”app内的一个休闲游戏（看不到可能是因为限制了新玩家不可见）。现代方块但：竖屏，可自定义ASD/ASP，能自定义键位，无Hold，无B2B，无攻击缓冲不可抵消，每次攻击上限为4，连击较强",
     },
     {
         cat='game',
-        shortname="ea",
-        tags="官方 手机 单人 触屏 延迟 慢速 创新",
         word="ea;tetris ea",
         title="Tetris (EA)",
         text="EA代理的一款宇宙主题的移动端方块。有滑动操控和单点触控两种操作模式；除经典的马拉松外还有一个星系模式（地图挖掘），有重力连锁机制，目标是在限定块数内消除所有地图块\n已于2020年4月下架",
@@ -970,8 +939,6 @@ local game={
     -- 题库
     {
         cat='game',
-        shortname="ttt",
-        tags="热门 非官方 电脑 网页 单人 键盘 题库",
         word="ttt",
         title="TTT",
         text="Tetris Trainer Très-Bien (by こな)。现代方块特殊操作手把手教程（只能键盘操作）\n\t推荐能纯消四完成40L挑战的人学习\n\t内含T-spin、极简、SRS、部分对战定式介绍等教程\n注：提供的链接是翻译后挂在茶服的版本",
@@ -979,8 +946,6 @@ local game={
     },
     {
         cat='game',
-        shortname="ttpc",
-        tags="热门 非官方 电脑 网页 单人 键盘 题库",
         word="ttpc",
         title="TTPC",
         text="TETRIS Perfect Clear Challenge (by chokotia)。SRS+Bag7方块游戏Perfect Clear Opener教程（只能键盘操作）。推荐完成了TTT的人学习（必须先学会SRS）\n\n注：提供的链接是翻译后挂在茶服的版本",
@@ -988,8 +953,6 @@ local game={
     },
     {
         cat='game',
-        shortname="tpo",
-        tags="非官方 电脑 网页 单人 键盘 题库",
         word="tpo",
         title="TPO",
         text="Tetris Puzzle O。由TCV100制作的题库网站，内含nazo的部分题库",
@@ -997,8 +960,6 @@ local game={
     },
     {
         cat='game',
-        shortname="nazo",
-        tags="非官方 电脑 网页 单人 键盘 题库",
         word="nazo",
         title="NAZO",
         text="各类SRS试题\n\t推荐能通过TTT的玩家尝试\n\t内含各种T-spin/All spin题目，简单到极难题目都有\n\n注：提供的链接是翻译后挂在茶服的版本",
