@@ -42,34 +42,34 @@ local meta={
         detail="以下给出几个新手时期的主线任务树，前期应主要练习这些内容而不是定式和T-Spin，对实力帮助并不大（注意，ABC三段应当同时进行，没有顺序）：\nA. 堆叠能力练习方法\n\tA1. 手上的块可以放的时候先别急着放，看看下一块有没有地方，如果放不下去就看看手上的能不能换个地方\n\tA2. 尝试把地形尽量控制得平整，因为大多数情况比较平的地形来啥块都比较容易放得下去\n\tA3. 允许hold的时候可以多想想手里和hold的块和后续几块应该怎么安排顺序，长远地使地形平整\nB. 操作效率与速度练习方法\n\tB1. 不要每一块都拿影子去对形状对位置，要自己想象这个块转一下是什么方向，想好了再开始按按键\n\tB2. 学习双旋，能逆时针转一次就不要顺时针转三次，费手\n\tB3. 学习极简，刚开始不用管速度，保证正确率最重要，养成良好习惯以后再提速快得很\nC. 堆叠能力考核\n\tC1. 稳定完成40行不死（可以用hold）\n\tC2. 稳定完成40行不死（不能用hold）\n\tC3. 稳定全程消四完成40行（可以用hold）\n\tC4. 稳定全程消四完成40行（不能用hold）\n以上都是根据社区和个人经验总结的模糊方法与目标，所以C的考核可以根据自身情况调整严格程度（例如“稳定”的具体成功率）\n注：完成C部分考核后别忘了无上限的A1，这是方块的根本元素之一，你在未来会一直持续需要它",
     },
     {
-        word="学习tspin",
-        title="关于T-spin学习",
-        text="适合开始学Tspin门槛水平参考：40L达到60s以内（速度够说明堆叠基本功过关）、能够轻松完成全程消四的40L（能稳定平整堆叠）、不使用Hold不降太多速度的前提下比较轻松完成全程消四的40L（有足够的看next的意识和算力）",
-        detail="需要指出，要能熟练做出各种T-spin并不是只看着T-spin的那一小部分地形就可以玩好的，对玩家堆叠能力和计算next能力同样也有较高的要求。故如果目的主要是提升打块能力、没什么娱乐随便玩玩的成分时，推荐在基础能力没达到上述要求前不用去详细了解具体的T-spin构造知识，把重点放在前置基本功的练习上就可以了",
+        word="学习tspin;学习t旋",
+        title="关于T-Spin学习",
+        text="适合开始学T-Spin门槛水平参考：40L达到60s以内（速度够说明堆叠基本功过关）、能够轻松完成全程消四的40L（能稳定平整堆叠）、不使用Hold不降太多速度的前提下比较轻松完成全程消四的40L（有足够的看next的意识和算力）",
+        detail="需要指出，要能熟练做出各种T-Spin并不是只看着T-Spin的那一小部分地形就可以玩好的，对玩家堆叠能力和计算next能力同样也有较高的要求。故如果目的主要是提升打块能力、没什么娱乐随便玩玩的成分时，推荐在基础能力没达到上述要求前不用去详细了解具体的T-Spin构造知识，把重点放在前置基本功的练习上就可以了",
     },
     {
-        word="灰机;huiji;灰机wiki",
-        title="灰机Wiki",
-        text="俄罗斯方块中文维基，由一群来自俄罗斯方块研究群及下属群的方块同好建立的关于俄罗斯方块的中文百科全书\n\n目前其大部分页面翻译和参考来自Hard Drop Wiki和Tetris Wiki",
+        word="wiki;维基;中文wiki;中文维基;灰机;huiji;灰机wiki",
+        title="俄罗斯方块中文维基",
+        text="俄罗斯方块中文维基，由中国玩家建立的中文的俄罗斯方块百科全书，位于灰机wiki平台\n推荐新人有不懂的知识先查阅百科再提问，也欢迎各位玩家作出编辑贡献\n早期大部分条目译自Hard Drop Wiki和Tetris Wiki",
         link="tetris.huijiwiki.com",
     },
     {
         word="harddrop wiki",
-        title="HardDrop Wiki",
-        text="(英文)位于Hard Drop全球俄罗斯方块社区的Wiki百科",
-        link="harddrop.com/wiki/Tetris_Wiki",
+        title="Hard Drop Wiki",
+        text="(英文)Hard Drop社区的维基百科，位于Hard Drop社区网站",
+        link="harddrop.com/wiki",
     },
     {
         word="tetris wiki",
         title="Tetris Wiki",
-        text="(英文)一个专注于创建俄罗斯方块相关内容的Wiki百科，由Myndzi在2015创办",
+        text="(英文)一个俄罗斯方块的维基百科，由Myndzi在2015年创办\n与tetris.fandom.com是不同的网站",
         link="tetris.wiki",
     },
     {
         word="tetris wiki fandom",
         title="Tetris Wiki Fandom",
-        text="(英文)一个俄罗斯方块维基",
-        link="tetris.fandom.com/wiki/Tetris_Wiki",
+        text="(英文)一个俄罗斯方块的维基百科，位于fandom平台\n与tetris.wiki是不同的网站",
+        link="tetris.fandom.com",
     },
     {
         word="fumen",
@@ -99,55 +99,65 @@ local meta={
 local main={
     -- 缩写
     {
-        word="40l;40line;sprint",
-        title="40行模式",
-        text="一个大多数现代方块都会有的竞速模式，在默认规则下消除40行比拼速度，目前的世界纪录是westl的13秒多",
+        word="marathon;马拉松;马拉松模式",
+        title="马拉松模式",
+        text="准则规定的现代方块三大基本模式之一，直接来自经典方块玩法，考察固定等级/行数内的得分。绝大多数游戏中是15级/150行，等级/重力/倍率逐渐增加",
+    },
+    {
+        word="40l;40line;40lines;sprint;time attack;竞速;竞速模式",
+        title="竞速模式/40行模式",
+        text="准则规定的现代方块三大基本模式之一，考察消除固定行数的用时。绝大多数游戏中是40行，没有等级/重力/倍率增加",
+    },
+    {
+        word="ultra;time trial;限时打分;限时极限;限时打分模式;限时极限模式",
+        title="限时打分模式",
+        text="准则规定的现代方块三大基本模式之一，考察固定时间内的得分或消行数。绝大多数游戏中是2或3分钟，没有等级/重力/倍率增加",
+    },
+    {
+        word="blitz;闪电战;闪电战模式",
+        title="闪电战模式",
+        text="TETR.IO结合马拉松与限时打分两大传统模式的新规则限时打分，考察2分钟内的得分，但是等级/重力/倍率逐渐增加",
     },
     {
         word="zen;禅;禅模式",
         title="禅模式",
-        text="出自宝开早年游戏中多次出现的无尽休闲模式，方块里的此模式都会被设计成没有速度要求，但是否无尽不一定",
+        text="（无尽）休闲模式，灵感很可能来自宝开早年游戏。方块里的此模式都会被设计成没有速度要求，但是否无尽不一定",
     },
     {
-        word="限时打分;限时打分模式;blitz;ultra",
-        title="限时打分模式",
-        text="出自宝开早年游戏中多次出现的限时打分模式",
-    },
-    {
-        word="lpm;bpm;ppm;pps",
+        word="lpm;bpm;ppm;pps;kpm;kps",
         title="速度",
-        text="Line per Min，行每分\nBlock/Piece per Min/Sec，块每分/秒",
+        text="Line per Min，每分钟消行数\nPiece/Block/Drop per Min/Sec，每分钟/每秒落块数\nKey per Min/Sec，每分钟/每秒按键数",
         detail="不同游戏中的“LPM”含义可能不同，虽然写的是行数但可能实际用的是块数/2.5，以此忽略掉对战模式中垃圾行带来的干扰",
     },
     {
-        word="kpm",
-        title="KPM",
-        text="Key per Min，按键每分",
-    },
-    {
-        word="kpp",
+        word="kpp;按键效率",
         title="KPP",
-        text="Key per Piece，按键每块，体现玩家操作是否繁琐，学习 #极简操作 提升操作效率以降低此数字",
+        text="Key per Piece，每块按键数，体现玩家按键效率高低，操作是否繁琐。\n与多余操作数量相关但并不完全挂钩，学习 #极简操作 提升操作效率可以降低此数字",
     },
     {
         word="apm;spm",
-        title="攻击",
-        text="Attack per Min，攻击每分\nSent per Min，送出每分\n其中Sent指送出的垃圾行，若对手先打来垃圾行自己抵消时就不计入Sent，但仍然计Attack",
+        title="APM",
+        text="Attack per Min，每分钟攻击行数\nSent per Min，每分钟送出行数\n其中Sent指确实送给对手的垃圾行，若对手先打来垃圾行自己抵消时就不计入Sent，但仍然计Attack",
     },
     {
         word="dpm",
         title="DPM",
-        text="Dig per Min，挖掘每分，玩家每分钟向下挖掘的垃圾行数",
+        text="Dig per Min，每分钟挖掘行数，玩家每分钟向下挖掘的垃圾行数\n另外一些游戏中dpm表示Drop per Min，相当于Piece per Min，每分钟落块数",
     },
     {
         word="adpm;vs",
         title="ADPM",
-        text="Atk & Dig per Min，攻击+挖掘每分，用于在同一局游戏内对比玩家间水平差距，比APM更准确一些。在TETR.IO中叫“VS”的数据实质就是ADPM（考虑到数据大小调整了比例，其实是Atk & Dig per 100s）",
+        text="Atk & Dig per Min，每分钟攻击+挖掘行数，衡量玩家对战水平的指标，比APM更准确一些。在TETR.IO中叫“VS”的数据实质与ADPM相同，只是考虑到数据大小从每分钟调整为每100秒（也就是Atk & Dig per 100s）",
     },
     {
         word="apl;效率",
         title="APL",
-        text="Attack per Line，攻击每行（效率通常指APL）。例如消四的效率就比消二高（消四打4➗4行=1效；消二打1➗2行=0.5效）",
+        text="Attack per Line，每行攻击数，衡量玩家消行的攻击效率。例如消四的效率就比消二高（消四打4➗4行=1效；消二打1➗2行=0.5效）\n另见 #按键效率",
+    },
+    {
+        word="finesse fault;极简失误;多余操作",
+        title="多余操作",
+        text="一局游戏中不符合极简要求的多余按键数。最好降到零。\n学习 #极简操作 降低此数字可以减少失误、提升速度，并降低 #kpp",
     },
     {
         word="tas",
@@ -183,7 +193,7 @@ local main={
     {
         word="gg;ggs",
         title="gg(s)",
-        text="Good game (s)，打得不错\n游戏结束时的常用语，可以原样回复",
+        text="Good game(s)，打得不错\n游戏结束时的常用语，可以原样回复",
     },
     {
         word="eggs",
@@ -221,8 +231,8 @@ local main={
     {
         word="spin;tspin;t-spin",
         title="Spin",
-        text="使用旋转将方块卡进一些不能直接移动进入的位置（根据具体语境也可能会指同时消行了的），通常会有额外的分数/攻击加成\n另见 #Mini #All Spin",
-        detail="具体判定规则不同游戏不一样，例如一个常见的规则是当T方块在锁定前的最后一个操作是旋转，并且锁定后旋转中心对应的四个斜角位置有三个不是空气，那么这就是一个T-spin",
+        text="使用旋转将方块卡进一些不能直接移动进入的位置（根据具体语境也可能会指同时消行了的），通常会有额外的分数/攻击加成\n另见 #Mini #All-Spin",
+        detail="具体判定规则不同游戏不一样，例如一个常见的规则是当T方块在锁定前的最后一个操作是旋转，并且锁定后旋转中心对应的四个斜角位置有三个不是空气，那么这就是一个T-Spin",
     },
     {
         word="mini",
@@ -231,8 +241,8 @@ local main={
     },
     {
         word="all spin;all-spin",
-        title="All Spin",
-        text="规则名，指用所有方块进行Spin消除都能获得奖励，而不是通常仅T-spin才能打出攻击(T-Spin Only)",
+        title="All-Spin",
+        text="规则名，指用所有方块进行Spin消除都能获得奖励，而不是通常仅T-Spin才能打出攻击(T-Spin Only)",
     },
     {
         word="tss;tsd;tst",
@@ -241,8 +251,8 @@ local main={
     },
     {
         word="ospin;o-spin",
-        title="O-spin",
-        text="由于O块旋转不变只能左右移所以经常被卡住，于是就有了O-spin这个梗",
+        title="O-Spin",
+        text="由于O块旋转不变只能左右移所以经常被卡住，于是就有了O-Spin这个梗",
         detail="有人做了T99/TF中的O块变形的特效视频广为流传；\n一些旋转系统允许O块旋进坑；\nTech设计的变形系统中可以旋转O来变形/传送进入一些特定形状的洞",
     },
     {
@@ -301,7 +311,7 @@ local main={
     {
         word="b2b;back to back",
         title="B2B",
-        text="Back to Back，连续打出两次特殊消行（Spin或消四），中间不夹杂普通消行",
+        text="Back to Back，连续的消行都是特殊消行（Spin或消四），中间不夹杂普通消行",
     },
     {
         word="fin;neo;iso;特殊t2;可移动t2",
@@ -363,7 +373,7 @@ local main={
     {
         word="捐赠;donate;donation",
         title="捐赠",
-        text="指刻意临时堵住（可以消四的）洞做T-spin，打出T-spin后就会解开，是比较进阶的保持/提升火力的技巧\n有时候只要堵住了个坑，即使不是消四的洞也会用这个词",
+        text="指刻意临时堵住（可以消四的）洞做T-Spin，打出T-Spin后就会解开，是比较进阶的保持/提升火力的技巧\n有时候只要堵住了个坑，即使不是消四的洞也会用这个词",
     },
     {
         word="攻击;进攻;防守;防御;攻防",
@@ -373,7 +383,7 @@ local main={
     {
         word="连击;combo;ren",
         title="连击",
-        text="连续的消除从第二次起称为 1 Combo，攻击数取决于具体哪一款游戏。“REN”这个名称来源于日语中的“連”(れん)",
+        text="连续落块都完成消除。从第二次起称为 1 Combo，攻击数取决于具体哪一款游戏。“REN”这个名称来源于日语中的“連”(れん)",
     },
     {
         word="spike",
@@ -455,7 +465,7 @@ local main={
     {
         word="20g",
         title="20G",
-        text="现代方块的最高下落速度(无限)，瞬间到底 下落过程完全不可见，会让方块无法跨越壕沟或攀爬台阶",
+        text="现代方块的最高下落速度(无限)，瞬间到底、下落过程完全不可见，会让方块无法跨越壕沟或攀爬台阶",
         detail="因为一般场地就是20高，所以20G的意思其实同∞G\n一些游戏中ASP调成0可能可以让方块飞跃山谷，但考虑“高重力”这个项目的玩法，其实不该如此，例如Techmino中20G的优先级比移动高一层，ASP=0的“瞬间移动”中途也会受到20G的影响掉入深坑",
     },
     {
@@ -466,12 +476,12 @@ local main={
     {
         word="生成延迟;spawn delay;are",
         title="生成延迟",
-        text="ARE。方块“锁定完成到下一个方块出现”之间的时间",
+        text="“上一个方块锁定完成”到“下一个方块出现”之间的时间。“are”的命名来自日文“あれ”，意思是“那个”（不好描述的东西）",
     },
     {
         word="消行延迟;clear delay;line clear delay;line are",
         title="消行延迟",
-        text="Line ARE。方块“锁定且消行时的消行动画”占据的时间",
+        text="方块锁定且消行时，“消行动画”占据的时间",
     },
     {
         word="极简;finesse;极简操作",
@@ -482,7 +492,7 @@ local main={
     {
         word="科研",
         title="科研",
-        text="指在低重力（或无重力）的单人模式里慢速思考如何构造各种T-spin，是一种练习方法",
+        text="指在低重力（或无重力）的单人模式里慢速思考如何构造各种T-Spin，是一种练习方法",
     },
     {
         word="键位",
@@ -504,7 +514,7 @@ local main={
     {
         word="asd;asp;asd/asp;das;arr",
         title="ASD/ASP",
-        text="ASD（曾叫DAS）指从“按下移动键时动一格”到“开始自动移动”之间的时间\nASP（曾叫ARR），指“每次自动移动”之间的时间，单位可以是f(帧)或者或者ms(毫秒)，1f≈16.7ms\n另见 #ASD通俗 #ASD设置引导",
+        text="ASD（曾叫DAS）指从“按下移动键时动一格”到“开始自动移动”之间的时间\nASP（曾叫ARR），指“每次自动移动”之间的时间，单位可以是f(帧)或者或者ms(毫秒)，1f≈16.7ms\n详细参见：https://tetris.huijiwiki.com/wiki/DAS\n另见 #ASD通俗 #ASD设置引导",
         detail="Auto-Shift-Delay，自动移动延迟；Auto-Shift-Period，自动移动间隔",
     },
     {
@@ -527,18 +537,18 @@ local main={
     {
         word="7bag;bag7",
         title="7-Bag出块",
-        text="一种出块方式，现代方块普遍使用该规则，从开局起每7个块是7种形状各出现一次，避免了很久不出某个块和某个块来得特别多，是一些现代方块战术的基础\n例如：ZSJLTOI OTSLZIJ LTISZOJ",
+        text="一种出块方式，现代方块普遍使用该规则，从开局起每7个块是7种形状各出现一次，避免了很久不出某个块和某个块来得特别多，是一些现代方块战术的基础\n例如：ZSJLTOI OTSLZIJ LTISZOJ\n详细参见：https://tetris.huijiwiki.com/wiki/Bag_Randomizer",
     },
     {
         word="his;his4;h4r6",
         title="History出块",
-        text="一种的出块方式，例如h4r6 (His4 Roll6)是在随机新块的时候若和最近4次已经生成的Next中有一样的就重新随机，直到和那4个都不一样或者重roll了6次",
+        text="一种出块方式，例如h4r6 (His4 Roll6)是在随机新块的时候若和最近4次已经生成的Next中有一样的就重新随机，直到和那4个都不一样或者已经随机了6次\n详细参见：https://tetris.huijiwiki.com/wiki/Nintendo_Randomizer",
         detail="这是早期对纯随机出块的一大改进，大大减小了连续出几个SZ(洪水)的概率，但偶尔还是会很久不出现某一块比如I，导致发生干旱",
     },
     {
         word="hispool",
         title="HisPool出块",
-        text="一种出块方式，History Pool，his算法一个比较复杂的分支，在理论上保证了干旱时间不会无限长，最终效果介于His和Bag之间",
+        text="一种出块方式，History Pool，his算法一个比较复杂的分支，在理论上保证了干旱时间不会无限长，最终效果介于His和Bag之间\n详细参见：https://tetris.huijiwiki.com/wiki/TGM_Randomizer",
         detail="在His的基础上添加了一个Pool(池)，在取块的时候his是直接随机和历史序列（最后4次生成的next）比较，而HisPool是从Pool里面随机取（然后补充一个最旱的块增加他的概率）然后和历史序列比较",
     },
     {
@@ -549,14 +559,14 @@ local main={
     {
         word="hypertap;超连点",
         title="Hypertap",
-        text="快速震动手指，实现比长按更快速+灵活的高速单点移动",
-        detail="主要在经典块的高难度下（因为ASD不可调而且特别慢，高速下很容易md导致失败，此时手动连点就比自动移动更快）或者受特殊情况限制不适合用自动移动时使用",
+        text="主要用于NES方块的指法，快速震动手指，实现比长按更快速+灵活的高速单点移动",
+        detail="主要在NES方块的高难度下（因为ASD不可调而且特别慢，高速下很容易md导致失败，此时手动连点就比自动移动更快）或者受特殊情况限制不适合用自动移动时使用",
     },
     {
         word="rolling;轮指",
         title="Rolling",
-        text="另一种快速连点方法，用于ASD/ASP设置非常慢时的高重力（1G左右）模式",
-        detail="先把手柄（键盘……可能也行吧）悬空摆好，比如架在腿上，要连点某个键的时候一只手虚按按键，另外一只手的几根手指轮流敲打手柄背面，“反向按键”实现连点。这种控制方法可以让玩家更轻松地获得比直接抖动手指的Hypertap（详见超连点词条）更快的控制速度\n此方法最先由Cheez-fish发明，他本人则使用Rolling达到过超过20Hz的点击频率",
+        text="主要用于NES方块的指法，通过轮流敲击手柄完成更快的连点，用于ASD/ASP设置非常慢时的高重力（1G左右）模式",
+        detail="先把手柄（键盘……可能也行吧）悬空摆好，比如架在腿上，要连点某个键的时候一只手虚按按键，另外一只手的几根手指轮流敲打手柄背面，“反向按键”实现连点。这种控制方法可以让玩家相对更简单地获得比直接抖动手指的Hypertap（详见超连点词条）更快的控制速度\n此方法最先由CheeZ发明，现在被所有顶级NES方块玩家采用，顶级玩家速度可达30Hz",
     },
     {
         word="堆叠;stack",
@@ -626,9 +636,9 @@ local main={
         text="一个AI的名字\n由研究群群友zzz（奏之章）开发，重新调参后在各个游戏平台上的表现都很不错",
     },
     {
-        word="guideline;gl;基准;基准规则",
+        word="guideline;gl;基准;准则;基准规则",
         title="Guideline",
-        text="#TTC 内部使用的一套Guideline（基准、标准）手册，详细规定了他们所要求的“Tetris”游戏在技术、营销上的各种细则，包括了场地尺寸、按键布局、方块颜色、出块规则、死亡判定等",
+        text="#TTC 内部使用的一套Guideline（基准、准则）手册，详细规定了他们所要求的“Tetris”游戏在技术、营销上的各种细则，包括了场地尺寸、按键布局、方块颜色、出块规则、死亡判定等",
         detail="这套规定保证了21世纪后新出的官方方块游戏都拥有不错的基础游玩体验，再也不是曾经的一款游戏一个规则，跨游戏的经验和手感完全无法通用了。不过代价是所有的官方方块游戏也都被强制要求按照这套手册设计，新的设计不一定会被TTC官方人员认可\n目前所有的专业方块游戏也都依然保留了这套规则中与游戏规则相关的大多数设计。",
     },
     {
@@ -643,13 +653,8 @@ local pattern={
     {
         word="定式;开局定式",
         title="开局定式",
-        text="定式一般指开局定式，是开局后可选使用的套路堆叠方法\n另见 #中局定式",
-        detail="能称为定式的摆法要尽量满足以下至少2~3条：\n能适应大多数块序\n输出高，尽量不浪费T块\n很多方块无需软降，极简操作数少\n有明确后续，分支尽量少\n\n注：bag7序列的规律性太强，才让定式称为可能",
-    },
-    {
-        word="中局定式",
-        title="中局定式",
-        text="指一些特定的能打出较高伤害的常见典型形状，是中局输出的途径之一，部分也可以在开局做不过不是很有必要，主要见于中局\n另见 #开局定式",
+        text="定式一般指开局定式，是开局后可选使用的套路堆叠方法\n一些常用技巧或复合形状则可能被称为“中局定式”\n参见：https://tetris.huijiwiki.com/wiki/T-Spin_Methods",
+        detail="能称为定式的摆法要尽量满足以下至少2~3条：\n能适应大多数块序\n输出高，尽量不浪费T块\n很多方块无需软降，极简操作数少\n有明确后续，分支尽量少\n\n注：7bag随机器极大降低了随机性增强了确定性，才让定式成为可能",
     },
     {
         word="dt;dt炮;dtpc;bt;bt炮;btpc;ddpc;qt;qt炮;mt;mt炮;trinity;狼月炮;sewer;tki;tki3;tki-3;god spin;信天翁;鹈鹕;全消开局;全清开局;六巧板;dpc;c-spin;stsd;stmb;双刃剑;lst;lst堆叠;汉堡;汉堡包;皇十;皇家十字;阶梯;阶梯捐;社畜train;千鸟;千鸟格子;绯红之王;连续pc",
@@ -946,7 +951,7 @@ local game={
         cat='game',
         word="ttt",
         title="TTT",
-        text="Tetris Trainer Très-Bien (by こな)。现代方块特殊操作手把手教程（只能键盘操作）\n\t推荐能纯消四完成40L挑战的人学习\n\t内含T-spin、极简、SRS、部分对战定式介绍等教程\n注：提供的链接是翻译后挂在茶服的版本",
+        text="Tetris Trainer Très-Bien (by こな)。现代方块特殊操作手把手教程（只能键盘操作）\n\t推荐能纯消四完成40L挑战的人学习\n\t内含T-Spin、极简、SRS、部分对战定式介绍等教程\n注：提供的链接是翻译后挂在茶服的版本",
         link="teatube.cn/ttt",
     },
     {
@@ -967,7 +972,7 @@ local game={
         cat='game',
         word="nazo",
         title="NAZO",
-        text="各类SRS试题\n\t推荐能通过TTT的玩家尝试\n\t内含各种T-spin/All spin题目，简单到极难题目都有\n\n注：提供的链接是翻译后挂在茶服的版本",
+        text="各类SRS试题\n\t推荐能通过TTT的玩家尝试\n\t内含各种T-Spin/All-Spin题目，简单到极难题目都有\n\n注：提供的链接是翻译后挂在茶服的版本",
         link="teatube.cn/nazo",
     },
     -- 已逝
