@@ -1013,7 +1013,7 @@ local extra_tetrio={
     {
         word="surge;surge b2b",
         title="Surge B2B",
-        text="充能B2B系统，达到b2b×4后b2b中断时会打出一发和b2b数同样的超大攻击（分成三节）\n目前Tetr.io的TL第二赛季和QP2都使用此新系统",
+        text="充能B2B系统，达到b2b×4然后中断时会打出一发和b2b数同样的超大攻击（分成三节）\n目前Tetr.io的TL第二赛季和QP2都使用此新系统（QP的具体数字不同）",
     },
     {
         word="推进器",
@@ -1085,13 +1085,13 @@ local extra_tetrio={
 ---@type ZictEntry[]
 local contributor={
     {
-        word="小z;zita",
-        text="喵喵？是我哦",
-    },
-    {
         word="26f studio;26f;26楼;26楼工作室",
         text="是我家喵",
         link="studio26f.org",
+    },
+    {
+        word="T626;小z;zita",
+        text="喵喵？是我哦",
     },
     {
         word="T026;T26;mrz;z酱",
