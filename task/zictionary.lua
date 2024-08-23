@@ -55,7 +55,10 @@ for _,entry in next,zict do
     end
 end
 gameNames=TABLE.getKeys(gameNames)
-for i=1,#gameNames do gameNames[i]=SimpStr(gameNames[i].shortname) end
+for i=1,#gameNames do
+    gameNames[i].detail="[tags: "..gameNames[i].tags.."]"..(gameNames[i].detail or "")
+    gameNames[i]=SimpStr(gameNames[i].shortname)
+end
 table.sort(gameNames)
 
 ---@type Task_raw
