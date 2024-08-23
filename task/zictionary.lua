@@ -3,7 +3,7 @@ local ins=table.insert
 local zict=FILE.load('task/zictionary_data.lua','-lua')
 assert(zict,"Dict data not found")
 
-local tags="热门 官方 非官方 电脑 手机 主机 网页 键盘 触屏 鼠标 单人 多人 快速 慢速 无延迟 延迟 题库 新人 创新"
+local tags="热门 官方 非官方 电脑 手机 主机 网页 单人 多人 键盘 触屏 鼠标 快速 慢速 无延迟 延迟 题库 新人 创新"
 local tagRedirect={
     -- 缩
     ["热"]="热门",

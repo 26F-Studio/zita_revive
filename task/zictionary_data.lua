@@ -657,7 +657,7 @@ local game={
     {
         cat='game',
         shortname="kos",
-        tags="非官方 电脑 手机 网页 单人 多人 键盘 触屏 鼠标 慢速 无延迟 创新",
+        tags="非官方 电脑 手机 网页 单人 多人 键盘 触屏 鼠标 无延迟 慢速 创新",
         word="kos;king of stackers",
         title="King of Stackers",
         text="简称KoS。网页版回合制对战方块点击即玩（可能很卡），主要规则为：以7块为一个回合，双方轮流在自己场地中放置方块，任何的攻击只在对方回合放一块不消行后生效，策略性很强。有不同的伤害表设置",
@@ -666,7 +666,7 @@ local game={
     {
         cat='game',
         shortname="屁块",
-        tags="热门 非官方 电脑 手机 网页 单人 键盘 触屏 快速 无延迟 慢速 延迟 新人",
+        tags="热门 非官方 电脑 手机 网页 单人 键盘 触屏 快速 慢速 无延迟 延迟 新人",
         word="屁块;tetrjs;tetr.js",
         title="Tetr.js",
         text="简称屁块（因为作者网名叫Farter）。设置内容足够专业，模式很多，但画面很简单，几乎没有动画，而且移动端只有几套固定的按键组合（不能自由拖放）",
@@ -683,7 +683,7 @@ local game={
     {
         cat='game',
         shortname="tl",
-        tags="热门 非官方 电脑 网页 单人 键盘 快速 无延迟 慢速 延迟",
+        tags="热门 非官方 电脑 网页 单人 键盘 快速 慢速 无延迟 延迟",
         word="tl;tetra legends",
         title="Tetra Legends",
         text="简称TL，单机模式比较丰富，有两个隐藏的节奏模式，并且将一些其他游戏中不可见的机制进行了可视化，动效也很多。在2020年12月，基本确定由于各种原因不再继续开发",
@@ -692,7 +692,7 @@ local game={
     {
         cat='game',
         shortname="asc",
-        tags="热门 非官方 电脑 网页 单人 键盘 快速 无延迟 慢速 延迟 创新",
+        tags="热门 非官方 电脑 网页 单人 键盘 快速 慢速 无延迟 延迟 创新",
         word="asc;ascension",
         title="Ascension",
         text="简称ASC，使用自己的ASC旋转系统，有不少单机模式，对战模式目前处在测试阶段",
@@ -728,7 +728,7 @@ local game={
     {
         cat='game',
         shortname="wwc",
-        tags="非官方 电脑 网页 单人 多人 键盘 快速 无延迟 慢速 延迟 创新",
+        tags="非官方 电脑 网页 单人 多人 键盘 快速 慢速 无延迟 延迟 创新",
         word="wwc;worldwide combos",
         title="Worldwide Combos",
         text="简称WWC，全世界匹配制1V1。特色：有录像战，匹配的对手可以不是真人；几种不同风格的大规则；炸弹垃圾行对战",
@@ -737,7 +737,7 @@ local game={
     {
         cat='game',
         shortname="tf",
-        tags="官方 电脑 网页 单人 多人 键盘 快速 无延迟 慢速 延迟",
+        tags="官方 电脑 网页 单人 多人 键盘 快速 慢速 无延迟 延迟",
         word="tf;tetris friends",
         title="Tetris Friends",
         text="简称TF，已经关服了的网页版方块。以前人比较多，后来官服倒闭了热度下去了，不过现在有人架了私服还可以体验到",
@@ -772,7 +772,7 @@ local game={
     {
         cat='game',
         shortname="tech",
-        tags="热门 非官方 电脑 手机 键盘 触屏 单人 多人 快速 无延迟 慢速 延迟 新人 创新",
+        tags="热门 非官方 电脑 手机 单人 多人 键盘 触屏 快速 慢速 无延迟 延迟 新人 创新",
         word="tech;techmino;铁壳;铁壳米诺",
         title="Techmino",
         text="简称Tech，单机模式和各种设置都很齐全\n目前最新版本0.17.21，可以和约好友联机对战",
@@ -781,7 +781,7 @@ local game={
     {
         cat='game',
         shortname="aqm",
-        tags="热门 非官方 电脑 键盘 单人 快速 无延迟 慢速 延迟 创新",
+        tags="热门 非官方 电脑 单人 键盘 快速 慢速 无延迟 延迟 创新",
         word="aqm;aquamino",
         title="Aquamino",
         text="除了基础的单机模式外还有冰风暴、多线程、激光、雷暴等创意模式",
@@ -790,7 +790,7 @@ local game={
     {
         cat='game',
         shortname="fl",
-        tags="非官方 电脑 手机 网页 键盘 触屏 单人 多人 快速 无延迟 慢速 延迟 创新",
+        tags="非官方 电脑 手机 网页 单人 多人 键盘 触屏 快速 慢速 无延迟 延迟 创新",
         word="fl;falling lightblocks",
         title="Falling Lightblocks",
         text="（现在疑似上不去）一个全平台块，横竖屏，有延迟并且不可调。手机支持自定义键位，主要玩法基于NES块设计，也有现代模式。对战为半即时半回合制，无攻击缓冲不可抵消",
@@ -798,7 +798,7 @@ local game={
     {
         cat='game',
         shortname="剑桥",
-        tags="非官方 电脑 单人 键盘 快速 无延迟 慢速 延迟",
+        tags="非官方 电脑 单人 键盘 快速 慢速 无延迟 延迟",
         word="剑桥;cambridge",
         title="Cambridge",
         text="致力于创建一个轻松高度自定义新模式的方块平台。最初由Joe Zeng开发，于2020/10/08的0.1.5版开始Milla接管了开发。 — Tetris Wiki.",
@@ -890,7 +890,7 @@ local game={
     {
         cat='game',
         shortname="poly",
-        tags="热门 非官方 电脑 单人 键盘 快速 无延迟 慢速 延迟 创新",
+        tags="热门 非官方 电脑 单人 键盘 快速 慢速 无延迟 延迟 创新",
         word="poly;polyform",
         title="Polyform",
         text="单机方块游戏，只有几个经典的模式，但单元格不是正方形，有三角形和六边形",
@@ -898,7 +898,7 @@ local game={
     {
         cat='game',
         shortname="sd",
-        tags="热门 非官方 电脑 单人 多人 键盘 快速 无延迟 慢速 延迟 创新",
+        tags="热门 非官方 电脑 单人 多人 键盘 快速 慢速 无延迟 延迟 创新",
         word="sd;spirit drop",
         title="Spirit Drop",
         text="主要内容为单机，除了几个经典的模式外有一大堆类似炫酷的还在开发中",
@@ -906,7 +906,7 @@ local game={
     {
         cat='game',
         shortname="np",
-        tags="热门 非官方 电脑 单人 键盘 快速 无延迟 慢速 延迟",
+        tags="热门 非官方 电脑 单人 键盘 快速 慢速 无延迟 延迟",
         word="np;nullpomino",
         title="Nullpomino",
         text="简称NP，整个游戏自定义程度极高，几乎任何参数都可以自己设置，是一个专业级方块\n[不过UI风格比较老，需要全键盘操作，刚开始可能不习惯]",
@@ -922,7 +922,7 @@ local game={
     {
         cat='game',
         shortname="thm",
-        tags="热门 非官方 电脑 单人 键盘 慢速 延迟 快速 无延迟 创新",
+        tags="热门 非官方 电脑 单人 键盘 快速 慢速 无延迟 延迟 创新",
         word="thm;touhoumino",
         title="Touhoumino",
         text="一个Nullpomino的自带资源包的改版，将东方Project元素与俄罗斯方块结合。马拉松模式结合了东方Project里的“符卡”机制，需要在一定时间内达成目标分数才能击破\n[难度较大，适合有方块基础并且各项能力都较强的玩家游玩（不然都不知道自己怎么死的）。]",
@@ -930,7 +930,7 @@ local game={
     {
         cat='game',
         shortname="beat",
-        tags="官方 手机 单人 触屏 快速 无延迟 慢速 延迟 创新",
+        tags="官方 手机 单人 触屏 快速 慢速 无延迟 延迟 创新",
         word="beat;tetris beat",
         title="Tetris Beat",
         text="ios限定，N3TWORK代理的一款移动端方块。除了马拉松以外游戏还有一个“Beat”模式，但只需根据BGM的节奏落块就可以得到额外分数\n[特效比较瞎眼，不支持自定义键位，而且默认的按钮也很小导致控制也不是很舒服]",
@@ -938,7 +938,7 @@ local game={
     {
         cat='game',
         shortname="royale",
-        tags="热门 官方 手机 单人 触屏 快速 无延迟 慢速 延迟",
+        tags="热门 官方 手机 单人 触屏 快速 慢速 无延迟 延迟",
         word="royale;tetris royale;tetris n3twork;tetris n3t",
         title="Tetris (N3TWORK)",
         text="N3TWORK开发的一款移动端方块（目前由Play Studio代理），有马拉松、3分钟限时打分和Royale（最多100人对战）模式\n[UI设计比较不错，但不支持自定义键位，而且默认的按钮也很小导致控制也不是很舒服]",
