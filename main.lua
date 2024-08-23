@@ -99,7 +99,7 @@ function Bot.send(data)
             message=data.message,
         }
     }
-    if Config.safeMode and not Config.safeSessionID[data.user or data.group] then
+    if Config.safeMode and not Config.safeSessionID['p'..data.user or 'g'..data.group] then
         if TASK.lock('safeModeBlock',10) then
             print("Message blocked in safe mode")
         end

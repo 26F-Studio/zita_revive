@@ -1,80 +1,69 @@
 local ins=table.insert
-local Dict=FILE.load('task/zictionary_data.lua','-lua')
-assert(Dict,"Dict data not found")
+---@type Map<ZictEntry>
+local zict=FILE.load('task/zictionary_data.lua','-lua')
+assert(zict,"Dict data not found")
 
-local tags="热门 电脑 手机 主机 网页 键盘 触屏 鼠标 单人 多人 快速 慢速 无延迟 延迟 题库 新人"
+local tags="热门 官方 非官方 电脑 手机 主机 网页 键盘 触屏 鼠标 单人 多人 快速 慢速 无延迟 延迟 题库 新人 创新"
 local tagRedirect={
+    -- 缩
     ["热"]="热门",
-    ["pc"]="电脑",["pe"]="手机",["web"]="网页",
-    ["键"]="键盘",["触"]="触屏",["鼠"]="鼠标",
-    ["单"]="单人",["多"]="多人",["联"]="多人",
-    ["快"]="快速",["慢"]="慢速",
-    ["无延"]="无延迟",["延"]="延迟",
-    ["题"]="题库",["新"]="新人",
+    ["官"]="官方",
+    ["野"]="非官方",
+    ["pc"]="电脑",
+    ["pe"]="手机",
+    ["web"]="网页",
+    ["键"]="键盘",
+    ["触"]="触屏",
+    ["鼠"]="鼠标",
+    ["单"]="单人",
+    ["多"]="多人",
+    ["联"]="多人",
+    ["快"]="快速",
+    ["慢"]="慢速",
+    ["无延"]="无延迟",
+    ["延"]="延迟",
+    ["题"]="题库",
+    ["新"]="新人",
 
-    ["电脑版"]="电脑",["手机版"]="手机",
-    ["浏览器"]="网页",["网页版"]="网页",
-    ["单机"]="单人",["对战"]="多人",["联机"]="多人",["联网"]="多人",
-    ["无延迟块"]="无延迟",["延迟块"]="延迟",
+    -- 其他用词
+    ["电脑版"]="电脑",
+    ["手机版"]="手机",
+    ["浏览器"]="网页",
+    ["网页版"]="网页",
+    ["单机"]="单人",
+    ["对战"]="多人",
+    ["联机"]="多人",
+    ["联网"]="多人",
+    ["无延迟块"]="无延迟",
+    ["延迟块"]="延迟",
 }
-local gameData={
-    -- 多人（热）
-    {name="tech",        tags="热门 电脑 手机 键盘 触屏 单人 多人 快速 无延迟 慢速 延迟 新人"},
-    {name="io",          tags="热门 电脑 网页 单人 多人 键盘 快速 无延迟 新人"},
-    {name="js",          tags="热门 电脑 手机 网页 单人 多人 键盘 触屏 快速 无延迟 新人"},
-    {name="tec",         tags="热门 电脑 主机 单人 多人 键盘 鼠标 慢速 延迟 新人"},
-
-    -- 单机（热）
-    {name="aqua",        tags="热门 电脑 键盘 单人 快速 无延迟 慢速 延迟"},
-    {name="tetrjs",      tags="热门 电脑 手机 网页 单人 键盘 触屏 快速 无延迟 慢速 延迟 新人"},
-    {name="tgm",         tags="热门 电脑 单人 键盘 快速 延迟"},
-    {name="poly",        tags="热门 电脑 单人 键盘 快速 无延迟 慢速 延迟"},
-    {name="sd",          tags="热门 电脑 单人 多人 键盘 快速 无延迟 慢速 延迟"},
-    {name="tl",          tags="热门 电脑 网页 单人 键盘 快速 无延迟 慢速 延迟"},
-    {name="asc",         tags="热门 电脑 网页 单人 键盘 快速 无延迟 慢速 延迟"},
-    {name="np",          tags="热门 电脑 单人 键盘 快速 无延迟 慢速 延迟"},
-    {name="misa",        tags="热门 电脑 单人 键盘 慢速 无延迟"},
-    {name="touhoumino",  tags="热门 电脑 单人 键盘 慢速 延迟 快速 无延迟"},
-    {name="royale",      tags="热门 手机 单人 触屏 快速 无延迟 慢速 延迟"},
-
-    -- 主机
-    {name="ppt",         tags="热门 电脑 主机 单人 多人 键盘 慢速 延迟"},
-    {name="t99",         tags="热门 主机 单人 多人 慢速 延迟"},
-
-    -- 单机（冷）
-    {name="mind bender", tags="电脑 手机 网页 单人 键盘 触屏 鼠标 慢速 延迟"},
-    {name="gems",        tags="电脑 手机 网页 单人 键盘 触屏 鼠标 慢速 延迟"},
-    {name="tetris.com",  tags="电脑 手机 网页 单人 键盘 触屏 鼠标 慢速 延迟"},
-    {name="mob",         tags="电脑 单人 键盘 快速 延迟"},
-    {name="dtet",        tags="电脑 单人 键盘 快速 无延迟"},
-    {name="cambridge",   tags="电脑 单人 键盘 快速 无延迟 慢速 延迟"},
-    {name="hebo",        tags="电脑 单人 键盘 快速 无延迟"},
-    {name="texmaster",   tags="电脑 单人 键盘 快速 无延迟"},
-    {name="tetris beat", tags="手机 单人 触屏 快速 无延迟 慢速 延迟"},
-
-    -- 多人（冷）
-    {name="kos",         tags="电脑 手机 网页 单人 多人 键盘 触屏 鼠标 慢速 无延迟"},
-    {name="to",          tags="电脑 单人 多人 键盘 快速 无延迟"},
-    {name="c2",          tags="电脑 单人 多人 键盘 快速 无延迟"},
-    {name="nuke",        tags="电脑 网页 单人 多人 键盘 慢速 延迟"},
-    {name="wwc",         tags="电脑 网页 单人 多人 键盘 快速 无延迟 慢速 延迟"},
-    {name="tf",          tags="电脑 网页 单人 多人 键盘 快速 无延迟 慢速 延迟"},
-    {name="jj",          tags="手机 单人 多人 触屏 快速 无延迟"},
-    -- {name="fl",          tags="电脑 手机 网页 键盘 触屏 单人 多人 经典 现代 快速 无延迟 慢速 延迟"},-- 目前好像上不去
-
-    -- 题库
-    {name="ttt",         tags="热门 电脑 网页 单人 键盘 题库"},
-    {name="ttpc",        tags="热门 电脑 网页 单人 键盘 题库"},
-    {name="tpo",         tags="电脑 网页 单人 键盘 题库"},
-    {name="nazo",        tags="电脑 网页 单人 键盘 题库"},
-}
+local gameNames={}
+for _,entry in next,zict do
+    if entry.cat=='game' and entry.shortname then
+        if entry.tags then
+            local t=STRING.split(entry.tags,' ')
+            for _,tag in next,t do
+                if not tags:find(tag) then
+                    print("unlisted tag: "..tag.." in "..entry.title)
+                end
+            end
+        end
+        gameNames[entry]=true
+        if not zict[SimpStr(entry.shortname)] then
+            print("cannot find "..entry.shortname.."; "..entry.title)
+        end
+    end
+end
+gameNames=TABLE.getKeys(gameNames)
+for i=1,#gameNames do gameNames[i]=SimpStr(gameNames[i].shortname) end
+table.sort(gameNames)
 
 ---@type Task_raw
 return {
     init=function(_,D)
         D.lastDetailEntry=false
-        D.entries=Dict.entries
-        Dict.entries=nil
+        D.entries=zict.entries
+        zict.entries=nil
     end,
     func=function(S,M,D)
         ---@cast M LLOneBot.Event.PrivateMessage|LLOneBot.Event.GroupMessage
@@ -126,16 +115,17 @@ return {
                 end
 
                 local results={}
-                for _,game in next,gameData do
+                for _,gameName in next,gameNames do
+                    local game=zict[SimpStr(gameName)]
                     local available=true
                     for _,word in next,words do
-                        if not game.tags:find(word) then
+                        if not game.tags:find(word,nil,true) then
                             available=false
                             break
                         end
                     end
                     if available then
-                        table.insert(results,game.name)
+                        table.insert(results,gameName)
                     end
                 end
 
@@ -199,7 +189,7 @@ return {
         ---@type ZictEntry
         local entry
         if startPos==1 then
-            entry=Dict[phrase]
+            entry=zict[SimpStr(phrase)]
         else
             local words=STRING.split(phrase,'%s+',true)
             while #words[#words]>26 do
@@ -207,7 +197,7 @@ return {
                 if not words[1] then return false end
             end
             while #words>0 do
-                entry=Dict[table.concat(words,'')]
+                entry=zict[table.concat(words,'')]
                 if entry then break end
                 table.remove(words)
             end

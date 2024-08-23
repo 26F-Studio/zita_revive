@@ -1,10 +1,14 @@
 ---@class ZictEntry
 ---@field word string
----@field title string
----@field text string
+---@field title? string
+---@field text? string
 ---@field detail? string
 ---@field link? string
 ---@field func? fun(words:string[]):string
+---
+---@field cat 'game'|nil
+---@field shortname? string
+---@field tags? string
 
 --[[
     word是每个词条的查询关键词，多个名称用分号分隔，目前访问词条必须完全匹配其中的一个（不过英文字母大小写和空格会被忽略，例如a b c和ABC视为同一个东西）。
@@ -15,6 +19,7 @@
     func，可选，用于实现特殊词条
 ]]
 
+---@type ZictEntry[]
 local meta={
     {
         word="词典;小z词典;zict;zictionary",
@@ -46,19 +51,19 @@ local meta={
     {
         word="harddrop wiki",
         title="HardDrop Wiki",
-        text="（英文）位于Hard Drop全球俄罗斯方块社区的Wiki百科",
+        text="(英文)位于Hard Drop全球俄罗斯方块社区的Wiki百科",
         link="harddrop.com/wiki/Tetris_Wiki",
     },
     {
         word="tetris wiki",
         title="Tetris Wiki",
-        text="（英文）一个专注于创建俄罗斯方块相关内容的Wiki百科，由Myndzi在2015创办",
+        text="(英文)一个专注于创建俄罗斯方块相关内容的Wiki百科，由Myndzi在2015创办",
         link="tetris.wiki",
     },
     {
         word="tetris wiki fandom",
         title="Tetris Wiki Fandom",
-        text="（英文）一个俄罗斯方块维基",
+        text="(英文)一个俄罗斯方块维基",
         link="tetris.fandom.com/wiki/Tetris_Wiki",
     },
     {
@@ -85,8 +90,24 @@ local meta={
         text="（不熟，有请其他群友解释）",
     },
 }
+---@type ZictEntry[]
 local main={
     -- 缩写
+    {
+        word="40l;40line;sprint",
+        title="40行模式",
+        text="一个大多数现代方块都会有的竞速模式，在默认规则下消除40行比拼速度，目前的世界纪录是westl的13秒多",
+    },
+    {
+        word="zen;禅;禅模式",
+        title="禅模式",
+        text="出自宝开早年游戏中多次出现的无尽休闲模式，方块里的此模式都会被设计成没有速度要求，但是否无尽不一定",
+    },
+    {
+        word="限时打分;限时打分模式;blitz;ultra",
+        title="限时打分模式",
+        text="出自宝开早年游戏中多次出现的限时打分模式",
+    },
     {
         word="lpm;bpm;ppm;pps",
         title="速度",
@@ -220,15 +241,15 @@ local main={
         detail="有人做了T99/TF中的O块变形的特效视频广为流传；\n一些旋转系统允许O块旋进坑；\nTech设计的变形系统中可以旋转O来变形/传送进入一些特定形状的洞",
     },
     {
-        word="旋转系统;rs;rotation system",
+        word="踢墙;踢墙表;旋转系统;rs;rotation system",
         title="旋转系统",
         text="现代方块游戏中，方块一般能绕着固定的旋转中心旋转。如果旋转后和场地或墙壁有重合，会根据一些规则尝试移动方块到附近的空位来让旋转成立而不是卡住转不动",
-        detail="（类）SRS旋转系统通常根据<从哪个方向转到哪个方向>选取一个偏移列表（也叫踢墙表），方块根据这个列表进行位置偏移（这个过程叫踢墙），于是就可以钻进入一些特定形状的洞。不同旋转系统的具体踢墙表可以在各大Wiki查到",
+        detail="(类)SRS旋转系统通常根据【从哪个方向转到哪个方向】选取一个偏移列表（也叫踢墙表），方块根据这个列表进行位置偏移（这个过程叫踢墙），于是就可以钻进入一些特定形状的洞。不同旋转系统的具体踢墙表可以在各大Wiki查到",
     },
     {
         word="朝向;方块朝向;direction",
         title="方块朝向",
-        text="在（类）SRS旋转系统中需要说明方块朝向的时候，“朝下”“竖着”等词描述太模糊，所以使用0-R-2-L来表示方块从原位开始顺时针转一圈的四个状态",
+        text="在(类)SRS旋转系统中需要说明方块朝向的时候，“朝下”“竖着”等词描述太模糊，所以使用0-R-2-L来表示方块从原位开始顺时针转一圈的四个状态",
         detail="通常见于SRS踢墙表的行首，0→L表示原位逆时针转一次到L状态，0→R表示原位顺时针转一次到R状态，2→R代表从180°状态逆时针转一次到R状态",
     },
     {
@@ -240,7 +261,7 @@ local main={
         word="birs;bias rs",
         title="BiRS",
         text="Bias Rotation System，Techmino原创旋转系统，基于XRS和SRS设计，有“指哪打哪”的特性",
-        detail="当左/右/下（软降）被按下并且那个方向顶住了墙，会在旋转时添加一个额外偏移（三个键朝各自方向加1格），和基础踢墙表叠加（额外偏移和叠加偏移的水平方向不能相反，且叠加偏移的位移大小不能超过√5）。如果失败，会取消向左右的偏移然后重试，还不行就取消向下的偏移\nBiRS相比XRS只使用一个踢墙表更容易记忆，并且保留了SRS翻越地形的功能",
+        detail="当左/右/下(软降)被按下并且那个方向顶住了墙，会在旋转时添加一个额外偏移（三个键朝各自方向加1格），和基础踢墙表叠加（额外偏移和叠加偏移的水平方向不能相反，且叠加偏移的位移大小不能超过√5）。如果失败，会取消向左右的偏移然后重试，还不行就取消向下的偏移\nBiRS相比XRS只使用一个踢墙表更容易记忆，并且保留了SRS翻越地形的功能",
     },
     {
         word="c2rs;cultris2 rs",
@@ -342,12 +363,12 @@ local main={
     {
         word="攻击;进攻;防守;防御;攻防",
         title="对战攻防",
-        text="攻击指通过消除给对手发送垃圾行；\n防御（相杀）指别人打过来攻击之后用攻击抵消；\n反击指抵消/吃下所有攻击后打出攻击",
+        text="攻击指通过消除给对手发送垃圾行；\n防御(相杀)指别人打过来攻击之后用攻击抵消；\n反击指抵消/吃下所有攻击后打出攻击",
     },
     {
         word="连击;combo;ren",
         title="连击",
-        text="连续的消除从第二次起称为 1 Combo，攻击数取决于具体哪一款游戏。“REN”这个名称来源于日语中的“連”（れん）",
+        text="连续的消除从第二次起称为 1 Combo，攻击数取决于具体哪一款游戏。“REN”这个名称来源于日语中的“連”(れん)",
     },
     {
         word="spike",
@@ -381,7 +402,7 @@ local main={
     {
         word="c1w",
         title="C1W",
-        text="Center 1 Wide，中间空1列，一种实战里消4同时辅助打TSD的打法，需要玩家理解<平衡法>，熟练之后可以轻松消四+T2输出",
+        text="Center 1 Wide，中间空1列，一种实战里消4同时辅助打TSD的打法，需要玩家理解“平衡法”，熟练之后可以轻松消四+T2输出",
     },
     {
         word="c2w;c3w",
@@ -392,7 +413,7 @@ local main={
         word="c4w;吃四碗",
         title="C4W",
         text="Center 4 Wide，中间空四列，一种连击打法，能打出很高的连击",
-        detail="利用了大多数专业对战方块游戏的死亡判定机制，可以放心堆高不担心被顶死，然后开始连击。是一种利用游戏机制的不平衡策略（尤其在开局时），观赏性不是很强还可以以弱胜强，成本太低所以成为了部分游戏中约定的类似“禁招”的东西，请在了解情况后再使用，不然可能会被别人骂\nTechmino中虑到了平衡问题，所以c4w的强度没有别的游戏那么夸张\n另见 #N-Res",
+        detail="利用了大多数专业对战方块游戏的死亡判定机制，可以放心堆高不担心被顶死然后开始连击。属于利用了游戏机制的略不平衡策略（尤其在开局时），打多了比较千篇一律还容易以弱胜强，所以c4s成为了部分游戏中约定的类似“禁招”的东西，滥用容易招致批评\n另见 #N-Res",
     },
     {
         word="n-res",
@@ -429,7 +450,7 @@ local main={
     {
         word="20g",
         title="20G",
-        text="现代方块的最高下落速度（无限），瞬间到底 下落过程完全不可见，会让方块无法跨越壕沟或攀爬台阶",
+        text="现代方块的最高下落速度(无限)，瞬间到底 下落过程完全不可见，会让方块无法跨越壕沟或攀爬台阶",
         detail="因为一般场地就是20高，所以20G的意思其实同∞G\n一些游戏中ASP调成0可能可以让方块飞跃山谷，但考虑“高重力”这个项目的玩法，其实不该如此，例如Techmino中20G的优先级比移动高一层，ASP=0的“瞬间移动”中途也会受到20G的影响掉入深坑",
     },
     {
@@ -440,12 +461,12 @@ local main={
     {
         word="生成延迟;spawn delay;are",
         title="生成延迟",
-        text="ARE。方块<锁定完成到下一个方块出现>之间的时间",
+        text="ARE。方块“锁定完成到下一个方块出现”之间的时间",
     },
     {
         word="消行延迟;clear delay;line clear delay;line are",
         title="消行延迟",
-        text="Line ARE。方块<锁定完成能消行时的消行动画>占据的时间",
+        text="Line ARE。方块“锁定且消行时的消行动画”占据的时间",
     },
     {
         word="极简;finesse;极简操作",
@@ -478,7 +499,7 @@ local main={
     {
         word="asd;asp;asd/asp;das;arr",
         title="ASD/ASP",
-        text="ASD（曾叫DAS）指从“按下移动键时动一格”到“开始自动移动”之间的时间\nASP（曾叫ARR），指“每次自动移动”之间的时间，单位可以是f（帧）或者或者ms（毫秒），1f≈16.7ms\n另见 #ASD通俗 #ASD设置引导",
+        text="ASD（曾叫DAS）指从“按下移动键时动一格”到“开始自动移动”之间的时间\nASP（曾叫ARR），指“每次自动移动”之间的时间，单位可以是f(帧)或者或者ms(毫秒)，1f≈16.7ms\n另见 #ASD通俗 #ASD设置引导",
         detail="Auto-Shift-Delay，自动移动延迟；Auto-Shift-Period，自动移动间隔",
     },
     {
@@ -507,13 +528,13 @@ local main={
         word="his;his4;h4r6",
         title="History出块",
         text="一种的出块方式，例如h4r6 (His4 Roll6)是在随机新块的时候若和最近4次已经生成的Next中有一样的就重新随机，直到和那4个都不一样或者重roll了6次",
-        detail="这是早期对纯随机出块的一大改进，大大减小了连续出几个SZ（洪水）的概率，但偶尔还是会很久不出现某一块比如I，导致发生干旱",
+        detail="这是早期对纯随机出块的一大改进，大大减小了连续出几个SZ(洪水)的概率，但偶尔还是会很久不出现某一块比如I，导致发生干旱",
     },
     {
         word="hispool",
         title="HisPool出块",
         text="一种出块方式，History Pool，his算法一个比较复杂的分支，在理论上保证了干旱时间不会无限长，最终效果介于His和Bag之间",
-        detail="在His的基础上添加了一个Pool（池），在取块的时候his是直接随机和历史序列（最后4次生成的next）比较，而HisPool是从Pool里面随机取（然后补充一个最旱的块增加他的概率）然后和历史序列比较",
+        detail="在His的基础上添加了一个Pool(池)，在取块的时候his是直接随机和历史序列（最后4次生成的next）比较，而HisPool是从Pool里面随机取（然后补充一个最旱的块增加他的概率）然后和历史序列比较",
     },
     {
         word="c2出块;cultris2出块",
@@ -550,7 +571,7 @@ local main={
     {
         word="干旱;drought",
         title="干旱",
-        text="经典块术语，指长时间不来I方块（长条）。现代方块使用的Bag7出块规则下平均7块就会有一个I，理论极限两个I最远中间隔12块，严重的干旱不可能出现",
+        text="经典块术语，指长时间不来I方块(长条)。现代方块使用的Bag7出块规则下平均7块就会有一个I，理论极限两个I最远中间隔12块，严重的干旱不可能出现",
     },
     {
         word="骨块;bone;bone block",
@@ -612,6 +633,7 @@ local main={
         detail="如果你想开发以Tetris为大标题的“官方”俄罗斯方块游戏，必须经过他们的同意且支付大额授权费用，这对于个人开发者来说是几乎不可能的",
     },
 }
+---@type ZictEntry[]
 local pattern={
     {
         word="定式;开局定式",
@@ -629,133 +651,163 @@ local pattern={
         title="定式相关信息正在维护，请到 #灰机wiki 查看",
     },
 }
+---@type ZictEntry[]
 local game={
-    -- 题库
-    {
-        word="ttt",
-        title="TTT",
-        text="Tetris Trainer Très-Bien (by こな)。现代方块特殊操作手把手教程（只能键盘操作）\n\t推荐能纯消四完成40L挑战的人学习\n\t内含T-spin、极简、SRS、部分对战定式介绍等教程\n注：提供的链接是翻译后挂在茶服的版本",
-        link="teatube.cn/ttt",
-    },
-    {
-        word="ttpc",
-        title="TTPC",
-        text="TETRIS Perfect Clear Challenge (by chokotia)。SRS+Bag7方块游戏Perfect Clear Opener教程（只能键盘操作）。推荐完成了TTT的人学习（必须先学会SRS）\n\n注：提供的链接是翻译后挂在茶服的版本",
-        link="teatube.cn/ttpc",
-    },
-    {
-        word="nazo",
-        title="NAZO",
-        text="各类SRS试题\n\t推荐能通过TTT的玩家尝试\n\t内含各种T-spin/All spin题目，简单到极难题目都有\n\n注：提供的链接是翻译后挂在茶服的版本",
-        link="teatube.cn/nazo",
-    },
-    {
-        word="tpo",
-        title="TPO",
-        text="Tetris Puzzle O。由TCV100制作的题库网站，内含nazo的部分题库",
-        link="47.92.33.38/tpo",
-    },
     -- 网页
     {
+        cat='game',
+        shortname="kos",
+        tags="非官方 电脑 手机 网页 单人 多人 键盘 触屏 鼠标 慢速 无延迟 创新",
         word="kos;king of stackers",
         title="King of Stackers",
         text="简称KoS。网页版回合制对战方块点击即玩（可能很卡），主要规则为：以7块为一个回合，双方轮流在自己场地中放置方块，任何的攻击只在对方回合放一块不消行后生效，策略性很强。有不同的伤害表设置",
         link="kingofstackers.com/games.php",
     },
     {
+        cat='game',
+        shortname="屁块",
+        tags="热门 非官方 电脑 手机 网页 单人 键盘 触屏 快速 无延迟 慢速 延迟 新人",
         word="屁块;tetrjs;tetr.js",
         title="Tetr.js",
         text="简称屁块（因为作者网名叫Farter）。设置内容足够专业，模式很多，但画面很简单，几乎没有动画，而且移动端只有几套固定的按键组合（不能自由拖放）",
         link="farter.cn/t",
     },
     {
+        cat='game',
+        shortname="T-ex",
+        tags="非官方 电脑 网页 单人 键盘 快速 延迟",
         word="T-ex",
         title="T-ex",
         text="Farter早年制作的一个基于flash的仿TGM游戏，包含一个创新旋转系统 #XRS",
     },
     {
+        cat='game',
+        shortname="tl",
+        tags="热门 非官方 电脑 网页 单人 键盘 快速 无延迟 慢速 延迟",
         word="tl;tetra legends",
         title="Tetra Legends",
         text="简称TL，单机模式比较丰富，有两个隐藏的节奏模式，并且将一些其他游戏中不可见的机制进行了可视化，动效也很多。在2020年12月，基本确定由于各种原因不再继续开发",
         link="tetralegends.app",
     },
     {
+        cat='game',
+        shortname="asc",
+        tags="热门 非官方 电脑 网页 单人 键盘 快速 无延迟 慢速 延迟 创新",
         word="asc;ascension",
         title="Ascension",
         text="简称ASC，使用自己的ASC旋转系统，有不少单机模式，对战模式目前处在测试阶段",
         link="asc.winternebs.com",
     },
     {
-        word="js;jstris",
-        title="Jstris",
-        text="简称JS，有常用的科研向单机模式和自定义各种参数的功能，允许拖放固定尺寸的正方形虚拟按键，没有任何动画效果",
-        link="jstris.jezevec10.com",
-    },
-    {
+        cat='game',
+        shortname="io",
+        tags="热门 非官方 电脑 网页 单人 多人 键盘 快速 无延迟 新人",
         word="io;tetrio;tetr.io",
         title="TETR.IO",
         text="简称IO，有排位系统和功能全面的自定义模式，单机模式只有三个。有电脑客户端下载（优化性能）\n[Safari浏览器似乎打不开]\n另见#io s2",
         link="tetr.io",
     },
     {
+        cat='game',
+        shortname="js",
+        tags="热门 非官方 电脑 手机 网页 单人 多人 键盘 触屏 快速 无延迟 新人 创新",
+        word="js;jstris",
+        title="Jstris",
+        text="简称JS，有常用的科研向单机模式和自定义各种参数的功能，允许拖放固定尺寸的正方形虚拟按键，没有任何动画效果",
+        link="jstris.jezevec10.com",
+    },
+    {
+        cat='game',
+        shortname="nuke",
+        tags="非官方 电脑 网页 单人 多人 键盘 慢速 延迟",
         word="nuke;nuketris",
         title="Nuketris",
         text="有几个基础单机模式和1V1排位",
         link="nuketris.com",
     },
     {
+        cat='game',
+        shortname="wwc",
+        tags="非官方 电脑 网页 单人 多人 键盘 快速 无延迟 慢速 延迟 创新",
         word="wwc;worldwide combos",
         title="Worldwide Combos",
         text="简称WWC，全世界匹配制1V1。特色：有录像战，匹配的对手可以不是真人；几种不同风格的大规则；炸弹垃圾行对战",
         link="worldwidecombos.com",
     },
     {
+        cat='game',
+        shortname="tf",
+        tags="官方 电脑 网页 单人 多人 键盘 快速 无延迟 慢速 延迟",
         word="tf;tetris friends",
         title="Tetris Friends",
         text="简称TF，已经关服了的网页版方块。以前人比较多，后来官服倒闭了热度下去了，不过现在有人架了私服还可以体验到",
         link="notrisfoes.com",
     },
     {
+        cat='game',
+        shortname="tetris.com",
+        tags="官方 电脑 手机 网页 单人 键盘 触屏 鼠标 慢速 延迟",
         word="tetris.com",
         title="tetris.com",
         text="tetris.com官网上的俄罗斯方块，只有马拉松一种模式，特色是支持基于鼠标指针位置的智能控制",
     },
     {
+        cat='game',
+        shortname="gems",
+        tags="官方 电脑 手机 网页 单人 键盘 触屏 鼠标 慢速 延迟 创新",
         word="gems;tetris gems",
         title="Tetris Gems",
         text="tetris.com官网上的俄罗斯方块，限时1分钟挖掘，有重力机制\n有三种消除后可以获得不同功能的宝石方块",
         link="https://tetris.com/play-tetrisgems",
     },
     {
+        cat='game',
+        shortname="mindbender",
+        tags="官方 电脑 手机 网页 单人 键盘 触屏 鼠标 慢速 延迟",
         word="mind bender;tetris mind bender",
         title="Tetris Mind Bender",
         text="tetris.com官网上的俄罗斯方块，在马拉松基础上添加了效果，场地上会随机冒出效果方块，消除后会得到各种各样或好或坏的效果",
     },
     -- 跨平台
     {
+        cat='game',
+        shortname="tech",
+        tags="热门 非官方 电脑 手机 键盘 触屏 单人 多人 快速 无延迟 慢速 延迟 新人 创新",
         word="tech;techmino;铁壳;铁壳米诺",
         title="Techmino",
         text="简称Tech，单机模式和各种设置都很齐全\n目前最新版本0.17.21，可以和约好友联机对战",
         link="studio26f.org",
     },
     {
+        cat='game',
+        shortname="aqm",
+        tags="热门 非官方 电脑 键盘 单人 快速 无延迟 慢速 延迟 创新",
         word="aqm;aquamino",
         title="Aquamino",
         text="除了基础的单机模式外还有冰风暴、多线程、激光、雷暴等创意模式",
         link="aqua6623.itch.io/aquamino",
     },
     {
+        cat='game',
+        shortname="fl",
+        tags="非官方 电脑 手机 网页 键盘 触屏 单人 多人 快速 无延迟 慢速 延迟 创新",
         word="fl;falling lightblocks",
         title="Falling Lightblocks",
-        text="一个全平台块，横竖屏，有延迟并且不可调。手机支持自定义键位，主要玩法基于NES块设计，也有现代模式。对战为半即时半回合制，无攻击缓冲不可抵消",
+        text="（现在疑似上不去）一个全平台块，横竖屏，有延迟并且不可调。手机支持自定义键位，主要玩法基于NES块设计，也有现代模式。对战为半即时半回合制，无攻击缓冲不可抵消",
     },
     {
+        cat='game',
+        shortname="剑桥",
+        tags="非官方 电脑 单人 键盘 快速 无延迟 慢速 延迟",
         word="剑桥;cambridge",
         title="Cambridge",
         text="致力于创建一个轻松高度自定义新模式的方块平台。最初由Joe Zeng开发，于2020/10/08的0.1.5版开始Milla接管了开发。 — Tetris Wiki.",
     },
     -- 街机/类街机
     {
+        cat='game',
+        shortname="tgm",
+        tags="热门 官方 电脑 单人 键盘 快速 延迟",
         word="tgm;tetris the grand master;tetris grand master",
         title="TGM",
         text="Tetris The Grand Master，一个街机方块系列（有Windows移植版），S13/GM等称号都出自该作，其中TGM3比较普遍，部分模式说明发送“##”查看",
@@ -763,118 +815,213 @@ local game={
         link="teatube.cn/TGMGUIDE",
     },
     {
+        cat='game',
+        shortname="dtet",
+        tags="非官方 电脑 单人 键盘 快速 无延迟",
         word="dtet",
         title="DTET",
-        text="单机方块游戏，基于经典规则加入了20G和一个强大的旋转系统，但是除了键位其他参数都不可自定义。有点难找到，而且找到后可能还要自己补齐缺的DLL文件",
+        text="单机方块游戏，基于经典规则加入了20G和强大的人体工学方块控制系统",
     },
     {
+        cat='game',
+        shortname="mob",
+        tags="非官方 电脑 单人 键盘 快速 延迟",
         word="mob;master of block",
         title="Master of Block",
         text="一个仿街机方块游戏",
     },
     {
+        cat='game',
+        shortname="hebo",
+        tags="非官方 电脑 单人 键盘 快速 无延迟",
         word="hebo;heboris",
         title="Heboris",
         text="一个仿街机方块游戏，可以模拟多个方块游戏的部分模式",
     },
     {
+        cat='game',
+        shortname="tex",
+        tags="非官方 电脑 单人 键盘 快速 无延迟",
         word="tex;texmaster",
         title="Texmaster",
         text="TGM的社区自制游戏，包含TGM的所有模式，可以用来练习TGM，但World规则不完全一样（如软降到底无锁延，踢墙表有细节不同等）",
     },
     -- 其他
     {
+        cat='game',
+        shortname="tec",
+        tags="热门 官方 电脑 主机 单人 多人 键盘 鼠标 慢速 延迟 新人",
         word="tec;tetris effect;tetris effect connected",
         title="Tetris Effect: Connected",
         text="简称TEC，特效方块游戏\n相比早期的Tetris Effect单机游戏，TEC增加了联网对战，包含Boss战、Zone对战、经典块对战和分数对战四个模式",
     },
     {
+        cat='game',
+        shortname="t99",
+        tags="热门 官方 主机 单人 多人 慢速 延迟",
         word="t99;tetris 99",
         title="Tetris 99",
         text="简称T99，主玩99人混战的吃鸡模式，战术比重比较大，胜率不只由玩家在平时1V1时的水平决定\n也有一些常用单机模式如马拉松等",
     },
     {
+        cat='game',
+        shortname="ppt",
+        tags="热门 官方 电脑 主机 单人 多人 键盘 慢速 延迟",
         word="ppt;puyo puyo tetris",
         title="Puyo Puyo Tetris",
         text="简称PPT，将方块和 Puyo Puyo 两个下落消除游戏放到一个游戏里，二者可以对战，联机单机模式都很多。另有一拓展版本Puyo Puyo Tetris 2\n[Steam PC版相对NS版手感和网络等都不太好]",
     },
     {
+        cat='game',
+        shortname="to",
+        tags="官方 电脑 单人 多人 键盘 快速 无延迟",
         word="to;top;toj;tos;tetris online",
         title="Tetris Online",
         text="简称TO，主要用来6人内对战/单挑/刷每日40L榜/挖掘模式/打机器人。支持自定义DAS/ARR但都不能到0\n现在还开着的服务器有：\nTO-P（波兰服，服务器在波兰，可能会卡顿）\nTO-S（研究服，研究群群友自己开的服，很稳定，需要进群注册）",
     },
     {
+        cat='game',
+        shortname="c2",
+        tags="非官方 电脑 单人 多人 键盘 快速 无延迟 创新",
+        word="c2;cultris2;cultris ii",
+        title="Cultris II",
+        text="简称C2，设计基于经典规则出发，支持自定义DAS/ARR，对战的主要玩法是基于时间的连击，考验玩家速度/Wide打法/挖掘",
+    },
+    {
+        cat='game',
+        shortname="poly",
+        tags="热门 非官方 电脑 单人 键盘 快速 无延迟 慢速 延迟 创新",
+        word="poly;polyform",
+        title="Polyform",
+        text="单机方块游戏，只有几个经典的模式，但单元格不是正方形，有三角形和六边形",
+    },
+    {
+        cat='game',
+        shortname="sd",
+        tags="热门 非官方 电脑 单人 多人 键盘 快速 无延迟 慢速 延迟 创新",
+        word="sd;spirit drop",
+        title="Spirit Drop",
+        text="主要内容为单机，除了几个经典的模式外有一大堆类似炫酷的还在开发中",
+    },
+    {
+        cat='game',
+        shortname="np",
+        tags="热门 非官方 电脑 单人 键盘 快速 无延迟 慢速 延迟",
+        word="np;nullpomino",
+        title="Nullpomino",
+        text="简称NP，整个游戏自定义程度极高，几乎任何参数都可以自己设置，是一个专业级方块\n[不过UI风格比较老，需要全键盘操作，刚开始可能不习惯]",
+    },
+    {
+        cat='game',
+        shortname="misa",
+        tags="热门 非官方 电脑 单人 键盘 慢速 无延迟",
+        word="misa;misamino",
+        title="Misamino",
+        text="单机1v1，主玩回合制模式，可以自定义AI（自己写的话需要了解接口）",
+    },
+    {
+        cat='game',
+        shortname="thm",
+        tags="热门 非官方 电脑 单人 键盘 慢速 延迟 快速 无延迟 创新",
+        word="thm;touhoumino",
+        title="Touhoumino",
+        text="一个Nullpomino的自带资源包的改版，将东方Project元素与俄罗斯方块结合。马拉松模式结合了东方Project里的“符卡”机制，需要在一定时间内达成目标分数才能击破\n[难度较大，适合有方块基础并且各项能力都较强的玩家游玩（不然都不知道自己怎么死的）。]",
+    },
+    {
+        cat='game',
+        shortname="beat",
+        tags="官方 手机 单人 触屏 快速 无延迟 慢速 延迟 创新",
+        word="beat;tetris beat",
+        title="Tetris Beat",
+        text="ios限定，N3TWORK代理的一款移动端方块。除了马拉松以外游戏还有一个“Beat”模式，但只需根据BGM的节奏落块就可以得到额外分数\n[特效比较瞎眼，不支持自定义键位，而且默认的按钮也很小导致控制也不是很舒服]",
+    },
+    {
+        cat='game',
+        shortname="royale",
+        tags="热门 官方 手机 单人 触屏 快速 无延迟 慢速 延迟",
+        word="royale;tetris royale;tetris n3twork;tetris n3t",
+        title="Tetris (N3TWORK)",
+        text="N3TWORK开发的一款移动端方块（目前由Play Studio代理），有马拉松、3分钟限时打分和Royale（最多100人对战）模式\n[UI设计比较不错，但不支持自定义键位，而且默认的按钮也很小导致控制也不是很舒服]",
+    },
+    {
+        cat='game',
+        shortname="jj",
+        tags="非官方 手机 单人 多人 触屏 快速 无延迟",
+        word="jj;jj块",
+        title="JJ块",
+        text="JJ棋牌平台下一个休闲游戏，Android端百度“JJ比赛”官网下载平台后可以找到（找不到的原因是iOS系统或者没在官网下载或者被限制不可直接访问游戏）。竖屏，输入延迟很小，可自定义DAS/ARR/20G软降，简单自定义键位，无Hold，没有B2B，无攻击缓冲不可抵消，每次攻击上限为4，连击较强，其他同现代方块",
+    },
+    -- 题库
+    {
+        cat='game',
+        shortname="ttt",
+        tags="热门 非官方 电脑 网页 单人 键盘 题库",
+        word="ttt",
+        title="TTT",
+        text="Tetris Trainer Très-Bien (by こな)。现代方块特殊操作手把手教程（只能键盘操作）\n\t推荐能纯消四完成40L挑战的人学习\n\t内含T-spin、极简、SRS、部分对战定式介绍等教程\n注：提供的链接是翻译后挂在茶服的版本",
+        link="teatube.cn/ttt",
+    },
+    {
+        cat='game',
+        shortname="ttpc",
+        tags="热门 非官方 电脑 网页 单人 键盘 题库",
+        word="ttpc",
+        title="TTPC",
+        text="TETRIS Perfect Clear Challenge (by chokotia)。SRS+Bag7方块游戏Perfect Clear Opener教程（只能键盘操作）。推荐完成了TTT的人学习（必须先学会SRS）\n\n注：提供的链接是翻译后挂在茶服的版本",
+        link="teatube.cn/ttpc",
+    },
+    {
+        cat='game',
+        shortname="tpo",
+        tags="非官方 电脑 网页 单人 键盘 题库",
+        word="tpo",
+        title="TPO",
+        text="Tetris Puzzle O。由TCV100制作的题库网站，内含nazo的部分题库",
+        link="47.92.33.38/tpo",
+    },
+    {
+        cat='game',
+        shortname="nazo",
+        tags="非官方 电脑 网页 单人 键盘 题库",
+        word="nazo",
+        title="NAZO",
+        text="各类SRS试题\n\t推荐能通过TTT的玩家尝试\n\t内含各种T-spin/All spin题目，简单到极难题目都有\n\n注：提供的链接是翻译后挂在茶服的版本",
+        link="teatube.cn/nazo",
+    },
+    -- 已逝
+    {
+        cat='game',
+        word="闪电战;tetris blitz",
+        title="Tetris Blitz",
+        text="简称闪电战，EA代理的一款移动端方块，有重力连锁机制，限时2分钟，游戏开始会掉下一堆小方块；持续消行会进入Frenzy模式（场地下方会不断冒出垃圾行，帮助玩家制造大连锁，如果多次落块没有消行会强制结束Frenzy）。有非常多的道具\n当新出现的方块与场地现有方块重叠时，场地最上方的几行会被自动清除，游戏不结束。已于2020年4月下架",
+    },
+    {
+        cat='game',
+        word="tetris ea",
+        title="Tetris (EA)",
+        text="EA代理的一款宇宙主题的移动端方块。有滑动操控和单点触控两种操作模式；除经典的马拉松外还有一个星系模式（地图挖掘），有重力连锁机制，目标是在限定块数内消除所有地图块\n已于2020年4月下架",
+    },
+    {
+        cat='game',
         word="tetra online",
         title="Tetra Online",
         text="简称TO，由Dr Ocelot和Mine两人开发\n故意设计为延迟较多，平时玩无延迟方块的玩家可能会不习惯\n2020年12月9日收到来自TTC的DMCA警告信于是被迫停止开发，在一段时间后关服并下架Steam\n现在在GitHub上面还可以下到Windows的Offline Build\n[UI部分模仿了PPT，音乐不错，攻击特效好看。]",
         link="github.com/Juan-Cartes/Tetra-Offline/releases/tag/1.0",
     },
     {
-        word="c2;cultris2;cultris ii",
-        title="Cultris II",
-        text="简称C2，设计基于经典规则出发，支持自定义DAS/ARR，对战的主要玩法是基于时间的连击，考验玩家速度/Wide打法/挖掘",
-    },
-    {
-        word="poly;polyform",
-        title="Polyform",
-        text="单机方块游戏，只有几个经典的模式，但单元格不是正方形，有三角形和六边形",
-    },
-    {
-        word="sd;spirit drop",
-        title="Spirit Drop",
-        text="主要内容为单机，除了几个经典的模式外有一大堆类似炫酷的还在开发中",
-    },
-    {
-        word="np;nullpomino",
-        title="Nullpomino",
-        text="简称NP，整个游戏自定义程度极高，几乎任何参数都可以自己设置，是一个专业级方块\n[不过UI风格比较老，需要全键盘操作，刚开始可能不习惯]",
-    },
-    {
-        word="misa;misamino",
-        title="Misamino",
-        text="单机1v1，主玩回合制模式，可以自定义AI（自己写的话需要了解接口）",
-    },
-    {
-        word="touhoumino",
-        title="Touhoumino",
-        text="一个Nullpomino的自带资源包的改版，将东方Project元素与俄罗斯方块结合。马拉松模式结合了东方Project里的“符卡”机制，需要在一定时间内达成目标分数才能击破\n[难度较大，适合有方块基础并且各项能力都较强的玩家游玩（不然都不知道自己怎么死的）。]",
-    },
-    {
-        word="闪电战;tetris blitz",
-        title="Tetris Blitz",
-        text="简称闪电战，EA代理的一款移动端方块，有重力连锁机制，限时2分钟，游戏开始会掉下一堆小方块；持续消行会进入Frenzy模式（场地下方会不断冒出垃圾行，帮助玩家制造大连锁，如果多次落块没有消行会强制结束Frenzy）。有非常多的道具\n当新出现的方块与场地现有方块重叠时，场地最上方的几行会被自动清除，游戏不结束。已于2020年4月下架",
-    },
-    {
-        word="tetris ea",
-        title="Tetris (EA)",
-        text="EA代理的一款宇宙主题的移动端方块。有滑动操控和单点触控两种操作模式；除经典的马拉松外还有一个星系模式（地图挖掘），有重力连锁机制，目标是在限定块数内消除所有地图块\n已于2020年4月下架",
-    },
-    {
-        word="tetris beat",
-        title="Tetris Beat",
-        text="N3TWORK代理的一款移动端方块。除了马拉松以外游戏还有一个“Beat”模式，但只需根据BGM的节奏落块就可以得到额外分数\n[特效比较瞎眼，不支持自定义键位，而且默认的按钮也很小导致控制也不是很舒服]",
-    },
-    {
-        word="royale;tetris royale;tetris n3twork;tetris n3t",
-        title="Tetris (N3TWORK)",
-        text="N3TWORK开发的一款移动端方块（目前由Play Studio代理），有马拉松、3分钟限时打分和Royale（最多100人对战）模式\n[UI设计比较不错，但不支持自定义键位，而且默认的按钮也很小导致控制也不是很舒服]",
-    },
-    {
+        cat='game',
         word="环游记;俄罗斯方块环游记;journey;tetris journey",
         title="俄罗斯方块环游记",
         text="简称环游记，国内第一款正版授权手游方块。有闯关模式、对战模式和几个单机模式。闯关模式有各种各样有趣规则大多数有重力连锁，对战规则同现代方块，可以自定义虚拟按键的大小和位置，但是不能自定义DAS/ARR。已于2023年2月15日停服",
     },
     {
-        word="jj;jj块",
-        title="JJ块",
-        text="JJ棋牌平台下一个休闲游戏，Android端百度“JJ比赛”官网下载平台后可以找到（找不到的原因是iOS系统或者没在官网下载或者被限制不可直接访问游戏）。竖屏，输入延迟很小，可自定义DAS/ARR/20G软降，简单自定义键位，无Hold，没有B2B，无攻击缓冲不可抵消，每次攻击上限为4，连击较强，其他同现代方块",
-    },
-    {
+        cat='game',
         word="火拼;火拼俄罗斯",
         title="火拼俄罗斯",
         text="腾讯游戏大厅的方块，场地12列，打字的 DAS 和 ARR，1 Next无 Hold，攻击途径只有消4打3、 消3打2，垃圾行为国际象棋棋盘式，几乎不可能挖掘",
     },
 }
+---@type ZictEntry[]
 local extra_tetrio={
     {
         word="qp2;io s2",
@@ -959,6 +1106,7 @@ local extra_tetrio={
         text="双人 （塔罗牌：恋人 The Lovers）\n会员玩家可以邀请其他人和自己两个人一起玩此模式，两个人发送出去给别人的伤害数值减半，一个人死了后另一个人可以做任务复活队友",
     },
 }
+---@type ZictEntry[]
 local contributor={
     {
         word="小z;zita",
@@ -970,7 +1118,7 @@ local contributor={
         link="studio26f.org",
     },
     {
-        word="mrz;z酱",
+        word="T026;T26;mrz;z酱",
         text="T026.MrZ，Techmino的主创、主程、音乐、音效、主美(?)\n也是另一个我喵！",
         link="space.bilibili.com/225238922",
     },
