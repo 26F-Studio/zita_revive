@@ -812,8 +812,7 @@ local pattern={
     },
     {
         word="st cannon;single triple;st炮;rifle;步枪;dstsd;magic key;魔法钥匙;stsd+;dna;trehalose;海藻糖;kojibiose;曲二糖;iso trelahose;iso-trelahose;iso海藻糖;yog-sothoth;yog sothoth;尤格索托斯",
-        title="其他复合构造",
-        text="相对不太常用的大量其他复合构造，请自行查阅中文维基的T旋方法分类",
+        text="不常用的复合构造，详见链接",
         link="tetris.huijiwiki.com/wiki/T-Spin_Methods",
     },
     -- 技巧·削减
@@ -843,8 +842,7 @@ local pattern={
     },
     {
         word="链锯;shallow grave;浅坟;deja vu;既视感;nuki;枋;横梁;crush;grim grotto;sz passage;sz通道;may;背面t3;背面tst",
-        title="其他削减技巧",
-        text="相对不太常用的大量其他削减技巧，请自行查阅中文维基的T旋方法分类",
+        text="不常用的削减技巧，详见链接",
         link="tetris.huijiwiki.com/wiki/T-Spin_Methods",
     },
     -- 技巧·捐赠
@@ -892,8 +890,7 @@ local pattern={
     },
     {
         word="escalator;escalator loading;电梯;电梯捐;电梯捐赠;tdd;purple rain;紫雨;air;floating;t3斜塔;special triple triple;stt;sky prop;doomerang;毁旋镖",
-        title="其他捐赠技巧",
-        text="相对不太常用的大量其他捐赠技巧，请自行查阅中文维基的T旋方法分类",
+        text="不常用的捐赠技巧，详见链接",
         link="tetris.huijiwiki.com/wiki/T-Spin_Methods",
     },
     --技巧·思路与持续堆叠
@@ -929,15 +926,13 @@ local pattern={
     },
     {
         word="snake;snaking;蛇行;蛇形;hyper fractal;究极分形;zipper;拉链",
-        title="其他堆叠模式",
-        text="相对不太常用的大量其他堆叠模式，请自行查阅中文维基的T旋方法分类",
+        text="不常用的堆叠模式，详见链接",
         link="tetris.huijiwiki.com/wiki/T-Spin_Methods",
     },
     -- 开局定式·第一包mini
     {
         word="hebomai spin;hbm spin;hebomai炮;fiddlesworth;mtd;mini triple double;joystick;摇杆;nyaspin;xz cannon;xz炮;mdf;mini double fractal",
-        title="其他mini开局定式",
-        text="相对不太常用的巨量其他mini开局定式，请自行查阅中文维基的T旋方法分类",
+        text="不常用的mini开局定式，详见链接",
         link="tetris.huijiwiki.com/wiki/T-Spin_Methods",
     },
     -- 开局定式·第一包t1
@@ -985,8 +980,7 @@ local pattern={
     },
     {
         word="doubleyou;pwn's std;pwn的std;dolphin;海豚;misfire;kermspin;surrealist s;超现实主义s;tenespin;hummingbird;蜂鸟;seagull;海鸥;submarine;潜艇;last;old key;旧钥匙;icebreaker;curveball;弧线球;skim cannon;削减炮;kerr loop;ksd;kvodeth sd;secspin;spachispin;齿磨sd;sure fd;speedboat;快艇;pokemino;pokemino's std;pokemino的std",
-        title="其他t1开局定式",
-        text="相对不太常用的巨量其他t1开局定式，请自行查阅中文维基的T旋方法分类",
+        text="不常用的t1开局定式，详见链接",
         link="tetris.huijiwiki.com/wiki/T-Spin_Methods",
     },
     -- 开局定式·第一包t2
@@ -1040,8 +1034,7 @@ local pattern={
     },
     {
         word="perfect dt;完美dt;glitter brooch;captain;captain stacking;captain堆叠;reliable t2;reliable tsd;rich ddp;dodo;渡渡鸟;dragon;dragon sp;dragon special;龙;龙特别型;coon dragon;coon-dragon;428 cannon;428炮;black tea cannon;红茶炮;mochi's anger;mochi之怒;trustworthy dt",
-        title="其他t2开局定式",
-        text="相对不太常用的巨量其他t2开局定式，请自行查阅中文维基的T旋方法分类",
+        text="不常用的t2开局定式，详见链接",
         link="tetris.huijiwiki.com/wiki/T-Spin_Methods",
     },
     -- 开局定式·第一包堆叠第二包t2
@@ -1071,8 +1064,7 @@ local pattern={
     },
     {
         word="antifate;antifate tsd;greenwich;greenwich cannon;格林尼治炮;i-rin tsd;I凛TSD;3d cannon;3d炮;over future;超未来;h cannon;hstsd;H炮;qt;qt cannon;qt炮;et;et cannon;et炮;ok cannon;okey cannon;ok炮;szdt;ct;ct scan;ct scan stacking;ct扫描堆叠;claw machine",
-        title="其他第一包堆叠第二包t2开局定式",
-        text="相对不太常用的巨量其他第一包堆叠第二包t2开局定式，请自行查阅中文维基的T旋方法分类",
+        text="不常用的第一包堆叠第二包t2开局定式，详见链接",
         link="tetris.huijiwiki.com/wiki/T-Spin_Methods",
     },
     -- 开局定式·第一包堆叠第二包t3
@@ -1138,8 +1130,7 @@ local pattern={
     },
     {
         word="pancake;pancake stacking;松饼;松饼堆叠;kuromitsu;kuromitsu stacking;黑蜜;黑蜜堆叠;aitch;aitch stacking;aitch堆叠;olive;olive stacking;橄榄;橄榄堆叠;loyal td;yamaha;yamaha stacking;yamaha堆叠;rabbit;rabbit stacking;兔子堆叠;ruby;ruby stacking;红宝石堆叠;atlas;atlas stacking;atlas堆叠;gravity td;重力td;tandoori chicken;tandoori chicken stacking;riif;riif stacking;riif堆叠;(　ﾟдﾟ)ﾎﾟｶｰﾝ;(　ﾟдﾟ)ﾎﾟｶｰﾝ堆叠;dc-spin;dcspin;double c-spin;double cspin;quick tower;快塔;quick tower 2;快塔改;sewer;tzt cannon;tzt炮",
-        title="其他第一包堆叠第二包t3开局定式",
-        text="相对不太常用的巨量其他第一包堆叠第二包t3开局定式，请自行查阅中文维基的T旋方法分类",
+        text="不常用的第一包堆叠第二包t3开局定式，详见链接",
         link="tetris.huijiwiki.com/wiki/T-Spin_Methods",
     },
     -- 开局定式·new tsd
@@ -1157,8 +1148,7 @@ local pattern={
     },
     {
         word="maospin;intspin;godspin;godless spin;godless-spin;ajanba signature;ajanba签名",
-        title="其他new tsd开局定式",
-        text="相对不太常用的巨量其他new tsd开局定式，请自行查阅中文维基的T旋方法分类",
+        text="不常用的new tsd开局定式，详见链接",
         link="tetris.huijiwiki.com/wiki/T-Spin_Methods",
     },
     -- 开局定式·不做T
@@ -1189,8 +1179,7 @@ local pattern={
     },
     {
         word="crowbar;sz cross;sz十字;outlogic sd;octupus tea cannon;octupus tea炮;catspin;sbsd",
-        title="其他开局定式",
-        text="相对不太常用的巨量其他开局定式，请自行查阅中文维基的T旋方法分类",
+        text="不常用的开局定式，详见链接",
         link="tetris.huijiwiki.com/wiki/T-Spin_Methods",
     },
     -- 其他定式·乐
@@ -1201,7 +1190,7 @@ local pattern={
         link="tetris.huijiwiki.com/wiki/Dubble",
     },
     {
-        word="最强炮",
+        word="最强;最强炮",
         title="最强炮",
         text="一个开局定式，流程长达10包，做出7个不同的T旋。娱乐性定式",
         link="tetris.huijiwiki.com/wiki/Strongest_Cannon",
@@ -1240,7 +1229,7 @@ local game={
         tags="非官 电脑 手机 网页 单人 多人 键盘 触屏 鼠标 无延 慢速 创新",
         word="kos;king of stackers",
         title="King of Stackers",
-        text="简称KoS。网页版回合制对战方块点击即玩（可能很卡），主要规则为：以7块为一个回合，双方轮流在自己场地中放置方块，任何的攻击只在对方回合放一块不消行后生效，策略性很强。有不同的伤害表设置",
+        text="简称KoS,网页版回合制对战方块点击即玩（可能很卡），主要规则为：以7块为一个回合，双方轮流在自己场地中放置方块，任何的攻击只在对方回合放一块不消行后生效，策略性很强。有不同的伤害表设置",
         link="kingofstackers.com/games.php",
     },
     {
@@ -1249,7 +1238,7 @@ local game={
         tags="热门 非官 电脑 手机 网页 单人 键盘 触屏 快速 慢速 无延 延迟 新人 创新",
         word="屁块;tetrjs;tetr.js",
         title="Tetr.js",
-        text="简称屁块（作者网名Farter）。设置内容足够专业模式很多，但画面很简单且触摸控制只有几套固定布局不能自由拖放",
+        text="简称屁块（作者网名Farter）,设置内容足够专业模式很多，但画面很简单且触摸控制只有几套固定布局不能自由拖放",
         link="farter.cn/t",
     },
     {
