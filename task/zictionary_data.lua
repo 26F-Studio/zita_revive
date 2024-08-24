@@ -1763,15 +1763,7 @@ local contributor={
     },
     {
         word="osk",
-        text="OSK，TETR.IO的主创",
-    },
-    {
-        word="Dr.ocelot;Dr ocelot;ocelot",
-        text="Dr.Ocelot，制作了TETR.IO的音频，编写了QP2模式的所有音乐",
-    },
-    {
-        word="garbo",
-        text="Garbo，设计了TETR.IO的游戏玩法和世界观相关内容",
+        text="OSK，创立了Tetr.io",
     },
     -- 神秘
     {
