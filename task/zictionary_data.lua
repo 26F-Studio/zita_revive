@@ -114,9 +114,9 @@ local main={
         text="准则规定的现代方块三大基本模式之一，考察固定时间内的得分或消行数。绝大多数游戏中是2或3分钟，没有等级/重力/倍率增加",
     },
     {
-        word="blitz;闪电战;闪电战模式",
-        title="闪电战模式",
-        text="TETR.IO结合马拉松与限时打分两大传统模式的新规则限时打分，考察2分钟内的得分，但是等级/重力/倍率逐渐增加",
+        word="blitz;blitz mode;blitz模式",
+        title="Blitz模式",
+        text="TETR.IO结合马拉松与限时打分两大传统模式的新规则限时打分，考察2分钟内的得分，但是等级/重力/倍率逐渐增加\n另见 #Tetris Blitz",
     },
     {
         word="zen;禅;禅模式",
@@ -685,7 +685,7 @@ local pattern={
         link="tetris.huijiwiki.com/wiki/%E4%B8%87%E8%8A%B1%E7%AD%92",
     },
     {
-        word="sd;sd cannon;single double;single double cannon;sd炮",
+        word="sd cannon;single double;single double cannon;sd炮",
         title="SD炮",
         text="一个t1接t2的复合构造\n如果寻找的是t1接t2接8L PC的开局定式，请见 #SDPC",
         link="tetris.huijiwiki.com/wiki/SD_%E7%82%AE",
@@ -811,10 +811,10 @@ local pattern={
         link="tetris.huijiwiki.com/wiki/%E7%BB%AF%E7%BA%A2%E4%B9%8B%E7%8E%8B",
     },
     {
-        word="st cannon;single triple;st炮;rifle;步枪;dstsd;magic key;魔法钥匙;stsd+;dna;trehalose;海藻糖;kojibiose;曲二糖;iso trelahose;iso-trelahose;iso海藻糖；yog-sothoth;yog sothoth;尤格索托斯",
+        word="st cannon;single triple;st炮;rifle;步枪;dstsd;magic key;魔法钥匙;stsd+;dna;trehalose;海藻糖;kojibiose;曲二糖;iso trelahose;iso-trelahose;iso海藻糖;yog-sothoth;yog sothoth;尤格索托斯",
         title="其他复合构造",
         text="相对不太常用的大量其他复合构造，请自行查阅中文维基的T旋方法分类",
-        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+        link="tetris.huijiwiki.com/wiki/T-Spin%20Methods",
     },
     -- 技巧·削减
     {
@@ -842,10 +842,10 @@ local pattern={
         link="tetris.huijiwiki.com/wiki/%E8%B6%85%E8%9E%BA%E6%97%8B",
     },
     {
-        word="链锯;shallow grave;浅坟;dejavu;deja vu;既视感;nuki;枋;横梁;crush;grim grotto;sz passage;sz通道;may;背面t3;背面tst",
+        word="链锯;shallow grave;浅坟;deja vu;既视感;nuki;枋;横梁;crush;grim grotto;sz passage;sz通道;may;背面t3;背面tst",
         title="其他削减技巧",
         text="相对不太常用的大量其他削减技巧，请自行查阅中文维基的T旋方法分类",
-        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+        link="tetris.huijiwiki.com/wiki/T-Spin%20Methods",
     },
     -- 技巧·捐赠
     {
@@ -894,7 +894,7 @@ local pattern={
         word="escalator;escalator loading;电梯;电梯捐;电梯捐赠;tdd;purple rain;紫雨;air;floating;t3斜塔;special triple triple;stt;sky prop;doomerang;毁旋镖",
         title="其他捐赠技巧",
         text="相对不太常用的大量其他捐赠技巧，请自行查阅中文维基的T旋方法分类",
-        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+        link="tetris.huijiwiki.com/wiki/T-Spin%20Methods",
     },
     --技巧·思路与持续堆叠
     {
@@ -931,14 +931,14 @@ local pattern={
         word="snake;snaking;蛇行;蛇形;hyper fractal;究极分形;zipper;拉链",
         title="其他堆叠模式",
         text="相对不太常用的大量其他堆叠模式，请自行查阅中文维基的T旋方法分类",
-        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+        link="tetris.huijiwiki.com/wiki/T-Spin%20Methods",
     },
     -- 开局定式·第一包mini
     {
         word="hebomai spin;hbm spin;hebomai炮;fiddlesworth;mtd;mini triple double;joystick;摇杆;nyaspin;xz cannon;xz炮;mdf;mini double fractal",
         title="其他mini开局定式",
         text="相对不太常用的巨量其他mini开局定式，请自行查阅中文维基的T旋方法分类",
-        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+        link="tetris.huijiwiki.com/wiki/T-Spin%20Methods",
     },
     -- 开局定式·第一包t1
     {
@@ -987,7 +987,7 @@ local pattern={
         word="doubleyou;pwn's std;pwn的std;dolphin;海豚;misfire;kermspin;surrealist s;超现实主义s;tenespin;hummingbird;蜂鸟;seagull;海鸥;submarine;潜艇;last;old key;旧钥匙;icebreaker;curveball;弧线球;skim cannon;削减炮;kerr loop;ksd;kvodeth sd;secspin;spachispin;齿磨sd;sure fd;speedboat;快艇;pokemino;pokemino's std;pokemino的std",
         title="其他t1开局定式",
         text="相对不太常用的巨量其他t1开局定式，请自行查阅中文维基的T旋方法分类",
-        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+        link="tetris.huijiwiki.com/wiki/T-Spin%20Methods",
     },
     -- 开局定式·第一包t2
     {
@@ -1042,7 +1042,7 @@ local pattern={
         word="perfect dt;完美dt;glitter brooch;captain;captain stacking;captain堆叠;reliable t2;reliable tsd;rich ddp;dodo;渡渡鸟;dragon;dragon sp;dragon special;龙;龙特别型;coon dragon;coon-dragon;428 cannon;428炮;black tea cannon;红茶炮;mochi's anger;mochi之怒;trustworthy dt",
         title="其他t2开局定式",
         text="相对不太常用的巨量其他t2开局定式，请自行查阅中文维基的T旋方法分类",
-        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+        link="tetris.huijiwiki.com/wiki/T-Spin%20Methods",
     },
     -- 开局定式·第一包堆叠第二包t2
     {
@@ -1073,7 +1073,7 @@ local pattern={
         word="antifate;antifate tsd;greenwich;greenwich cannon;格林尼治炮;i-rin tsd;I凛TSD;3d cannon;3d炮;over future;超未来;h cannon;hstsd;H炮;qt;qt cannon;qt炮;et;et cannon;et炮;ok cannon;okey cannon;ok炮;szdt;ct;ct scan;ct scan stacking;ct扫描堆叠;claw machine",
         title="其他第一包堆叠第二包t2开局定式",
         text="相对不太常用的巨量其他第一包堆叠第二包t2开局定式，请自行查阅中文维基的T旋方法分类",
-        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+        link="tetris.huijiwiki.com/wiki/T-Spin%20Methods",
     },
     -- 开局定式·第一包堆叠第二包t3
     {
@@ -1137,16 +1137,10 @@ local pattern={
         link="tetris.huijiwiki.com/wiki/Bakery_TD",
     },
     {
-        word="ttpc",
-        title="TTPC",
-        text="一个开局定式，第一包堆叠，第二包t3，第三包t3，高概率8行PC",
-        link="tetris.huijiwiki.com/wiki/TTPC",
-    },
-    {
         word="pancake;pancake stacking;松饼;松饼堆叠;kuromitsu;kuromitsu stacking;黑蜜;黑蜜堆叠;aitch;aitch stacking;aitch堆叠;olive;olive stacking;橄榄;橄榄堆叠;loyal td;yamaha;yamaha stacking;yamaha堆叠;rabbit;rabbit stacking;兔子堆叠;ruby;ruby stacking;红宝石堆叠;atlas;atlas stacking;atlas堆叠;gravity td;重力td;tandoori chicken;tandoori chicken stacking;riif;riif stacking;riif堆叠;(　ﾟдﾟ)ﾎﾟｶｰﾝ;(　ﾟдﾟ)ﾎﾟｶｰﾝ堆叠;dc-spin;dcspin;double c-spin;double cspin;quick tower;快塔;quick tower 2;快塔改;sewer;tzt cannon;tzt炮",
         title="其他第一包堆叠第二包t3开局定式",
         text="相对不太常用的巨量其他第一包堆叠第二包t3开局定式，请自行查阅中文维基的T旋方法分类",
-        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+        link="tetris.huijiwiki.com/wiki/T-Spin%20Methods",
     },
     -- 开局定式·new tsd
     {
@@ -1165,7 +1159,7 @@ local pattern={
         word="maospin;intspin;godspin;godless spin;godless-spin;ajanba signature;ajanba签名",
         title="其他new tsd开局定式",
         text="相对不太常用的巨量其他new tsd开局定式，请自行查阅中文维基的T旋方法分类",
-        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+        link="tetris.huijiwiki.com/wiki/T-Spin%20Methods",
     },
     -- 开局定式·不做T
     {
@@ -1197,7 +1191,7 @@ local pattern={
         word="crowbar;sz cross;sz十字;outlogic sd;octupus tea cannon;octupus tea炮;catspin;sbsd",
         title="其他开局定式",
         text="相对不太常用的巨量其他开局定式，请自行查阅中文维基的T旋方法分类",
-        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+        link="tetris.huijiwiki.com/wiki/T-Spin%20Methods",
     },
     -- 其他定式·乐
     {
@@ -1564,7 +1558,7 @@ local game={
         cat='game',
         word="闪电战;tetris blitz",
         title="Tetris Blitz",
-        text="简称闪电战，EA代理的一款移动端方块，有重力连锁机制，限时2分钟，游戏开始会掉下一堆小方块；持续消行会进入Frenzy模式（场地下方会不断冒出垃圾行，帮助玩家制造大连锁，如果多次落块没有消行会强制结束Frenzy）。有非常多的道具\n当新出现的方块与场地现有方块重叠时，场地最上方的几行会被自动清除，游戏不结束。已于2020年4月下架",
+        text="俄罗斯方块闪电战，EA代理的一款移动端方块，有重力连锁机制，限时2分钟，游戏开始会掉下一堆小方块；持续消行会进入Frenzy模式（场地下方会不断冒出垃圾行，帮助玩家制造大连锁，如果多次落块没有消行会强制结束Frenzy）。有非常多的道具\n当新出现的方块与场地现有方块重叠时，场地最上方的几行会被自动清除，游戏不结束。已于2020年4月下架\n另见 #Blitz模式",
     },
     {
         cat='game',
@@ -1798,6 +1792,7 @@ local function checkWords(entry)
         print("Fullwidth semicolon found in entry '"..entry.title.."'")
     end
 end
+-- os.execute('chcp 65001')
 local function loadData(data)
     for _,entry in next,data do
         checkWords(entry)
