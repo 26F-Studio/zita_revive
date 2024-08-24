@@ -11,6 +11,7 @@ local text={
     guessed="这个数字猜过了喵",
     notFinished="上一局还没结束喵",
     win="猜对了喵！答案是",
+    bonus="这是你的奖励喵",
     lose="机会用完了喵…答案是",
     forfeit="认输了喵？答案是",
 }
@@ -138,6 +139,9 @@ return {
                 D.playing=false
                 S:send(D.textHis.."\n"..text.win..mes)
                 D.lastInterectTime=Time()-260
+                if Config.extraData.family[S.uid] then
+                    S:send(text.bonus..CQimage(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages)))
+                end
             elseif D.chances>0 then
                 S:send(D.textHis.."\n"..text.remain[D.mode]..D.chances)
                 D.lastInterectTime=Time()

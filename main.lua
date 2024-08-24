@@ -9,6 +9,7 @@ ZENITHA.setVersionText('')
 function SimpStr(s) return s:gsub('%s',''):lower() end -- Remove spaces and lower case
 local esc={{'&amp;','&'},{'&#91;','['},{'&#93;',']'},{'&#44;',','}}
 function RawStr(s) for _,v in next,esc do s=s:gsub(v[1],v[2]) end return s end -- Unescape
+function CQimage(path) return "[CQ:image,file=file:///"..path:gsub("/","\\").."]" end -- Encode cq path
 --------------------------------------------------------------
 local ws=WS.new{
     host='localhost',
@@ -27,9 +28,11 @@ Config={
     superAdminID={},
     groupManaging={},
     safeSessionID={},
+    extraData=nil,
 }
 xpcall(function()
     local data=FILE.load('conf.luaon','-luaon')
+    ---@cast data Data
     Config.adminName=data.adminName
     Config.superAdminID=TABLE.getValueSet(data.superAdminID)
     Config.groupManaging=TABLE.getValueSet(data.groupManaging)
