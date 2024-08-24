@@ -639,7 +639,7 @@ local main={
         text="一个AI的名字\n由MinusKelvin开发，原用于PPT",
     },
     {
-        word="zzz;zzztoj;zzzbot",
+        word="zzz(bot);zzzbot;zzztoj",
         title="ZZZ (Bot)",
         text="一个AI的名字\n由研究群群友zzz（奏之章）开发，运行效率极高",
     },
@@ -1764,6 +1764,22 @@ local contributor={
     {
         word="osk",
         text="OSK，创立了Tetr.io",
+    },
+    {
+        word="Dr.ocelot;Dr ocelot;ocelot",
+        text="Dr.Ocelot，制作了Tetr.io的音频，编写了QP2模式的所有音乐",
+    },
+    {
+        word="garbo",
+        text="Garbo，设计了Tetr.io的游戏玩法和世界观相关内容",
+    },
+    {
+        word="Minus Kelvin;MinusK",
+        text="Minus Kelvin，编写了Cold Clear机器人",
+    },
+    {
+        word="ZZZ;Zou Zhi Zhang",
+        text="奏之章，编写了ZZZ机器人",
     },
     -- 神秘
     {
