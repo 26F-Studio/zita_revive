@@ -669,13 +669,13 @@ local pattern={
     {
         word="tki",
         title="TKI 消歧义",
-        text="tki是发明了多个定式的玩家，用他命名的技术有多个\n参阅 #TD攻击 #开局TKI堆叠 #TKI-3开局",
+        text="tki是发明了多个定式的玩家\n另见 #TD攻击 #开局TKI堆叠 #TKI-3开局",
     },
     -- 复合构造
     {
         word="mt;mt cannon;mini triple;mini triple cannon;mt炮",
         title="MT炮",
-        text="一个mini t1接t3的复合构造，形状类似 #STSD 加一行\n另见 #万花筒 （另一种mini t1接t3的复合构造）",
+        text="一个mini t1接t3的复合构造，形状类似 #STSD 加一行\n另见 #万花筒（另一种mini t1接t3的复合构造）",
         link="tetris.huijiwiki.com/wiki/MT_Cannon",
     },
     {
@@ -1627,47 +1627,47 @@ local extra_tetrio={
     {
         word="mod EX; expert ; expert mod ; emperor",
         title="QP2 Expert mod",
-        text="专家 （塔罗牌：皇帝 Emperor）\n各方面都变难一些：垃圾行瞬间出现、增加垃圾混乱度、失去“危急时降低受击概率”的保护",
+        text="专家（塔罗牌：皇帝 Emperor）\n各方面都变难一些：垃圾行瞬间出现、增加垃圾混乱度、失去“危急时降低受击概率”的保护",
     },
     {
         word="mod NH; nohold ; nohold mod ; temperance",
         title="QP2 Nohold mod",
-        text="无暂存 （塔罗牌：节制 Temperance）\n禁用暂存",
+        text="无暂存（塔罗牌：节制 Temperance）\n禁用暂存",
     },
     {
         word="mod MS; messy ; messy mod ; wheel of fortune",
         title="QP2 Messy mod",
-        text="混乱垃圾行 （塔罗牌：命运之轮 Wheel of Fortune）\n垃圾混乱度显著增加",
+        text="混乱垃圾行（塔罗牌：命运之轮 Wheel of Fortune）\n垃圾混乱度显著增加",
     },
     {
         word="mod GV; gravity mod ; tower ; the tower",
         title="QP2 Gravity mod",
-        text="高重力 （塔罗牌：塔 The Tower）\n重力显著增加",
+        text="高重力（塔罗牌：塔 The Tower）\n重力显著增加",
     },
     {
         word="mod VL; volatile ; volatile mod ; strength",
         title="QP2 Volatile mod",
-        text="不稳定垃圾行 （塔罗牌：力量 Strength）\n升起的垃圾行数量翻倍",
+        text="不稳定垃圾行（塔罗牌：力量 Strength）\n升起的垃圾行数量翻倍",
     },
     {
         word="mod DH; doublehole ; doublehole mod ; devil ; the devil",
         title="QP2 Doublehole mod",
-        text="双洞垃圾行 （塔罗牌：恶魔 The Devil）\n垃圾行可能会有两个洞",
+        text="双洞垃圾行（塔罗牌：恶魔 The Devil）\n垃圾行可能会有两个洞",
     },
     {
         word="mod IN; invisible mod; hermit ; the hermit",
         title="QP2 Invisible mod",
-        text="隐形 （塔罗牌：隐士 The Hermit）\n自己放下的方块会隐形，每5秒全场地闪烁一次",
+        text="隐形（塔罗牌：隐士 The Hermit）\n自己放下的方块会隐形，每5秒全场地闪烁一次",
     },
     {
         word="mod AS; allspin mod ; magician ; the magician",
         title="QP2 Allspin mod",
-        text="All （塔罗牌：魔法师 The Magician）\n非T块spin也有2*消行数的攻击，但“消除文本区”文本变化时若和上次相同，会出现一行实心行，需要做若干次符合条件的消除才能解除",
+        text="All（塔罗牌：魔法师 The Magician）\n非T块spin也有2*消行数的攻击，但“消除文本区”文本变化时若和上次相同，会出现一行实心行，需要做若干次符合条件的消除才能解除",
     },
     {
         word="mod 2P; duo ; duo mod ; lover ; lovers ; the lovers",
         title="QP2 Duo mod",
-        text="双人 （塔罗牌：恋人 The Lovers）\n会员玩家可以邀请其他人和自己两个人一起玩此模式，两个人发送出去给别人的伤害数值减半，一个人死了后另一个人可以做任务复活队友",
+        text="双人（塔罗牌：恋人 The Lovers）\n会员玩家可以邀请其他人和自己两个人一起玩此模式，两个人发送出去给别人的伤害数值减半，一个人死了后另一个人可以做任务复活队友",
     },
 }
 ---@type ZictEntry[]
