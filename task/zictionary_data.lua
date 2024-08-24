@@ -1,7 +1,7 @@
 ---@class ZictEntry
 ---@field word string
 ---@field title? string
----@field text? string|fun():string
+---@field text? string|fun(S:Session):string
 ---@field detail? string
 ---@field link? string
 ---@field func? fun(words:string[]):string
@@ -1772,7 +1772,7 @@ local contributor={
     -- 神秘
     {
         word="fkmrz;fkz;fkz酱",
-        text=function() return MATH.roll(0.01) and CQpic(Config.extraData.flanZ) or "Z酱快来禁言他" end,
+        text=function(S) return S:lock('fkmrz',62) and MATH.roll(0.01) and CQpic(Config.extraData.flanZ) or "Z酱快来禁言他" end,
     },
     {
         word="fkosk",

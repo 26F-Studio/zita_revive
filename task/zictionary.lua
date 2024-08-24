@@ -214,7 +214,7 @@ return {
             ins(result,(entry.detail and "##" or "#")..entry.title)
         end
         if entry.text then
-            ins(result,type(entry.text)=='function' and entry.text() or entry.text)
+            ins(result,type(entry.text)=='function' and entry.text(S) or entry.text)
         end
         if entry.detail then
             S:lock('detailedEntry',420)
