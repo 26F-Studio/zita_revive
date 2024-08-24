@@ -60,6 +60,18 @@ local commands={
             SessionMap[S.id]=nil
         end
     end,
+    ['%lock']=function(S,args)
+        print("[LOCK] "..args[1])
+        TASK.lock('newSession_'..args[1])
+        print('newSession_'..args[1])
+        S:send("群"..args[1].."锁定了喵")
+        SessionMap['g'..args[1]]=nil
+    end,
+    ['%unlock']=function(S,args)
+        print("[UNLOCK] "..args[1])
+        TASK.unlock('newSession_'..args[1])
+        S:send("群"..args[1].."解锁了喵")
+    end,
     ['%tasks']=function(S)
         local result="群里有这些任务喵："
         for _,task in next,S.taskList do
@@ -96,6 +108,7 @@ local commands={
             小z可以做这些事情喵：
             %help 帮助  %task 任务列表
             %stop 急停  %sleep 睡觉
+            %lock 锁群  %unlock 解锁群
             %restart 失忆  %log on/off 日志
             %stat 统计  ![lua代码] 运行代码
         ]],true)

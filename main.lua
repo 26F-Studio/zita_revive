@@ -65,6 +65,7 @@ Bot={
     taskGroup={
         {'log',-100},
         {'admin_control',-99},
+        {'group_safe',-26},
         {'help_public',1},
         {'ab_guess',2},
         {'zictionary',3},
@@ -171,6 +172,7 @@ function Bot._update()
             local id=priv and res.user_id or res.group_id
             local S=SessionMap[(priv and 'p' or 'g')..id]
             if not S then
+                if TASK.getLock('newSession_'..id) then return true end
                 S=Session.new(id,priv)
                 SessionMap[S.uid]=S
             end
