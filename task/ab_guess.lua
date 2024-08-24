@@ -101,7 +101,7 @@ return {
                 end
                 return true
             end
-            if S.group and not (M.sender and (M.sender.role=='owner' or M.sender.role=='admin')) and Time()-D.lastInterectTime<300 then
+            if S.group and not AdminMsg(M) and Time()-D.lastInterectTime<300 then
                 if S:lock('ab_cd',26) then
                     S:send(STRING.repD("开始新游戏需要等5分钟喵（还剩$1秒）",300-(Time()-D.lastInterectTime)))
                 end
@@ -140,7 +140,7 @@ return {
                 S:send(D.textHis.."\n"..text.win..mes)
                 D.lastInterectTime=Time()-260
                 if Config.extraData.family[S.uid] then
-                    S:send(text.bonus..CQimage(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages)))
+                    S:send(text.bonus..CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages)))
                 end
             elseif D.chances>0 then
                 S:send(D.textHis.."\n"..text.remain[D.mode]..D.chances)

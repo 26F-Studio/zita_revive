@@ -208,13 +208,13 @@ return {
         if not entry then return false end
 
         -- Response
-        local result={}
+        local result={} ---@type string[]
         if daily then ins(result,"【今日词条】") end
         if entry.title then
             ins(result,(entry.detail and "##" or "#")..entry.title)
         end
         if entry.text then
-            ins(result,entry.text)
+            ins(result,type(entry.text)=='function' and entry.text() or entry.text)
         end
         if entry.detail then
             S:lock('detailedEntry',420)
@@ -229,7 +229,7 @@ return {
         end
         local resultStr=table.concat(result,'\n')
 
-        if S.group and not (M.sender and (M.sender.role=='owner' or M.sender.role=='admin')) then
+        if S.group and not AdminMsg(M) then
             S:update()
             local chargeNeed=62+#resultStr/4.2
             if S.charge<math.min(94.2,chargeNeed) then
