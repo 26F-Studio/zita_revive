@@ -634,25 +634,25 @@ local main={
         text="出自TGM系列的彩蛋玩法。拼图拼出“每行仅有一个洞且排成大于号的图形”。最高目标是完成19行并封口",
     },
     {
-        word="cold clear",
+        word="cc;cold clear",
         title="Cold Clear",
         text="一个AI的名字\n由MinusKelvin开发，原用于PPT",
     },
     {
-        word="zzzbot",
-        title="ZZZbot",
-        text="一个AI的名字\n由研究群群友zzz（奏之章）开发，重新调参后在各个游戏平台上的表现都很不错",
+        word="zzz;zzztoj;zzzbot",
+        title="ZZZ (Bot)",
+        text="一个AI的名字\n由研究群群友zzz（奏之章）开发，运行效率极高",
     },
     {
-        word="guideline;gl;基准;准则;基准规则",
+        word="guideline;gl;基准;准则;基准规则;官方规则",
         title="Guideline",
         text="#TTC 内部使用的一套Guideline（基准、准则）手册，详细规定了他们所要求的“Tetris”游戏在技术、营销上的各种细则，包括了场地尺寸、按键布局、方块颜色、出块规则、死亡判定等",
         detail="这套规定保证了21世纪后新出的官方方块游戏都拥有不错的基础游玩体验，再也不是曾经的一款游戏一个规则，跨游戏的经验和手感完全无法通用了。不过代价是所有的官方方块游戏也都被强制要求按照这套手册设计，新的设计不一定会被TTC官方人员认可\n目前所有的专业方块游戏也都依然保留了这套规则中与游戏规则相关的大多数设计。",
     },
     {
-        word="ttc;the tetris company",
-        title="TTC",
-        text="The Tetris Company，俄罗斯方块公司，拥有游戏版权和Tetris商标的公司。",
+        word="ttc;the tetris company;官方;俄罗斯方块公司",
+        title="俄罗斯方块公司",
+        text="The Tetris Company，简称TTC，是拥有游戏版权和Tetris商标的公司。",
         detail="如果你想开发以Tetris为大标题的“官方”俄罗斯方块游戏，必须经过他们的同意且支付大额授权费用，这对于个人开发者来说是几乎不可能的",
     },
 }
@@ -1689,43 +1689,44 @@ local contributor={
     },
     {
         word="T1080;Particle_G;ParticleG;pg",
-        text="T1080.Particle_G，Techmino的CI、主后端、程序",
+        text="T1080.Particle_G，编写了Techmino的CI、主后端、程序",
     },
     {
         word="T0812;T812;scdhh;呵呵",
-        text="T0812.呵呵，写了好几个块群bot，Techmino的CI、后端",
+        text="T0812.呵呵，写了好几个块群bot，编写了Techmino的CI、后端",
+        link="space.bilibili.com/266621672",
     },
     {
         word="T114;flyz;flaribbit;小飞翔;fxg",
-        text="T114.flyz，Techmino的CI、后端",
+        text="T114.flyz，编写了Techmino的CI、后端",
         link="space.bilibili.com/787096",
     },
     {
         word="T1379;Trebor",
-        text="T1379.Trebor，Techmino的CI、后端、程序、音乐",
+        text="T1379.Trebor，编写和制作了Techmino的CI、后端、程序、音乐",
         link="space.bilibili.com/502473020",
     },
     {
         word="chno;C29H25N3O5;芙兰喵",
-        text="Techmino的UI/UX、音乐、周边美术",
+        text="制作了Techmino的UI/UX、音乐、周边美术",
     },
     {
         word="T7023;Miya",
-        text="T7023，块群吉祥物猫猫，Techmino的插图、配音",
+        text="T7023，块群吉祥物猫猫，制作了Techmino的插图、配音",
         link="space.bilibili.com/846180",
     },
     {
         word="T0210;T210;Mono",
-        text="T0210，Techmino的插图、配音",
+        text="T0210，制作了Techmino的插图、配音",
     },
     {
         word="T056;flore;風洛霊;風洛霊flore;妈妈",
-        text="T056.flore，目前主办各项中文社区方块赛事，主办年度奖项活动，活跃编辑方块中文维基，Techmino的配音",
+        text="T056.flore，目前主办各项中文社区方块赛事，主办年度奖项活动，活跃编辑方块中文维基，制作了Techmino的配音",
         link="space.bilibili.com/1223403016",
     },
     {
         word="T283;模电;模电283;modian;modian283",
-        text="T283.模电，上过最强大脑，擅长20G和隐形，Techmino的演出",
+        text="T283.模电，上过最强大脑，擅长20G和隐形，在Techmino中有出镜",
         link="space.bilibili.com/17583394",
     },
     {
@@ -1763,6 +1764,14 @@ local contributor={
     {
         word="osk",
         text="OSK，TETR.IO的主创",
+    },
+    {
+        word="Dr.ocelot;Dr ocelot;ocelot",
+        text="Dr.Ocelot，制作了TETR.IO的音频，编写了QP2模式的所有音乐",
+    },
+    {
+        word="garbo",
+        text="Garbo，设计了TETR.IO的游戏玩法和世界观相关内容",
     },
     -- 神秘
     {
