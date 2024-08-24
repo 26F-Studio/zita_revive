@@ -86,7 +86,7 @@ local meta={
     {
         word="宝石;宝石迷阵;bej;bej3;bejeweled;bejeweled3",
         title="Bejeweled",
-        text="三消系列神作，类比现代方块之于经典方块的进步，Bej系列每一作都是前无古人后无来者的“现代三消”，BejT和Bej3的三消玩法至今未被超越",
+        text="三消系列神作，类比现代块之于经典块的进步，Bej系列每一作都是前无古人后无来者的“现代三消”，BejT和Bej3的三消玩法至今未被超越",
         link="b23.tv/BV1sE421P7dE  b23.tv/BV1TE421A7wG",
     },
     {
@@ -101,20 +101,20 @@ local main={
     {
         word="marathon;马拉松;马拉松模式",
         title="马拉松模式",
-        text="准则规定的现代方块三大基本模式之一，直接来自经典方块玩法，考察固定等级/行数内的得分。绝大多数游戏中是15级/150行，等级/重力/倍率逐渐增加",
+        text="#Guideline 规定官方Tetris的三个必备模式之一，直接来自于经典块的玩法，考察固定等级/行数内的得分。绝大多数游戏中是15级/150行，等级/重力/倍率逐渐增加",
     },
     {
         word="40l;40line;40lines;sprint;time attack;竞速;竞速模式",
         title="竞速模式/40行模式",
-        text="准则规定的现代方块三大基本模式之一，考察消除固定行数的用时。绝大多数游戏中是40行，没有等级/重力/倍率增加",
+        text="#Guideline 规定官方Tetris的三个必备模式之一，考察消除固定行数的用时。一般是消40行，没有其他限制",
     },
     {
         word="ultra;time trial;限时打分;限时极限;限时打分模式;限时极限模式",
         title="限时打分模式",
-        text="准则规定的现代方块三大基本模式之一，考察固定时间内的得分或消行数。绝大多数游戏中是2或3分钟，没有等级/重力/倍率增加",
+        text="#Guideline 规定官方Tetris的三个必备模式之一，考察固定时间内的得分或消行数。一般是2或3分钟，没有其他限制",
     },
     {
-        word="blitz;blitz mode;blitz模式",
+        word="blitz;blitz模式",
         title="Blitz模式",
         text="TETR.IO结合马拉松与限时打分两大传统模式的新规则限时打分，考察2分钟内的得分，但是等级/重力/倍率逐渐增加\n另见 #Tetris Blitz",
     },
@@ -1487,7 +1487,7 @@ local game={
     {
         cat='game',
         shortname="four",
-        tags="非官 电脑 单人 键盘 快速 慢速 无延",
+        tags="非官 电脑 单人 键盘 慢速 无延",
         word="four;fourtris;four-tris",
         title="four-tris",
         text="单机自由沙盘，可以方便地随时自定义序列、绘制和删除地形、撤销和前进步骤，有截图识别地形功能，有多个练习模式，非常适合进行各种练习、复盘、绘制地形",
@@ -1596,7 +1596,7 @@ local extra_tetrio={
     {
         word="surge;surge b2b",
         title="Surge B2B",
-        text="充能B2B系统，达到b2b×4然后中断时会打出一发和b2b数同样的超大攻击（分成三节）\n目前Tetr.io的TL第二赛季和QP2都使用此新系统（QP的具体数字不同）",
+        text="充能B2B系统，达到b2b×4然后中断时会打出一发和b2b数同样的超大攻击（分成三节）\n目前Tetr.io的TL第二赛季和QP2都使用此新系统（QP中参数不同）",
     },
     {
         word="推进器",

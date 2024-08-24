@@ -3,7 +3,7 @@ local ins=table.insert
 local zict=FILE.load('task/zictionary_data.lua','-lua')
 assert(zict,"Dict data not found")
 
-local tags="热门 官方 非官 电脑 手机 主机 网页 单人 多人 键盘 触屏 鼠标 快速 慢速 无延 延迟 题库 新人 创新"
+local tags="热门 官方 非官 电脑 手机 主机 网页 单人 多人 键盘 触屏 鼠标 快速 慢速 无延 延迟 新人 创新"
 local tagRedirect={
     -- 缩
     ["热"]="热门",
@@ -21,7 +21,6 @@ local tagRedirect={
     ["快"]="快速",
     ["慢"]="慢速",
     ["延"]="延迟",
-    ["题"]="题库",
     ["新"]="新人",
 
     -- 其他用词
@@ -74,12 +73,12 @@ return {
 
         local mes=STRING.trim(RawStr(M.raw_message))
 
-        local words=STRING.split(mes,'%s+',true)
+        local sections=STRING.split(mes,'%s+',true)
 
         -- Game Searching
-        if words[1]=="#游戏" or words[1]=="#game" then
-            table.remove(words,1)
-            if #words==0 then
+        if sections[1]=="#游戏" or sections[1]=="#game" then
+            table.remove(sections,1)
+            if #sections==0 then
                 if S:lock('game_search_help',26) then
                     S:send("发送“#游戏 标签1 标签2…”来寻找你能接受的方块游戏，可用的tag：\n"..tags)
                 end
@@ -91,29 +90,29 @@ return {
                 end
 
                 -- Remove too long words
-                for i=#words,1,-1 do
-                    if #words[i]>=10 then
-                        table.remove(words,i)
-                    elseif tagRedirect[words[i]] then
-                        words[i]=tagRedirect[words[i]]
+                for i=#sections,1,-1 do
+                    if #sections[i]>=10 then
+                        table.remove(sections,i)
+                    elseif tagRedirect[sections[i]] then
+                        sections[i]=tagRedirect[sections[i]]
                     end
                 end
 
                 -- Remove too many words
-                while #words>10 do
-                    table.remove(words)
+                while #sections>10 do
+                    table.remove(sections)
                 end
 
                 -- Remove invalid tags
                 local filtered=false
-                for i=#words,1,-1 do
-                    if not tags:find(words[i]) then
-                        table.remove(words,i)
+                for i=#sections,1,-1 do
+                    if not tags:find(sections[i]) then
+                        table.remove(sections,i)
                         filtered=true
                     end
                 end
 
-                if #words==0 then
+                if #sections==0 then
                     S:send("没有有效标签喵，发送“#游戏”查看帮助")
                     return true
                 end
@@ -122,7 +121,7 @@ return {
                 for _,gameName in next,gameNames do
                     local game=zict[SimpStr(gameName)]
                     local available=true
-                    for _,word in next,words do
+                    for _,word in next,sections do
                         if not game.tags:find(word,nil,true) then
                             available=false
                             break
