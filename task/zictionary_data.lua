@@ -288,7 +288,7 @@ local main={
         title="SRS",
         text="Super Rotation System，现代方块最常用的旋转系统，也是不少自制旋转系统的设计模板",
         detail="在SRS中，每个方块有四个朝向，每个朝向时可以向顺逆两个方向旋转（SRS并不包含180°旋转），总共4*2=8种动作对应8个偏移表，方块旋转失败时会根据偏移表的内容尝试移动方块让旋转成立，具体数据可以去各大Wiki查",
-        link="tetris.wiki/Super_Rotation_System",
+        link="tetris.huijiwiki.com/wiki/Super_Rotation_System",
     },
     {
         word="srs plus;srs+",
@@ -374,6 +374,11 @@ local main={
         word="捐赠;donate;donation",
         title="捐赠",
         text="指刻意临时堵住（可以消四的）洞做T-Spin，打出T-Spin后就会解开，是比较进阶的保持/提升火力的技巧\n有时候只要堵住了个坑，即使不是消四的洞也会用这个词",
+    },
+    {
+        word="削减;skim;skimming",
+        title="削减",
+        text="指有意识地通过特定的普通消行改善地形，例如消四堆叠时用普通消行整地等待I块、对战时用特定技巧把地形削成T-Spin形状",
     },
     {
         word="攻击;进攻;防守;防御;攻防",
@@ -514,7 +519,8 @@ local main={
     {
         word="asd;asp;asd/asp;das;arr",
         title="ASD/ASP",
-        text="ASD（曾叫DAS）指从“按下移动键时动一格”到“开始自动移动”之间的时间\nASP（曾叫ARR），指“每次自动移动”之间的时间，单位可以是f(帧)或者或者ms(毫秒)，1f≈16.7ms\n详细参见：https://tetris.huijiwiki.com/wiki/DAS\n另见 #ASD通俗 #ASD设置引导",
+        text="ASD（曾叫DAS）指从“按下移动键时动一格”到“开始自动移动”之间的时间\nASP（曾叫ARR），指“每次自动移动”之间的时间，单位可以是f(帧)或者或者ms(毫秒)，1f≈16.7ms\n另见 #ASD通俗 #ASD设置引导",
+        link="tetris.huijiwiki.com/wiki/DAS",
         detail="Auto-Shift-Delay，自动移动延迟；Auto-Shift-Period，自动移动间隔",
     },
     {
@@ -537,18 +543,21 @@ local main={
     {
         word="7bag;bag7",
         title="7-Bag出块",
-        text="一种出块方式，现代方块普遍使用该规则，从开局起每7个块是7种形状各出现一次，避免了很久不出某个块和某个块来得特别多，是一些现代方块战术的基础\n例如：ZSJLTOI OTSLZIJ LTISZOJ\n详细参见：https://tetris.huijiwiki.com/wiki/Bag_Randomizer",
+        text="一种出块方式，现代方块普遍使用该规则，从开局起每7个块是7种形状各出现一次，避免了很久不出某个块和某个块来得特别多，是一些现代方块战术的基础\n例如：ZSJLTOI OTSLZIJ LTISZOJ",
+        link="tetris.huijiwiki.com/wiki/Bag_Randomizer",
     },
     {
         word="his;his4;h4r6",
         title="History出块",
-        text="一种出块方式，例如h4r6 (His4 Roll6)是在随机新块的时候若和最近4次已经生成的Next中有一样的就重新随机，直到和那4个都不一样或者已经随机了6次\n详细参见：https://tetris.huijiwiki.com/wiki/Nintendo_Randomizer",
+        text="一种出块方式，例如h4r6 (His4 Roll6)是在随机新块的时候若和最近4次已经生成的Next中有一样的就重新随机，直到和那4个都不一样或者已经随机了6次",
+        link="tetris.huijiwiki.com/wiki/Nintendo_Randomizer",
         detail="这是早期对纯随机出块的一大改进，大大减小了连续出几个SZ(洪水)的概率，但偶尔还是会很久不出现某一块比如I，导致发生干旱",
     },
     {
         word="hispool",
         title="HisPool出块",
-        text="一种出块方式，History Pool，his算法一个比较复杂的分支，在理论上保证了干旱时间不会无限长，最终效果介于His和Bag之间\n详细参见：https://tetris.huijiwiki.com/wiki/TGM_Randomizer",
+        text="一种出块方式，History Pool，his算法一个比较复杂的分支，在理论上保证了干旱时间不会无限长，最终效果介于His和Bag之间",
+        link="tetris.huijiwiki.com/wiki/TGM_Randomizer",
         detail="在His的基础上添加了一个Pool(池)，在取块的时候his是直接随机和历史序列（最后4次生成的next）比较，而HisPool是从Pool里面随机取（然后补充一个最旱的块增加他的概率）然后和历史序列比较",
     },
     {
@@ -623,7 +632,6 @@ local main={
         word="秘密段位;大于号;secret grade",
         title="秘密段位",
         text="出自TGM系列的彩蛋玩法。拼图拼出“每行仅有一个洞且排成大于号的图形”。最高目标是完成19行并封口",
-        link="harddrop.com/wiki?search=Secret_Grade_Techniques",
     },
     {
         word="cold clear",
@@ -653,12 +661,580 @@ local pattern={
     {
         word="定式;开局定式",
         title="开局定式",
-        text="定式一般指开局定式，是开局后可选使用的套路堆叠方法\n一些常用技巧或复合形状则可能被称为“中局定式”\n参见：https://tetris.huijiwiki.com/wiki/T-Spin_Methods",
+        text="定式一般指开局定式，是可以在开局时使用的套路堆叠方法，快速做出想要的消行\n一些常用技巧、复合构造和固定堆叠方法则有时可能被称为“中局定式”",
+        link="tetris.huijiwiki.com/wiki/T-Spin_Methods",
         detail="能称为定式的摆法要尽量满足以下至少2~3条：\n能适应大多数块序\n输出高，尽量不浪费T块\n很多方块无需软降，极简操作数少\n有明确后续，分支尽量少\n\n注：7bag随机器极大降低了随机性增强了确定性，才让定式成为可能",
     },
+    -- 消歧义
     {
-        word="dt;dt炮;dtpc;bt;bt炮;btpc;ddpc;qt;qt炮;mt;mt炮;trinity;狼月炮;sewer;tki;tki3;tki-3;god spin;信天翁;鹈鹕;全消开局;全清开局;六巧板;dpc;c-spin;stsd;stmb;双刃剑;lst;lst堆叠;汉堡;汉堡包;皇十;皇家十字;阶梯;阶梯捐;社畜train;千鸟;千鸟格子;绯红之王;连续pc",
-        title="定式相关信息正在维护，请到 #灰机wiki 查看",
+        word="tki",
+        title="TKI 消歧义",
+        text="tki是发明了多个定式的玩家，用他命名的技术有多个\n参阅 #TD攻击 #开局TKI堆叠 #TKI-3开局",
+    },
+    -- 复合构造
+    {
+        word="mt;mt cannon;mini triple;mini triple cannon;mt炮",
+        title="MT炮",
+        text="一个mini t1接t3的复合构造，形状类似 #STSD 加一行\n另见 #万花筒 （另一种mini t1接t3的复合构造）",
+        link="tetris.huijiwiki.com/wiki/MT_%E7%82%AE",
+    },
+    {
+        word="kaslideoscope;万花筒",
+        title="万花筒",
+        text="一个mini t1接t3的复合构造，形状独特\n也有人认为是 #MT炮 的变种",
+        link="tetris.huijiwiki.com/wiki/%E4%B8%87%E8%8A%B1%E7%AD%92",
+    },
+    {
+        word="sd;sd cannon;single double;single double cannon;sd炮",
+        title="SD炮",
+        text="一个t1接t2的复合构造\n如果寻找的是t1接t2接8L PC的开局定式，请见 #SDPC",
+        link="tetris.huijiwiki.com/wiki/SD_%E7%82%AE",
+    },
+    {
+        word="windsor;windsor sd;温莎;温莎sd",
+        title="温莎SD",
+        text="一个t1接t2的复合构造，在t2上盖一行用t1消除留下屋檐",
+        link="tetris.huijiwiki.com/wiki/%E6%B8%A9%E8%8E%8E_SD",
+    },
+    {
+        word="double dagger;fractal;分形;双刃剑;双剑",
+        title="双剑",
+        text="两个或更多t2纵向对齐在同一列、共享屋檐的复合构造\n双刃剑是错误翻译，不要用",
+        link="tetris.huijiwiki.com/wiki/%E5%8F%8C%E5%89%91",
+    },
+    {
+        word="cut copy;千鳥格子;千鸟;千鸟格子",
+        title="千鸟格子",
+        text="一个两连t2的复合构造，其中一个t2被切开，另一个t2偏移一列插入中间",
+        link="tetris.huijiwiki.com/wiki/%E5%8D%83%E9%B8%9F%E6%A0%BC%E5%AD%90",
+    },
+    {
+        word="uncut copy",
+        title="Uncut Copy",
+        text="一个两连t2的复合构造，一个t2偏移一列在另一个t2之上\n也有人认为这只是在一个t2上加一个 #STMB 捐赠",
+        link="tetris.huijiwiki.com/wiki/Uncut_Copy",
+    },
+    {
+        word="stsd;super t-spin double;super tspin double",
+        title="STSD",
+        text="一个两连t2的复合构造，形状近似于t3",
+        link="tetris.huijiwiki.com/wiki/STSD",
+    },
+    {
+        word="imperial cross;皇十;皇家十字",
+        title="皇家十字",
+        text="一个两连t2的复合构造，形状为一个十字",
+        link="tetris.huijiwiki.com/wiki/%E7%9A%87%E5%AE%B6%E5%8D%81%E5%AD%97",
+    },
+    {
+        word="dt;dt cannon;double triple cannon;dt炮",
+        title="DT炮",
+        text="一个t2接t3的复合构造，来自极其著名的同名定式 #DT炮开局",
+        link="tetris.huijiwiki.com/wiki/DT_%E7%82%AE",
+    },
+    {
+        word="bt;beta;bt炮;beta炮",
+        title="BT炮",
+        text="一个t2接t3的复合构造，来自同名定式 #BT炮开局",
+        link="tetris.huijiwiki.com/wiki/BT_%E7%82%AE",
+    },
+    {
+        word="dt 2;dt cannon 2;double triple cannon 2;dt炮2;dt炮二号",
+        title="DT炮二号",
+        text="一个t2接t3的复合构造，是 #DT炮 的变种",
+        link="tetris.huijiwiki.com/wiki/DT_%E7%82%AE%E4%BA%8C%E5%8F%B7",
+    },
+    {
+        word="td;td attack;cspin;c-spin;td攻击",
+        title="TD攻击",
+        text="一个t3接t2的复合构造，有大量使用该形状的开局定式",
+        link="tetris.huijiwiki.com/wiki/TD_%E6%94%BB%E5%87%BB",
+    },
+    {
+        word="tst tower;t3 tower;t3塔;tst塔",
+        title="T3塔",
+        text="两个或更多t3纵向对齐在同一列、共享屋檐的复合构造\n另见不断重复做t3塔的堆叠模式 #无限T3",
+        link="tetris.huijiwiki.com/wiki/T3_%E5%A1%94",
+    },
+    {
+        word="polymer;polymer tspin;polymer t-spin;聚合型tspin;聚合型t-spin",
+        title="聚合型T-Spin",
+        text="多个特殊t2（iso neo fin）的复合构造的统称，包括海藻糖、曲二糖、尤格·索托斯等\n也包括大量开局定式，不过可能仅供观赏",
+        link="tetris.huijiwiki.com/wiki/%E8%81%9A%E5%90%88%E5%9E%8B_T-Spin",
+    },
+    {
+        word="trinity;三连;三连炮",
+        title="Trinity",
+        text="一个三连t2的复合构造，形状有两种，都是在t2上搭 #STSD",
+        link="tetris.huijiwiki.com/wiki/Trinity",
+    },
+    {
+        word="dt stsd;dt cannon stsd;dt炮stsd",
+        title="DT STSD",
+        text="一个三连t2的复合构造，以 #DT炮 的方式切开 #STSD 插入t2",
+        link="tetris.huijiwiki.com/wiki/DT_STSD",
+    },
+    {
+        word="bt stsd;bt cannon stsd;bt炮stsd",
+        title="BT STSD",
+        text="一个三连t2的复合构造，以 #BT炮 的方式切开 #STSD 插入t2",
+        link="tetris.huijiwiki.com/wiki/BT_STSD",
+    },
+    {
+        word="dt 2 stsd;dt cannon 2 stsd;dt炮二号stsd",
+        title="DT 2 STSD",
+        text="一个三连t2的复合构造，以 #DT炮二号 的方式切开 #STSD 插入t2",
+        link="tetris.huijiwiki.com/wiki/DT_2_STSD",
+    },
+    {
+        word="impeldown",
+        title="Impeldown",
+        text="一个三连t2的复合构造，在t2上搭建 #皇家十字",
+        link="",
+    },
+    {
+        word="black cross;黑色十字",
+        title="黑色十字",
+        text="一个三连t2的复合构造，把 #双剑 的上层改造成 #皇家十字",
+        link="tetris.huijiwiki.com/wiki/%E9%BB%91%E8%89%B2%E5%8D%81%E5%AD%97",
+    },
+    {
+        word="nil cross;nil-cross;零号十字",
+        title="零号十字",
+        text="一个t3接t2接t2的复合构造，在 #皇家十字 上搭建t3",
+        link="tetris.huijiwiki.com/wiki/%E9%9B%B6%E5%8F%B7%E5%8D%81%E5%AD%97",
+    },
+    {
+        word="king crimson;绯红之王",
+        title="绯红之王",
+        text="一个t3接t2接t2的复合构造，在 #STSD 上搭建t3",
+        link="tetris.huijiwiki.com/wiki/%E7%BB%AF%E7%BA%A2%E4%B9%8B%E7%8E%8B",
+    },
+    {
+        word="st cannon;single triple;st炮;rifle;步枪;dstsd;magic key;魔法钥匙;stsd+;dna;trehalose;海藻糖;kojibiose;曲二糖;iso trelahose;iso-trelahose;iso海藻糖；yog-sothoth;yog sothoth;尤格索托斯",
+        title="其他复合构造",
+        text="相对不太常用的大量其他复合构造，请自行查阅中文维基的T旋方法分类",
+        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+    },
+    -- 技巧·削减
+    {
+        word="plowshare;ploughshare;wc plowshare;wc ploughshare;犁刃;锄之刃",
+        title="锄之刃",
+        text="一个倒扣JL块消一行把t1补成t2的削减技巧",
+        link="tetris.huijiwiki.com/wiki/%E9%94%84%E4%B9%8B%E5%88%83",
+    },
+    {
+        word="qtk",
+        title="QTK",
+        text="一个在2*3空地中竖放SZ块做出t2地形的削减技巧",
+        link="tetris.huijiwiki.com/wiki/QTK",
+    },
+    {
+        word="boomerang;回旋镖",
+        title="回旋镖",
+        text="一个旋入JL块挽救被破坏的 #STSD 的削减技巧",
+        link="tetris.huijiwiki.com/wiki/%E5%9B%9E%E6%97%8B%E9%95%96",
+    },
+    {
+        word="super spiral;超螺旋",
+        title="超螺旋",
+        text="一个旋入JL块制造t3地形的削减技巧，可能偏观赏性",
+        link="tetris.huijiwiki.com/wiki/%E8%B6%85%E8%9E%BA%E6%97%8B",
+    },
+    {
+        word="链锯;shallow grave;浅坟;dejavu;deja vu;既视感;nuki;枋;横梁;crush;grim grotto;sz passage;sz通道;may;背面t3;背面tst",
+        title="其他削减技巧",
+        text="相对不太常用的大量其他削减技巧，请自行查阅中文维基的T旋方法分类",
+        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+    },
+    -- 技巧·捐赠
+    {
+        word="stmb;stmb cave",
+        title="STMB Cave",
+        text="一个在3列宽地形上挂SZ块做凌空t2的捐赠技巧",
+        link="tetris.huijiwiki.com/wiki/STMB_Cave",
+    },
+    {
+        word="st;st捐;st捐赠",
+        title="ST捐赠",
+        text="一个竖放SZ块做凌空t2的捐赠技巧\n不断重复这一捐赠就是 #ST堆叠",
+        link="tetris.huijiwiki.com/wiki/ST_%E6%8D%90%E8%B5%A0",
+    },
+    {
+        word="kaidan;阶段;阶梯;阶梯捐;阶梯捐赠",
+        title="阶梯捐赠",
+        text="一个在阶梯状崎岖地形上竖放SZ块做t2的捐赠技巧\n实际上就是 #ST捐赠",
+        link="tetris.huijiwiki.com/wiki/%E9%98%B6%E6%A2%AF%E6%8D%90%E8%B5%A0",
+    },
+    {
+        word="yoshihiro;yoshihiro sd;yoshihiro堆叠;yoshihiro捐赠",
+        title="Yoshihiro",
+        text="一个mini t1接t2的常见技巧",
+        link="tetris.huijiwiki.com/wiki/Yoshihiro",
+    },
+    {
+        word="shachiku train;社畜;社畜列车;社畜捐;社畜捐赠",
+        title="社畜列车",
+        text="一个组合使用SL或JZ块做出两连t2的捐赠技巧",
+        link="tetris.huijiwiki.com/wiki/%E7%A4%BE%E7%95%9C%E5%88%97%E8%BD%A6",
+    },
+    {
+        word="blockade;闭塞",
+        title="闭塞",
+        text="一个组合使用SZ或JL块在t2上凌空搭建t2的捐赠技巧",
+        link="tetris.huijiwiki.com/wiki/%E9%97%AD%E5%A1%9E",
+    },
+    {
+        word="anchor;anchor set;锚;锚捐;锚式捐赠",
+        title="锚式捐赠",
+        text="一个在堆叠不完整的情况下使用JL块完成消四的捐赠技巧",
+        link="tetris.huijiwiki.com/wiki/%E9%94%9A%E5%BC%8F%E6%8D%90%E8%B5%A0",
+    },
+    {
+        word="escalator;escalator loading;电梯;电梯捐;电梯捐赠;tdd;purple rain;紫雨;air;floating;t3斜塔;special triple triple;stt;sky prop;doomerang;毁旋镖",
+        title="其他捐赠技巧",
+        text="相对不太常用的大量其他捐赠技巧，请自行查阅中文维基的T旋方法分类",
+        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+    },
+    --技巧·思路与持续堆叠
+    {
+        word="parapet;栏杆",
+        title="栏杆",
+        text="一种故意把t2改成t1以便打开主洞接后续消四的做法\n可以持续不断进行栏杆t1，例如LT堆叠",
+        link="tetris.huijiwiki.com/wiki/%E6%A0%8F%E6%9D%86",
+    },
+    {
+        word="lst;lst stacking;lst堆叠",
+        title="LST堆叠",
+        text="一种极常见的堆叠模式，维持2-7地形，组合使用LS块与JZ块不断进行固定方法的t2，技术好的玩家可以近乎无限循环",
+        link="tetris.huijiwiki.com/wiki/LST_%E5%A0%86%E5%8F%A0",
+    },
+    {
+        word="st stacking;st堆叠",
+        title="ST堆叠",
+        text="一种常见的堆叠模式，不断重复做同样的 #ST捐赠 t2，是马拉松等高重力模式下的出色策略，技术好的玩家可以近乎无限循环",
+        link="tetris.huijiwiki.com/wiki/ST_%E5%A0%86%E5%8F%A0",
+    },
+    {
+        word="infinite t3;infinite tst;t3永久机关;tst永久机关;永续t3;永续tst;无限t3;无限tst",
+        title="无限T3",
+        text="一种常见的堆叠模式，不断重复做 #T3塔，是官方游戏常见的刷分策略，技术好的玩家可以近乎无限循环",
+        link="tetris.huijiwiki.com/wiki/%E6%97%A0%E9%99%90_T3",
+    },
+    {
+        word="hamburger;汉堡;汉堡堆叠",
+        title="汉堡堆叠",
+        text="一种堆叠模式，不断使用S或Z块做边列捐赠t1，逐渐会留下ST或ZT颜色层层交替的地形类似多层汉堡，适合在PPT中对抗噗哟玩家",
+        link="tetris.huijiwiki.com/wiki/%E6%B1%89%E5%A0%A1%E5%A0%86%E5%8F%A0",
+    },
+    {
+        word="snake;snaking;蛇行;蛇形;hyper fractal;究极分形;zipper;拉链",
+        title="其他堆叠模式",
+        text="相对不太常用的大量其他堆叠模式，请自行查阅中文维基的T旋方法分类",
+        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+    },
+    -- 开局定式·第一包mini
+    {
+        word="hebomai spin;hbm spin;hebomai炮;fiddlesworth;mtd;mini triple double;joystick;摇杆;nyaspin;xz cannon;xz炮;mdf;mini double fractal",
+        title="其他mini开局定式",
+        text="相对不太常用的巨量其他mini开局定式，请自行查阅中文维基的T旋方法分类",
+        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+    },
+    -- 开局定式·第一包t1
+    {
+        word="sailboat;sst ship;帆船",
+        title="帆船",
+        text="一个开局定式，第一包凌空t1，第二包t1，第三包t2",
+        link="tetris.huijiwiki.com/wiki/%E5%B8%86%E8%88%B9",
+    },
+    {
+        word="singleyou;sdpc",
+        title="SDPC",
+        text="一个开局定式，第一包凌空t1，第二包t2，大概率8行PC\n与 #Stickspin #SDPC Spin 非常相似",
+        link="tetris.huijiwiki.com/wiki/SDPC",
+    },
+    {
+        word="stick;stickspin",
+        title="Stickspin",
+        text="一个开局定式，第一包凌空t1，第二包t2，然后搭建 #TD攻击\n与 #SDPC 非常相似",
+        link="tetris.huijiwiki.com/wiki/Stickspin",
+    },
+    {
+        word="sdspin;sdpc spin",
+        title="SDPC Spin",
+        text="一个开局定式，第一包凌空t1，第二包t2，然后多种接续\n是 #SDPC 的变体",
+        link="tetris.huijiwiki.com/wiki/SDPC_Spin",
+    },
+    {
+        word="邪炮",
+        title="邪炮",
+        text="一个开局定式，第一包凌空t1，第二包t2，然后搭建 #TD攻击",
+        link="tetris.huijiwiki.com/wiki/%E9%82%AA%E7%82%AE",
+    },
+    {
+        word="hachispin;hachi cannon;28;28炮;二八炮",
+        title="二八炮",
+        text="一个开局定式，第一包凌空t1，第二包t3，然后多种接续",
+        link="tetris.huijiwiki.com/wiki/%E4%BA%8C%E5%85%AB%E7%82%AE",
+    },
+    {
+        word="mr.t-spin;mr tspin;mr.t-spin's std;mr tspin's std;mr.t-spin的std",
+        title="Mr.T-Spin的STD",
+        text="一个开局定式，第一包凌空t1，第二包t3，第三包t2",
+        link="tetris.huijiwiki.com/wiki/Mr._T-Spin_%E7%9A%84_STD",
+    },
+    {
+        word="doubleyou;pwn's std;pwn的std;dolphin;海豚;misfire;kermspin;surrealist s;超现实主义s;tenespin;hummingbird;蜂鸟;seagull;海鸥;submarine;潜艇;last;old key;旧钥匙;icebreaker;curveball;弧线球;skim cannon;削减炮;kerr loop;ksd;kvodeth sd;secspin;spachispin;齿磨sd;sure fd;speedboat;快艇;pokemino;pokemino's std;pokemino的std",
+        title="其他t1开局定式",
+        text="相对不太常用的巨量其他t1开局定式，请自行查阅中文维基的T旋方法分类",
+        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+    },
+    -- 开局定式·第一包t2
+    {
+        word="tki3;tki-3;开幕tsd;开幕t2;开局tsd;开局t2;tki-3开局",
+        title="TKI-3开局",
+        text="一个开局定式，I块为底，第一包t2，后续大量接续，极其常用",
+        link="tetris.huijiwiki.com/wiki/TKI-3_%E5%BC%80%E5%B1%80",
+    },
+    {
+        word="mko;mko stacking;mko堆叠",
+        title="MKO堆叠",
+        text="一个开局定式，JL块为底，第一包t2，后续大量接续",
+        link="tetris.huijiwiki.com/wiki/MKO_%E5%A0%86%E5%8F%A0",
+    },
+    {
+        word="ajanba t2;ajanba tsd",
+        title="Ajanba TSD",
+        text="一个开局定式，I块为底，第一包t2，后续大量接续",
+        link="tetris.huijiwiki.com/wiki/Ajanba_TSD",
+    },
+    {
+        word="no1;no.1;number 1;number one;数字1;数字一",
+        title="Number One",
+        text="一个开局定式，第一包凌空t2，留下数字“1”形状的地形",
+        link="tetris.huijiwiki.com/wiki/%E6%95%B0%E5%AD%971",
+    },
+    {
+        word="flamingo;火烈鸟",
+        title="火烈鸟",
+        text="一系列开局定式，OS或OZ块为核心，第一包凌空t2",
+        link="tetris.huijiwiki.com/wiki/%E7%81%AB%E7%83%88%E9%B8%9F",
+    },
+    {
+        word="ddpc",
+        title="DDPC",
+        text="若干开局定式的t2接t2接6行PC路线\n有这个路线的定式包括 #TKI-3开局 #Ajanba TSD 等",
+        link="tetris.huijiwiki.com/wiki/DDPC",
+    },
+    {
+        word="albatross;信天翁",
+        title="信天翁",
+        text="两个开局定式（特别型与TSD），第一包凌空t2，后续接t3接t2（特别型）或接t2接t3（TSD）",
+        link="tetris.huijiwiki.com/wiki/%E4%BF%A1%E5%A4%A9%E7%BF%81%E7%89%B9%E5%88%AB%E5%9E%8B",
+    },
+    {
+        word="pelican;鹈鹕",
+        title="鹈鹕",
+        text="一个开局定式，SZ块叠放，第一包凌空t2",
+        link="tetris.huijiwiki.com/wiki/%E9%B9%88%E9%B9%95",
+    },
+    {
+        word="perfect dt;完美dt;glitter brooch;captain;captain stacking;captain堆叠;reliable t2;reliable tsd;rich ddp;dodo;渡渡鸟;dragon;dragon sp;dragon special;龙;龙特别型;coon dragon;coon-dragon;428 cannon;428炮;black tea cannon;红茶炮;mochi's anger;mochi之怒;trustworthy dt",
+        title="其他t2开局定式",
+        text="相对不太常用的巨量其他t2开局定式，请自行查阅中文维基的T旋方法分类",
+        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+    },
+    -- 开局定式·第一包堆叠第二包t2
+    {
+        word="gassho;合掌;合掌tsd",
+        title="合掌TSD",
+        text="一个开局定式，SZ块相对竖放，第一包堆叠，第二包t2，然后多种接续并有较低概率4行PC",
+        link="tetris.huijiwiki.com/wiki/%E5%90%88%E6%8E%8C_TSD",
+    },
+    {
+        word="dt opener;dt cannon opener;dt炮开局",
+        title="DT炮开局",
+        text="一个开局定式，第一包堆叠，然后搭建 #DT炮 ，非常著名",
+        link="tetris.huijiwiki.com/wiki/DT_%E7%82%AE%E5%BC%80%E5%B1%80",
+    },
+    {
+        word="bt opener;beta opener;bt cannon opener;bt炮开局",
+        title="BT炮开局",
+        text="一个开局定式，第一包堆叠，然后搭建 #BT炮 ，可以五包PC",
+        link="tetris.huijiwiki.com/wiki/BT_%E7%82%AE%E5%BC%80%E5%B1%80",
+    },
+    {
+        word="mechanical;mechanical t2;mechanical tsd;机械t2;机械tsd",
+        title="机械T2",
+        text="一系列每包摆法固定、可以不断做出t2的定式，有v1v2v3v4多个版本，不过高度会不断增高无法永远持续",
+        link="tetris.huijiwiki.com/wiki/%E6%9C%BA%E6%A2%B0_T2",
+    },
+    {
+        word="antifate;antifate tsd;greenwich;greenwich cannon;格林尼治炮;i-rin tsd;I凛TSD;3d cannon;3d炮;over future;超未来;h cannon;hstsd;H炮;qt;qt cannon;qt炮;et;et cannon;et炮;ok cannon;okey cannon;ok炮;szdt;ct;ct scan;ct scan stacking;ct扫描堆叠;claw machine",
+        title="其他第一包堆叠第二包t2开局定式",
+        text="相对不太常用的巨量其他第一包堆叠第二包t2开局定式，请自行查阅中文维基的T旋方法分类",
+        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+    },
+    -- 开局定式·第一包堆叠第二包t3
+    {
+        word="tki stacking;tki堆叠;开局tki堆叠",
+        title="开局TKI堆叠",
+        text="一个开局定式，第一包堆叠，然后搭建 #TD攻击。是发明了该形状的定式",
+        link="tetris.huijiwiki.com/wiki/%E5%BC%80%E5%B1%80_TKI_%E5%A0%86%E5%8F%A0",
+    },
+    {
+        word="gamushiro;gamushiro stacking;gamushiro堆叠",
+        title="Gamushiro堆叠",
+        text="一个开局定式，第一包堆叠，然后搭建 #TD攻击 ，高概率8行PC。最早流行的TDPC定式",
+        link="tetris.huijiwiki.com/wiki/Gamushiro_%E5%A0%86%E5%8F%A0",
+    },
+    {
+        word="mountain;mountainous stacking;mountainous stacking 1;mountainous stacking 2;mountainous stacking 3;ms;ms1;ms2;ms3;山岳;山岳堆叠;山岳1;山岳2;山岳3;山岳一;山岳二;山岳三;山岳堆叠一号;山岳堆叠二号;山岳堆叠三号",
+        title="山岳堆叠",
+        text="一系列开局定式，第一包堆叠，然后搭建 #TD攻击 ，高概率8行PC。有123三种，最常见的是2，在无延迟极为流行的TDPC",
+        link="tetris.huijiwiki.com/wiki/%E5%B1%B1%E5%B2%B3%E5%A0%86%E5%8F%A0%E4%BA%8C%E5%8F%B7",
+    },
+    {
+        word="hachimitsu;hachimitsu cannon;honey;honey cup;蜂蜜;蜂蜜杯子;蜂蜜炮",
+        title="蜂蜜炮",
+        text="一个开局定式，第一包堆叠，然后搭建 #TD攻击 ，高概率8行PC。在延迟块性能非常出色的TDPC",
+        link="tetris.huijiwiki.com/wiki/%E8%9C%82%E8%9C%9C%E7%82%AE",
+    },
+    {
+        word="stray;stray cannon;迷走;迷走炮",
+        title="迷走炮",
+        text="一个开局定式，第一包堆叠，然后搭建 #TD攻击 ，高概率8行PC。在延迟块性能非常出色的TDPC",
+        link="tetris.huijiwiki.com/wiki/%E8%BF%B7%E8%B5%B0%E7%82%AE",
+    },
+    {
+        word="satsuki;satsuki stacking;皋月;皋月堆叠",
+        title="皋月堆叠",
+        text="一个开局定式，第一包堆叠，然后搭建 #TD攻击 ，高概率8行PC。适合延迟块刷分的TDPC",
+        link="tetris.huijiwiki.com/wiki/%E7%9A%8B%E6%9C%88%E5%A0%86%E5%8F%A0",
+    },
+    {
+        word="kisaragi;kisaragi stacking;如月;如月堆叠",
+        title="如月堆叠",
+        text="一个开局定式，第一包堆叠，然后搭建 #TD攻击 ，高概率8行PC。适合延迟块刷分的TDPC",
+        link="tetris.huijiwiki.com/wiki/%E5%A6%82%E6%9C%88%E5%A0%86%E5%8F%A0",
+    },
+    {
+        word="pc-spin;pc spin;pc-spin okey;pc spin okey;pc-spin okey version;pc spin okey version",
+        title="PC-Spin",
+        text="两个开局定式，第一包堆叠，然后搭建 #TD攻击 ，高概率8行PC。原版性能不够好，最常见的是Okey Version变体，适合延迟块刷分的TDPC",
+        link="tetris.huijiwiki.com/wiki/PC-Spin_(Okey_Version)",
+    },
+    {
+        word="dot;dot cannon;点炮",
+        title="点炮",
+        text="一个开局定式，第一包堆叠，然后搭建 #TD攻击 ，高概率8行PC。主要特点是前两包100%成功的TDPC",
+        link="tetris.huijiwiki.com/wiki/%E7%82%B9%E7%82%AE",
+    },
+    {
+        word="bakery;bakery td",
+        title="Bakery TD",
+        text="一个开局定式，第一包堆叠，然后搭建 #TD攻击 ，高概率8行PC。路线简单且上限高的TDPC",
+        link="tetris.huijiwiki.com/wiki/Bakery_TD",
+    },
+    {
+        word="ttpc",
+        title="TTPC",
+        text="一个开局定式，第一包堆叠，第二包t3，第三包t3，高概率8行PC",
+        link="tetris.huijiwiki.com/wiki/TTPC",
+    },
+    {
+        word="pancake;pancake stacking;松饼;松饼堆叠;kuromitsu;kuromitsu stacking;黑蜜;黑蜜堆叠;aitch;aitch stacking;aitch堆叠;olive;olive stacking;橄榄;橄榄堆叠;loyal td;yamaha;yamaha stacking;yamaha堆叠;rabbit;rabbit stacking;兔子堆叠;ruby;ruby stacking;红宝石堆叠;atlas;atlas stacking;atlas堆叠;gravity td;重力td;tandoori chicken;tandoori chicken stacking;riif;riif stacking;riif堆叠;(　ﾟдﾟ)ﾎﾟｶｰﾝ;(　ﾟдﾟ)ﾎﾟｶｰﾝ堆叠;dc-spin;dcspin;double c-spin;double cspin;quick tower;快塔;quick tower 2;快塔改;sewer;tzt cannon;tzt炮",
+        title="其他第一包堆叠第二包t3开局定式",
+        text="相对不太常用的巨量其他第一包堆叠第二包t3开局定式，请自行查阅中文维基的T旋方法分类",
+        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+    },
+    -- 开局定式·new tsd
+    {
+        word="fint;fint cannon;罚金炮",
+        title="罚金炮",
+        text="一个开局定式，第一包堆叠，第二包fin t2，第三包t3",
+        link="tetris.huijiwiki.com/wiki/%E7%BD%9A%E9%87%91%E7%82%AE",
+    },
+    {
+        word="wolfmoon;wolfmoon cannon;wm cannon;狼月;狼月炮",
+        title="狼月炮",
+        text="一个开局定式，第一包堆叠，第二包fin t2，然后搭建 #Impeldown",
+        link="tetris.huijiwiki.com/wiki/%E7%8B%BC%E6%9C%88%E7%82%AE",
+    },
+    {
+        word="maospin;intspin;godspin;godless spin;godless-spin;ajanba signature;ajanba签名",
+        title="其他new tsd开局定式",
+        text="相对不太常用的巨量其他new tsd开局定式，请自行查阅中文维基的T旋方法分类",
+        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+    },
+    -- 开局定式·不做T
+    {
+        word="pco;pc opener; perfect clear opener;全消开局;全清开局;开局全消;开局全清",
+        title="全消开局",
+        text="一个开局定式，约七成概率4行PC。最早的PC开局定式",
+        link="tetris.huijiwiki.com/wiki/%E5%85%A8%E6%B6%88%E5%BC%80%E5%B1%80",
+    },
+    {
+        word="grace;grace system;六巧板",
+        title="六巧板",
+        text="一个开局定式，约八成概率4行PC",
+        link="tetris.huijiwiki.com/wiki/%E5%85%AD%E5%B7%A7%E6%9D%BF",
+    },
+    {
+        word="jigsaw;jigsaw pc;jigsaw全消;jigsaw全清",
+        title="Jigsaw 全消",
+        text="一个开局定式，约七成概率4行PC。高概率做额外的t0可以多得分数",
+        link="tetris.huijiwiki.com/wiki/Jigsaw_%E5%85%A8%E6%B6%88",
+    },
+    -- 其他定式·不好分类
+    {
+        word="dpc",
+        title="DPC",
+        text="一系列中局定式的统称，使用前一包剩余的一块和两个整包。和8行PC配合可以完成循环",
+        link="tetris.huijiwiki.com/wiki/DPC",
+    },
+    {
+        word="crowbar;sz cross;sz十字;outlogic sd;octupus tea cannon;octupus tea炮;catspin;sbsd",
+        title="其他开局定式",
+        text="相对不太常用的巨量其他开局定式，请自行查阅中文维基的T旋方法分类",
+        link="https://tetris.huijiwiki.com/wiki/T-Spin%20Methods",
+    },
+    -- 其他定式·乐
+    {
+        word="dubble",
+        title="Dubble",
+        text="一个开局定式，第一包快速做出消二以期断掉对手PC。半娱乐性定式",
+        link="tetris.huijiwiki.com/wiki/Dubble",
+    },
+    {
+        word="最强炮",
+        title="最强炮",
+        text="一个开局定式，流程长达10包，做出7个不同的T旋。娱乐性定式",
+        link="tetris.huijiwiki.com/wiki/%E6%9C%80%E5%BC%BA%E7%82%AE",
+    },
+    {
+        word="horse;horse opener;马;马开局",
+        title="马",
+        text="一个开局定式，用第一包搭起马的形状。纯观赏娱乐性定式",
+        link="tetris.huijiwiki.com/wiki/%E9%A9%AC",
+    },
+    {
+        word="sus;sus opener;among us;among us opener",
+        title="Sus",
+        text="一个开局定式，用第一包搭起游戏Among Us主角的形状。纯观赏娱乐性定式",
+        link="tetris.huijiwiki.com/wiki/Sus_%E5%BC%80%E5%B1%80",
+    },
+    {
+        word="missile;导弹;导弹发射",
+        title="导弹发射！",
+        text="一个开局定式，用四包搭起巨大的导弹形状。纯观赏娱乐性定式",
+        link="tetris.huijiwiki.com/wiki/%E5%AF%BC%E5%BC%B9%E5%8F%91%E5%B0%84%EF%BC%81",
+    },
+    {
+        word="aoiro;aoiro炮",
+        title="Aoiro炮",
+        text="一个开局定式，拥有理论上最低的0.12%PC率。娱乐性定式",
+        link="tetris.huijiwiki.com/wiki/Aoiro%E7%82%AE",
     },
 }
 ---@type ZictEntry[]
@@ -764,14 +1340,14 @@ local game={
         word="gems;tetris gems",
         title="Tetris Gems",
         text="tetris.com官网上的俄罗斯方块，限时1分钟挖掘，有重力机制\n有三种消除后可以获得不同功能的宝石方块",
-        link="https://tetris.com/play-tetrisgems",
+        link="tetris.com/play-tetrisgems",
     },
     {
         cat='game',
         word="mind bender;tetris mind bender",
         title="Tetris Mind Bender",
         text="tetris.com官网上的俄罗斯方块，在马拉松基础上添加了效果，场地上会随机冒出效果方块，消除后会得到各种各样或好或坏的效果",
-        link="https://tetris.com/play-tetrismindbender",
+        link="tetris.com/play-tetrismindbender",
     },
     -- 跨平台
     {
@@ -912,7 +1488,15 @@ local game={
         cat='game',
         word="misa;misamino",
         title="Misamino",
-        text="单机1v1，主玩回合制模式，可以自定义AI（自己写的话需要了解接口）",
+        text="单机1v1，与AI进行回合制对战，可以自定义AI（自己写的话需要了解接口）",
+    },
+    {
+        cat='game',
+        shortname="four",
+        tags="非官 电脑 单人 键盘 快速 慢速 无延",
+        word="four;fourtris;four-tris",
+        title="four-tris",
+        text="单机自由沙盘，可以方便地随时自定义序列、绘制和删除地形、撤销和前进步骤，有截图识别地形功能，有多个练习模式，非常适合进行各种练习、复盘、绘制地形",
     },
     {
         cat='game',
@@ -1136,7 +1720,7 @@ local contributor={
     },
     {
         word="T056;flore;風洛霊;風洛霊flore;妈妈",
-        text="T056.flore，组织各项块群方块赛事，主办年度奖项活动，活跃编辑方块中文wiki，Techmino的配音",
+        text="T056.flore，目前主办各项中文社区方块赛事，主办年度奖项活动，活跃编辑方块中文维基，Techmino的配音",
         link="space.bilibili.com/1223403016",
     },
     {
@@ -1146,7 +1730,7 @@ local contributor={
     },
     {
         word="T0325;T325;幻灭",
-        text="T0325.幻灭，制作了tetr.io汉化插件",
+        text="T0325.幻灭，制作了TETR.IO汉化插件",
         link="space.bilibili.com/8933681",
     },
     {
@@ -1156,7 +1740,7 @@ local contributor={
     },
     {
         word="T022;teatube;茶叶子;茶管;茶;茶娘",
-        text="T022.Teatube，前群宠，组织过块群赛事，写了块群bot，架设了Tetris Online Study研究服",
+        text="T022.Teatube，前群宠，主办过中文社区方块赛事，写了块群bot，架设了Tetris Online Study研究服",
         link="space.bilibili.com/834903  space.bilibili.com/271332633",
     },
     {
@@ -1169,16 +1753,16 @@ local contributor={
     --     text="T872.Diao，写过一些zzzbot的胶水程序",
     -- },
     {
-        word="T1069;苏云;suyuna;苏云云;苏云云云",
-        text="T1069.苏云，组织过不少块群赛事和活动",
+        word="T1069;苏云;苏云云;苏云云云;suyuna",
+        text="T1069.苏云，主办过不少中文社区方块赛事和活动",
     },
     {
-        word="T043;xb",
-        text="T043.xb，前wiki编辑者，组织过块群赛事",
+        word="T043;xb;xb2002b;allustrate",
+        text="T043.xb，主办过不少中文社区方块赛事，曾经是中文维基最主要的编辑者和翻译者",
     },
     {
         word="osk",
-        text="OSK，Tetr.io的主创",
+        text="OSK，TETR.IO的主创",
     },
     -- 神秘
     {
@@ -1187,7 +1771,7 @@ local contributor={
     },
     {
         word="fkosk",
-        title="OSK，Tetr.io的主创，请尊重本人意愿不要在他面前发这个喵",
+        title="OSK，TETR.IO的主创，请尊重本人意愿不要在他面前发这个喵",
     },
 }
 
