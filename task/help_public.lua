@@ -1,9 +1,9 @@
-local wordList=TABLE.getValueSet({"小z在吗","#help","#帮助"})
+local wordList=TABLE.getValueSet{"小z在吗","#help","#帮助"}
 ---@type Task_raw
 return {
     func=function(S,M)
         ---@cast M LLOneBot.Event.PrivateMessage|LLOneBot.Event.GroupMessage
-        local mes=M.raw_message:lower()
+        local mes=SimpStr(M.raw_message)
         if not wordList[mes] then return false end
         if S:forceLock('help_public',62) then
             S:send(STRING.trimIndent[[

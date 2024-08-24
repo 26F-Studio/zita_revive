@@ -39,8 +39,8 @@ return {
 
         local repChance=
             0.005*(1-#mes/62)
-            +math.min(D.messageCharge*0.001,0.01)
-            +D.repMesCount*.1
+            +math.min(D.messageCharge*0.0005,0.01)
+            +D.repMesCount*.0626
 
         if repChance>-.01 then
             for _,word in next,goodWords do
