@@ -16,6 +16,9 @@ end
 
 ---@type table<string,fun(S:Session,args:string[])|string>
 local commands={
+    ['%test']=function(S)
+        -- something
+    end,
     ['%stop']=function(S)
         print("[STOP]")
         S:send("小z紧急停止了喵！")
