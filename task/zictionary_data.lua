@@ -503,7 +503,7 @@ local main={
         word="键位",
         title="键位设置原则参考",
         text="1.不要让一个手指管两个可能同时按的键（一般除了旋转键都要安排一个）\n2.不要用不灵活的手指（比如没锻炼过的小指），所有的操作频率都较高",
-        detail="*3.根据2021/8的统计，Jstris的40L前一千名中95%的玩家都用右手（惯用手）控制移动\n*4.没必要照抄别人的键位，只需参考前几条就几乎不会对成绩产生影响，可以放心",
+        detail="*3.根据2021/8的统计，Jstris的40L前一千名中95%的玩家都用右手（惯用手）控制移动\n*4.没必要照抄别人的键位，只需参考前几条就几乎不会对成绩产生影响，可以放心"
     },
     {
         word="手感",
@@ -669,7 +669,7 @@ local pattern={
     {
         word="tki",
         title="TKI 消歧义",
-        text="tki是发明了多个定式的玩家，用他id命名的有很多个\n另见 #TD攻击 #开局TKI堆叠 #TKI-3开局",
+        text="tki是发明了多个定式的玩家，用他命名的技术有多个\n参阅 #TD攻击 #开局TKI堆叠 #TKI-3开局",
     },
     -- 复合构造
     {
@@ -1355,11 +1355,6 @@ local game={
     },
     {
         cat='game',
-        word="Techmino Galaxy;Techmino: Galaxy;盖勒克希;铁壳米诺盖勒克希",
-        text="Techmino: Galaxy，一款谜之前端",
-    },
-    {
-        cat='game',
         shortname="aqm",
         tags="热门 非官 电脑 单人 键盘 快速 慢速 无延 延迟 创新",
         word="aqm;aquamino",
@@ -1678,11 +1673,11 @@ local contributor={
         link="studio26f.org",
     },
     {
-        word="T626;小z;Zita",
+        word="T626;小z;zita",
         text="喵喵？是我哦",
     },
     {
-        word="T026;T26;MrZ;z酱",
+        word="T026;T26;mrz;z酱",
         text="T026.MrZ，Techmino的主创、主程、音乐、音效、主美(?)\n也是另一个我喵！",
         link="space.bilibili.com/225238922",
     },
@@ -1724,7 +1719,7 @@ local contributor={
         link="space.bilibili.com/1223403016",
     },
     {
-        word="T283;模电;模电283;Electric;Electric283;Modian;Modian283",
+        word="T283;模电;模电283;modian;modian283",
         text="T283.模电，上过最强大脑，擅长20G和隐形，在Techmino中有出镜",
         link="space.bilibili.com/17583394",
     },
@@ -1734,18 +1729,18 @@ local contributor={
         link="space.bilibili.com/8933681",
     },
     {
-        word="TTTT;Farter;屁;屁爷",
+        word="TTTT;farter;屁;屁爷",
         text="TTTT.屁，创研究群的【写乐Tetr.js(屁块)【哦还有写T-ex的【然并无人玩【【",
         link="space.bilibili.com/132966",
     },
     {
-        word="T022;Teatube;茶叶子;茶管;茶;茶娘",
+        word="T022;teatube;茶叶子;茶管;茶;茶娘",
         text="T022.Teatube，前群宠，主办过中文社区方块赛事，写了块群bot，架设了Tetris Online Study研究服",
         link="space.bilibili.com/834903  space.bilibili.com/271332633",
     },
     {
-        word="T042;42;思竣;思竣一号;思竣二号;思竣三号;思竣四号",
-        text="T042.思竣，找到了Techmino的一万个bug并记住了所在版本号，另外还有一堆铁壳only的世界纪录",
+        word="T042;42;思竣",
+        text="T042.思竣，有一堆铁壳only的世界纪录，找到了Techmino的一万个bug并记住了所在版本号",
         link="space.bilibili.com/403250559",
     },
     -- {
