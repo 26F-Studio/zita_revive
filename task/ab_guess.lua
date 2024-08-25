@@ -1,26 +1,27 @@
 local text={
-    help="AB猜数字：有一个四位不同的数字，玩家猜测后会回答几A几B，A同wordle的绿色，B是猜测数中有几个在答案里但位置不正确，猜对了有奖励哦（？）",
+    help="AB猜方块：有一组四个不同的方块，玩家猜测后会回答几A几B，A同wordle的绿色，B是猜测的块中有几个在答案里但位置不正确，猜对了有奖励哦（？）",
     start={
-        easy="我想好了一个四位数字，开始猜吧喵！",
-        hard="四位数想好了喵！不会变的喵！",
+        easy="我想好了四个方块，开始猜吧喵！",
+        hard="四个方块想好了喵！不会变的喵！",
     },
     remain={
         easy="剩余机会：",
         hard="[HD]剩余机会：",
     },
-    guessed="这个数字猜过了喵",
+    guessed="这组方块猜过了喵",
     notFinished="上一局还没结束喵",
     win="猜对了喵！答案是",
     bonus="这是你的奖励喵",
     lose="机会用完了喵…答案是",
     forfeit="认输了喵？答案是",
 }
-local ins,rem=table.insert,table.remove
+local pieces=STRING.split("Z S J L T O I"," ")
+local ins=table.insert
 local copy=TABLE.copy
-local function randomGuess(question)
-    local l=STRING.split("1 2 3 4 5 6 7 8 9 0"," ")
+local function randomGuess()
+    local l=TABLE.copy(pieces)
     local g={}
-    for _=1,4 do ins(g,rem(l,math.random(_==1 and question and #l-1 or #l))) end
+    for _=1,4 do ins(g,TABLE.popRandom(l)) end
     return g
 end
 local function comp(ANS,G)
@@ -54,9 +55,17 @@ local function guess(D,g)
             if not set[r] then set[r]={} end
             ins(set[r],answer)
         end
+        -- print("--------------------------")
+        -- for k,v in next,set do
+        --     local s=""
+        --     if #v<=10 then
+        --         for _,_4 in next,v do s=s..table.concat(_4).." " end
+        --     end
+        --     print(k,#v,s)
+        -- end
         local keys=TABLE.getKeys(set)
-        table.sort(keys,function(a,b) return #set[a]>#set[b] end)
-        if #set[keys[1]]==1 then return 'win' end
+        table.sort(keys,function(a,b) return #set[a]>#set[b] or #set[a]==#set[b] and a<b end)
+        if keys[1]=='4A0B' then return 'win' end
         D.answer=set[keys[1]]
         res=keys[1]
     end
@@ -112,13 +121,13 @@ return {
             D.answer={}
             D.guessHis={}
             D.textHis=""
-            D.chances=D.mode=='easy' and 8 or 10
+            D.chances=D.mode=='easy' and 6 or 7
             if D.mode=='easy' then
-                D.answer=randomGuess(true)
+                D.answer=randomGuess()
             else
-                for a=1,9 do for b=0,9 do for c=0,9 do for d=0,9 do
+                for a=1,7 do for b=1,7 do for c=1,7 do for d=1,7 do
                     if a~=b and a~=c and a~=d and b~=c and b~=d and c~=d then
-                        ins(D.answer,{""..a,""..b,""..c,""..d})
+                        ins(D.answer,{pieces[a],pieces[b],pieces[c],pieces[d]})
                     end
                 end end end end
             end
@@ -128,7 +137,8 @@ return {
             return true
         elseif D.playing then
             if mes:sub(1,3)=='#ab' then mes=mes:sub(4) end
-            if not mes:match('^%d%d%d%d$') then return false end
+            mes=mes:upper()
+            if not mes:match('^[ZSJLTOI][ZSJLTOI][ZSJLTOI][ZSJLTOI]$') then return false end
             local res=guess(D,{mes:sub(1,1),mes:sub(2,2),mes:sub(3,3),mes:sub(4,4)})
             if res=='duplicate' then
                 if S:lock('ab_help',12.6) then
