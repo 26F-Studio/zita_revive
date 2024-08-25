@@ -11,7 +11,6 @@ local text={
     guessed="这组方块猜过了喵",
     notFinished="上一局还没结束喵",
     win="猜对了喵！答案是",
-    bonus="这是你的奖励喵",
     lose="机会用完了喵…答案是",
     forfeit="认输了喵？答案是",
 }
@@ -44,10 +43,11 @@ local function comp(ANS,G)
 end
 local function guess(D,g)
     if TABLE.find(D.guessHis,table.concat(g)) then return 'duplicate' end
+    local win=false
     local res
     if D.mode=='easy' then
         res=comp(copy(D.answer),copy(g))
-        if res=='4A0B' then return 'win' end
+        win=res=='4A0B'
     elseif D.mode=='hard' then
         local set={}
         for _,answer in next,D.answer do
@@ -65,7 +65,7 @@ local function guess(D,g)
         -- end
         local keys=TABLE.getKeys(set)
         table.sort(keys,function(a,b) return #set[a]>#set[b] or #set[a]==#set[b] and a<b end)
-        if keys[1]=='4A0B' then return 'win' end
+        win=keys[1]=='4A0B'
         D.answer=set[keys[1]]
         res=keys[1]
     end
@@ -75,6 +75,7 @@ local function guess(D,g)
         D.textHis=D.textHis..(#D.guessHis%2==0 and "    " or "\n")
     end
     D.textHis=D.textHis..table.concat(g).." "..res
+    if win then return 'win' end
 end
 
 ---@type Task_raw
@@ -150,7 +151,11 @@ return {
                 S:send(D.textHis.."\n"..text.win..mes)
                 D.lastInterectTime=Time()-260
                 if Config.extraData.family[S.uid] then
-                    S:send(text.bonus..CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages)))
+                    local bonus=""
+                    for _=1,D.mode=='easy' and 1 or 2 do
+                        bonus=bonus..CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))
+                    end
+                    S:send(bonus)
                 end
             elseif D.chances>0 then
                 S:send(D.textHis.."\n"..text.remain[D.mode]..D.chances)
