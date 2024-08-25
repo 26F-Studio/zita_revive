@@ -73,8 +73,9 @@ local function guess(D,g)
         local keys=TABLE.getKeys(set)
         table.sort(keys,function(a,b) return #set[a]>#set[b] or #set[a]==#set[b] and a<b end)
         win=keys[1]=='4A0B'
-        D.answer=set[keys[math.random(#D.guessHis<=2 and 2 or 1)]]
-        res=keys[1]
+        local r=math.random(#D.guessHis<=2 and 2 or 1)
+        D.answer=set[keys[r]]
+        res=keys[r]
     end
     if #D.guessHis>1 then
         D.textHis=D.textHis..(#D.guessHis%2==0 and "    " or "\n")
