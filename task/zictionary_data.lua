@@ -84,10 +84,6 @@ local meta={
         link="github.com/26F-Studio/Techmino",
     },
     {
-        word="donate;捐赠;打赏;打钱",
-        text="Techmino，好玩！"..CQpic(Config.extraData.imgPath..'pay.png'),
-    },
-    {
         word="宝石;宝石迷阵;bej;bej3;bejeweled;bejeweled3",
         title="Bejeweled",
         text="三消系列神作，类比现代块之于经典块的进步，Bej系列每一作都是前无古人后无来者的“现代三消”，BejT和Bej3的三消玩法至今未被超越",
