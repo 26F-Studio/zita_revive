@@ -11,7 +11,10 @@ local text={
     guessed="这组方块猜过了喵",
     notFinished="上一局还没结束喵",
     win="猜对了喵！答案是",
-    lose="机会用完了喵…答案是",
+    lose={
+        easy="机会用完了喵…答案是",
+        hard="机会用完了喵…答案好像是$1还是$2来着？不过那不重要啦喵~",
+    },
     forfeit="认输了喵？答案是",
 }
 local pieces=STRING.split("Z S J L T O I"," ")
@@ -113,7 +116,7 @@ return {
             end
             if S.group and not AdminMsg(M) and Time()-D.lastInterectTime<300 then
                 if S:lock('ab_cd',26) then
-                    S:send(STRING.repD("开始新游戏需要等5分钟喵（还剩$1秒）",300-(Time()-D.lastInterectTime)))
+                    S:send(STRING.repD("开始新游戏需要等5分钟喵（还剩$1秒）",math.ceil(300-(Time()-D.lastInterectTime))))
                 end
                 return true
             end
@@ -162,7 +165,16 @@ return {
                 D.lastInterectTime=Time()
             else
                 D.playing=false
-                S:send(D.textHis.."\n"..text.lose..(D.mode=='easy' and table.concat(D.answer) or table.concat(D.answer[1])))
+                local t=D.textHis.."\n"
+                if D.mode=='easy' then
+                    t=t..text.lose.easy..table.concat(D.answer)
+                elseif #D.answer==1 then
+                    t=t..text.lose.easy..table.concat(D.answer[1])
+                else
+                    local ans1,ans2=table.concat(TABLE.popRandom(D.answer)),table.concat(TABLE.popRandom(D.answer))
+                    t=t..STRING.repD(text.lose.hard,ans1,ans2)
+                end
+                S:send(t)
                 D.lastInterectTime=Time()
             end
             return true
