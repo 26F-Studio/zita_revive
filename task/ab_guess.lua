@@ -121,7 +121,7 @@ return {
             D.answer={}
             D.guessHis={}
             D.textHis=""
-            D.chances=D.mode=='easy' and 6 or 7
+            D.chances=6
             if D.mode=='easy' then
                 D.answer=randomGuess()
             else
