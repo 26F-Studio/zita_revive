@@ -31,7 +31,7 @@ local function comp(ANS,G)
     for i=1,4 do
         if ANS[i]==G[i] then
             aCount=aCount+1
-            ANS[i],G[i]=false,false
+            G[i]=false
         end
     end
     if aCount==4 then return '4A0B' end
@@ -46,6 +46,10 @@ local function comp(ANS,G)
 end
 local function guess(D,g)
     if TABLE.find(D.guessHis,table.concat(g)) then return 'duplicate' end
+
+    D.chances=D.chances-1
+    ins(D.guessHis,table.concat(g))
+
     local win=false
     local res
     if D.mode=='easy' then
@@ -69,11 +73,9 @@ local function guess(D,g)
         local keys=TABLE.getKeys(set)
         table.sort(keys,function(a,b) return #set[a]>#set[b] or #set[a]==#set[b] and a<b end)
         win=keys[1]=='4A0B'
-        D.answer=set[keys[1]]
+        D.answer=set[keys[math.random(#D.guessHis<=2 and 2 or 1)]]
         res=keys[1]
     end
-    D.chances=D.chances-1
-    ins(D.guessHis,table.concat(g))
     if #D.guessHis>1 then
         D.textHis=D.textHis..(#D.guessHis%2==0 and "    " or "\n")
     end
@@ -91,7 +93,7 @@ return {
         D.answer={} -- {'1','2','3','4'} in Easy mode, {'1234','5678',...} in Hard mode
         D.guessHis={}
         D.textHis=""
-        D.chances=8
+        D.chances=26
     end,
     func=function(S,M,D)
         -- Log
@@ -125,7 +127,7 @@ return {
             D.answer={}
             D.guessHis={}
             D.textHis=""
-            D.chances=6
+            D.chances=D.mode=='easy' and 6 or 7
             if D.mode=='easy' then
                 D.answer=randomGuess()
             else
