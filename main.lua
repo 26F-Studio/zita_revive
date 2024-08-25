@@ -96,37 +96,59 @@ function Bot.isAdmin(id)
     return Config.superAdminID[id]
 end
 
----@param data LLOneBot.SimpMes
-function Bot.send(data)
+---@param data table
+function Bot._send(data)
+    local suc,res=pcall(JSON.encode,data)
+    if suc then
+        if Config.debugLog_send then
+            print(TABLE.dump(data))
+        end
+        ws:send(res)
+        return true
+    else
+        print("Error encoding json:\n"..debug.traceback(res))
+    end
+end
+---@param message string
+---@param group? number
+---@param user? number
+function Bot.sendMsg(message,group,user)
     local mes={
         action='send_msg',
         params={
-            user_id=data.user,
-            group_id=data.group,
-            message=data.message,
+            user_id=user,
+            group_id=group,
+            message=message,
         }
     }
-    if Config.safeMode and not Config.safeSessionID['p'..data.user or 'g'..data.group] then
+    if Config.safeMode and not Config.safeSessionID[group and 'g'..group or 'p'..user] then
         if TASK.lock('safeModeBlock',10) then
             print("Message blocked in safe mode")
         end
         return
     end
-    local suc,res=pcall(JSON.encode,mes)
-    if suc then
-        if Config.debugLog_send then
-            print(TABLE.dump(mes))
-        end
-        ws:send(res)
+    if Bot._send(mes) then
         Bot.stat.messageSent=Bot.stat.messageSent+1
         Bot.stat.totalMessageSent=Bot.stat.totalMessageSent+1
-    else
-        print("Error encoding json:\n"..debug.traceback(res))
     end
+end
+---@param group_id number
+---@param user_id number
+---@param time? number
+function Bot.ban(group_id,user_id,time)
+    local mes={
+        action='set_group_ban',
+        params={
+            group_id=group_id,
+            user_id=user_id,
+            duration=time or 60,
+        }
+    }
+    Bot._send(mes)
 end
 function Bot.adminNotice(text)
     for id in next,Config.superAdminID do
-        Bot.send{user=id,message=text}
+        Bot.sendMsg(text,nil,id)
     end
 end
 function Bot.restart()
@@ -362,12 +384,11 @@ function Session:receive(M)
 end
 function Session:send(text)
     if self.priv then
-        Bot.send{user=self.id,message=text}
+        Bot.sendMsg(text,nil,self.id)
     else
-        Bot.send{group=self.id,message=text}
+        Bot.sendMsg(text,self.id,nil)
     end
 end
-
 ---@type table<string, Session>
 SessionMap={}
 --------------------------------------------------------------
