@@ -26,6 +26,14 @@ local meta={
         title="本词(字?)典是收集方块游戏相关词汇并加以解释供人检查参考的工具",
     },
     {
+        word="表格;游戏表格",
+        text=CQpic(Config.extraData.imgPath.."方块游戏表格.png"),
+    },
+    {
+        word="赞助;打钱",
+        text=CQpic(Config.extraData.imgPath.."pay.png"),
+    },
+    {
         word="提问",
         text="提问时请尽量完整地描述问题，这样别人才更容易一句话解决问题，而不是不得不反复要求补充更多条件，一个人回答浪费一分钟，群里几百个人浪费几百分钟",
         detail="例：“【问题现象截图】我使用【设备类型】在【游戏名】【版本号】中遇到了【现象】，并且能用【具体操作】反复触发，这是bug吗？”\nhttps://gist.github.com/burningtnt/360d2b93452560c0413ac1a6e3515642",
@@ -1229,7 +1237,7 @@ local game={
         tags="非官 电脑 手机 网页 单人 多人 键盘 触屏 鼠标 无延 慢速 创新",
         word="kos;king of stackers",
         title="King of Stackers",
-        text="简称KoS,网页版回合制对战方块点击即玩（可能很卡），主要规则为：以7块为一个回合，双方轮流在自己场地中放置方块，任何的攻击只在对方回合放一块不消行后生效，策略性很强。有不同的伤害表设置",
+        text="简称KoS,网页版回合制对战方块，主要玩法类似下棋，每个人以7块为一个回合轮流操作，策略性很强，画面简陋",
         link="kingofstackers.com/games.php",
     },
     {
@@ -1238,7 +1246,7 @@ local game={
         tags="热门 非官 电脑 手机 网页 单人 键盘 触屏 快速 慢速 无延 延迟 新人 创新",
         word="屁块;tetrjs;tetr.js",
         title="Tetr.js",
-        text="简称屁块（作者网名Farter）,设置内容足够专业模式很多，但画面很简单且触摸控制只有几套固定布局不能自由拖放",
+        text="简称屁块（作者网名Farter）,网页版单人块，设置内容足够专业模式很多，但画面很简单且触摸控制只有几套固定布局不能自由拖放",
         link="farter.cn/t",
     },
     {
@@ -1250,7 +1258,7 @@ local game={
     {
         cat='game',
         shortname="tl",
-        tags="热门 非官 电脑 网页 单人 键盘 快速 慢速 无延 延迟",
+        tags="非官 电脑 网页 单人 键盘 快速 慢速 无延 延迟",
         word="tl;tetra legends",
         title="Tetra Legends",
         text="简称TL，单机模式比较丰富，有两个隐藏的节奏模式，并且将一些其他游戏中不可见的机制进行了可视化，动效也很多。在2020年12月，基本确定由于各种原因不再继续开发",
@@ -1259,7 +1267,7 @@ local game={
     {
         cat='game',
         shortname="asc",
-        tags="热门 非官 电脑 网页 单人 键盘 快速 慢速 无延 延迟 创新",
+        tags="非官 电脑 网页 单人 键盘 快速 慢速 无延 延迟 创新",
         word="asc;ascension",
         title="Ascension",
         text="简称ASC，使用自己的ASC旋转系统，有不少单机模式，对战模式目前处在测试阶段",
@@ -1268,7 +1276,7 @@ local game={
     {
         cat='game',
         shortname="io",
-        tags="热门 非官 电脑 网页 单人 多人 键盘 快速 无延 新人 创新",
+        tags="热门 非官 电脑 网页 多人 键盘 快速 无延 新人 创新",
         word="io;tetrio;tetr.io",
         title="TETR.IO",
         text="简称IO，在线人数很多，模式不多但是有专业的排位系统和自定义房间，有电脑客户端下载\n另见#io s2",
@@ -1301,8 +1309,6 @@ local game={
     },
     {
         cat='game',
-        shortname="tf",
-        tags="官方 电脑 网页 单人 多人 键盘 快速 慢速 无延 延迟",
         word="tf;tetris friends",
         title="Tetris Friends",
         text="简称TF，已经关服了的网页版方块。以前人比较多，后来官服倒闭了热度下去了，不过现在有人架了私服还可以体验到",
@@ -1336,7 +1342,7 @@ local game={
     {
         cat='game',
         shortname="tech",
-        tags="热门 非官 电脑 手机 单人 多人 键盘 触屏 快速 慢速 无延 延迟 新人 创新",
+        tags="热门 非官 电脑 手机 单人 键盘 触屏 快速 慢速 无延 延迟 新人 创新",
         word="tech;techmino;铁壳;铁壳米诺",
         title="Techmino",
         text="简称Tech，单机模式和各种设置都很齐全\n目前最新版本0.17.21，可以和约好友联机对战",
@@ -1429,7 +1435,7 @@ local game={
     {
         cat='game',
         shortname="ppt",
-        tags="热门 官方 电脑 主机 单人 多人 键盘 慢速 延迟",
+        tags="官方 电脑 主机 单人 多人 键盘 慢速 延迟",
         word="ppt;puyo puyo tetris",
         title="Puyo Puyo Tetris",
         text="简称PPT，将方块和 Puyo Puyo 两个下落消除游戏放到一个游戏里，二者可以对战，联机单机模式都很多。另有一拓展版本Puyo Puyo Tetris 2\n[Steam PC版相对NS版手感和网络等都不太好]",
@@ -1452,8 +1458,14 @@ local game={
     },
     {
         cat='game',
+        word="ultimate;tetris ultimate",
+        title="Tetris Ultimate",
+        text="单机/多人方块游戏，有周期隐形/山体滑坡/双人同版等有趣模式，但不能自定义键位和控制参数，目前已下架",
+    },
+    {
+        cat='game',
         shortname="poly",
-        tags="热门 非官 电脑 单人 键盘 快速 慢速 无延 延迟 创新",
+        tags="非官 电脑 单人 键盘 快速 慢速 无延 延迟 创新",
         word="poly;polyform",
         title="Polyform",
         text="单机方块游戏，只有几个经典的模式，但单元格不是正方形，有三角形和六边形",
@@ -1501,7 +1513,7 @@ local game={
     {
         cat='game',
         shortname="royale",
-        tags="热门 官方 手机 单人 触屏 快速 慢速 无延 延迟",
+        tags="官方 手机 单人 触屏 快速 慢速 无延 延迟",
         word="royale;tetris royale;tetris n3twork;tetris n3t",
         title="Tetris (N3TWORK)",
         text="N3TWORK开发的一款移动端方块（目前由Play Studio代理），有马拉松、3分钟限时打分和Royale（最多100人对战）模式\n[UI设计比较不错，但不支持自定义键位，而且默认的按钮也很小导致控制也不是很舒服]",
