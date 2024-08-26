@@ -74,13 +74,13 @@ local meta={
         link="tetris.wiki",
     },
     {
-        word="tetris wiki fandom",
+        word="fandom;wiki fandom;tetris wiki fandom",
         title="Tetris Wiki Fandom",
         text="(英文)一个俄罗斯方块的维基百科，位于fandom平台\n与tetris.wiki是不同的网站",
         link="tetris.fandom.com",
     },
     {
-        word="fumen",
+        word="fumen;编辑器",
         title="Fumen",
         text="一个方块版面编辑器，可以用于分享定式，PC解法等，用处很多。设置里可以启用英文版",
         link="fumen.zui.jp  knewjade.github.io/fumen-for-mobile",
@@ -1391,7 +1391,7 @@ local game={
         cat='game',
         word="sega;sega tetris",
         title="Sega Tetris",
-        text="官块，要下载，主单机，音画优秀，电脑开模拟器，部分改键，不可调控制\n1999年发行的主机游戏，有1v1道具战，六种不同的消除方式能发送特殊效果",
+        text="官块，要下载，主单机，音画优秀，需要模拟器，部分改键，不可调控制\n1999年发行的主机游戏，有1v1道具战，六种不同的消除方式能发送特殊效果",
     },
     -- 其他
     {
@@ -1494,6 +1494,12 @@ local game={
         title="Tetris (EA)",
         text="离线，官块，要下载，主单机，音画优秀，手机限定，不可改键，不可调控制\nEA代理的一款宇宙主题的移动端方块。有滑动操控和单点触控两种操作模式，已于2020年4月下架",
         detail="除经典的马拉松外还有一个星系模式（地图挖掘），有重力连锁机制，目标是在限定块数内消除所有地图块",
+    },
+    {
+        cat='game',
+        word="nes",
+        title="Tetris (Nes, Nitendo)",
+        text="nes平台上的块，官块，主单机，音画优秀，需要模拟器，不可调控制\n最普及的经典俄罗斯方块之一，因各种因素硬抗住了方块现代化的进程活到了现在，CTWC比赛用的就是这个游戏",
     },
     -- 题库
     {
