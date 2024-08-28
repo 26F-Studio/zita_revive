@@ -98,7 +98,7 @@ return {
 
         if S.group and not AdminMsg(M) then
             S:update()
-            local chargeNeed=62+#resultStr/4.2
+            local chargeNeed=62+#resultStr/2.6
             if S.charge<math.min(94.2,chargeNeed) then
                 if S:forceLock('dictCharge',26) then S:send("词典能量耗尽！请稍后再试喵") end
                 return true
