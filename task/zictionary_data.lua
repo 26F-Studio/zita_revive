@@ -209,6 +209,11 @@ local main={
         text="“打得不错”，游戏结束时的常用语，可以原样回复",
     },
     {
+        word="ggwp",
+        title="Good game(s), well played",
+        text="“打得不错”，游戏结束时的常用语，可以原样回复",
+    },
+    {
         word="eggs",
         title="ggs的整活版本",
     },
