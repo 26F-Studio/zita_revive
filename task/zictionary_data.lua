@@ -1759,6 +1759,10 @@ local contributor={
         word="ZZZ;Zou Zhi Zhang",
         text="奏之章，编写了ZZZ机器人",
     },
+    {
+        word="Z120;渣渣;渣渣120",
+        text="块群查询 Bot 模板实现与开发以及 v2 模板设计, 并制作了 tetr.io 客户端三合一 (plus + verge + 中文翻译)"
+    }
 }
 
 local zict={entries={}}
