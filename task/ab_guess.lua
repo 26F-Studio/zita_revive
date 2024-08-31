@@ -5,14 +5,141 @@ local cooldownSkip={
     giveup=1620,
 } for k,v in next,cooldownSkip do cooldownSkip[k]=cooldown-v end
 local score={
-    easy={[0]=0,.5, 1, 3, 4,10},
-    hard={[0]=1, 3, 6, 8,10,10},
+    easy={[0]=0, 0.5, 1, 6.26},
+    hard={[0]=1, 3, 6, 8, 10, 10},
 }
 local rewardList={
     {98,73,31, 6, 0, 0, 0, 0, 0, 0}, -- 1
     { 2,26,62,50,45,34,15, 4, 2, 0}, -- 2
     { 0, 1, 6,42,52,62,80,90,91,92}, -- 3
     { 0, 0, 1, 2, 3, 4, 5, 6, 7, 8}, -- 1+1
+}
+local rules={
+    -- 顺序无关
+    {
+        --54%，19/35
+        text="包含对称块",
+        rule=function(seq) return seq:find('Z') and seq:find('S') or seq:find('J') and seq:find('L') end
+    },
+    {
+        --46%，16/35
+        text="不包含对称块",
+        rule=function(seq) return not (seq:find('Z') and seq:find('S') or seq:find('J') and seq:find('L')) end
+    },
+    {
+        --60%？，包含T或者有J有L
+        text="纵奇偶能平衡",
+        rule=function(seq) return seq:find('T') or seq:find('J') and seq:find('L') end
+    },
+    {
+        --60%
+        text="有三块颜色在彩虹中连续",
+        rule=function(seq)
+            return string.find(
+                (seq:find('Z') and '1' or '0')..
+                (seq:find('L') and '1' or '0')..
+                (seq:find('O') and '1' or '0')..
+                (seq:find('S') and '1' or '0')..
+                (seq:find('I') and '1' or '0')..
+                (seq:find('J') and '1' or '0')..
+                (seq:find('T') and '1' or '0')..
+                (seq:find('Z') and '1' or '0')..
+                (seq:find('L') and '1' or '0'),
+                '111'
+            )
+        end
+    },
+    {
+        --40%？，没有I且包含J或L
+        text="最多只能普消三",
+        rule=function(seq) return not seq:find('I') and (seq:find('J') or seq:find('L')) end
+    },
+    {
+        --71.4%？
+        text="总共至少10种朝向状态",
+        rule=function(seq)
+            local count=0
+            if seq:find('Z') then count=count+2 end
+            if seq:find('S') then count=count+2 end
+            if seq:find('J') then count=count+4 end
+            if seq:find('L') then count=count+4 end
+            if seq:find('T') then count=count+4 end
+            if seq:find('O') then count=count+1 end
+            if seq:find('I') then count=count+2 end
+            return count>=10
+        end
+    },
+    {
+        --57%，4/7，有I
+        text="能消四",
+        rule=function(seq) return seq:find('I') end
+    },
+    {
+        --43%，3/7，无I
+        text="干旱",
+        rule=function(seq) return not seq:find('I') end
+    },
+    {
+        --71%，5/7，不同时有T和I
+        text="不能b2b",
+        rule=function(seq) return not seq:find('T') and seq:find('I') end
+    },
+    {
+        --63%？，SZJL中最多有两个
+        text="最多两块能spinPC",
+        rule=function(seq)
+            local count=0
+            if seq:find('S') then count=count+1 end
+            if seq:find('Z') then count=count+1 end
+            if seq:find('J') then count=count+1 end
+            if seq:find('L') then count=count+1 end
+            return count<=2
+        end
+    },
+    {
+        --86%，6/7，包含S或Z
+        text="不都能普通消PC",
+        rule=function(seq) return seq:find('S') or seq:find('Z') end
+    },
+    {
+        --63%？，JLT中包含至少两个
+        text="不能取两块PC二宽四深井",
+        rule=function(seq)
+            local count=0
+            if seq:find('J') then count=count+1 end
+            if seq:find('L') then count=count+1 end
+            if seq:find('T') then count=count+1 end
+            return count<2
+        end
+    },
+
+    -- 顺序相关
+    {
+        --66.66%，2/3
+        text="无暂存不用重开",
+        rule=function(seq)
+            if seq:sub(1,1)=='O' then seq=seq:sub(2) end
+            return not seq:sub(1,1)=='S' and not seq:sub(1,1)=='Z'
+        end
+    },
+    {
+        --67.6%？
+        text="有连续两块是相邻彩虹色",
+        rule=function(seq)
+            for _,twin in next,{'ZL','LO','OS','SI','IJ','JT','LZ','OL','SO','IS','JI','TJ'} do
+                if seq:find(twin) then return true end
+            end
+        end
+    },
+    {
+        --55.2%？
+        text="有连续两块可以无spin消6行",
+        rule=function(seq)
+            for _,twin in next,{'JL','LJ','IJ','JI','IL','LI','IS','SI','IZ','ZI'} do
+                if seq:find(twin) then return true end
+            end
+        end
+    },
 }
 local text={
     help="AB猜方块：有一组四个不同的方块，玩家猜测后会回答几A几B，A同wordle的绿色，B是猜测的块中有几个在答案里但位置不正确，猜对了有奖励哦（？）",
@@ -40,10 +167,13 @@ local text={
 local pieces=STRING.split("Z S J L T O I"," ")
 local ins=table.insert
 local copy=TABLE.copy
-local function randomGuess()
-    local l=TABLE.copy(pieces)
-    local g={}
-    for _=1,4 do ins(g,TABLE.popRandom(l)) end
+local function randomGuess(ans)
+    local g
+    repeat
+        g={}
+        local l=TABLE.copy(pieces)
+        for _=1,4 do ins(g,TABLE.popRandom(l)) end
+    until not (ans and TABLE.equal(g,ans))
     return g
 end
 local function comp(ANS,G)
@@ -152,7 +282,6 @@ return {
             D.answer={}
             D.guessHis={}
             D.textHis=""
-            D.chances=D.mode=='easy' and 6 or 7
             if D.mode=='easy' then
                 D.answer=randomGuess()
             else
@@ -162,7 +291,8 @@ return {
                     end
                 end end end end
             end
-            guess(D,randomGuess())
+            guess(D,randomGuess(D.mode=='easy' and D.answer))
+            D.chances=D.mode=='easy' and 4 or 6
             S:send(text.start[D.mode].."\n"..D.textHis.."\n"..text.remain[D.mode]..D.chances)
             D.lastInterectTime=Time()
             return true
@@ -213,6 +343,23 @@ return {
                     end
                 end
             elseif D.chances>0 then
+                if #D.guessHis==2 and D.mode=='easy' then
+                    local possibleRules={}
+                    local ans=table.concat(D.answer)
+                    for i=1,#rules do
+                        if rules[i].rule(ans) then
+                            ins(possibleRules,rules[i])
+                        end
+                    end
+                    if #possibleRules>0 then
+                        local r=TABLE.getRandom(possibleRules)
+                        D.textHis=D.textHis.."\n"..r.text
+                        -- print(table.concat(D.answer))
+                        -- for i=1,#possibleRules do
+                        --     print(possibleRules[i].text)
+                        -- end
+                    end
+                end
                 S:send(D.textHis.."\n"..text.remain[D.mode]..D.chances)
                 D.lastInterectTime=Time()
             else
