@@ -18,18 +18,22 @@ local text={
     help="AB猜方块：有一组四个不同的方块，玩家猜测后会回答几A几B，A同wordle的绿色，B是猜测的块中有几个在答案里但位置不正确，猜对了有奖励哦（？）",
     start={
         easy="我想好了四个方块，开始猜吧喵！",
-        hard="四个方块想好了喵！不会变的喵！",
+        hard="四个方块想好了！不会变的喵！",
     },
     remain={
-        easy="剩余机会：",
-        hard="[HD]剩余机会：",
+        easy="剩余机会:",
+        hard="[HD]剩余机会:",
     },
     guessed="这组方块猜过了喵",
     notFinished="上一局还没结束喵",
-    win="猜对了喵！答案是",
+    win={
+        easy="猜对了喵！答案是",
+        hard="好厉害！猜对了喵！是",
+    },
     lose={
-        easy="机会用完了喵…答案是",
-        hard="机会用完了喵…答案好像是$1还是$2来着？不过那不重要啦喵~",
+        easy="机会用完了喵…答案是$1",
+        hardAlmost="答案是$1，只差一次就能猜出来了喵~",
+        hard="没猜出来喵~答案是$1还是$2来着？不过那不重要啦~",
     },
     forfeit="认输了喵？答案是",
 }
@@ -174,7 +178,7 @@ return {
                 D.lastInterectTime=Time()
             elseif res=='win' then
                 D.playing=false
-                S:send(D.textHis.."\n"..text.win..mes)
+                S:send(D.textHis.."\n"..text.win[D.mode]..mes)
                 S:unlock('ab_help')
                 S:unlock('ab_playing')
                 S:unlock('ab_cd')
@@ -215,9 +219,12 @@ return {
                 D.playing=false
                 local t=D.textHis.."\n"
                 if D.mode=='easy' then
-                    t=t..text.lose.easy..table.concat(D.answer)
+                    t=t..STRING.repD(text.lose.easy,table.concat(D.answer))
                 elseif #D.answer==1 then
-                    t=t..text.lose.easy..table.concat(D.answer[1])
+                    t=t..STRING.repD(text.lose.hardAlmost,table.concat(D.answer[1]))
+                    if Config.extraData.family[S.uid] then
+                        t=t..CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))
+                    end
                 else
                     local ans1,ans2=table.concat(TABLE.popRandom(D.answer)),table.concat(TABLE.popRandom(D.answer))
                     t=t..STRING.repD(text.lose.hard,ans1,ans2)
