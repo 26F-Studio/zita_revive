@@ -80,7 +80,7 @@ local commands={
         S:send(result)
     end,['%task']="%tasks",
     ['%log']=function(S,args)
-        local on=args[1]==''
+        local on=args[1]=='on'
         print("Log: "..(on and "on" or "off"))
         S:send(on and "小z开始日志了喵！" or "小z停止日志了喵！")
         Config.debugLog_receive=on
@@ -135,7 +135,7 @@ local texts={
     },
 }
 local function no_permission(S,i)
-    if S:forceLock('no_permission',12) then
+    if S:forceLock('no_permission',62) then
         S:send(texts[i][math.random(#texts[i])])
     end
 end

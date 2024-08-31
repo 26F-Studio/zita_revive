@@ -1472,7 +1472,7 @@ local game={
         cat='game',
         word="thm;touhoumino",
         title="Touhoumino",
-        text="非官块 要下载 主单机 音画优秀 电脑\n一个Nullpomino的自带资源包的改版，将东方Project元素与俄罗斯方块结合",
+        text="非官块 要下载 主单机 音画优秀 电脑\n一个Nullpomino的mod版，在方块里加入了东方Project元素",
         detail="马拉松模式结合东方Project里的“符卡”机制，需要在一定时间内达成目标分数才能击破。难度较大，适合有方块基础并且各项能力都较强的玩家游玩（不然都不知道自己怎么死的）",
     },
     {

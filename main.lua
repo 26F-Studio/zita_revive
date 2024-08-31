@@ -7,8 +7,12 @@ ZENITHA.setDrawFreq(10)
 ZENITHA.setUpdateFreq(100)
 ZENITHA.setVersionText('')
 function SimpStr(s) return s:gsub('%s',''):lower() end -- Remove spaces and lower case
-local esc={{'&amp;','&'},{'&#91;','['},{'&#93;',']'},{'&#44;',','}}
-function RawStr(s) for _,v in next,esc do s=s:gsub(v[1],v[2]) end return s end -- Unescape
+local esc={['&amp;']='&',['&#91;']='[',['&#93;']=']',['&#44;']=','}
+function RawStr(s)
+    s=s:gsub('%[CQ:at,qq=(%d+),name=.-%]','[CQ:at,qq=%1]')
+    for k,v in next,esc do s=s:gsub(k,v) end
+    return s
+end -- Unescape
 function CQpic(path) return "[CQ:image,file=file:///"..path:gsub("/","\\").."]" end -- Encode cq path
 function AdminMsg(M) return M.sender and (M.sender.role=='owner' or M.sender.role=='admin') end -- Encode cq path
 --------------------------------------------------------------
