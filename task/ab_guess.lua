@@ -105,14 +105,14 @@ return {
     func=function(S,M,D)
         -- Log
         local mes=SimpStr(M.raw_message)
-        if #mes>8 then return false end
+        if #mes>9 then return false end
 
         if mes=='#abhelp' then
             if S:lock('ab_help',26) then
                 S:send(text.help)
             end
             return true
-        elseif mes=='#ab放弃' or mes=='#ab认输' then
+        elseif mes=='#abandon' then
             D.playing=false
             D.lastInterectTime=Time()-cooldownSkip.giveup
             S:send(text.forfeit..(D.mode=='easy' and table.concat(D.answer) or table.concat(D.answer[1])))
