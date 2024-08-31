@@ -18,7 +18,12 @@ return {
         -- Detail of last entry
         if mes=='##' then
             if S:getLock('detailedEntry') then
-                S:send("##"..D.lastDetailEntry.title.." (续)\n"..D.lastDetailEntry.detail)
+                local res=""
+                if D.lastDetailEntry.title then
+                    S:send('##'..D.lastDetailEntry.title.." (续)\n"..D.lastDetailEntry.detail)
+                else
+                    S:send("(续)"..D.lastDetailEntry.detail)
+                end
                 D.lastDetailEntry=false
                 S:unlock('detailedEntry')
             else
@@ -84,7 +89,7 @@ return {
             ins(result,type(entry.text)=='function' and entry.text(S) or entry.text)
         end
         if entry.detail then
-            S:lock('detailedEntry',420)
+            S:forceLock('detailedEntry',420)
             if showDetail then
                 ins(result,entry.detail)
             else
