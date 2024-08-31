@@ -155,7 +155,7 @@ return {
             commands[cmd](S,args)
             return true
         elseif mes:sub(1,1)=='!' then
-            if #mes==1 then return false end
+            if #mes<=6 then return false end
             if not Bot.isAdmin(M.user_id) then
                 no_permission(S,2)
                 return true
