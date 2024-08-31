@@ -1,3 +1,9 @@
+local cooldown=2600
+local cooldownSkip={
+    win=2600,
+    lose=1200,
+    giveup=1620,
+} for k,v in next,cooldownSkip do cooldownSkip[k]=cooldown-v end
 local text={
     help="AB猜方块：有一组四个不同的方块，玩家猜测后会回答几A几B，A同wordle的绿色，B是猜测的块中有几个在答案里但位置不正确，猜对了有奖励哦（？）",
     start={
@@ -108,18 +114,18 @@ return {
             return true
         elseif mes=='#ab放弃' or mes=='#ab认输' then
             D.playing=false
-            D.lastInterectTime=Time()-300+26
+            D.lastInterectTime=Time()-cooldownSkip.giveup
             S:send(text.forfeit..(D.mode=='easy' and table.concat(D.answer) or table.concat(D.answer[1])))
         elseif mes=='#ab' or mes=='#abhard' then
             if D.playing and Time()-D.lastInterectTime<600 then
-                if S:lock('ab_help',26) then
+                if S:lock('ab_help',62) then
                     S:send(text.notFinished.."\n"..D.textHis.."\n"..text.remain[D.mode]..D.chances)
                 end
                 return true
             end
-            if S.group and not AdminMsg(M) and Time()-D.lastInterectTime<300 then
-                if S:lock('ab_cd',26) then
-                    S:send(STRING.repD("开始新游戏需要等5分钟喵（还剩$1秒）",math.ceil(300-(Time()-D.lastInterectTime))))
+            if not Config.safeSessionID[S.uid] and S.group and not AdminMsg(M) and Time()-D.lastInterectTime<cooldown then
+                if S:lock('ab_cd',62) then
+                    S:send(STRING.repD("开始新游戏还要等$1秒喵",math.ceil(cooldown-(Time()-D.lastInterectTime))))
                 end
                 return true
             end
@@ -155,7 +161,8 @@ return {
             elseif res=='win' then
                 D.playing=false
                 S:send(D.textHis.."\n"..text.win..mes)
-                D.lastInterectTime=Time()-260
+                S:unlock('ab_help')
+                D.lastInterectTime=Time()-cooldownSkip.win
                 if Config.extraData.family[S.uid] then
                     local bonus=""
                     for _=1,D.mode=='easy' and 1 or 2 do
@@ -178,7 +185,8 @@ return {
                     t=t..STRING.repD(text.lose.hard,ans1,ans2)
                 end
                 S:send(t)
-                D.lastInterectTime=Time()
+                S:unlock('ab_help')
+                D.lastInterectTime=Time()-cooldownSkip.lose
             end
             return true
         end
