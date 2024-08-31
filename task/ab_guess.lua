@@ -4,6 +4,16 @@ local cooldownSkip={
     lose=1200,
     giveup=1620,
 } for k,v in next,cooldownSkip do cooldownSkip[k]=cooldown-v end
+local score={
+    easy={[0]=0,.5, 1, 3, 4,10},
+    hard={[0]=1, 3, 6, 8,10,10},
+}
+local rewardList={
+    {98,73,31, 6, 0, 0, 0, 0, 0, 0}, -- 1
+    { 2,26,62,50,45,34,15, 4, 2, 0}, -- 2
+    { 0, 1, 6,42,52,62,80,90,91,92}, -- 3
+    { 0, 0, 1, 2, 3, 4, 5, 6, 7, 8}, -- 1+1
+}
 local text={
     help="AB猜方块：有一组四个不同的方块，玩家猜测后会回答几A几B，A同wordle的绿色，B是猜测的块中有几个在答案里但位置不正确，猜对了有奖励哦（？）",
     start={
@@ -114,11 +124,15 @@ return {
             return true
         elseif mes=='#abandon' then
             D.playing=false
-            D.lastInterectTime=Time()-cooldownSkip.giveup
             S:send(text.forfeit..(D.mode=='easy' and table.concat(D.answer) or table.concat(D.answer[1])))
-        elseif mes=='#ab' or mes=='#abhard' then
+            S:unlock('ab_help')
+            S:unlock('ab_playing')
+            S:unlock('ab_cd')
+            S:unlock('ab_duplicate')
+            D.lastInterectTime=Time()-cooldownSkip.giveup
+    elseif mes=='#ab' or mes=='#abhard' then
             if D.playing and Time()-D.lastInterectTime<600 then
-                if S:lock('ab_help',62) then
+                if S:lock('ab_playing',62) then
                     S:send(text.notFinished.."\n"..D.textHis.."\n"..text.remain[D.mode]..D.chances)
                 end
                 return true
@@ -154,7 +168,7 @@ return {
             if not mes:match('^[ZSJLTOI][ZSJLTOI][ZSJLTOI][ZSJLTOI]$') then return false end
             local res=guess(D,{mes:sub(1,1),mes:sub(2,2),mes:sub(3,3),mes:sub(4,4)})
             if res=='duplicate' then
-                if S:lock('ab_help',12.6) then
+                if S:lock('ab_duplicate',12.6) then
                     S:send(text.guessed)
                 end
                 D.lastInterectTime=Time()
@@ -162,13 +176,37 @@ return {
                 D.playing=false
                 S:send(D.textHis.."\n"..text.win..mes)
                 S:unlock('ab_help')
+                S:unlock('ab_playing')
+                S:unlock('ab_cd')
+                S:unlock('ab_duplicate')
                 D.lastInterectTime=Time()-cooldownSkip.win
                 if Config.extraData.family[S.uid] then
-                    local bonus=""
-                    for _=1,D.mode=='easy' and 1 or 2 do
-                        bonus=bonus..CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))
+                    local point=((score[D.mode][D.chances] or 2.6)+(D.mode=='easy' and 1 or 2)*math.random())/10
+                    local rewardType=MATH.randFreq{
+                        MATH.lLerp(rewardList[1],point),
+                        MATH.lLerp(rewardList[2],point),
+                        MATH.lLerp(rewardList[3],point),
+                        MATH.lLerp(rewardList[4],point),
+                    }
+                    if rewardType==1 then
+                        S:send(CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages)))
+                    elseif rewardType==2 then
+                        S:send(
+                            CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))..
+                            CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))
+                        )
+                    elseif rewardType==3 then
+                        S:send(
+                            CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))..
+                            CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))..
+                            CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))
+                        )
+                    elseif rewardType==4 then
+                        S:send(
+                            CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))..
+                            CQpic(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg')
+                        )
                     end
-                    S:send(bonus)
                 end
             elseif D.chances>0 then
                 S:send(D.textHis.."\n"..text.remain[D.mode]..D.chances)
@@ -186,6 +224,9 @@ return {
                 end
                 S:send(t)
                 S:unlock('ab_help')
+                S:unlock('ab_playing')
+                S:unlock('ab_cd')
+                S:unlock('ab_duplicate')
                 D.lastInterectTime=Time()-cooldownSkip.lose
             end
             return true
