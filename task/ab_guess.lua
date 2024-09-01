@@ -3,37 +3,49 @@ local cooldownSkip={
     win=2600,
     lose=1200,
     giveup=1620,
-} for k,v in next,cooldownSkip do cooldownSkip[k]=cooldown-v end
+}
+for k,v in next,cooldownSkip do cooldownSkip[k]=cooldown-v end
 local score={
-    easy={[0]=0, 0.5, 1, 6.26},
-    hard={[0]=1, 3, 6, 8, 10, 10},
+    easy={[0]=0,0.5,1,4,5},
+    hard={[0]=1,2,3,5,6},
 }
 local rewardList={
-    {98,73,31, 6, 0, 0, 0, 0, 0, 0}, -- 1
-    { 2,26,62,50,45,34,15, 4, 2, 0}, -- 2
-    { 0, 1, 6,42,52,62,80,90,91,92}, -- 3
-    { 0, 0, 1, 2, 3, 4, 5, 6, 7, 8}, -- 1+1
+    {98,73,31,10, 5, 0, 0}, -- 1
+    { 2,26,62,62,50,15, 0}, -- 2
+    { 0, 1, 6,26,42,80,92}, -- 3
+    { 0, 0, 1, 2, 3, 5, 8}, -- 1+1
 }
 local rules={
     -- 顺序无关
     {
-        --54%，19/35
-        text="包含对称块",
-        rule=function(seq) return seq:find('Z') and seq:find('S') or seq:find('J') and seq:find('L') end
+        -- 54%，19/35
+        id=0,
+        rate=54,
+        text="【包含镜像对称的块】",
+        rule=function(seq) return seq:find('Z') and seq:find('S') or seq:find('J') and seq:find('L') end,
     },
     {
-        --46%，16/35
-        text="不包含对称块",
-        rule=function(seq) return not (seq:find('Z') and seq:find('S') or seq:find('J') and seq:find('L')) end
+        -- 46%，16/35
+        id=1,
+        rate=46,
+        text="【不包含镜像对称的块】",
+        rule=function(seq) return not (seq:find('Z') and seq:find('S') or seq:find('J') and seq:find('L')) end,
     },
     {
-        --60%？，包含T或者有J有L
-        text="纵奇偶能平衡",
-        rule=function(seq) return seq:find('T') or seq:find('J') and seq:find('L') end
+        -- 约60%，包含T或者JL总数为偶数
+        id=2,
+        rate=60,
+        text="【纵奇偶能够平衡】",
+        rule=function(seq)
+            if seq:find('T') then return true end
+            return STRING.count(seq,'[JL]')%2==0
+        end,
     },
     {
-        --60%
-        text="有三块颜色在彩虹中连续",
+        -- 60%
+        id=3,
+        rate=60,
+        text="【有三块颜色在循环彩虹七色中连续】",
         rule=function(seq)
             return string.find(
                 (seq:find('Z') and '1' or '0')..
@@ -47,102 +59,147 @@ local rules={
                 (seq:find('L') and '1' or '0'),
                 '111'
             )
-        end
+        end,
     },
     {
-        --40%？，没有I且包含J或L
-        text="最多只能普消三",
-        rule=function(seq) return not seq:find('I') and (seq:find('J') or seq:find('L')) end
+        -- 约40%，没有I且包含J或L
+        id=4,
+        rate=40,
+        text="【任取一块最多只能普通消除三行】",
+        rule=function(seq) return not seq:find('I') and (seq:find('J') or seq:find('L')) end,
     },
     {
-        --71.4%？
-        text="总共至少10种朝向状态",
+        -- 约71.4%
+        id=5,
+        rate=71,
+        text="【总共至少10种朝向状态】",
+        rule=function(seq)
+            return
+                STRING.count(seq,'[ZSI]')*2+
+                STRING.count(seq,'[JLT]')*4+
+                STRING.count(seq,'O')
+                >=10
+        end,
+    },
+    {
+        -- 43%，3/7，O和I要么都有要么都没
+        id=6,
+        rate=43,
+        text="【总共最多能消刚好12行】",
         rule=function(seq)
             local count=0
-            if seq:find('Z') then count=count+2 end
-            if seq:find('S') then count=count+2 end
-            if seq:find('J') then count=count+4 end
-            if seq:find('L') then count=count+4 end
-            if seq:find('T') then count=count+4 end
-            if seq:find('O') then count=count+1 end
-            if seq:find('I') then count=count+2 end
+            for c in string.gmatch(seq,'.') do
+                if c=='Z' then
+                    count=count+3
+                elseif c=='S' then
+                    count=count+3
+                elseif c=='J' then
+                    count=count+3
+                elseif c=='L' then
+                    count=count+3
+                elseif c=='T' then
+                    count=count+3
+                elseif c=='O' then
+                    count=count+2
+                elseif c=='I' then
+                    count=count+4
+                end
+            end
             return count>=10
-        end
+        end,
     },
     {
-        --57%，4/7，有I
-        text="能消四",
-        rule=function(seq) return seq:find('I') end
+        -- 57%，4/7，有I
+        id=7,
+        rate=57,
+        text="【有一块能够消四行】",
+        rule=function(seq) return seq:find('I') end,
     },
     {
-        --43%，3/7，无I
-        text="干旱",
-        rule=function(seq) return not seq:find('I') end
+        -- 43%，3/7，无I
+        id=8,
+        rate=43,
+        text="【干旱】",
+        rule=function(seq) return not seq:find('I') end,
     },
     {
-        --71%，5/7，不同时有T和I
-        text="不能b2b",
-        rule=function(seq) return not seq:find('T') and seq:find('I') end
-    },
-    {
-        --63%？，SZJL中最多有两个
-        text="最多两块能spinPC",
+        -- 约63%，SZJL中最多有两个
+        id=9,
+        rate=63,
+        text="【最多两块能够spinPC】",
         rule=function(seq)
             local count=0
-            if seq:find('S') then count=count+1 end
-            if seq:find('Z') then count=count+1 end
-            if seq:find('J') then count=count+1 end
-            if seq:find('L') then count=count+1 end
+            for c in string.gmatch(seq,'.') do
+                if c=='Z' then
+                    count=count+1
+                elseif c=='S' then
+                    count=count+1
+                elseif c=='J' then
+                    count=count+1
+                elseif c=='L' then
+                    count=count+1
+                end
+            end
             return count<=2
-        end
+        end,
     },
     {
-        --86%，6/7，包含S或Z
-        text="不都能普通消PC",
-        rule=function(seq) return seq:find('S') or seq:find('Z') end
+        -- 86%，6/7，包含S或Z
+        id=10,
+        rate=86,
+        text="【不全都能普通消PC】",
+        rule=function(seq) return seq:find('S') or seq:find('Z') end,
     },
     {
-        --63%？，JLT中包含至少两个
-        text="不能取两块PC二宽四深井",
+        -- 约63%，JLT中包含至少两个
+        id=11,
+        rate=63,
+        text="【任取两块不能PC二宽四深井】",
         rule=function(seq)
             local count=0
             if seq:find('J') then count=count+1 end
             if seq:find('L') then count=count+1 end
             if seq:find('T') then count=count+1 end
             return count<2
-        end
+        end,
     },
 
     -- 顺序相关
     {
-        --66.66%，2/3
-        text="无暂存不用重开",
+        -- 67%，2/3
+        id=12,
+        rate=67,
+        text="【无暂存这个开局序列不用重开】",
         rule=function(seq)
-            if seq:sub(1,1)=='O' then seq=seq:sub(2) end
-            return not seq:sub(1,1)=='S' and not seq:sub(1,1)=='Z'
-        end
+            local s=seq:sub(1,1)=='O' and 2 or 1
+            return seq:sub(s,s)~='S' and seq:sub(s,s)~='Z'
+        end,
     },
     {
-        --67.6%？
-        text="有连续两块是相邻彩虹色",
+        -- 约67.6%
+        id=13,
+        rate=67,
+        text="【有连续两块在循环彩虹七色中相邻】",
         rule=function(seq)
-            for _,twin in next,{'ZL','LO','OS','SI','IJ','JT','LZ','OL','SO','IS','JI','TJ'} do
+            for _,twin in next,{'ZL','LO','OS','SI','IJ','JT','TZ'; 'LZ','OL','SO','IS','JI','TJ','ZT'} do
                 if seq:find(twin) then return true end
             end
-        end
+        end,
     },
     {
-        --55.2%？
-        text="有连续两块可以无spin消6行",
+        -- 约55.2%
+        id=14,
+        rate=55,
+        text="【有连续两块可以无spin消6行】",
         rule=function(seq)
             for _,twin in next,{'JL','LJ','IJ','JI','IL','LI','IS','SI','IZ','ZI'} do
                 if seq:find(twin) then return true end
             end
-        end
+        end,
     },
 }
 local text={
-    help="AB猜方块：有一组四个不同的方块，玩家猜测后会回答几A几B，A同wordle的绿色，B是猜测的块中有几个在答案里但位置不正确，猜对了有奖励哦（？）",
+    help="AB猜方块：有一组四个不同的方块，玩家猜测后会提示几A几B，A同wordle的绿色，B是猜测的块中有几个在答案里但位置不正确\n注：困难模式中允许每种块出现两次，例如答案是LSST时猜LLSS得到2A2B，其中2A是第1/3块对应，2B是第2/4块不正确但存在于答案中",
     start={
         easy="我想好了四个方块，开始猜吧喵！",
         hard="四个方块想好了！不会变的喵！",
@@ -171,10 +228,29 @@ local function randomGuess(ans)
     local g
     repeat
         g={}
-        local l=TABLE.copy(pieces)
+        local l=copy(pieces)
         for _=1,4 do ins(g,TABLE.popRandom(l)) end
     until not (ans and TABLE.equal(g,ans))
     return g
+end
+local hardLib={} do
+    local l,_l={},{}
+    for a=1,7 do for b=1,7 do for c=1,7 do for d=1,7 do
+        l[1],l[2],l[3],l[4]=pieces[a],pieces[b],pieces[c],pieces[d]
+        _l[1],_l[2],_l[3],_l[4]=l[1],l[2],l[3],l[4]
+        table.sort(_l)
+        if _l[1]~=_l[3] and _l[2]~=_l[4] then ins(hardLib,copy(l)) end
+    end end end end
+    print('Hard quest lib length: '..#hardLib)
+end
+for _,r in next,rules do
+    local count=0
+    for i=1,#hardLib do
+        if r.rule(table.concat(hardLib[i])) then count=count+1 end
+    end
+    if count<=626 then
+        print("Warning: Rule "..r.id.." only has "..count.." answers")
+    end
 end
 local function comp(ANS,G)
     local aCount,bCount=0,0
@@ -227,6 +303,7 @@ local function guess(D,g)
         D.answer=set[keys[r]]
         res=keys[r]
     end
+    -- print(D.mode,table.concat(g),res)
     if #D.guessHis>1 then
         D.textHis=D.textHis..(#D.guessHis%2==0 and "    " or "\n")
     end
@@ -241,7 +318,7 @@ return {
         D.lastInterectTime=-1e99 -- time of last answer, for reset when timeout
 
         D.mode=false -- 'easy' or 'hard'
-        D.answer={} -- {'1','2','3','4'} in Easy mode, {'1234','5678',...} in Hard mode
+        D.answer={} -- {'1','2','3','4'} for Easy mode, {{'1','2','3','4'},{'5','6','7','8'},...} for Hard mode
         D.guessHis={}
         D.textHis=""
         D.chances=26
@@ -251,7 +328,7 @@ return {
         local mes=SimpStr(M.raw_message)
         if #mes>9 then return false end
 
-        if mes=='#abhelp' then
+        if mes=='#abhelp' or mes=='#about' then
             if S:lock('ab_help',26) then
                 S:send(text.help)
             end
@@ -264,7 +341,7 @@ return {
             S:unlock('ab_cd')
             S:unlock('ab_duplicate')
             D.lastInterectTime=Time()-cooldownSkip.giveup
-    elseif mes=='#ab' or mes=='#abhard' then
+        elseif mes=='#ab' or mes=='#abhard' then
             if D.playing and Time()-D.lastInterectTime<600 then
                 if S:lock('ab_playing',62) then
                     S:send(text.notFinished.."\n"..D.textHis.."\n"..text.remain[D.mode]..D.chances)
@@ -284,15 +361,23 @@ return {
             D.textHis=""
             if D.mode=='easy' then
                 D.answer=randomGuess()
+                guess(D,randomGuess(D.mode=='easy' and D.answer))
             else
-                for a=1,7 do for b=1,7 do for c=1,7 do for d=1,7 do
-                    if a~=b and a~=c and a~=d and b~=c and b~=d and c~=d then
-                        ins(D.answer,{pieces[a],pieces[b],pieces[c],pieces[d]})
+                D.answer=copy(hardLib,0)
+                local r=rules[math.random(#rules)]
+                local newAns={}
+                for i=1,#D.answer do
+                    if r.rule(table.concat(D.answer[i])) then
+                        ins(newAns,D.answer[i])
                     end
-                end end end end
+                end
+                assert(#newAns>0,"No answer after rule filter "..r.id)
+                D.answer=newAns
+                D.textHis=r.text.."\n"
+                local g=hardLib[math.random(#hardLib)]
+                guess(D,g)
             end
-            guess(D,randomGuess(D.mode=='easy' and D.answer))
-            D.chances=D.mode=='easy' and 4 or 6
+            D.chances=5
             S:send(text.start[D.mode].."\n"..D.textHis.."\n"..text.remain[D.mode]..D.chances)
             D.lastInterectTime=Time()
             return true
@@ -315,7 +400,7 @@ return {
                 S:unlock('ab_duplicate')
                 D.lastInterectTime=Time()-cooldownSkip.win
                 if Config.extraData.family[S.uid] then
-                    local point=((score[D.mode][D.chances] or 2.6)+(D.mode=='easy' and 1 or 2)*math.random())/10
+                    local point=((score[D.mode][D.chances] or 2.6)+(D.mode=='easy' and 0.26 or 2)*math.random())/10
                     local rewardType=MATH.randFreq{
                         MATH.lLerp(rewardList[1],point),
                         MATH.lLerp(rewardList[2],point),
