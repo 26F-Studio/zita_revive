@@ -18,7 +18,6 @@ return {
         -- Detail of last entry
         if mes=='##' then
             if S:getLock('detailedEntry') then
-                local res=""
                 if D.lastDetailEntry.title then
                     S:send('##'..D.lastDetailEntry.title.." (续)\n"..D.lastDetailEntry.detail)
                 else
