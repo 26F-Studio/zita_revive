@@ -17,10 +17,10 @@ local score={
     hard={[0]=1,2,3,5,6},
 }
 local rewardList={
-    {98,73,31,10,5, 0, 0}, -- 1
-    {2, 26,62,62,50,15,0}, -- 2
-    {0, 1, 6, 26,42,80,92}, -- 3
-    {0, 0, 1, 2, 3, 5, 8}, -- 1+1
+    {98,56,31,10, 5, 0, 0}, -- 1
+    {2, 42,62,62,50,15, 0}, -- 2
+    {0,  2, 6,26,42,80,92}, -- 3
+    {0,  0, 1, 2, 3, 5, 8}, -- 1+1
 }
 local count=STRING.count
 local rules={
@@ -375,89 +375,92 @@ return {
                     S:send(text.guessed)
                 end
                 D.lastInterectTime=Time()
-            elseif res=='win' then
-                -- Win
-                D.playing=false
-                S:send(D.textHis.."\n"..text.win[D.mode]..mes)
-                S:unlock('ab_help')
-                S:unlock('ab_playing')
-                S:unlock('ab_cd')
-                S:unlock('ab_duplicate')
-                D.lastInterectTime=Time()-cooldownSkip.win
-                if Config.extraData.family[S.uid] then
-                    local point=((score[D.mode][D.chances] or 2.6)+(D.mode=='easy' and 0.26 or 2)*math.random())/10
-                    local rewardType=MATH.randFreq{
-                        MATH.lLerp(rewardList[1],point),
-                        MATH.lLerp(rewardList[2],point),
-                        MATH.lLerp(rewardList[3],point),
-                        MATH.lLerp(rewardList[4],point),
-                    }
-                    if rewardType==1 then
-                        S:send(CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages)))
-                    elseif rewardType==2 then
-                        S:send(
-                            CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))..
-                            CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))
-                        )
-                    elseif rewardType==3 then
-                        S:send(
-                            CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))..
-                            CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))..
-                            CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))
-                        )
-                    elseif rewardType==4 then
-                        S:send(
-                            CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))..
-                            CQpic(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg')
-                        )
-                    end
+            else
+                -- Available guess
+                if S.echos.ab_guess and S.echos.ab_guess.message_id then
+                    Bot.deleteMsg(S.echos.ab_guess.message_id)
+                    S.echos.ab_guess=nil
                 end
-            elseif D.chances>0 then
-                -- Guess normally
-                if #D.guessHis==2 and D.mode=='easy' then
-                    local possibleRules={}
-                    local ans=table.concat(D.answer)
-                    for i=1,#rules do
-                        if rules[i].rule(ans) then
-                            ins(possibleRules,rules[i])
+                if res=='win' then
+                    -- Win
+                    D.playing=false
+                    S:send(D.textHis.."\n"..text.win[D.mode]..mes)
+                    S:unlock('ab_help')
+                    S:unlock('ab_playing')
+                    S:unlock('ab_cd')
+                    S:unlock('ab_duplicate')
+                    D.lastInterectTime=Time()-cooldownSkip.win
+                    if Config.extraData.family[S.uid] then
+                        local point=((score[D.mode][D.chances] or 2.6)+(D.mode=='easy' and 0.26 or 2)*math.random())/10
+                        local rewardType=MATH.randFreq{
+                            MATH.lLerp(rewardList[1],point),
+                            MATH.lLerp(rewardList[2],point),
+                            MATH.lLerp(rewardList[3],point),
+                            MATH.lLerp(rewardList[4],point),
+                        }
+                        if rewardType==1 then
+                            S:send(CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages)))
+                        elseif rewardType==2 then
+                            S:send(
+                                CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))..
+                                CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))
+                            )
+                        elseif rewardType==3 then
+                            S:send(
+                                CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))..
+                                CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))..
+                                CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))
+                            )
+                        elseif rewardType==4 then
+                            S:send(
+                                CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))..
+                                CQpic(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg')
+                            )
                         end
                     end
-                    if #possibleRules>0 then
-                        local r=TABLE.getRandom(possibleRules)
-                        D.textHis=D.textHis.."\n"..r.text
-                        -- print(table.concat(D.answer))
-                        -- for i=1,#possibleRules do
-                        --     print(possibleRules[i].text)
-                        -- end
+                elseif D.chances>0 then
+                    -- Guess normally
+                    if #D.guessHis==2 and D.mode=='easy' then
+                        local possibleRules={}
+                        local ans=table.concat(D.answer)
+                        for i=1,#rules do
+                            if rules[i].rule(ans) then
+                                ins(possibleRules,rules[i])
+                            end
+                        end
+                        if #possibleRules>0 then
+                            local r=TABLE.getRandom(possibleRules)
+                            D.textHis=D.textHis.."\n"..r.text
+                            -- print(table.concat(D.answer))
+                            -- for i=1,#possibleRules do
+                            --     print(possibleRules[i].text)
+                            -- end
+                        end
                     end
-                end
-                S:send(D.textHis.."\n"..text.remain[D.mode]..D.chances,'ab_guess')
-                D.lastInterectTime=Time()
-            else
-                -- Lose
-                D.playing=false
-                local t=D.textHis.."\n"
-                if D.mode=='easy' then
-                    t=t..STRING.repD(text.lose.easy,table.concat(D.answer))
-                elseif #D.answer==1 then
-                    t=t..STRING.repD(text.lose.hardAlmost,table.concat(D.answer[1]))
-                    if Config.extraData.family[S.uid] then
-                        t=t..CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))
-                    end
+                    S:send(D.textHis.."\n"..text.remain[D.mode]..D.chances,'ab_guess')
+                    D.lastInterectTime=Time()
                 else
-                    local ans1,ans2=table.concat(TABLE.popRandom(D.answer)),table.concat(TABLE.popRandom(D.answer))
-                    t=t..STRING.repD(text.lose.hard,ans1,ans2)
+                    -- Lose
+                    D.playing=false
+                    local t=D.textHis.."\n"
+                    if D.mode=='easy' then
+                        t=t..STRING.repD(text.lose.easy,table.concat(D.answer))
+                    elseif #D.answer==1 then
+                        t=t..STRING.repD(text.lose.hardAlmost,table.concat(D.answer[1]))
+                        if Config.extraData.family[S.uid] then
+                            t=t..CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))
+                        end
+                    else
+                        local ans1,ans2=table.concat(TABLE.popRandom(D.answer)),table.concat(TABLE.popRandom(D.answer))
+                        t=t..STRING.repD(text.lose.hard,ans1,ans2)
+                    end
+                    S:send(t)
+                    S:unlock('ab_help')
+                    S:unlock('ab_playing')
+                    S:unlock('ab_cd')
+                    S:unlock('ab_duplicate')
+                    D.lastInterectTime=Time()-cooldownSkip.lose
                 end
-                S:send(t)
-                S:unlock('ab_help')
-                S:unlock('ab_playing')
-                S:unlock('ab_cd')
-                S:unlock('ab_duplicate')
-                D.lastInterectTime=Time()-cooldownSkip.lose
-            end
-            if res~='duplicate' and S.echos.ab_guess and S.echos.ab_guess.message_id then
-                Bot.deleteMsg(S.echos.ab_guess.message_id)
-                S.echos.ab_guess=nil
             end
             return true
         end
