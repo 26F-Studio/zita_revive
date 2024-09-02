@@ -5,195 +5,151 @@ local cooldownSkip={
     giveup=1620,
 }
 for k,v in next,cooldownSkip do cooldownSkip[k]=cooldown-v end
+local hdWeights={
+    {2,5,3},
+    {3,5,2},
+    {6,3,1},
+    {7,3},
+    {1},
+}
 local score={
     easy={[0]=0,0.5,1,4,5},
     hard={[0]=1,2,3,5,6},
 }
 local rewardList={
-    {98,73,31,10, 5, 0, 0}, -- 1
-    { 2,26,62,62,50,15, 0}, -- 2
-    { 0, 1, 6,26,42,80,92}, -- 3
-    { 0, 0, 1, 2, 3, 5, 8}, -- 1+1
+    {98,73,31,10,5, 0, 0}, -- 1
+    {2, 26,62,62,50,15,0}, -- 2
+    {0, 1, 6, 26,42,80,92}, -- 3
+    {0, 0, 1, 2, 3, 5, 8}, -- 1+1
 }
+local count=STRING.count
 local rules={
-    -- 顺序无关
-    {
-        -- 54%，19/35
-        id=0,
-        rate=54,
-        text="【包含镜像对称的块】",
+    { -- 同时有SZ或者JL
+        id=1,
+        text="<包含两块镜像对称>",
         rule=function(seq) return seq:find('Z') and seq:find('S') or seq:find('J') and seq:find('L') end,
     },
-    {
-        -- 46%，16/35
-        id=1,
-        rate=46,
-        text="【不包含镜像对称的块】",
+    { -- 不同时有SZ或者JL
+        id=2,
+        text="<两两都不镜像对称>",
         rule=function(seq) return not (seq:find('Z') and seq:find('S') or seq:find('J') and seq:find('L')) end,
     },
-    {
-        -- 约60%，包含T或者JL总数为偶数
-        id=2,
-        rate=60,
-        text="【纵奇偶能够平衡】",
-        rule=function(seq)
-            if seq:find('T') then return true end
-            return STRING.count(seq,'[JL]')%2==0
-        end,
-    },
-    {
-        -- 60%
+    { -- 包含T或者JL总数为偶数
         id=3,
-        rate=60,
-        text="【有三块颜色在循环彩虹七色中连续】",
-        rule=function(seq)
-            return string.find(
-                (seq:find('Z') and '1' or '0')..
-                (seq:find('L') and '1' or '0')..
-                (seq:find('O') and '1' or '0')..
-                (seq:find('S') and '1' or '0')..
-                (seq:find('I') and '1' or '0')..
-                (seq:find('J') and '1' or '0')..
-                (seq:find('T') and '1' or '0')..
-                (seq:find('Z') and '1' or '0')..
-                (seq:find('L') and '1' or '0'),
-                '111'
-            )
-        end,
+        text="<整组块纵奇偶能够平衡>",
+        rule=function(seq) return seq:find('T') or count(seq,'[JL]')%2==0 end,
     },
-    {
-        -- 约40%，没有I且包含J或L
+    { -- 包含T或者JL总数为偶数
         id=4,
-        rate=40,
-        text="【任取一块最多只能普通消除三行】",
-        rule=function(seq) return not seq:find('I') and (seq:find('J') or seq:find('L')) end,
+        text="<整组块斜奇偶平衡>",
+        rule=function(seq) return count(seq,'T')%2==0 end,
     },
     {
-        -- 约71.4%
         id=5,
-        rate=71,
-        text="【总共至少10种朝向状态】",
+        text="<有三块可以拼成3*4盒子>",
         rule=function(seq)
             return
-                STRING.count(seq,'[ZSI]')*2+
-                STRING.count(seq,'[JLT]')*4+
-                STRING.count(seq,'O')
+            -- JLS, JLZ
+                seq:find('J') and seq:find('L') and seq:find('[SZ]') or
+                seq:match('(.).*%1') and (
+                -- IJJ, ILL, IOO
+                    seq:find('I') and (count(seq,'J')>=2 or count(seq,'L')>=2 or count(seq,'O')>=2) or
+                    -- JSJ, LZL
+                    seq:find('S') and count(seq,'J')>=2 or
+                    seq:find('Z') and count(seq,'L')>=2 or
+                    -- OJJ, OLL
+                    seq:find('O') and count(seq,'[JL]')>=2 or
+                    -- JTT, LTT
+                    seq:find('[JL]') and count(seq,'T')>=2
+                )
+        end,
+    },
+    { -- SZJLT里至少有三个
+        id=6,
+        text="<至少三块只能消除三行>",
+        rule=function(seq) return count(seq,'[SZJLT]')>=3 end,
+    },
+    {
+        id=7,
+        text="<总共至少10种朝向状态>",
+        rule=function(seq)
+            return
+                count(seq,'[ZSI]')*2+
+                count(seq,'[JLT]')*4+
+                count(seq,'O')
                 >=10
         end,
     },
     {
-        -- 43%，3/7，O和I要么都有要么都没
-        id=6,
-        rate=43,
-        text="【总共最多能消刚好12行】",
+        id=8,
+        text="<至少三块包含排成直线的三小格>",
         rule=function(seq)
-            local count=0
-            for c in string.gmatch(seq,'.') do
-                if c=='Z' then
-                    count=count+3
-                elseif c=='S' then
-                    count=count+3
-                elseif c=='J' then
-                    count=count+3
-                elseif c=='L' then
-                    count=count+3
-                elseif c=='T' then
-                    count=count+3
-                elseif c=='O' then
-                    count=count+2
-                elseif c=='I' then
-                    count=count+4
-                end
-            end
-            return count>=10
+            return count(seq,'[JLTI]')>=3
         end,
     },
-    {
-        -- 57%，4/7，有I
-        id=7,
-        rate=57,
-        text="【有一块能够消四行】",
+    { -- 有I
+        id=9,
+        text="<存在能消四行的块>",
         rule=function(seq) return seq:find('I') end,
     },
-    {
-        -- 43%，3/7，无I
-        id=8,
-        rate=43,
-        text="【干旱】",
+    { -- 无I
+        id=10,
+        text="<干旱>",
         rule=function(seq) return not seq:find('I') end,
     },
-    {
-        -- 约63%，SZJL中最多有两个
-        id=9,
-        rate=63,
-        text="【最多两块能够spinPC】",
-        rule=function(seq)
-            local count=0
-            for c in string.gmatch(seq,'.') do
-                if c=='Z' then
-                    count=count+1
-                elseif c=='S' then
-                    count=count+1
-                elseif c=='J' then
-                    count=count+1
-                elseif c=='L' then
-                    count=count+1
-                end
-            end
-            return count<=2
-        end,
-    },
-    {
-        -- 86%，6/7，包含S或Z
-        id=10,
-        rate=86,
-        text="【不全都能普通消PC】",
-        rule=function(seq) return seq:find('S') or seq:find('Z') end,
-    },
-    {
-        -- 约63%，JLT中包含至少两个
+    { -- SZJL中最多有两个
         id=11,
-        rate=63,
-        text="【任取两块不能PC二宽四深井】",
-        rule=function(seq)
-            local count=0
-            if seq:find('J') then count=count+1 end
-            if seq:find('L') then count=count+1 end
-            if seq:find('T') then count=count+1 end
-            return count<2
-        end,
+        text="<能够spinPC的块不超过两个>",
+        rule=function(seq) return count(seq,'[SZJL]')<=2 end,
     },
-
-    -- 顺序相关
     {
-        -- 67%，2/3
         id=12,
-        rate=67,
-        text="【无暂存这个开局序列不用重开】",
-        rule=function(seq)
-            local s=seq:sub(1,1)=='O' and 2 or 1
-            return seq:sub(s,s)~='S' and seq:sub(s,s)~='Z'
-        end,
+        text="<至少三块能普通消PC>",
+        rule=function(seq) return count(seq,'[JLTOI]')>=3 end,
     },
     {
-        -- 约67.6%
         id=13,
-        rate=67,
-        text="【有连续两块在循环彩虹七色中相邻】",
+        text="<有连续两块颜色在“红橙黄绿青蓝紫”中相邻>",
         rule=function(seq)
-            for _,twin in next,{'ZL','LO','OS','SI','IJ','JT','TZ'; 'LZ','OL','SO','IS','JI','TJ','ZT'} do
+            for _,twin in next,{'ZL','LO','OS','SI','IJ','JT'; 'LZ','OL','SO','IS','JI','TJ'} do
                 if seq:find(twin) then return true end
             end
         end,
     },
     {
-        -- 约55.2%
         id=14,
-        rate=55,
-        text="【有连续两块可以无spin消6行】",
+        text="<有连续两块可以无spin消6行>",
         rule=function(seq)
             for _,twin in next,{'JL','LJ','IJ','JI','IL','LI','IS','SI','IZ','ZI'} do
                 if seq:find(twin) then return true end
+            end
+        end,
+    },
+    {
+        id=42,
+        text="<这四块开局可以在第二行消除>",
+        rule=function(seq)
+            local i=count(seq,'I')
+            if i==0 then
+                -- 杀O[JL]{3}
+                return not (seq:find('O') and count(seq,'[JL]')==3)
+            elseif i==1 then
+                local o=count(seq,'O')
+                -- 杀IO[OSZ][JL]，和IOOT
+                if seq:find('T') and o==2 then
+                    return false
+                elseif o>0 and seq:find('[JL]') and (seq:find('[SZ]') or o==2) then
+                    return false
+                end
+                return true
+            elseif i==2 then
+                -- 有JLT没O活
+                return seq:find('[JLT]') and not seq:find('O')
+            elseif i==3 then
+                -- 虽然目前用不上
+                return seq:find('SZOT')
+            else
+                return false
             end
         end,
     },
@@ -233,23 +189,37 @@ local function randomGuess(ans)
     until not (ans and TABLE.equal(g,ans))
     return g
 end
-local hardLib={} do
+local hardLib={}
+do
     local l,_l={},{}
-    for a=1,7 do for b=1,7 do for c=1,7 do for d=1,7 do
-        l[1],l[2],l[3],l[4]=pieces[a],pieces[b],pieces[c],pieces[d]
-        _l[1],_l[2],_l[3],_l[4]=l[1],l[2],l[3],l[4]
-        table.sort(_l)
-        if _l[1]~=_l[3] and _l[2]~=_l[4] then ins(hardLib,copy(l)) end
-    end end end end
+    for a=1,7 do
+        for b=1,7 do
+            for c=1,7 do
+                for d=1,7 do
+                    l[1],l[2],l[3],l[4]=pieces[a],pieces[b],pieces[c],pieces[d]
+                    _l[1],_l[2],_l[3],_l[4]=l[1],l[2],l[3],l[4]
+                    table.sort(_l)
+                    if _l[1]~=_l[3] and _l[2]~=_l[4] then ins(hardLib,copy(l)) end
+                end
+            end
+        end
+    end
     print('Hard quest lib length: '..#hardLib)
 end
-for _,r in next,rules do
-    local count=0
-    for i=1,#hardLib do
-        if r.rule(table.concat(hardLib[i])) then count=count+1 end
-    end
-    if count<=626 then
-        print("Warning: Rule "..r.id.." only has "..count.." answers")
+if not TABLE.find(arg,"startWithNotice") then
+    for _,r in next,rules do
+        local cnt=0
+        local cntSimp=0
+        for i=1,#hardLib do
+            if r.rule(table.concat(hardLib[i])) then
+                cnt=cnt+1
+                if not table.concat(hardLib[i]):match('(.).*%1') then cntSimp=cntSimp+1 end
+            end
+        end
+        print(r.id,("HD: %.0f%%(%d)"):format(cnt/#hardLib*100,cnt),("EZ: %.0f%%(%d)"):format(cntSimp/840*100,cntSimp))
+        if not (MATH.between(cnt/#hardLib,0.26,0.8) and MATH.between(cntSimp/840,0.26,0.8)) then
+            print("^Warning: Limitation Too Strong/Weak^")
+        end
     end
 end
 local function comp(ANS,G)
@@ -257,36 +227,39 @@ local function comp(ANS,G)
     for i=1,4 do
         if ANS[i]==G[i] then
             aCount=aCount+1
+            -- ANS[i]=false
             G[i]=false
         end
     end
     if aCount==4 then return '4A0B' end
     for i=1,4 do
         if G[i] then
-            if TABLE.find(ANS,G[i]) then
+            local p=TABLE.find(ANS,G[i])
+            if p then
+                -- ANS[p]=false
                 bCount=bCount+1
             end
         end
     end
     return aCount..'A'..bCount..'B'
 end
+local resultSets={}
+local function resultSorter(a,b) return #resultSets[a]>#resultSets[b] end
 local function guess(D,g)
     if TABLE.find(D.guessHis,table.concat(g)) then return 'duplicate' end
 
     D.chances=D.chances-1
     ins(D.guessHis,table.concat(g))
 
-    local win=false
     local res
     if D.mode=='easy' then
         res=comp(copy(D.answer),copy(g))
-        win=res=='4A0B'
     elseif D.mode=='hard' then
-        local set={}
+        resultSets={}
         for _,answer in next,D.answer do
             local r=comp(copy(answer),copy(g))
-            if not set[r] then set[r]={} end
-            ins(set[r],answer)
+            if not resultSets[r] then resultSets[r]={} end
+            ins(resultSets[r],answer)
         end
         -- print("--------------------------")
         -- for k,v in next,set do
@@ -296,19 +269,24 @@ local function guess(D,g)
         --     end
         --     print(k,#v,s)
         -- end
-        local keys=TABLE.getKeys(set)
-        table.sort(keys,function(a,b) return #set[a]>#set[b] or #set[a]==#set[b] and a<b end)
-        win=keys[1]=='4A0B'
-        local r=math.random(#D.guessHis<=2 and 2 or 1)
-        D.answer=set[keys[r]]
-        res=keys[r]
+        local keys=TABLE.getKeys(resultSets)
+        TABLE.delete(keys,'4A0B')
+        if #keys==0 then
+            -- Only one answer left
+            res='4A0B'
+        else
+            -- Still has multiple possibilities
+            table.sort(keys,resultSorter)
+            local r=MATH.randFreq(hdWeights[math.min(#D.guessHis,#hdWeights)])
+            D.answer=resultSets[keys[r] or keys[#keys]]
+            res=keys[r]
+        end
     end
-    -- print(D.mode,table.concat(g),res)
     if #D.guessHis>1 then
         D.textHis=D.textHis..(#D.guessHis%2==0 and "    " or "\n")
     end
     D.textHis=D.textHis..table.concat(g).." "..res
-    if win then return 'win' end
+    if res=='4A0B' then return 'win' end
 end
 
 ---@type Task_raw
@@ -341,7 +319,7 @@ return {
             S:unlock('ab_cd')
             S:unlock('ab_duplicate')
             D.lastInterectTime=Time()-cooldownSkip.giveup
-        elseif mes=='#ab' or mes=='#abhard' then
+        elseif mes=='#ab' or mes=='#abhard' or mes=='#abhd' then
             if D.playing and Time()-D.lastInterectTime<600 then
                 if S:lock('ab_playing',62) then
                     S:send(text.notFinished.."\n"..D.textHis.."\n"..text.remain[D.mode]..D.chances)
