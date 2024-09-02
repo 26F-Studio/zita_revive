@@ -64,6 +64,7 @@ Bot={
         {'help_public',1},
         {'zictionary',2},
         {'phtool',3},
+        {'ab_guess',4},
     },
     taskGroup={
         {'log',-100},
@@ -116,14 +117,16 @@ end
 ---@param message string
 ---@param group? number
 ---@param user? number
-function Bot.sendMsg(message,group,user)
+---@param echo? string
+function Bot.sendMsg(message,group,user,echo)
     local mes={
         action='send_msg',
         params={
             user_id=user,
             group_id=group,
             message=message,
-        }
+        },
+        echo=echo,
     }
     if Config.safeMode and not Config.safeSessionID[group and 'g'..group or 'p'..user] then
         if TASK.lock('safeModeBlock',10) then
@@ -136,6 +139,14 @@ function Bot.sendMsg(message,group,user)
         Bot.stat.totalMessageSent=Bot.stat.totalMessageSent+1
     end
 end
+function Bot.deleteMsg(mes_id)
+    Bot._send{
+        action='delete_msg',
+        params={
+            message_id=mes_id,
+        },
+    }
+end
 ---@param group_id number
 ---@param user_id number
 ---@param time? number
@@ -146,7 +157,7 @@ function Bot.ban(group_id,user_id,time)
             group_id=group_id,
             user_id=user_id,
             duration=time or 60,
-        }
+        },
     }
     Bot._send(mes)
 end
@@ -187,8 +198,15 @@ function Bot._update()
             if res.meta_event_type=='lifecycle' then
                 print("Lifecycle event: "..res.sub_type)
             end
-        elseif res.retcode then
+        elseif rawget(res,'retcode') then
             ---@cast res LLOneBot.Event.Response
+            if res.echo then
+                local uid=STRING.before(res.echo,':')
+                local S=SessionMap[uid]
+                if S then
+                    S.echos[STRING.after(res.echo,':')]=res.data
+                end
+            end
             if Config.debugLog_response then
                 print(TABLE.dump(res))
             end
@@ -224,6 +242,7 @@ end
 ---@field taskList Task[]
 ---@field locks Map<number>
 ---@field checkpoints Map<number>
+---@field echos Map<table>
 ---@field data Map<Session.data>
 ---
 ---@field createTime number
@@ -248,6 +267,7 @@ function Session.new(id,priv)
         taskList={},
         locks=setmetatable({},lockMapMeta),
         checkpoints={},
+        echos={},
         data={},
 
         createTime=Time(),
@@ -386,11 +406,16 @@ function Session:receive(M)
         end
     end
 end
-function Session:send(text)
+---@param text string
+---@param echo? string
+function Session:send(text,echo)
+    if echo then
+        echo=self.uid..':'..echo
+    end
     if self.priv then
-        Bot.sendMsg(text,nil,self.id)
+        Bot.sendMsg(text,nil,self.id,echo)
     else
-        Bot.sendMsg(text,self.id,nil)
+        Bot.sendMsg(text,self.id,nil,echo)
     end
 end
 ---@type table<string, Session>

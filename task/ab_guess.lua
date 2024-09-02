@@ -44,8 +44,69 @@ local rules={
         text="<整组块斜奇偶平衡>",
         rule=function(seq) return count(seq,'T')%2==0 end,
     },
-    {
+    { -- SZJLT里至少有三个
         id=5,
+        text="<至少三块只能消除三行>",
+        rule=function(seq) return count(seq,'[SZJLT]')>=3 end,
+    },
+    {
+        id=6,
+        text="<总共至少10种朝向状态>",
+        rule=function(seq)
+            return
+                count(seq,'[ZSI]')*2+
+                count(seq,'[JLT]')*4+
+                count(seq,'O')
+                >=10
+        end,
+    },
+    {
+        id=7,
+        text="<至少三块包含排成直线的三小格>",
+        rule=function(seq)
+            return count(seq,'[JLTI]')>=3
+        end,
+    },
+    { -- 有I
+        id=8,
+        text="<存在能消四行的块>",
+        rule=function(seq) return seq:find('I') end,
+    },
+    { -- 无I
+        id=9,
+        text="<干旱>",
+        rule=function(seq) return not seq:find('I') end,
+    },
+    { -- SZJL中最多有两个
+        id=10,
+        text="<能够spinPC的块不超过两个>",
+        rule=function(seq) return count(seq,'[SZJL]')<=2 end,
+    },
+    {
+        id=11,
+        text="<至少三块能普通消PC>",
+        rule=function(seq) return count(seq,'[JLTOI]')>=3 end,
+    },
+    {
+        id=12,
+        text="<有连续两块颜色在“红橙黄绿青蓝紫”中相邻>",
+        rule=function(seq)
+            for _,twin in next,{'ZL','LO','OS','SI','IJ','JT'; 'LZ','OL','SO','IS','JI','TJ'} do
+                if seq:find(twin) then return true end
+            end
+        end,
+    },
+    {
+        id=13,
+        text="<有连续两块可以无spin消6行>",
+        rule=function(seq)
+            for _,twin in next,{'JL','LJ','IJ','JI','IL','LI','IS','SI','IZ','ZI'} do
+                if seq:find(twin) then return true end
+            end
+        end,
+    },
+    {
+        id=26,
         text="<有三块可以拼成3*4盒子>",
         rule=function(seq)
             return
@@ -62,67 +123,6 @@ local rules={
                     -- JTT, LTT
                     seq:find('[JL]') and count(seq,'T')>=2
                 )
-        end,
-    },
-    { -- SZJLT里至少有三个
-        id=6,
-        text="<至少三块只能消除三行>",
-        rule=function(seq) return count(seq,'[SZJLT]')>=3 end,
-    },
-    {
-        id=7,
-        text="<总共至少10种朝向状态>",
-        rule=function(seq)
-            return
-                count(seq,'[ZSI]')*2+
-                count(seq,'[JLT]')*4+
-                count(seq,'O')
-                >=10
-        end,
-    },
-    {
-        id=8,
-        text="<至少三块包含排成直线的三小格>",
-        rule=function(seq)
-            return count(seq,'[JLTI]')>=3
-        end,
-    },
-    { -- 有I
-        id=9,
-        text="<存在能消四行的块>",
-        rule=function(seq) return seq:find('I') end,
-    },
-    { -- 无I
-        id=10,
-        text="<干旱>",
-        rule=function(seq) return not seq:find('I') end,
-    },
-    { -- SZJL中最多有两个
-        id=11,
-        text="<能够spinPC的块不超过两个>",
-        rule=function(seq) return count(seq,'[SZJL]')<=2 end,
-    },
-    {
-        id=12,
-        text="<至少三块能普通消PC>",
-        rule=function(seq) return count(seq,'[JLTOI]')>=3 end,
-    },
-    {
-        id=13,
-        text="<有连续两块颜色在“红橙黄绿青蓝紫”中相邻>",
-        rule=function(seq)
-            for _,twin in next,{'ZL','LO','OS','SI','IJ','JT'; 'LZ','OL','SO','IS','JI','TJ'} do
-                if seq:find(twin) then return true end
-            end
-        end,
-    },
-    {
-        id=14,
-        text="<有连续两块可以无spin消6行>",
-        rule=function(seq)
-            for _,twin in next,{'JL','LJ','IJ','JI','IL','LI','IS','SI','IZ','ZI'} do
-                if seq:find(twin) then return true end
-            end
         end,
     },
     {
@@ -168,12 +168,12 @@ local text={
     notFinished="上一局还没结束喵",
     win={
         easy="猜对了喵！答案是",
-        hard="好厉害！猜对了喵！是",
+        hard="不错喵！答案是",
     },
     lose={
         easy="机会用完了喵…答案是$1",
-        hardAlmost="答案是$1，只差一次就能猜出来了喵~",
-        hard="没猜出来喵~答案是$1还是$2来着？不过那不重要啦~",
+        hardAlmost="答案是$1，差一点点就猜对了喵~",
+        hard="哼哼，没猜出来喵~哎呀，忘了之前想的是$1还是$2了",
     },
     forfeit="认输了喵？答案是",
 }
@@ -261,16 +261,19 @@ local function guess(D,g)
             if not resultSets[r] then resultSets[r]={} end
             ins(resultSets[r],answer)
         end
-        -- print("--------------------------")
-        -- for k,v in next,set do
-        --     local s=""
-        --     if #v<=10 then
-        --         for _,_4 in next,v do s=s..table.concat(_4).." " end
-        --     end
-        --     print(k,#v,s)
-        -- end
         local keys=TABLE.getKeys(resultSets)
         TABLE.delete(keys,'4A0B')
+        -- print("--------------------------")
+        -- for _,key in next,keys do
+        --     local set=resultSets[key]
+        --     if #set<=10 then
+        --         local s=""
+        --         for _,_4 in next,set do s=s..table.concat(_4).." " end
+        --         print(key,#set,s)
+        --     else
+        --         print(key,#set)
+        --     end
+        -- end
         if #keys==0 then
             -- Only one answer left
             res='4A0B'
@@ -320,6 +323,7 @@ return {
             S:unlock('ab_duplicate')
             D.lastInterectTime=Time()-cooldownSkip.giveup
         elseif mes=='#ab' or mes=='#abhard' or mes=='#abhd' then
+            -- Start
             if D.playing and Time()-D.lastInterectTime<600 then
                 if S:lock('ab_playing',62) then
                     S:send(text.notFinished.."\n"..D.textHis.."\n"..text.remain[D.mode]..D.chances)
@@ -356,20 +360,23 @@ return {
                 guess(D,g)
             end
             D.chances=5
-            S:send(text.start[D.mode].."\n"..D.textHis.."\n"..text.remain[D.mode]..D.chances)
+            S:send(text.start[D.mode].."\n"..D.textHis.."\n"..text.remain[D.mode]..D.chances,'ab_guess')
             D.lastInterectTime=Time()
             return true
         elseif D.playing then
             if mes:sub(1,3)=='#ab' then mes=mes:sub(4) end
             mes=mes:upper()
             if not mes:match('^[ZSJLTOI][ZSJLTOI][ZSJLTOI][ZSJLTOI]$') then return false end
+
             local res=guess(D,{mes:sub(1,1),mes:sub(2,2),mes:sub(3,3),mes:sub(4,4)})
             if res=='duplicate' then
+                -- Duplicate
                 if S:lock('ab_duplicate',12.6) then
                     S:send(text.guessed)
                 end
                 D.lastInterectTime=Time()
             elseif res=='win' then
+                -- Win
                 D.playing=false
                 S:send(D.textHis.."\n"..text.win[D.mode]..mes)
                 S:unlock('ab_help')
@@ -406,6 +413,7 @@ return {
                     end
                 end
             elseif D.chances>0 then
+                -- Guess normally
                 if #D.guessHis==2 and D.mode=='easy' then
                     local possibleRules={}
                     local ans=table.concat(D.answer)
@@ -423,9 +431,10 @@ return {
                         -- end
                     end
                 end
-                S:send(D.textHis.."\n"..text.remain[D.mode]..D.chances)
+                S:send(D.textHis.."\n"..text.remain[D.mode]..D.chances,'ab_guess')
                 D.lastInterectTime=Time()
             else
+                -- Lose
                 D.playing=false
                 local t=D.textHis.."\n"
                 if D.mode=='easy' then
@@ -445,6 +454,10 @@ return {
                 S:unlock('ab_cd')
                 S:unlock('ab_duplicate')
                 D.lastInterectTime=Time()-cooldownSkip.lose
+            end
+            if res~='duplicate' and S.echos.ab_guess and S.echos.ab_guess.message_id then
+                Bot.deleteMsg(S.echos.ab_guess.message_id)
+                S.echos.ab_guess=nil
             end
             return true
         end

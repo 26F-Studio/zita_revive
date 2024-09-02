@@ -75,3 +75,4 @@
 ---@field wording string 未知
 ---@field data table 未知
 ---@field message string 未知
+---@field echo? string
