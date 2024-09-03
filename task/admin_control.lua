@@ -80,10 +80,23 @@ local commands={
         S:send(result)
     end,['%task']="%tasks",
     ['%log']=function(S,args)
-        local on=args[1]=='on'
-        print("Log: "..(on and "on" or "off"))
-        S:send(on and "小z开始日志了喵！" or "小z停止日志了喵！")
-        Config.debugLog_receive=on
+        if args[1]=='on' then
+            S.data.log.log=true
+            print("Log: on")
+            S:send("小z开始日志了喵！")
+        elseif args[1]=='off' then
+            S.data.log.log=false
+            print("Log: off")
+            S:send("小z停止日志了喵！")
+        elseif args[1]=='all' then
+            print("Log: all")
+            Bot.adminNotice("小z开始所有日志了喵！")
+            Config.debugLog_receive=true
+        elseif args[1]=='0' then
+            print("Log: 0")
+            Bot.adminNotice("小z停止所有日志了喵！")
+            Config.debugLog_receive=false
+        end
     end,
     ['%stat']=function(S)
         local result=STRING.repD(STRING.trimIndent[[
