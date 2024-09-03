@@ -30,6 +30,17 @@
 ---@field meta_event_type 'lifecycle'|'heartbeat'
 ---@field sub_type 'connect'|'enable'|'disable'
 
+---@class Segment
+---@field type 'text'|'face'|'image'|'video'|'at'|'rps'|'dice'|'poke'|'anonymous'|'share'|'contact'|'location'|'music'|'reply'|'forward'|'node'|'xml'|'json'
+---@field data table
+
+---@class Segment.Text : Segment
+---@field type 'text'
+---@field data {text:string}
+
+---@class Segment.At : Segment
+---@field type 'at'
+---@field data {qq:number,name:string}
 
 ---@class LLOneBot.Event.PrivateMessage : LLOneBot.Event.Base
 ---@field post_type 'message'
@@ -39,7 +50,7 @@
 ---@field raw_message string
 ---
 ---@field sender LLOneBot.Sender
----@field message table
+---@field message Segment[]
 ---
 ---@field font number
 ---@field message_id number
