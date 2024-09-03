@@ -26,7 +26,7 @@ local count=STRING.count
 local rules={
     { -- 同时有SZ或者JL
         id=1,
-        text="<包含两块镜像对称>",
+        text="<有两块互为镜像对称>",
         rule=function(seq) return seq:find('Z') and seq:find('S') or seq:find('J') and seq:find('L') end,
     },
     { -- 不同时有SZ或者JL
@@ -46,7 +46,7 @@ local rules={
     },
     { -- SZJLT里至少有三个
         id=5,
-        text="<至少三块只能消除三行>",
+        text="<至少三块最多只能消三>",
         rule=function(seq) return count(seq,'[SZJLT]')>=3 end,
     },
     {
@@ -77,18 +77,23 @@ local rules={
         text="<干旱>",
         rule=function(seq) return not seq:find('I') end,
     },
-    { -- SZJL中最多有两个
+    { -- SZJLTI中最多有两个
         id=10,
+        text="<每一块的长度都达到了3>",
+        rule=function(seq) return not seq:find('O') end,
+    },
+    { -- SZJL中最多有两个
+        id=11,
         text="<能够spinPC的块不超过两个>",
         rule=function(seq) return count(seq,'[SZJL]')<=2 end,
     },
     {
-        id=11,
+        id=12,
         text="<至少三块能普通消PC>",
         rule=function(seq) return count(seq,'[JLTOI]')>=3 end,
     },
     {
-        id=12,
+        id=13,
         text="<有连续两块颜色在“红橙黄绿青蓝紫”中相邻>",
         rule=function(seq)
             for _,twin in next,{'ZL','LO','OS','SI','IJ','JT'; 'LZ','OL','SO','IS','JI','TJ'} do
@@ -97,7 +102,7 @@ local rules={
         end,
     },
     {
-        id=13,
+        id=14,
         text="<有连续两块可以无spin消6行>",
         rule=function(seq)
             for _,twin in next,{'JL','LJ','IJ','JI','IL','LI','IS','SI','IZ','ZI'} do
@@ -218,7 +223,7 @@ if not TABLE.find(arg,"startWithNotice") then
         end
         print(r.id,("HD: %.0f%%(%d)"):format(cnt/#hardLib*100,cnt),("EZ: %.0f%%(%d)"):format(cntSimp/840*100,cntSimp))
         if not (MATH.between(cnt/#hardLib,0.26,0.8) and MATH.between(cntSimp/840,0.26,0.8)) then
-            print("^Warning: Limitation Too Strong/Weak^")
+            print("^Warning: Extreme Limitation^")
         end
     end
 end
@@ -281,8 +286,9 @@ local function guess(D,g)
             -- Still has multiple possibilities
             table.sort(keys,resultSorter)
             local r=MATH.randFreq(hdWeights[math.min(#D.guessHis,#hdWeights)])
-            D.answer=resultSets[keys[r] or keys[#keys]]
+            while not keys[r] do r=r-1 end
             res=keys[r]
+            D.answer=resultSets[res]
         end
     end
     if #D.guessHis>1 then
