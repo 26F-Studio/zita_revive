@@ -1,5 +1,6 @@
 conf.luaon
 task/response.lua
+task/uuz_reducer.lua
 
 .vscode
 *.ini
