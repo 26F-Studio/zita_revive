@@ -1,14 +1,14 @@
 local ins=table.insert
 ---@type Map<ZictEntry>
 local zict=FILE.load('task/zictionary_data.lua','-lua')
+local entryList=zict.entryList
+zict.entryList=nil
 assert(zict,"Dict data not found")
 
 ---@type Task_raw
 return {
     init=function(_,D)
         D.lastDetailEntry=false
-        D.entries=zict.entries
-        zict.entries=nil
     end,
     func=function(S,M,D)
         ---@cast M LLOneBot.Event.PrivateMessage|LLOneBot.Event.GroupMessage
@@ -37,7 +37,7 @@ return {
             if S:lock('dailyEntry',600) then
                 math.randomseed(tonumber(os.date('%Y%m%d')) or 26)
                 for _=1,42 do math.random() end
-                mes='#'..D.entries[math.random(#D.entries)].word
+                mes='#'..entryList[math.random(#entryList)].word
                 if mes:find(';') then mes=mes:match('(.-);') end
                 math.randomseed(os.time())
                 daily=true

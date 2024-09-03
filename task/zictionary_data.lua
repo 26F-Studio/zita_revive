@@ -58,7 +58,7 @@ local meta={
     {
         word="wiki;维基;中文wiki;中文维基;灰机;huiji;灰机wiki",
         title="俄罗斯方块中文维基",
-        text="俄罗斯方块中文维基，由中国玩家建立的中文的俄罗斯方块百科全书，位于灰机wiki平台\n推荐新人有不懂的知识先查阅百科再提问，也欢迎各位玩家作出编辑贡献\n早期大部分条目译自Hard Drop Wiki和Tetris Wiki",
+        text="由中国玩家建立的中文的俄罗斯方块百科全书，位于灰机wiki平台\n推荐新人有不懂的知识先查阅百科再提问，也欢迎各位玩家作出编辑贡献\n早期大部分条目译自Hard Drop Wiki和Tetris Wiki",
         link="tetris.huijiwiki.com",
     },
     {
@@ -1765,7 +1765,7 @@ local contributor={
     }
 }
 
-local zict={entries={}}
+local zict={entryList={}}
 local function checkWords(entry)
     if entry.word:find("；") then
         print("Fullwidth semicolon found in entry '"..entry.title.."'")
@@ -1783,7 +1783,7 @@ local function loadData(data)
                 zict[word]=entry
             end
         end
-        table.insert(zict.entries,entry)
+        table.insert(zict.entryList,entry)
     end
 end
 
@@ -1794,6 +1794,6 @@ loadData(game)
 loadData(extra_tetrio)
 loadData(contributor)
 
-print("Zictionary Data Loaded, total "..#zict.entries.." entries")
+print("Zictionary Data Loaded, total "..#zict.entryList.." entries")
 
 return zict
