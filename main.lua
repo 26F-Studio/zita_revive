@@ -8,11 +8,11 @@ ZENITHA.setUpdateFreq(100)
 ZENITHA.setVersionText('')
 function SimpStr(s) return s:gsub('%s',''):lower() end -- Remove spaces and lower case
 local esc={['&amp;']='&',['&#91;']='[',['&#93;']=']',['&#44;']=','}
-function RawStr(s)
+function RawStr(s) -- Unescape & Remove username in CQ:at
     s=s:gsub('%[CQ:at,qq=(%d+),name=.-%]','[CQ:at,qq=%1]')
     for k,v in next,esc do s=s:gsub(k,v) end
     return s
-end -- Unescape
+end
 function CQpic(path) return "[CQ:image,file=file:///"..path:gsub("/","\\").."]" end -- Encode cq path
 function AdminMsg(M) return M.sender and (M.sender.role=='owner' or M.sender.role=='admin') end -- Encode cq path
 --------------------------------------------------------------
@@ -280,6 +280,12 @@ function Session.new(id,priv)
     local template=priv and Bot.taskPriv or Bot.taskGroup
     for _,task in next,template do
         s:newTask(task[1],task[2])
+    end
+    local extra=Config.extraData.extraTask[s.uid]
+    if extra then
+        for i=1,#extra do
+            s:newTask(extra[i][1],extra[i][2])
+        end
     end
     return s
 end
