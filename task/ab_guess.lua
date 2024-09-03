@@ -28,10 +28,14 @@ local rewardList={
     {00,00,01,02,03,05,08}, -- 1+1
 }
 local text={
-    help="AB猜方块：有一组四个不同的方块，玩家猜测后会提示几A几B，A同wordle的绿色，B是猜测的块中有几个在答案里但位置不正确\n注：困难模式中允许每种块出现两次，例如答案是LSST时猜LLSS得到2A2B，其中2A是第1/3块对应，2B是第2/4块不正确但存在于答案中",
+    help="AB猜方块：有一组四个不同的方块，玩家猜测后会提示几A几B，A是存在且位置也对，B是存在但位置不对\n#ab普通开始，#abandon放弃，##ab勿扰模式，#abhd困难模式（允许每种块出现两次，ZJJO猜ZJZJ会得到2A2B，数量溢出也给B计数）",
     guessed={"这组块已经猜过了喵","已经猜过这个了喵"},
+    gameNotStarted={"本来也没在玩喵！","你在干什么喵…"},
     notFinished={"上一局还没结束喵~","上一把还没玩完喵"},
     realWord={"这是一个$1考试里的词汇喵！","这个词是真实的$1考试词汇喵！"},
+    abandonOthers={"你是想干什么喵？","请礼貌排队喵~"},
+    privBlocked={"这局是勿扰模式，等他打完吧喵~","开了勿扰模式喵，先让他打完吧~"},
+    privLimit={"也让给别人玩一会喵~","霸机是坏文明喵~","不要霸机喵~"},
     tooFreq={"休息一会喵！","不要刷屏喵！",""},
     start={
         easy={"我想好了四个方块，开始猜吧喵！","四个方块想好了，可以开始猜了喵！"},
@@ -331,11 +335,20 @@ return {
         D.guessHis={}
         D.textHis=""
         D.chances=26
+
+        D.privOwner=false
+        D.playerHis=TABLE.new(false,5)
     end,
     func=function(S,M,D)
         -- Log
         local mes=SimpStr(M.raw_message)
         if #mes>=10 then return false end
+
+        local privGame=false
+        if mes:sub(1,2)=='##' then
+            mes=mes:sub(2)
+            privGame=true
+        end
 
         if mes=='#abhelp' or mes=='#about' or mes=='#ab帮助' or mes=='#ab说明' then
             if S:lock('ab_help',26) then
@@ -343,7 +356,20 @@ return {
             end
             return true
         elseif mes=='#abandon' then
+            if not D.playing then
+                if S:lock('ab_abandon',26) then
+                    S:send(getRnd(text.gameNotStarted))
+                end
+                return true
+            end
+            if D.privOwner and M.user_id~=D.privOwner then
+                if S:lock('ab_priv',12.6) then
+                    S:send(getRnd(text.abandonOthers))
+                end
+                return true
+            end
             D.playing=false
+            S:lock('ab_abandon',26)
             if D.mode=='easy' then
                 S:send(repD(text.forfeit.easy,concat(D.answer)))
             else
@@ -354,7 +380,7 @@ return {
                     end
                 else
                     local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))
-                    S:send(repD(text.forfeit.hard,ans1,ans2))
+                    S:send(repD(text.forfeit.hard,ans1,ans2,#D.answer))
                 end
             end
             S:unlock('ab_help')
@@ -367,7 +393,7 @@ return {
             local timeSkip=Time()-D.lastInterectTime
             if D.playing and timeSkip<600 then
                 if S:lock('ab_playing',62) then
-                    S:send(getRnd(text.notFinished).."\n"..D.textHis.."\n"..text.remain[D.mode=='hard' and #D.answer==1 and 'hardAlmost' or D.mode]..D.chances,'ab_guess')
+                    S:send(getRnd(text.notFinished).."\n"..D.textHis.."\n"..(D.privOwner and "*" or "")..text.remain[D.mode=='hard' and #D.answer==1 and 'hardAlmost' or D.mode]..D.chances,'ab_guess')
                 end
                 return true
             end
@@ -384,6 +410,25 @@ return {
                 end
                 return true
             end
+
+            local player
+            if not privGame then
+                player=false
+            else
+                local s=TABLE.count(D.playerHis,M.user_id)
+                if s<3 then
+                    player=M.user_id
+                else
+                    if S:lock('ab_privLimit',26) then
+                        S:send(getRnd(text.privLimit))
+                    end
+                    return true
+                end
+            end
+            ins(D.playerHis,1,player)
+            D.playerHis[6]=nil
+
+            D.privOwner=player
             D.playing=true
             D.mode=(mes:find("h") or mes:find("困"))  and 'hard' or 'easy'
             D.answer={}
@@ -415,6 +460,12 @@ return {
             if mes:sub(1,3)=='#ab' then mes=mes:sub(4) end
             mes=mes:upper()
             if not mes:match('^[ZSJLTOI][ZSJLTOI][ZSJLTOI][ZSJLTOI]$') then return false end
+            if D.privOwner and M.user_id~=D.privOwner then
+                if S:lock('ab_priv',12.6) then
+                    S:send(getRnd(text.privBlocked))
+                end
+                return true
+            end
 
             local res=guess(D,{mes:sub(1,1),mes:sub(2,2),mes:sub(3,3),mes:sub(4,4)})
             if res=='duplicate' then
@@ -432,6 +483,7 @@ return {
                 if res=='win' then
                     -- Win
                     D.playing=false
+                    S:lock('ab_abandon',26)
                     local t=D.textHis.."\n"..text.win[D.mode]..mes
                     local point=0
                     if realWords[mes] then
@@ -500,6 +552,7 @@ return {
                 else
                     -- Lose
                     D.playing=false
+                    S:lock('ab_abandon',26)
                     local bonus
                     local t=D.textHis.."\n"
                     if D.mode=='easy' then
@@ -511,7 +564,7 @@ return {
                         end
                     else
                         local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))
-                        t=t..repD(text.lose.hard,ans1,ans2)
+                        t=t..repD(text.lose.hard,ans1,ans2,#D.answer)
                     end
                     if S.group and Config.groupManaging[S.id] then
                         Bot.deleteMsg(M.message_id)
