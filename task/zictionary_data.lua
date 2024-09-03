@@ -559,9 +559,9 @@ local main={
         text="Soft Drop Factor，软降速度倍率\n几乎所有官块和TETR.IO中，“软降”的实际效果是当软降键被按住时，方块受到的重力变为原来的若干倍，SDF就是这个变大的倍数",
     },
     {
-        word="7bag;bag7",
+        word="7bag;bag7;bag",
         title="7-Bag出块",
-        text="一种出块方式，现代方块普遍使用该规则，从开局起每7个块是7种形状各出现一次，避免了很久不出某个块和某个块来得特别多，是一些现代方块战术的基础\n例如：ZSJLTOI OTSLZIJ LTISZOJ",
+        text="一种出块方式，从开局起每7个块是7种形状各一个，避免了很久不出某个块和某个块来得特别多，现代方块普遍使用该规则，是一些战术的基础\n例：ZSJLTOI ZJOLIST",
         link="tetris.huijiwiki.com/wiki/Bag_Randomizer",
     },
     {
