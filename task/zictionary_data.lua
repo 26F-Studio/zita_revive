@@ -350,12 +350,12 @@ local main={
     {
         word="tetrimino;tetromino;tetramino;四连块;四联块;形状;方块形状",
         title="四连块",
-        text="四个正方形共用边连接成的形状，在不允许翻转的情况下共有七种，根据形状命名为Z、S、J、L、T、O、I",
+        text="四个正方形共用边连接成的形状，在不允许翻转的情况下共有七种，根据形状命名为Z S J L T O I",
     },
     {
         word="pentamino;pentomino;五连块;五联块",
         title="五连块",
-        text="类似四连块但增加到五个正方形，在不允许翻转的情况下共有18种，命名方案不统一，其中一套是S5、Z5、P、Q、F、E、T5、U、V、W、X、J5、L5、R、Y、N、H",
+        text="类似四连块但增加到五个正方形，在不允许翻转的情况下共有18种，命名方案不统一，其中一套是S5 Z5 P Q F E T5 U V W X J5 L5 R Y N H I5",
     },
     {
         word="配色;颜色;方块颜色;标准配色;方块配色",
@@ -1573,14 +1573,14 @@ local extra_tetrio={
         link="github.com/MrZ626/io_qp2_rule",
     },
     {
-        word="十层;f10;floor;floors",
+        word="十层;楼层;f10;floor;floors",
         title="QP2楼层",
         text="十层分别是：初始大厅、酒店(50m)、赌场(150m)、竞技场(300m)、博物馆(450m)、废弃办公楼(650m)、实验室(850m)、核心(1100m)、污染区(1350m)、神之境(1650m)",
     },
     {
         word="surge;surge b2b",
         title="Surge B2B",
-        text="充能B2B系统，达到b2b×4然后中断时会打出一发和b2b数同样的超大攻击（分成三节）\n目前Tetr.io的TL第二赛季和QP2都使用此新系统（QP中参数不同）",
+        text="充能B2B系统，达到b2b×4然后中断时会打出一发和b2b数同样的超大攻击（分成三节）\n目前Tetr.io的TL第二赛季和QP2都使用此新系统（QP中参数略不同）",
     },
     {
         word="推进器",
@@ -1657,30 +1657,25 @@ local contributor={
         link="studio26f.org",
     },
     {
-        word="T626;小z;Zita",
+        word="T626;626;小z;Zita",
         text="喵喵？是我哦",
     },
     {
-        word="T026;T26;MrZ;z酱",
+        word="T026;026;T26;MrZ;z酱",
         text="T026.MrZ，Techmino的主创、主程、音乐、音效、主美(?)\n也是另一个我喵！",
         link="space.bilibili.com/225238922",
     },
     {
-        word="T1080;Particle_G;ParticleG;pg",
+        word="T1080;1080;Particle_G;ParticleG;pg",
         text="T1080.Particle_G，编写了Techmino的CI、主后端、程序",
     },
     {
-        word="T0812;T812;scdhh;呵呵",
-        text="T0812.呵呵，写了好几个块群bot，编写了Techmino的CI、后端",
-        link="space.bilibili.com/266621672",
-    },
-    {
-        word="T114;flyz;flaribbit;小飞翔;fxg",
+        word="T114;114;flyz;flaribbit;小飞翔;fxg",
         text="T114.flyz，编写了Techmino的CI、后端",
         link="space.bilibili.com/787096",
     },
     {
-        word="T1379;Trebor",
+        word="T1379;1379;Trebor",
         text="T1379.Trebor，编写和制作了Techmino的CI、后端、程序、音乐",
         link="space.bilibili.com/502473020",
     },
@@ -1689,7 +1684,7 @@ local contributor={
         text="制作了Techmino的UI/UX、音乐、周边美术",
     },
     {
-        word="T7023;Miya",
+        word="T7023;7023;Miya",
         text="T7023，块群吉祥物猫猫，制作了Techmino的插图、配音",
         link="space.bilibili.com/846180",
     },
@@ -1703,7 +1698,7 @@ local contributor={
         link="space.bilibili.com/1223403016",
     },
     {
-        word="T283;模电;模电283;Electric;Electric283;Modian;Modian283",
+        word="T283;283;模电;模电283;Electric;Electric283;Modian;Modian283",
         text="T283.模电，上过最强大脑，擅长20G和隐形，在Techmino中有出镜",
         link="space.bilibili.com/17583394",
     },
@@ -1711,6 +1706,15 @@ local contributor={
         word="T0325;T325;幻灭",
         text="T0325.幻灭，制作了TETR.IO汉化插件",
         link="space.bilibili.com/8933681",
+    },
+    {
+        word="T0812;T812;scdhh;呵呵",
+        text="T0812.呵呵，写了好几个块群bot，编写了Techmino的CI、后端",
+        link="space.bilibili.com/266621672",
+    },
+    {
+        word="Z120;渣渣;渣渣120",
+        text="Z120.渣渣120，做了块群查成绩Bot和TETR.IO的【汉化+Plus+Verge】三合一客户端"
     },
     {
         word="TTTT;Farter;屁;屁爷",
@@ -1728,7 +1732,7 @@ local contributor={
         link="space.bilibili.com/403250559",
     },
     -- {
-    --     word="T872;Diao;nmdtql;nmdtql030",
+    --     word="T872;872;Diao;nmdtql;nmdtql030",
     --     text="T872.Diao，写过一些zzzbot的胶水程序",
     -- },
     {
@@ -1759,10 +1763,6 @@ local contributor={
         word="ZZZ;Zou Zhi Zhang",
         text="奏之章，编写了ZZZ机器人",
     },
-    {
-        word="Z120;渣渣;渣渣120",
-        text="块群查询 Bot 模板实现与开发以及 v2 模板设计, 并制作了 tetr.io 客户端三合一 (plus + verge + 中文翻译)"
-    }
 }
 
 local zict={entryList={}}
