@@ -1,10 +1,15 @@
+local find=string.find
+local ins,concat=table.insert,table.concat
+local count,repD=STRING.count,STRING.repD
+local copy,getRnd=TABLE.copy,TABLE.getRandom
+
 local cooldown=2600
-local cooldownSkip={
+local cooldownSkip={}
+for k,v in next,{
     win=2600,
     lose=1200,
     giveup=1620,
-}
-for k,v in next,cooldownSkip do cooldownSkip[k]=cooldown-v end
+} do cooldownSkip[k]=cooldown-v end
 local hdWeights={
     {2,5,3},
     {3,5,2},
@@ -17,27 +22,57 @@ local score={
     hard={[0]=1,2,3,5,6},
 }
 local rewardList={
-    {98,56,31,10, 5, 0, 0}, -- 1
-    {2, 42,62,62,50,15, 0}, -- 2
-    {0,  2, 6,26,42,80,92}, -- 3
-    {0,  0, 1, 2, 3, 5, 8}, -- 1+1
+    {98,56,31,10,05,00,00}, -- 1
+    {02,42,62,62,50,15,00}, -- 2
+    {00,02,06,26,42,80,92}, -- 3
+    {00,00,01,02,03,05,08}, -- 1+1
 }
-local count=STRING.count
+local text={
+    help="AB猜方块：有一组四个不同的方块，玩家猜测后会提示几A几B，A同wordle的绿色，B是猜测的块中有几个在答案里但位置不正确\n注：困难模式中允许每种块出现两次，例如答案是LSST时猜LLSS得到2A2B，其中2A是第1/3块对应，2B是第2/4块不正确但存在于答案中",
+    guessed={"这组块已经猜过了喵","已经猜过这个了喵"},
+    notFinished={"上一局还没结束喵~","上一把还没玩完喵"},
+    realWord={"这是一个$1考试里的词汇喵！","这个词是真实的$1考试词汇喵！"},
+    tooFreq={"休息一会喵！","不要刷屏喵！",""},
+    start={
+        easy={"我想好了四个方块，开始猜吧喵！","四个方块想好了，可以开始猜了喵！"},
+        hard={"四个块想好了！不会变的喵！","四个块想好了！真的想好了喵！"},
+    },
+    remain={
+        easy="剩余机会:",
+        hardAlmost="[HD]剩余机会!",
+        hard="[HD]剩余机会:",
+    },
+    win={
+        easy="猜对了喵！答案是",
+        hard="不错喵！答案是",
+    },
+    lose={
+        easy="机会用完了喵…答案是$1",
+        hardAlmost="答案是$1，差一点点就猜对了喵~",
+        hard="哼哼，没猜出来喵~刚好我也忘了想的是$1还是$2了 欸嘿($3)",
+    },
+    forfeit={
+        easy="想不出来了喵？答案是$1",
+        hardAlmost="诶？！好吧…答案是$1",
+        hard="认输了喵？刚好我也忘了想的是$1还是$2啦($3)",
+    },
+}
+local realWords={JOLT="GRE",LIST="CET4",LOLL="GRE",LOSS="CET4",SILL="GRE",SILT="GRE",SLIT="CET4",SLOT="GRE",SOIL="CET4",SOLO="CET6",SOOT="GRE",TILL="CET4",TILT="CET6",TOIL="GRE",TOLL="GRE",TOOL="CET4",TOSS="CET4"}
 local rules={
     { -- 同时有SZ或者JL
         id=1,
         text="<有两块互为镜像对称>",
-        rule=function(seq) return seq:find('Z') and seq:find('S') or seq:find('J') and seq:find('L') end,
+        rule=function(seq) return find(seq,'Z') and find(seq,'S') or find(seq,'J') and find(seq,'L') end,
     },
     { -- 不同时有SZ或者JL
         id=2,
         text="<两两都不镜像对称>",
-        rule=function(seq) return not (seq:find('Z') and seq:find('S') or seq:find('J') and seq:find('L')) end,
+        rule=function(seq) return not (find(seq,'Z') and find(seq,'S') or find(seq,'J') and find(seq,'L')) end,
     },
     { -- 包含T或者JL总数为偶数
         id=3,
         text="<整组块纵奇偶能够平衡>",
-        rule=function(seq) return seq:find('T') or count(seq,'[JL]')%2==0 end,
+        rule=function(seq) return find(seq,'T') or count(seq,'[JL]')%2==0 end,
     },
     { -- 包含T或者JL总数为偶数
         id=4,
@@ -70,17 +105,17 @@ local rules={
     { -- 有I
         id=8,
         text="<存在能消四行的块>",
-        rule=function(seq) return seq:find('I') end,
+        rule=function(seq) return find(seq,'I') end,
     },
     { -- 无I
         id=9,
         text="<干旱>",
-        rule=function(seq) return not seq:find('I') end,
+        rule=function(seq) return not find(seq,'I') end,
     },
     { -- SZJLTI中最多有两个
         id=10,
         text="<每一块的长度都达到了3>",
-        rule=function(seq) return not seq:find('O') end,
+        rule=function(seq) return not find(seq,'O') end,
     },
     { -- SZJL中最多有两个
         id=11,
@@ -97,7 +132,7 @@ local rules={
         text="<有连续两块颜色在“红橙黄绿青蓝紫”中相邻>",
         rule=function(seq)
             for _,twin in next,{'ZL','LO','OS','SI','IJ','JT'; 'LZ','OL','SO','IS','JI','TJ'} do
-                if seq:find(twin) then return true end
+                if find(seq,twin) then return true end
             end
         end,
     },
@@ -106,7 +141,7 @@ local rules={
         text="<有连续两块可以无spin消6行>",
         rule=function(seq)
             for _,twin in next,{'JL','LJ','IJ','JI','IL','LI','IS','SI','IZ','ZI'} do
-                if seq:find(twin) then return true end
+                if find(seq,twin) then return true end
             end
         end,
     },
@@ -116,17 +151,17 @@ local rules={
         rule=function(seq)
             return
             -- JLS, JLZ
-                seq:find('J') and seq:find('L') and seq:find('[SZ]') or
+                find(seq,'J') and find(seq,'L') and find(seq,'[SZ]') or
                 seq:match('(.).*%1') and (
                 -- IJJ, ILL, IOO
-                    seq:find('I') and (count(seq,'J')>=2 or count(seq,'L')>=2 or count(seq,'O')>=2) or
+                    find(seq,'I') and (count(seq,'J')>=2 or count(seq,'L')>=2 or count(seq,'O')>=2) or
                     -- JSJ, LZL
-                    seq:find('S') and count(seq,'J')>=2 or
-                    seq:find('Z') and count(seq,'L')>=2 or
+                    find(seq,'S') and count(seq,'J')>=2 or
+                    find(seq,'Z') and count(seq,'L')>=2 or
                     -- OJJ, OLL
-                    seq:find('O') and count(seq,'[JL]')>=2 or
+                    find(seq,'O') and count(seq,'[JL]')>=2 or
                     -- JTT, LTT
-                    seq:find('[JL]') and count(seq,'T')>=2
+                    find(seq,'[JL]') and count(seq,'T')>=2
                 )
         end,
     },
@@ -137,54 +172,41 @@ local rules={
             local i=count(seq,'I')
             if i==0 then
                 -- 杀O[JL]{3}
-                return not (seq:find('O') and count(seq,'[JL]')==3)
+                return not (find(seq,'O') and count(seq,'[JL]')==3)
             elseif i==1 then
                 local o=count(seq,'O')
                 -- 杀IO[OSZ][JL]，和IOOT
-                if seq:find('T') and o==2 then
+                if find(seq,'T') and o==2 then
                     return false
-                elseif o>0 and seq:find('[JL]') and (seq:find('[SZ]') or o==2) then
+                elseif o>0 and find(seq,'[JL]') and (find(seq,'[SZ]') or o==2) then
                     return false
                 end
                 return true
             elseif i==2 then
                 -- 有JLT没O活
-                return seq:find('[JLT]') and not seq:find('O')
+                return find(seq,'[JLT]') and not find(seq,'O')
             elseif i==3 then
                 -- 虽然目前用不上
-                return seq:find('SZOT')
+                return find(seq,'SZOT')
             else
                 return false
             end
         end,
     },
 }
-local text={
-    help="AB猜方块：有一组四个不同的方块，玩家猜测后会提示几A几B，A同wordle的绿色，B是猜测的块中有几个在答案里但位置不正确\n注：困难模式中允许每种块出现两次，例如答案是LSST时猜LLSS得到2A2B，其中2A是第1/3块对应，2B是第2/4块不正确但存在于答案中",
-    start={
-        easy="我想好了四个方块，开始猜吧喵！",
-        hard="四个方块想好了！不会变的喵！",
-    },
-    remain={
-        easy="剩余机会:",
-        hard="[HD]剩余机会:",
-    },
-    guessed="这组方块猜过了喵",
-    notFinished="上一局还没结束喵",
-    win={
-        easy="猜对了喵！答案是",
-        hard="不错喵！答案是",
-    },
-    lose={
-        easy="机会用完了喵…答案是$1",
-        hardAlmost="答案是$1，差一点点就猜对了喵~",
-        hard="哼哼，没猜出来喵~哎呀，忘了之前想的是$1还是$2了",
-    },
-    forfeit="认输了喵？答案是",
+local pieces=STRING.atomize('ZSJLTOI')
+local piecesFullWidth={
+    Z='Ｚ',S='Ｓ',J='Ｊ',L='Ｌ',T='Ｔ',O='Ｏ',I='Ｉ',
+    -- ['0']='０',['1']='１',['2']='２',['3']='３',['4']='４',['5']='５',['6']='６',['7']='７',['8']='８',['9']='９',
+    -- [' ']='　',A='Ａ',B='Ｂ',
 }
-local pieces=STRING.split("Z S J L T O I"," ")
-local ins=table.insert
-local copy=TABLE.copy
+local function toFullwidth(str)
+    local res=''
+    for c in str:gmatch('.') do
+        res=res..(piecesFullWidth[c] or c)
+    end
+    return res
+end
 local function randomGuess(ans)
     local g
     repeat
@@ -211,14 +233,14 @@ do
     end
     print('Hard quest lib length: '..#hardLib)
 end
-if not TABLE.find(arg,"startWithNotice") then
+if not TABLE.find(arg,'startWithNotice') then
     for _,r in next,rules do
         local cnt=0
         local cntSimp=0
         for i=1,#hardLib do
-            if r.rule(table.concat(hardLib[i])) then
+            if r.rule(concat(hardLib[i])) then
                 cnt=cnt+1
-                if not table.concat(hardLib[i]):match('(.).*%1') then cntSimp=cntSimp+1 end
+                if not concat(hardLib[i]):match('(.).*%1') then cntSimp=cntSimp+1 end
             end
         end
         print(r.id,("HD: %.0f%%(%d)"):format(cnt/#hardLib*100,cnt),("EZ: %.0f%%(%d)"):format(cntSimp/840*100,cntSimp))
@@ -251,10 +273,10 @@ end
 local resultSets={}
 local function resultSorter(a,b) return #resultSets[a]>#resultSets[b] end
 local function guess(D,g)
-    if TABLE.find(D.guessHis,table.concat(g)) then return 'duplicate' end
+    if TABLE.find(D.guessHis,concat(g)) then return 'duplicate' end
 
     D.chances=D.chances-1
-    ins(D.guessHis,table.concat(g))
+    ins(D.guessHis,concat(g))
 
     local res
     if D.mode=='easy' then
@@ -273,7 +295,7 @@ local function guess(D,g)
         --     local set=resultSets[key]
         --     if #set<=10 then
         --         local s=""
-        --         for _,_4 in next,set do s=s..table.concat(_4).." " end
+        --         for _,_4 in next,set do s=s..concat(_4).." " end
         --         print(key,#set,s)
         --     else
         --         print(key,#set)
@@ -292,9 +314,9 @@ local function guess(D,g)
         end
     end
     if #D.guessHis>1 then
-        D.textHis=D.textHis..(#D.guessHis%2==0 and "    " or "\n")
+        D.textHis=D.textHis..(#D.guessHis%2==0 and "   " or "\n")
     end
-    D.textHis=D.textHis..table.concat(g).." "..res
+    D.textHis=D.textHis..toFullwidth(concat(g)).." "..res
     if res=='4A0B' then return 'win' end
 end
 
@@ -313,37 +335,57 @@ return {
     func=function(S,M,D)
         -- Log
         local mes=SimpStr(M.raw_message)
-        if #mes>9 then return false end
+        if #mes>=10 then return false end
 
-        if mes=='#abhelp' or mes=='#about' then
+        if mes=='#abhelp' or mes=='#about' or mes=='#ab帮助' or mes=='#ab说明' then
             if S:lock('ab_help',26) then
                 S:send(text.help)
             end
             return true
         elseif mes=='#abandon' then
             D.playing=false
-            S:send(text.forfeit..(D.mode=='easy' and table.concat(D.answer) or table.concat(D.answer[1])))
+            if D.mode=='easy' then
+                S:send(repD(text.forfeit.easy,concat(D.answer)))
+            else
+                if #D.answer==1 then
+                    S:send(repD(text.forfeit.hardAlmost,concat(D.answer[1])))
+                    if D.chances>=2 then
+                        S:send(CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                    end
+                else
+                    local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))
+                    S:send(repD(text.forfeit.hard,ans1,ans2))
+                end
+            end
             S:unlock('ab_help')
             S:unlock('ab_playing')
             S:unlock('ab_cd')
             S:unlock('ab_duplicate')
             D.lastInterectTime=Time()-cooldownSkip.giveup
-        elseif mes=='#ab' or mes=='#abhard' or mes=='#abhd' then
+        elseif mes=='#ab' or mes=='#abez' or mes=='#abeasy' or mes=='#ab简单' or mes=='#abhd' or mes=='#abhard' or mes=='#ab困难' then
             -- Start
-            if D.playing and Time()-D.lastInterectTime<600 then
+            local timeSkip=Time()-D.lastInterectTime
+            if D.playing and timeSkip<600 then
                 if S:lock('ab_playing',62) then
-                    S:send(text.notFinished.."\n"..D.textHis.."\n"..text.remain[D.mode]..D.chances)
+                    S:send(getRnd(text.notFinished).."\n"..D.textHis.."\n"..text.remain[D.mode=='hard' and #D.answer==1 and 'hardAlmost' or D.mode]..D.chances,'ab_guess')
                 end
                 return true
             end
-            if not Config.safeSessionID[S.uid] and S.group and not AdminMsg(M) and Time()-D.lastInterectTime<cooldown then
-                if S:lock('ab_cd',62) then
-                    S:send(STRING.repD("开始新游戏还要等$1秒喵",math.ceil(cooldown-(Time()-D.lastInterectTime))))
+            if not Config.safeSessionID[S.uid] and S.group and not AdminMsg(M) and timeSkip<cooldown then
+                local timeRemain=cooldown-timeSkip+10
+                if timeRemain<60 then
+                    if S:lock('ab_cd',26) then
+                        S:send(repD("再等$1秒就能开局了喵",math.ceil(timeRemain)))
+                    end
+                else
+                    if S:lock('ab_cd',62) then
+                        S:send(repD("$1等$2分钟才能再玩",getRnd(text.tooFreq),math.ceil(timeRemain/60)))
+                    end
                 end
                 return true
             end
             D.playing=true
-            D.mode=mes=='#ab' and 'easy' or 'hard'
+            D.mode=(mes:find("h") or mes:find("困"))  and 'hard' or 'easy'
             D.answer={}
             D.guessHis={}
             D.textHis=""
@@ -355,7 +397,7 @@ return {
                 local r=rules[math.random(#rules)]
                 local newAns={}
                 for i=1,#D.answer do
-                    if r.rule(table.concat(D.answer[i])) then
+                    if r.rule(concat(D.answer[i])) then
                         ins(newAns,D.answer[i])
                     end
                 end
@@ -366,7 +408,7 @@ return {
                 guess(D,g)
             end
             D.chances=5
-            S:send(text.start[D.mode].."\n"..D.textHis.."\n"..text.remain[D.mode]..D.chances,'ab_guess')
+            S:send(getRnd(text.start[D.mode]).."\n"..D.textHis.."\n"..text.remain[D.mode]..D.chances,'ab_guess')
             D.lastInterectTime=Time()
             return true
         elseif D.playing then
@@ -378,7 +420,7 @@ return {
             if res=='duplicate' then
                 -- Duplicate
                 if S:lock('ab_duplicate',12.6) then
-                    S:send(text.guessed)
+                    S:send(getRnd(text.guessed))
                 end
                 D.lastInterectTime=Time()
             else
@@ -390,77 +432,94 @@ return {
                 if res=='win' then
                     -- Win
                     D.playing=false
-                    S:send(D.textHis.."\n"..text.win[D.mode]..mes)
-                    S:unlock('ab_help')
-                    S:unlock('ab_playing')
-                    S:unlock('ab_cd')
-                    S:unlock('ab_duplicate')
-                    D.lastInterectTime=Time()-cooldownSkip.win
+                    local t=D.textHis.."\n"..text.win[D.mode]..mes
+                    local point=0
+                    if realWords[mes] then
+                        t=t.."\n"..repD(getRnd(text.realWord),realWords[mes])
+                        point=point+1
+                    end
                     if Config.extraData.family[S.uid] then
-                        local point=((score[D.mode][D.chances] or 2.6)+(D.mode=='easy' and 0.26 or 2)*math.random())/10
-                        local rewardType=MATH.randFreq{
+                        point=point+((score[D.mode][D.chances] or 2.6)+(D.mode=='easy' and 0.26 or 2)*math.random())/10
+                        local reward=MATH.randFreq{
                             MATH.lLerp(rewardList[1],point),
                             MATH.lLerp(rewardList[2],point),
                             MATH.lLerp(rewardList[3],point),
                             MATH.lLerp(rewardList[4],point),
                         }
-                        if rewardType==1 then
-                            S:send(CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages)))
-                        elseif rewardType==2 then
+                        if reward==1 then
+                            S:send(CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                        elseif reward==2 then
                             S:send(
-                                CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))..
-                                CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))
+                                CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages))..
+                                CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages))
                             )
-                        elseif rewardType==3 then
+                        elseif reward==3 then
                             S:send(
-                                CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))..
-                                CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))..
-                                CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))
+                                CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages))..
+                                CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages))..
+                                CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages))
                             )
-                        elseif rewardType==4 then
+                        elseif reward==4 then
                             S:send(
-                                CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))..
+                                CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages))..
                                 CQpic(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg')
                             )
                         end
+                        t=t.."\n"..("(%.2f)"):format(point)
                     end
+                    S:send(t)
+                    S:unlock('ab_help')
+                    S:unlock('ab_playing')
+                    S:unlock('ab_cd')
+                    S:unlock('ab_duplicate')
+                    D.lastInterectTime=Time()-cooldownSkip.win
                 elseif D.chances>0 then
                     -- Guess normally
                     if #D.guessHis==2 and D.mode=='easy' then
                         local possibleRules={}
-                        local ans=table.concat(D.answer)
+                        local ans=concat(D.answer)
                         for i=1,#rules do
                             if rules[i].rule(ans) then
                                 ins(possibleRules,rules[i])
                             end
                         end
                         if #possibleRules>0 then
-                            local r=TABLE.getRandom(possibleRules)
+                            local r=getRnd(possibleRules)
                             D.textHis=D.textHis.."\n"..r.text
-                            -- print(table.concat(D.answer))
+                            -- print(concat(D.answer))
                             -- for i=1,#possibleRules do
                             --     print(possibleRules[i].text)
                             -- end
                         end
                     end
-                    S:send(D.textHis.."\n"..text.remain[D.mode]..D.chances,'ab_guess')
+                    if S.group and Config.groupManaging[S.id] then
+                        Bot.deleteMsg(M.message_id)
+                    end
+                    S:send(D.textHis.."\n"..text.remain[D.mode=='hard' and #D.answer==1 and 'hardAlmost' or D.mode]..D.chances,'ab_guess')
                     D.lastInterectTime=Time()
                 else
                     -- Lose
                     D.playing=false
+                    local bonus
                     local t=D.textHis.."\n"
                     if D.mode=='easy' then
-                        t=t..STRING.repD(text.lose.easy,table.concat(D.answer))
+                        t=t..repD(text.lose.easy,concat(D.answer))
                     elseif #D.answer==1 then
-                        t=t..STRING.repD(text.lose.hardAlmost,table.concat(D.answer[1]))
+                        t=t..repD(text.lose.hardAlmost,concat(D.answer[1]))
                         if Config.extraData.family[S.uid] then
-                            t=t..CQpic(Config.extraData.touhouPath..TABLE.getRandom(Config.extraData.touhouImages))
+                            bonus=CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages))
                         end
                     else
-                        local ans1,ans2=table.concat(TABLE.popRandom(D.answer)),table.concat(TABLE.popRandom(D.answer))
-                        t=t..STRING.repD(text.lose.hard,ans1,ans2)
+                        local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))
+                        t=t..repD(text.lose.hard,ans1,ans2)
+                    end
+                    if S.group and Config.groupManaging[S.id] then
+                        Bot.deleteMsg(M.message_id)
                     end
                     S:send(t)
+                    if bonus then
+                        S:send(bonus)
+                    end
                     S:unlock('ab_help')
                     S:unlock('ab_playing')
                     S:unlock('ab_cd')
