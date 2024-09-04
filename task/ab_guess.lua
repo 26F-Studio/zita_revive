@@ -22,9 +22,9 @@ local score={
     hard={[0]=1,2,3,5,6},
 }
 local rewardList={
-    {98,56,31,10,05,00,00}, -- 1
-    {02,42,62,62,50,15,00}, -- 2
-    {00,02,06,26,42,80,92}, -- 3
+    {98,66,51,26,05,00,00}, -- 1
+    {02,32,42,62,50,15,00}, -- 2
+    {00,02,06,10,42,80,92}, -- 3
     {00,00,01,02,03,05,08}, -- 1+1
 }
 local text={
@@ -42,9 +42,9 @@ local text={
         hard={"四个块想好了！不会变的喵！","四个块想好了！真的想好了喵！"},
     },
     remain={
-        easy="剩余机会:",
-        hardAlmost="[HD]剩余机会!",
-        hard="[HD]剩余机会:",
+        easy="剩余机会:$1",
+        hardAlmost="[HD]剩余机会:$1!",
+        hard="[HD]剩余机会:$1",
     },
     win={
         easy="猜对了喵！答案是",
@@ -101,7 +101,7 @@ local rules={
     },
     {
         id=7,
-        text="<至少三块包含排成直线的三小格>",
+        text="<至少三块包含排成直线的三格>",
         rule=function(seq)
             return count(seq,'[JLTI]')>=3
         end,
@@ -123,7 +123,7 @@ local rules={
     },
     { -- SZJL中最多有两个
         id=11,
-        text="<能够spinPC的块不超过两个>",
+        text="<能spinPC的块不超过两个>",
         rule=function(seq) return count(seq,'[SZJL]')<=2 end,
     },
     {
@@ -323,6 +323,18 @@ local function guess(D,g)
     D.textHis=D.textHis..toFullwidth(concat(g)).." "..res
     if res=='4A0B' then return 'win' end
 end
+local function sendMes(S,M,D,mode)
+    local t="[CQ:at,qq="..M.user_id.."]\n"
+    if mode=='notFinished' then
+        t=t..getRnd(text.notFinished).."\n"
+    elseif mode=='start' then
+        t=t..getRnd(text.start[D.mode]).."\n"
+    end
+    t=t..D.textHis.."\n"
+    if D.privOwner then t=t.."#" end
+    t=t..text.remain[D.mode=='hard' and #D.answer==1 and 'hardAlmost' or D.mode]..D.chances
+    S:send(t,'ab_guess')
+end
 
 ---@type Task_raw
 return {
@@ -380,7 +392,7 @@ return {
                     end
                 else
                     local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))
-                    S:send(repD(text.forfeit.hard,ans1,ans2,#D.answer))
+                    S:send(repD(text.forfeit.hard,ans1,ans2,#D.answer+2))
                 end
             end
             S:unlock('ab_help')
@@ -393,7 +405,7 @@ return {
             local timeSkip=Time()-D.lastInterectTime
             if D.playing and timeSkip<600 then
                 if S:lock('ab_playing',62) then
-                    S:send(getRnd(text.notFinished).."\n"..D.textHis.."\n"..(D.privOwner and "*" or "")..text.remain[D.mode=='hard' and #D.answer==1 and 'hardAlmost' or D.mode]..D.chances,'ab_guess')
+                    sendMes(S,M,D,'notFinished')
                 end
                 return true
             end
@@ -453,7 +465,7 @@ return {
                 guess(D,g)
             end
             D.chances=5
-            S:send(getRnd(text.start[D.mode]).."\n"..D.textHis.."\n"..text.remain[D.mode]..D.chances,'ab_guess')
+            sendMes(S,M,D,'start')
             D.lastInterectTime=Time()
             return true
         elseif D.playing then
@@ -491,7 +503,7 @@ return {
                         point=point+1
                     end
                     if Config.extraData.family[S.uid] then
-                        point=point+((score[D.mode][D.chances] or 2.6)+(D.mode=='easy' and 0.26 or 2)*math.random())/10
+                        point=point+(score[D.mode][D.chances] or 2.6)+(D.mode=='easy' and 0.26 or 1.26)*math.random()
                         local reward=MATH.randFreq{
                             MATH.lLerp(rewardList[1],point),
                             MATH.lLerp(rewardList[2],point),
@@ -547,7 +559,7 @@ return {
                     if S.group and Config.groupManaging[S.id] then
                         Bot.deleteMsg(M.message_id,26)
                     end
-                    S:send(D.textHis.."\n"..text.remain[D.mode=='hard' and #D.answer==1 and 'hardAlmost' or D.mode]..D.chances,'ab_guess')
+                    sendMes(S,M,D,'normal')
                     D.lastInterectTime=Time()
                 else
                     -- Lose
@@ -564,7 +576,7 @@ return {
                         end
                     else
                         local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))
-                        t=t..repD(text.lose.hard,ans1,ans2,#D.answer)
+                        t=t..repD(text.lose.hard,ans1,ans2,#D.answer+2)
                     end
                     if S.group and Config.groupManaging[S.id] then
                         Bot.deleteMsg(M.message_id,26)
