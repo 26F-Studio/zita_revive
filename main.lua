@@ -427,10 +427,12 @@ function Session:delete(id,echo)
     Bot.deleteMsg(id)
 end
 
+---Notice that time must be less than 86400 (1 day)
 ---@param time number|nil
 ---@param text string
 ---@param echo? string
 function Session:delaySend(time,text,echo)
+    if time and time>86400 then return end
     if time==nil then time=.26+math.random() elseif time<=0 then return self:delete(id,echo) end
     if echo then echo=self.uid..':'..echo end
     if self.priv then
@@ -439,10 +441,12 @@ function Session:delaySend(time,text,echo)
         self:_timeTask('send',time,{text,self.id,nil,echo})
     end
 end
+---Notice that time must be less than 86400 (1 day)
 ---@param time number
 ---@param id number
 ---@param echo? string
 function Session:delayDelete(time,id,echo)
+    if time and time>86400 then return end
     if time==nil then time=.26+math.random() elseif time<=0 then return self:delete(id,echo) end
     if echo then echo=self.uid..':'..echo end
     self:_timeTask('delete',time,{id,echo})
