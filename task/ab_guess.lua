@@ -43,8 +43,8 @@ local text={
     },
     remain={
         easy="剩余机会:$1",
-        hardAlmost="[HD]剩余机会:$1!",
         hard="[HD]剩余机会:$1",
+        hardAlmost="[HD]剩余机会:$1!",
     },
     win={
         easy="猜对了喵！答案是",
@@ -52,13 +52,13 @@ local text={
     },
     lose={
         easy="机会用完了喵…答案是$1",
-        hardAlmost="答案是$1，差一点点就猜对了喵~",
         hard="哼哼，没猜出来喵~刚好我也忘了想的是$1还是$2了 欸嘿($3)",
+        hardAlmost="答案是$1，差一点点就猜对了喵~",
     },
     forfeit={
         easy="想不出来了喵？答案是$1",
-        hardAlmost="诶？！好吧…答案是$1",
         hard="认输了喵？刚好我也忘了想的是$1还是$2啦($3)",
+        hardAlmost="诶？！好吧…答案是$1",
     },
 }
 local realWords={JOLT="GRE",LIST="CET4",LOLL="GRE",LOSS="CET4",SILL="GRE",SILT="GRE",SLIT="CET4",SLOT="GRE",SOIL="CET4",SOLO="CET6",SOOT="GRE",TILL="CET4",TILT="CET6",TOIL="GRE",TOLL="GRE",TOOL="CET4",TOSS="CET4"}
@@ -527,7 +527,7 @@ return {
                             S:delaySend(0,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
                             S:delaySend(1,CQpic(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg'))
                         end
-                        t=t.."\n"..("(%.2f)"):format(point)
+                        t=t.."\n"..("(%.2f|%d)"):format(point,reward)
                     end
                     S:send(t)
                     S:unlock('ab_help')
