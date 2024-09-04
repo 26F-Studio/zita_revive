@@ -467,6 +467,9 @@ return {
             end
             D.chances=5
             sendMes(S,M,D,'start')
+            if S.group and Config.groupManaging[S.id] then
+                S:delayDelete(6.26,M.message_id)
+            end
             D.lastInterectTime=Time()
             return true
         elseif D.playing then
