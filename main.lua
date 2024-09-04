@@ -468,7 +468,7 @@ function Session:_timeTask(action,time,data)
         end
         insPos=i
     end
-    ins(queue,insPos,{
+    ins(queue,insPos or #queue+1,{
         time=time,
         func=
             action=='send' and Bot.sendMsg or
@@ -476,7 +476,6 @@ function Session:_timeTask(action,time,data)
             print("Invalid action: "..tostring(action)) or NULL,
         data=data,
     })
-    print("#Queue:"..#queue)
 end
 
 ---@type table<string, Session>
