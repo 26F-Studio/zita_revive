@@ -1567,7 +1567,7 @@ local game={
 ---@type ZictEntry[]
 local extra_tetrio={
     {
-        word="qp2;io s2",
+        word="qp2;io s2;爬塔;zenith;zenith tower",
         title="Tetr.io QP2",
         text="随开随打不需要等待的第二代快速游戏，发送攻击打败对手来爬升高度达到 #十层 ！\n另见 #Surge #推进器 #速通模式 #疲劳时间 #QP2 Mod",
         link="github.com/MrZ626/io_qp2_rule",
