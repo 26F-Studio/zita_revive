@@ -509,9 +509,9 @@ function scene.update()
         if not TASK.getLock('bot_running') then
             TASK.lock('bot_running')
             print("CONNECTED")
-            if TABLE.find(arg,"startWithNotice") then
-                Bot.adminNotice(Bot.stat.connectAttempts==1 and "小z启动了喵！" or STRING.repD("小z回来了喵…（第$1次）",Bot.stat.connectAttempts))
-            end
+            -- if TABLE.find(arg,"startWithNotice") then
+            --     Bot.adminNotice(Bot.stat.connectAttempts==1 and "小z启动了喵！" or STRING.repD("小z回来了喵…（第$1次）",Bot.stat.connectAttempts))
+            -- end
         end
         if TASK.lock('bot_timing',1) then
             while true do
