@@ -323,6 +323,7 @@ local function guess(D,g)
     D.textHis=D.textHis..toFullwidth(concat(g)).." "..res
     if res=='4A0B' then return 'win' end
 end
+---@param S Session
 local function sendMes(S,M,D,mode)
     local t="[CQ:at,qq="..M.user_id.."]\n"
     if mode=='notFinished' then
@@ -332,7 +333,7 @@ local function sendMes(S,M,D,mode)
     end
     t=t..D.textHis.."\n"
     if D.privOwner then t=t.."#" end
-    t=t..text.remain[D.mode=='hard' and #D.answer==1 and 'hardAlmost' or D.mode]..D.chances
+    t=t..repD(text.remain[D.mode=='hard' and #D.answer==1 and 'hardAlmost' or D.mode],D.chances)
     S:send(t,'ab_guess')
 end
 
@@ -489,7 +490,7 @@ return {
             else
                 -- Available guess
                 if S.echos.ab_guess and S.echos.ab_guess.message_id then
-                    Bot.deleteMsg(S.echos.ab_guess.message_id)
+                    S:delete(S.echos.ab_guess.message_id)
                     S.echos.ab_guess=nil
                 end
                 if res=='win' then
@@ -511,23 +512,17 @@ return {
                             MATH.lLerp(rewardList[4],point),
                         }
                         if reward==1 then
-                            S:send(CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                            S:delaySend(0,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
                         elseif reward==2 then
-                            S:send(
-                                CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages))..
-                                CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages))
-                            )
+                            S:delaySend(0,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                            S:delaySend(1,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
                         elseif reward==3 then
-                            S:send(
-                                CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages))..
-                                CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages))..
-                                CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages))
-                            )
+                            S:delaySend(0,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                            S:delaySend(1,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                            S:delaySend(2,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
                         elseif reward==4 then
-                            S:send(
-                                CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages))..
-                                CQpic(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg')
-                            )
+                            S:delaySend(0,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                            S:delaySend(1,CQpic(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg'))
                         end
                         t=t.."\n"..("(%.2f)"):format(point)
                     end
@@ -557,7 +552,7 @@ return {
                         end
                     end
                     if S.group and Config.groupManaging[S.id] then
-                        Bot.deleteMsg(M.message_id,26)
+                        S:delayDelete(26,M.message_id)
                     end
                     sendMes(S,M,D,'normal')
                     D.lastInterectTime=Time()
@@ -579,7 +574,7 @@ return {
                         t=t..repD(text.lose.hard,ans1,ans2,#D.answer+2)
                     end
                     if S.group and Config.groupManaging[S.id] then
-                        Bot.deleteMsg(M.message_id,26)
+                        S:delayDelete(26,M.message_id)
                     end
                     S:send(t)
                     if bonus then

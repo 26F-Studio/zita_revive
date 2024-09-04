@@ -70,7 +70,6 @@ Bot={
     taskGroup={
         {'log',-100},
         {'admin_control',-99},
-        {'group_safe',-26},
         {'help_public',1},
         {'response',2},
         {'ab_guess',3},
@@ -142,36 +141,13 @@ function Bot.sendMsg(message,group,user,echo)
     end
 end
 ---@param mes_id number
----@param time? number
-function Bot.deleteMsg(mes_id,time)
-    if not time or time<=0 then
-        Bot._send{
-            action='delete_msg',
-            params={
-                message_id=mes_id,
-            },
-        }
-    else
-        time=Time()+time
-        local queue=Bot.msgDelQueue
-        if not queue[1] or time<queue[1].time then
-            ins(queue,1,{id=mes_id,time=time})
-        elseif time>queue[#queue].time then
-            ins(queue,{id=mes_id,time=time})
-        else
-            local i,j=1,#queue
-            local insPos
-            while i<=j do
-                local m=math.floor((i+j)/2)
-                if queue[m].time>time then
-                    j=m-1
-                else
-                    i=m+1
-                end
-            end
-            ins(queue,i,{id=mes_id,time=time})
-        end
-    end
+function Bot.deleteMsg(mes_id)
+    Bot._send{
+        action='delete_msg',
+        params={
+            message_id=mes_id,
+        },
+    }
 end
 ---@param group_id number
 ---@param user_id number
@@ -433,18 +409,76 @@ function Session:receive(M)
         end
     end
 end
+
 ---@param text string
 ---@param echo? string
 function Session:send(text,echo)
-    if echo then
-        echo=self.uid..':'..echo
-    end
+    if echo then echo=self.uid..':'..echo end
     if self.priv then
         Bot.sendMsg(text,nil,self.id,echo)
     else
         Bot.sendMsg(text,self.id,nil,echo)
     end
 end
+---@param id number
+---@param echo? string
+function Session:delete(id,echo)
+    if echo then echo=self.uid..':'..echo end
+    Bot.deleteMsg(id)
+end
+
+---@param time number|nil
+---@param text string
+---@param echo? string
+function Session:delaySend(time,text,echo)
+    if time==nil then time=.26+math.random() elseif time<=0 then return self:delete(id,echo) end
+    if echo then echo=self.uid..':'..echo end
+    if self.priv then
+        self:_timeTask('send',time,{text,nil,self.id,echo})
+    else
+        self:_timeTask('send',time,{text,self.id,nil,echo})
+    end
+end
+---@param time number
+---@param id number
+---@param echo? string
+function Session:delayDelete(time,id,echo)
+    if time==nil then time=.26+math.random() elseif time<=0 then return self:delete(id,echo) end
+    if echo then echo=self.uid..':'..echo end
+    self:_timeTask('delete',time,{id,echo})
+end
+---@param action 'send'|'delete'
+---@param time number
+---@param data any[]
+function Session:_timeTask(action,time,data)
+    time=Time()+time
+    local queue=Bot.msgDelQueue
+    local insPos
+    if not queue[1] or time<queue[1].time then
+        insPos=1
+    elseif time<queue[#queue].time then
+        local i,j=1,#queue
+        while i<=j do
+            local m=math.floor((i+j)/2)
+            if queue[m].time>time then
+                j=m-1
+            else
+                i=m+1
+            end
+        end
+        insPos=i
+    end
+    ins(queue,insPos,{
+        time=time,
+        func=
+            action=='send' and Bot.sendMsg or
+            action=='delete' and Bot.deleteMsg or
+            print("Invalid action: "..tostring(action)) or NULL,
+        data=data,
+    })
+    print("#Queue:"..#queue)
+end
+
 ---@type table<string, Session>
 SessionMap={}
 --------------------------------------------------------------
@@ -479,11 +513,11 @@ function scene.update()
                 Bot.adminNotice(Bot.stat.connectAttempts==1 and "小z启动了喵！" or STRING.repD("小z回来了喵…（第$1次）",Bot.stat.connectAttempts))
             end
         end
-        if TASK.lock('bot_deleteMsg',1) then
+        if TASK.lock('bot_timing',1) then
             while true do
                 local m=Bot.msgDelQueue[1]
                 if not m or Time()<m.time then break end
-                Bot.deleteMsg(m.id)
+                m.func(unpack(m.data))
                 rem(Bot.msgDelQueue,1)
             end
         end

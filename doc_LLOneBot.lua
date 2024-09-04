@@ -42,6 +42,10 @@
 ---@field type 'at'
 ---@field data {qq:number,name:string}
 
+---@class Segment.Reply : Segment
+---@field type 'reply'
+---@field data {id:number}
+
 ---@class LLOneBot.Event.PrivateMessage : LLOneBot.Event.Base
 ---@field post_type 'message'
 ---@field message_type 'private'
