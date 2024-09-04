@@ -1,6 +1,7 @@
 Time=love.timer.getTime
 love._openConsole()
 --------------------------------------------------------------
+local ins,rem=table.insert,table.remove
 require'Zenitha'
 ZENITHA.setMaxFPS(30)
 ZENITHA.setDrawFreq(10)
@@ -76,6 +77,7 @@ Bot={
         {'zictionary',4},
         {'repeater',100},
     },
+    msgDelQueue={},
     stat={
         connectAttempts=0,
         launchTime=Time(),
@@ -139,13 +141,37 @@ function Bot.sendMsg(message,group,user,echo)
         Bot.stat.totalMessageSent=Bot.stat.totalMessageSent+1
     end
 end
-function Bot.deleteMsg(mes_id)
-    Bot._send{
-        action='delete_msg',
-        params={
-            message_id=mes_id,
-        },
-    }
+---@param mes_id number
+---@param time? number
+function Bot.deleteMsg(mes_id,time)
+    if not time or time<=0 then
+        Bot._send{
+            action='delete_msg',
+            params={
+                message_id=mes_id,
+            },
+        }
+    else
+        time=Time()+time
+        local queue=Bot.msgDelQueue
+        if not queue[1] or time<queue[1].time then
+            ins(queue,1,{id=mes_id,time=time})
+        elseif time>queue[#queue].time then
+            ins(queue,{id=mes_id,time=time})
+        else
+            local i,j=1,#queue
+            local insPos
+            while i<=j do
+                local m=math.floor((i+j)/2)
+                if queue[m].time>time then
+                    j=m-1
+                else
+                    i=m+1
+                end
+            end
+            ins(queue,i,{id=mes_id,time=time})
+        end
+    end
 end
 ---@param group_id number
 ---@param user_id number
@@ -174,11 +200,6 @@ end
 function Bot.stop(time)
     TASK.forceLock('bot_lock',time or 600)
     ws:close()
-end
-
-function Bot.help()
-    local cmds=TABLE.getKeys(Bot)
-    table.sort(cmds)
 end
 
 ---@return true? #if any message processed
@@ -309,7 +330,7 @@ function Session:newTask(id,prio)
         end
     end
     if not insPos then insPos=#self.taskList+1 end
-    table.insert(self.taskList,insPos,{
+    ins(self.taskList,insPos,{
         prio=prio,
         id=id,
         func=task.func,
@@ -322,7 +343,7 @@ function Session:removeTask_id(id)
     for i=1,#self.taskList do
         if self.taskList[i].id==id then
             print("Task removed: "..id)
-            table.remove(self.taskList,i)
+            rem(self.taskList,i)
             return
         end
     end
@@ -456,6 +477,14 @@ function scene.update()
             print("CONNECTED")
             if TABLE.find(arg,"startWithNotice") then
                 Bot.adminNotice(Bot.stat.connectAttempts==1 and "小z启动了喵！" or STRING.repD("小z回来了喵…（第$1次）",Bot.stat.connectAttempts))
+            end
+        end
+        if TASK.lock('bot_deleteMsg',1) then
+            while true do
+                local m=Bot.msgDelQueue[1]
+                if not m or Time()<m.time then break end
+                Bot.deleteMsg(m.id)
+                rem(Bot.msgDelQueue,1)
             end
         end
         repeat until not Bot._update()

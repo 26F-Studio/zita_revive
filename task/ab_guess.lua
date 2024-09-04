@@ -545,7 +545,7 @@ return {
                         end
                     end
                     if S.group and Config.groupManaging[S.id] then
-                        Bot.deleteMsg(M.message_id)
+                        Bot.deleteMsg(M.message_id,26)
                     end
                     S:send(D.textHis.."\n"..text.remain[D.mode=='hard' and #D.answer==1 and 'hardAlmost' or D.mode]..D.chances,'ab_guess')
                     D.lastInterectTime=Time()
@@ -567,7 +567,7 @@ return {
                         t=t..repD(text.lose.hard,ans1,ans2,#D.answer)
                     end
                     if S.group and Config.groupManaging[S.id] then
-                        Bot.deleteMsg(M.message_id)
+                        Bot.deleteMsg(M.message_id,26)
                     end
                     S:send(t)
                     if bonus then
