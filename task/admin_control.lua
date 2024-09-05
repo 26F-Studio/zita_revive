@@ -186,22 +186,28 @@ return {
                 local args=STRING.split(mes,' ')
                 local cmd=table.remove(args,1)
                 local C=commands[cmd]
-                if not C then return true end
-                if level<C.level then noPermission(S) return true end
-                C.func(S,args)
+                if C then
+                    if level>=C.level then
+                        C.func(S,args)
+                    else
+                        noPermission(S)
+                    end
+                end
                 return true
             end
-        elseif #M.message==2 then
-            if
-                M.message[1].type=='reply' and
-                M.message[2].type=='text' and M.message[2].data.text=='%del'
-            then
-                if level<2 then noPermission(S) return true end
-                S:delete(M.message[1].data.id)
-                S:delete(M.message_id)
-                return true
+            return false
+        elseif M.message[1].type=='reply' and Config.groupManaging[S.id] then
+            if M.raw_message:find('%del',nil,true) then
+                if level>=2 then
+                    S:delete(tonumber(M.message[1].data.id))
+                    S:delete(M.message_id)
+                else
+                    noPermission(S)
+                end
             end
+            return false
+        else
+            return false
         end
-        return false
     end,
 }
