@@ -18,7 +18,7 @@ local delays={
     del_normal=false,
     del_win=false,
     del_lose=false,
-    del_question=2.6,
+    del_question=26,
     send_reward=1,
 }
 local hdWeights={
@@ -33,11 +33,24 @@ local score={
     hard={[0]=1,2,3,5,6},
 }
 local rewardList={
-    {98,66,51,26,05,00,00}, -- 1
-    {02,32,42,62,50,15,00}, -- 2
-    {00,02,06,10,42,80,92}, -- 3
+    {98,56,31,10,05,00,00}, -- 1
+    {02,42,62,62,50,15,00}, -- 2
+    {00,02,06,26,42,80,92}, -- 3
     {00,00,01,02,03,05,08}, -- 1+1
 }
+-- for point=0,4,0.1 do
+--     local sum=0
+--     for _=1,1e4 do
+--         sum=sum+MATH.randFreq{
+--             MATH.lLerp(rewardList[1],point/6),
+--             MATH.lLerp(rewardList[2],point/6),
+--             MATH.lLerp(rewardList[3],point/6),
+--             MATH.lLerp(rewardList[4],point/6),
+--         }
+--     end
+--     sum=sum/1e4
+--     print(point,sum)
+-- end
 local text={
     help="AB猜方块：有一组四个不同的方块，玩家猜测后会提示几A几B，A是存在且位置也对，B是存在但位置不对\n#ab普通开始，#abandon放弃，##ab勿扰模式，#abhd困难模式（允许每种块出现两次，ZJJO猜ZJZJ会得到2A2B，数量溢出也给B计数）",
     guessed={"这组块已经猜过了喵","已经猜过这个了喵"},
@@ -355,6 +368,7 @@ local function sendMes(S,M,D,mode)
         end
         if Config.extraData.family[S.uid] then
             point=point+(score[D.mode][D.chances] or 2.6)+(D.mode=='easy' and 0.26 or 1.26)*math.random()
+            point=point/6
             local reward=MATH.randFreq{
                 MATH.lLerp(rewardList[1],point),
                 MATH.lLerp(rewardList[2],point),
