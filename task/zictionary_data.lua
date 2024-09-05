@@ -1240,7 +1240,7 @@ local game={
         cat='game',
         word="kos;king of stackers",
         title="King of Stackers",
-        text="简称KoS 非官块 网页 多人为主 有单机 音画廉价 电脑+手机理论可玩\n主要玩法类似下棋，每个人以7块为一个回合轮流操作，策略性很强",
+        text="简称KoS 非官块 网页 主联机有单机 音画廉价 电脑+手机理论可玩\n主要玩法类似下棋，每个人以7块为一个回合轮流操作，策略性很强",
         link="kingofstackers.com/games.php",
     },
     {
@@ -1274,14 +1274,14 @@ local game={
         cat='game',
         word="io;tetrio;tetr.io",
         title="TETR.IO",
-        text="简称IO 非官块 网页但建议下载 多人为主 有单机 音画优秀 电脑 会员付费 有自定义\n应该是目前全世界在线人数最多的现代块游戏\n另见#io s2",
+        text="简称IO 非官块 网页但建议下载 主联机有单机 音画优秀 电脑 会员付费 有自定义\n应该是目前全世界在线人数最多的现代块游戏\n另见#io qp2",
         link="tetr.io",
     },
     {
         cat='game',
         word="js;jstris",
         title="Jstris",
-        text="简称JS，非官块，网页，单机联机都有，音画廉价，电脑+手机，有自定义，代码可扩展",
+        text="简称JS 非官块 网页 单机联机都有 音画廉价 电脑+手机 有自定义 代码可扩展",
         link="jstris.jezevec10.com",
     },
     {
@@ -1300,7 +1300,7 @@ local game={
     },
     {
         cat='game',
-        word="tf;tetris friends",
+        word="tf;tetris friends;notris;notrisfoes",
         title="Tetris Friends",
         text="简称TF 私服 官块 网页 单机联机都有 音画优秀 电脑 部分改键 半可调控制\n以前人比较多，后来官服倒闭了热度没了",
         link="私服notrisfoes.com",
@@ -1410,19 +1410,19 @@ local game={
         cat='game',
         word="t99;tetris 99",
         title="Tetris 99",
-        text="简称T99 官块 要下载 多人为主 有单机 音画优秀 主机 部分改键 不可调控制 正版付费\n主打99人混战的吃鸡模式，也有一些常用单机模式如马拉松等",
+        text="简称T99 官块 要下载 主联机有单机 音画优秀 主机 部分改键 不可调控制 正版付费\n主打99人混战的吃鸡模式，也有一些常用单机模式如马拉松等",
     },
     {
         cat='game',
         word="ppt;puyo puyo tetris",
         title="Puyo Puyo Tetris",
-        text="简称PPT 官块 要下载 多人为主 有单机 音画优秀 电脑 不可调控制 正版付费\n包含Tetris和PuyoPuyo两个下落消除游戏，二者间可以对战\n注：PPT2的手感据很多人说都不行",
+        text="简称PPT 官块 要下载 主联机有单机 音画优秀 电脑 不可调控制 正版付费\n包含Tetris和PuyoPuyo两个下落消除游戏，二者间可以对战\n注：PPT2的手感据很多人说都不行",
     },
     {
         cat='game',
         word="to;top;toj;tos;tetris online",
         title="Tetris Online",
-        text="简称TO 私服 官块 要下载 多人为主 有单机 音画优秀 电脑 半可调控制\n主要用来6人内对战/单挑/刷每日40L榜/挖掘模式/打机器人",
+        text="简称TO 私服 官块 要下载 主联机有单机 音画优秀 电脑 半可调控制\n主要用来6人内对战/单挑/刷每日40L榜/挖掘模式/打机器人",
         detail="现在还开着的服务器有：TO-P（波兰服，服务器在波兰，可能会卡顿）；TO-S（研究服，研究群群友自己开的服更稳定）"
     },
     {
@@ -1448,6 +1448,13 @@ local game={
         word="sd;spirit drop",
         title="Spirit Drop",
         text="非官块 要下载 主单机有联机 音画优秀 电脑 有自定义\n除了几个主模式外还有一个变革模式包含几十个创意规则可挑战",
+        link="rayblastgames.com/spiritdrop.php",
+    },
+    {
+        cat='game',
+        word="chextris",
+        title="Chextris",
+        text="非官块 要下载 有单机 音画优秀 电脑 有自定义\n除了几个主模式外还有一个变革模式包含几十个创意规则可挑战",
         link="rayblastgames.com/spiritdrop.php",
     },
     {
@@ -1561,14 +1568,14 @@ local game={
         cat='game',
         word="火拼;火拼俄罗斯",
         title="火拼俄罗斯",
-        text="非官块 要下载 多人为主 有单机 音画廉价 电脑 不可改键 不可调控制\n腾讯游戏大厅的方块，12宽场地的经典块，攻击方式只有消4打3和消3打2，垃圾行为国际象棋棋盘式，几乎不可能挖掘",
+        text="非官块 要下载 主联机有单机 音画廉价 电脑 不可改键 不可调控制\n腾讯游戏大厅的方块，12宽场地的经典块，攻击方式只有消4打3和消3打2，垃圾行为国际象棋棋盘式，几乎不可能挖掘",
     },
 }
 ---@type ZictEntry[]
 local extra_tetrio={
     {
-        word="qp2;io s2;爬塔;zenith;zenith tower",
-        title="Tetr.io QP2",
+        word="qp2;io qp2;io s2;爬塔;zenith;zenith tower",
+        title="TETR.IO QP2",
         text="随开随打不需要等待的第二代快速游戏，发送攻击打败对手来爬升高度达到 #十层 ！\n另见 #Surge #推进器 #速通模式 #疲劳时间 #QP2 Mod",
         link="github.com/MrZ626/io_qp2_rule",
     },
@@ -1580,7 +1587,7 @@ local extra_tetrio={
     {
         word="surge;surge b2b",
         title="Surge B2B",
-        text="充能B2B系统，达到b2b×4然后中断时会打出一发和b2b数同样的超大攻击（分成三节）\n目前Tetr.io的TL第二赛季和QP2都使用此新系统（QP中参数略不同）",
+        text="充能B2B系统，达到b2b×4然后中断时会打出一发和b2b数同样的超大攻击（分成三节）\n目前TETR.IO的TL第二赛季和QP2都使用此新系统（QP中参数略不同）",
     },
     {
         word="推进器",
@@ -1745,15 +1752,15 @@ local contributor={
     },
     {
         word="osk",
-        text="OSK，创立了Tetr.io",
+        text="OSK，创立了TETR.IO",
     },
     {
         word="Dr.ocelot;Dr ocelot;ocelot",
-        text="Dr.Ocelot，制作了Tetr.io的音频，编写了QP2模式的所有音乐",
+        text="Dr.Ocelot，制作了TETR.IO的音频，编写了QP2模式的所有音乐",
     },
     {
         word="garbo",
-        text="Garbo，设计了Tetr.io的游戏玩法和世界观相关内容",
+        text="Garbo，设计了TETR.IO的游戏玩法和世界观相关内容",
     },
     {
         word="Minus Kelvin;MinusK",
