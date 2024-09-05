@@ -10,6 +10,17 @@ for k,v in next,{
     lose=1200,
     giveup=1620,
 } do cooldownSkip[k]=cooldown-v end
+local delays={
+    del_help=2.6,
+    del_abandon=6.26,
+    del_start=6.26,
+    del_duplicate=6.26,
+    del_normal=26,
+    del_win=26,
+    del_lose=26,
+    del_question=2.6,
+    send_reward=1,
+}
 local hdWeights={
     {2,5,3},
     {3,5,2},
@@ -334,7 +345,7 @@ local function sendMes(S,M,D,mode)
     t=t..D.textHis.."\n"
     if D.privOwner then t=t.."#" end
     t=t..repD(text.remain[D.mode=='hard' and #D.answer==1 and 'hardAlmost' or D.mode],D.chances)
-    S:send(t,'ab_guess')
+    S:send(t,'abguess')
 end
 
 ---@type Task_raw
@@ -366,6 +377,9 @@ return {
         if mes=='#abhelp' or mes=='#about' or mes=='#ab帮助' or mes=='#ab说明' then
             if S:lock('ab_help',26) then
                 S:send(text.help)
+            end
+            if Config.groupManaging[S.id] then
+                S:delayDelete(delays.del_help,M.message_id)
             end
             return true
         elseif mes=='#abandon' then
@@ -401,6 +415,10 @@ return {
             S:unlock('ab_cd')
             S:unlock('ab_duplicate')
             D.lastInterectTime=Time()-cooldownSkip.giveup
+            if Config.groupManaging[S.id] then
+                S:delayDelete(delays.del_abandon,M.message_id)
+            end
+            return true
         elseif mes=='#ab' or mes=='#abez' or mes=='#abeasy' or mes=='#ab简单' or mes=='#abhd' or mes=='#abhard' or mes=='#ab困难' then
             -- Start
             local timeSkip=Time()-D.lastInterectTime
@@ -467,10 +485,10 @@ return {
             end
             D.chances=5
             sendMes(S,M,D,'start')
-            if S.group and Config.groupManaging[S.id] then
-                S:delayDelete(6.26,M.message_id)
-            end
             D.lastInterectTime=Time()
+            if Config.groupManaging[S.id] then
+                S:delayDelete(delays.del_start,M.message_id)
+            end
             return true
         elseif D.playing then
             if mes:sub(1,3)=='#ab' then mes=mes:sub(4) end
@@ -486,15 +504,20 @@ return {
             local res=guess(D,{mes:sub(1,1),mes:sub(2,2),mes:sub(3,3),mes:sub(4,4)})
             if res=='duplicate' then
                 -- Duplicate
+                local mesID='abguess_duplicate_'..math.random(262626,626262)
                 if S:lock('ab_duplicate',12.6) then
-                    S:send(getRnd(text.guessed))
+                    S:send(getRnd(text.guessed),mesID)
                 end
                 D.lastInterectTime=Time()
+                if Config.groupManaging[S.id] then
+                    S:delayDelete(delays.del_duplicate,mesID)
+                    S:delayDelete(delays.del_duplicate,M.message_id)
+                end
             else
                 -- Available guess
-                if S.echos.ab_guess and S.echos.ab_guess.message_id then
-                    S:delete(S.echos.ab_guess.message_id)
-                    S.echos.ab_guess=nil
+                if S.echos.abguess then
+                    S:delayDelete(delays.del_question,S.echos.abguess.message_id)
+                    S.echos.abguess=nil
                 end
                 if res=='win' then
                     -- Win
@@ -515,17 +538,17 @@ return {
                             MATH.lLerp(rewardList[4],point),
                         }
                         if reward==1 then
-                            S:delaySend(0,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                            S:delaySend(0*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
                         elseif reward==2 then
-                            S:delaySend(0,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
-                            S:delaySend(1,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                            S:delaySend(0*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                            S:delaySend(1*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
                         elseif reward==3 then
-                            S:delaySend(0,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
-                            S:delaySend(1,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
-                            S:delaySend(2,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                            S:delaySend(0*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                            S:delaySend(1*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                            S:delaySend(2*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
                         elseif reward==4 then
-                            S:delaySend(0,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
-                            S:delaySend(1,CQpic(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg'))
+                            S:delaySend(0*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                            S:delaySend(1*delays.send_reward,CQpic(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg'))
                         end
                         t=t.."\n"..("(%.2f|%d)"):format(point,reward)
                     end
@@ -535,6 +558,9 @@ return {
                     S:unlock('ab_cd')
                     S:unlock('ab_duplicate')
                     D.lastInterectTime=Time()-cooldownSkip.win
+                    if Config.groupManaging[S.id] then
+                        S:delayDelete(delays.del_win,M.message_id)
+                    end
                 elseif D.chances>0 then
                     -- Guess normally
                     if #D.guessHis==2 and D.mode=='easy' then
@@ -554,11 +580,11 @@ return {
                             -- end
                         end
                     end
-                    if S.group and Config.groupManaging[S.id] then
-                        S:delayDelete(26,M.message_id)
-                    end
                     sendMes(S,M,D,'normal')
                     D.lastInterectTime=Time()
+                    if Config.groupManaging[S.id] then
+                        S:delayDelete(delays.del_normal,M.message_id)
+                    end
                 else
                     -- Lose
                     D.playing=false
@@ -576,9 +602,6 @@ return {
                         local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))
                         t=t..repD(text.lose.hard,ans1,ans2,#D.answer+2)
                     end
-                    if S.group and Config.groupManaging[S.id] then
-                        S:delayDelete(26,M.message_id)
-                    end
                     S:send(t)
                     if bonus then
                         S:send(bonus)
@@ -588,10 +611,14 @@ return {
                     S:unlock('ab_cd')
                     S:unlock('ab_duplicate')
                     D.lastInterectTime=Time()-cooldownSkip.lose
+                    if Config.groupManaging[S.id] then
+                        S:delayDelete(delays.del_lose,M.message_id)
+                    end
                 end
             end
             return true
+        else
+            return false
         end
-        return false
     end,
 }

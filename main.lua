@@ -286,6 +286,9 @@ function Session.new(id,priv)
     end
     return s
 end
+function Session:isAlive()
+    if SessionMap[self.uid] then return true end
+end
 
 ---@param id string Task name
 ---@param prio number Task priority
@@ -413,6 +416,7 @@ end
 ---@param text string
 ---@param echo? string
 function Session:send(text,echo)
+    if not self:isAlive() then return end
     if echo then echo=self.uid..':'..echo end
     if self.priv then
         Bot.sendMsg(text,nil,self.id,echo)
@@ -420,11 +424,17 @@ function Session:send(text,echo)
         Bot.sendMsg(text,self.id,nil,echo)
     end
 end
----@param id number
----@param echo? string
-function Session:delete(id,echo)
-    if echo then echo=self.uid..':'..echo end
-    Bot.deleteMsg(id)
+---@param id number|string string means search id from Session.echos
+function Session:delete(id)
+    if not self:isAlive() then return end
+    if type(id)=='number' then
+        Bot.deleteMsg(id)
+    else
+        if self.echos[id] then
+            Bot.deleteMsg(self.echos[id].message_id)
+            self.echos[id]=nil
+        end
+    end
 end
 
 ---Notice that time must be less than 86400 (1 day)
@@ -433,25 +443,19 @@ end
 ---@param echo? string
 function Session:delaySend(time,text,echo)
     if time and time>86400 then return end
-    if time==nil then time=.26+math.random() elseif time<=0 then return self:delete(id,echo) end
+    if time==nil then time=.26+math.random() elseif time<=0 then return self:send(text,echo) end
     if echo then echo=self.uid..':'..echo end
-    if self.priv then
-        self:_timeTask('send',time,{text,nil,self.id,echo})
-    else
-        self:_timeTask('send',time,{text,self.id,nil,echo})
-    end
+    self:_timeTask(self.send,time,{self,text,echo})
 end
 ---Notice that time must be less than 86400 (1 day)
 ---@param time number
----@param id number
----@param echo? string
-function Session:delayDelete(time,id,echo)
+---@param id number|string string means search id from Session.echos
+function Session:delayDelete(time,id)
     if time and time>86400 then return end
-    if time==nil then time=.26+math.random() elseif time<=0 then return self:delete(id,echo) end
-    if echo then echo=self.uid..':'..echo end
-    self:_timeTask('delete',time,{id,echo})
+    if time==nil then time=.26+math.random() elseif time<=0 then return self:delete(id) end
+    self:_timeTask(self.delete,time,{self,id})
 end
----@param action 'send'|'delete'
+---@param action function
 ---@param time number
 ---@param data any[]
 function Session:_timeTask(action,time,data)
@@ -474,10 +478,7 @@ function Session:_timeTask(action,time,data)
     end
     ins(queue,insPos or #queue+1,{
         time=time,
-        func=
-            action=='send' and Bot.sendMsg or
-            action=='delete' and Bot.deleteMsg or
-            print("Invalid action: "..tostring(action)) or NULL,
+        func=action,
         data=data,
     })
 end
