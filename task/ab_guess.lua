@@ -1,5 +1,5 @@
 local find=string.find
-local ins,concat=table.insert,table.concat
+local ins,rem,concat=table.insert,table.remove,table.concat
 local count,repD=STRING.count,STRING.repD
 local copy,getRnd=TABLE.copy,TABLE.getRandom
 
@@ -11,13 +11,13 @@ for k,v in next,{
     giveup=1620,
 } do cooldownSkip[k]=cooldown-v end
 local delays={
-    del_help=2.6,
-    del_abandon=6.26,
-    del_start=6.26,
-    del_duplicate=6.26,
-    del_normal=26,
-    del_win=26,
-    del_lose=26,
+    del_help=false,
+    del_abandon=false,
+    del_start=false,
+    del_duplicate=false,
+    del_normal=false,
+    del_win=false,
+    del_lose=false,
     del_question=2.6,
     send_reward=1,
 }
@@ -335,6 +335,7 @@ local function guess(D,g)
     if res=='4A0B' then return 'win' end
 end
 ---@param S Session
+---@param M LLOneBot.Event.GroupMessage
 local function sendMes(S,M,D,mode)
     local t="[CQ:at,qq="..M.user_id.."]\n"
     if mode=='notFinished' then
@@ -344,8 +345,62 @@ local function sendMes(S,M,D,mode)
     end
     t=t..D.textHis.."\n"
     if D.privOwner then t=t.."#" end
-    t=t..repD(text.remain[D.mode=='hard' and #D.answer==1 and 'hardAlmost' or D.mode],D.chances)
-    S:send(t,'abguess')
+    if mode=='win' then
+        local lastGuess=D.guessHis[#D.guessHis]
+        t=t..text.win[D.mode]..lastGuess
+        local point=0
+        if realWords[lastGuess] then
+            t=t.."\n"..repD(getRnd(text.realWord),realWords[lastGuess])
+            point=point+1
+        end
+        if Config.extraData.family[S.uid] then
+            point=point+(score[D.mode][D.chances] or 2.6)+(D.mode=='easy' and 0.26 or 1.26)*math.random()
+            local reward=MATH.randFreq{
+                MATH.lLerp(rewardList[1],point),
+                MATH.lLerp(rewardList[2],point),
+                MATH.lLerp(rewardList[3],point),
+                MATH.lLerp(rewardList[4],point),
+            }
+            if reward<=3 then
+                for i=1,reward do
+                    S:delaySend(i*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                end
+            else
+                S:delaySend(1*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                S:delaySend(2*delays.send_reward,CQpic(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg'))
+            end
+            t=t.."\n"..("(%.2f|%d)"):format(point,reward)
+        end
+        S:send(t)
+    elseif mode=='lose' then
+        if D.mode=='easy' then
+            t=t..repD(text.lose.easy,concat(D.answer))
+        elseif #D.answer==1 then
+            t=t..repD(text.lose.hardAlmost,concat(D.answer[1]))
+            if Config.extraData.family[S.uid] then
+                S:delaySend(delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+            end
+        else
+            local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))
+            t=t..repD(text.lose.hard,ans1,ans2,#D.answer+2)
+        end
+        S:send(t)
+    else
+        t=t..repD(text.remain[D.mode=='hard' and #D.answer==1 and 'hardAlmost' or D.mode],D.chances)
+        if delays.del_question then
+            local mesID='abguess_history_'..math.random(262626,626262)
+            S:send(t,mesID)
+            ins(D.mesIDList,mesID)
+            if D.mesIDList[2] then
+                for i=#D.mesIDList-1,1,-1 do
+                    S:delayDelete(delays.del_question,D.mesIDList[i])
+                    rem(D.mesIDList,i)
+                end
+            end
+        else
+            S:send(t)
+        end
+    end
 end
 
 ---@type Task_raw
@@ -357,6 +412,7 @@ return {
         D.mode=false -- 'easy' or 'hard'
         D.answer={} -- {'1','2','3','4'} for Easy mode, {{'1','2','3','4'},{'5','6','7','8'},...} for Hard mode
         D.guessHis={}
+        D.mesIDList={}
         D.textHis=""
         D.chances=26
 
@@ -364,6 +420,7 @@ return {
         D.playerHis=TABLE.new(false,5)
     end,
     func=function(S,M,D)
+        ---@cast M LLOneBot.Event.GroupMessage
         -- Log
         local mes=SimpStr(M.raw_message)
         if #mes>=10 then return false end
@@ -378,7 +435,7 @@ return {
             if S:lock('ab_help',26) then
                 S:send(text.help)
             end
-            if Config.groupManaging[S.id] then
+            if delays.del_help and Config.groupManaging[S.id] then
                 S:delayDelete(delays.del_help,M.message_id)
             end
             return true
@@ -415,7 +472,7 @@ return {
             S:unlock('ab_cd')
             S:unlock('ab_duplicate')
             D.lastInterectTime=Time()-cooldownSkip.giveup
-            if Config.groupManaging[S.id] then
+            if delays.del_abandon and Config.groupManaging[S.id] then
                 S:delayDelete(delays.del_abandon,M.message_id)
             end
             return true
@@ -486,7 +543,7 @@ return {
             D.chances=5
             sendMes(S,M,D,'start')
             D.lastInterectTime=Time()
-            if Config.groupManaging[S.id] then
+            if delays.del_start and Config.groupManaging[S.id] then
                 S:delayDelete(delays.del_start,M.message_id)
             end
             return true
@@ -507,58 +564,25 @@ return {
                 local mesID='abguess_duplicate_'..math.random(262626,626262)
                 if S:lock('ab_duplicate',12.6) then
                     S:send(getRnd(text.guessed),mesID)
-                end
-                D.lastInterectTime=Time()
-                if Config.groupManaging[S.id] then
-                    S:delayDelete(delays.del_duplicate,mesID)
-                    S:delayDelete(delays.del_duplicate,M.message_id)
+                    D.lastInterectTime=Time()
+                    if delays.del_duplicate and Config.groupManaging[S.id] then
+                        S:delayDelete(delays.del_duplicate,mesID)
+                        S:delayDelete(delays.del_duplicate,M.message_id)
+                    end
                 end
             else
                 -- Available guess
-                if S.echos.abguess then
-                    S:delayDelete(delays.del_question,S.echos.abguess.message_id)
-                    S.echos.abguess=nil
-                end
                 if res=='win' then
                     -- Win
                     D.playing=false
                     S:lock('ab_abandon',26)
-                    local t=D.textHis.."\n"..text.win[D.mode]..mes
-                    local point=0
-                    if realWords[mes] then
-                        t=t.."\n"..repD(getRnd(text.realWord),realWords[mes])
-                        point=point+1
-                    end
-                    if Config.extraData.family[S.uid] then
-                        point=point+(score[D.mode][D.chances] or 2.6)+(D.mode=='easy' and 0.26 or 1.26)*math.random()
-                        local reward=MATH.randFreq{
-                            MATH.lLerp(rewardList[1],point),
-                            MATH.lLerp(rewardList[2],point),
-                            MATH.lLerp(rewardList[3],point),
-                            MATH.lLerp(rewardList[4],point),
-                        }
-                        if reward==1 then
-                            S:delaySend(0*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
-                        elseif reward==2 then
-                            S:delaySend(0*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
-                            S:delaySend(1*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
-                        elseif reward==3 then
-                            S:delaySend(0*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
-                            S:delaySend(1*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
-                            S:delaySend(2*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
-                        elseif reward==4 then
-                            S:delaySend(0*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
-                            S:delaySend(1*delays.send_reward,CQpic(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg'))
-                        end
-                        t=t.."\n"..("(%.2f|%d)"):format(point,reward)
-                    end
-                    S:send(t)
+                    sendMes(S,M,D,'win')
                     S:unlock('ab_help')
                     S:unlock('ab_playing')
                     S:unlock('ab_cd')
                     S:unlock('ab_duplicate')
                     D.lastInterectTime=Time()-cooldownSkip.win
-                    if Config.groupManaging[S.id] then
+                    if delays.del_win and Config.groupManaging[S.id] then
                         S:delayDelete(delays.del_win,M.message_id)
                     end
                 elseif D.chances>0 then
@@ -582,36 +606,20 @@ return {
                     end
                     sendMes(S,M,D,'normal')
                     D.lastInterectTime=Time()
-                    if Config.groupManaging[S.id] then
+                    if delays.del_normal and Config.groupManaging[S.id] then
                         S:delayDelete(delays.del_normal,M.message_id)
                     end
                 else
                     -- Lose
                     D.playing=false
                     S:lock('ab_abandon',26)
-                    local bonus
-                    local t=D.textHis.."\n"
-                    if D.mode=='easy' then
-                        t=t..repD(text.lose.easy,concat(D.answer))
-                    elseif #D.answer==1 then
-                        t=t..repD(text.lose.hardAlmost,concat(D.answer[1]))
-                        if Config.extraData.family[S.uid] then
-                            bonus=CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages))
-                        end
-                    else
-                        local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))
-                        t=t..repD(text.lose.hard,ans1,ans2,#D.answer+2)
-                    end
-                    S:send(t)
-                    if bonus then
-                        S:send(bonus)
-                    end
+                    sendMes(S,M,D,'lose')
                     S:unlock('ab_help')
                     S:unlock('ab_playing')
                     S:unlock('ab_cd')
                     S:unlock('ab_duplicate')
                     D.lastInterectTime=Time()-cooldownSkip.lose
-                    if Config.groupManaging[S.id] then
+                    if delays.del_lose and Config.groupManaging[S.id] then
                         S:delayDelete(delays.del_lose,M.message_id)
                     end
                 end
