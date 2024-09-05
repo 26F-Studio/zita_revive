@@ -368,12 +368,11 @@ local function sendMes(S,M,D,mode)
         end
         if Config.extraData.family[S.uid] then
             point=point+(score[D.mode][D.chances] or 2.6)+(D.mode=='easy' and 0.26 or 1.26)*math.random()
-            point=point/6
             local reward=MATH.randFreq{
-                MATH.lLerp(rewardList[1],point),
-                MATH.lLerp(rewardList[2],point),
-                MATH.lLerp(rewardList[3],point),
-                MATH.lLerp(rewardList[4],point),
+                MATH.lLerp(rewardList[1],point/6),
+                MATH.lLerp(rewardList[2],point/6),
+                MATH.lLerp(rewardList[3],point/6),
+                MATH.lLerp(rewardList[4],point/6),
             }
             if reward<=3 then
                 for i=1,reward do
@@ -383,7 +382,7 @@ local function sendMes(S,M,D,mode)
                 S:delaySend(1*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
                 S:delaySend(2*delays.send_reward,CQpic(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg'))
             end
-            t=t.."\n"..("(%.2f|%d)"):format(point,reward)
+            t=t.."\n"..("(%.2f/6 | %d)"):format(point,reward)
         end
         S:send(t)
     elseif mode=='lose' then
