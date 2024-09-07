@@ -45,9 +45,19 @@ local meta={
     },
     {
         word="新人;萌新",
-        title="新人学习/练习路线",
-        text="本词条很长，发送“##”确认查看",
-        detail="以下给出几个新手时期的主线任务树，前期应主要练习这些内容而不是定式和T-Spin，对实力帮助并不大（注意，ABC三段应当同时进行，没有顺序）：\nA. 堆叠能力练习方法\n\tA1. 手上的块可以放的时候先别急着放，看看下一块有没有地方，如果放不下去就看看手上的能不能换个地方\n\tA2. 尝试把地形尽量控制得平整，因为大多数情况比较平的地形来啥块都比较容易放得下去\n\tA3. 允许hold的时候可以多想想手里和hold的块和后续几块应该怎么安排顺序，长远地使地形平整\nB. 操作效率与速度练习方法\n\tB1. 不要每一块都拿影子去对形状对位置，要自己想象这个块转一下是什么方向，想好了再开始按按键\n\tB2. 学习双旋，能逆时针转一次就不要顺时针转三次，费手\n\tB3. 学习极简，刚开始不用管速度，保证正确率最重要，养成良好习惯以后再提速快得很\nC. 堆叠能力考核\n\tC1. 稳定完成40行不死（可以用hold）\n\tC2. 稳定完成40行不死（不能用hold）\n\tC3. 稳定全程消四完成40行（可以用hold）\n\tC4. 稳定全程消四完成40行（不能用hold）\n以上都是根据社区和个人经验总结的模糊方法与目标，所以C的考核可以根据自身情况调整严格程度（例如“稳定”的具体成功率）\n注：完成C部分考核后别忘了无上限的A1，这是方块的根本元素之一，你在未来会一直持续需要它",
+        text=CQpic(Config.extraData.imgPath.."新人引导.png"),
+    },
+    {
+        word="分类",
+        text=CQpic(Config.extraData.imgPath.."方块游戏分类.png"),
+    },
+    {
+        word="zone22;22zone;impossibilitris",
+        text=CQpic(Config.extraData.imgPath.."zone22教程.jpg"),
+    },
+    {
+        word="zone23;23zone;infinitris",
+        text=CQpic(Config.extraData.imgPath.."zone23教程.png"),
     },
     {
         word="学习tspin;学习t旋",
@@ -1326,6 +1336,13 @@ local game={
         text="Tetris官网上的块 官块 网页 主单机 音画优秀 电脑+手机 不可调控制\n在马拉松基础上添加了效果，场地上会随机冒出效果方块，消除后会得到各种各样或好或坏的效果",
         link="tetris.com/play-tetrismindbender",
     },
+    {
+        cat='game',
+        word="ztrix",
+        title="Ztrix",
+        text="练习工具 网页 主单机 音画廉价 电脑\nTEC的Zone练习用工具游戏，有自定义序列和撤销和出题等功能",
+        link="ztrix-game.web.app",
+    },
     -- 跨平台
     {
         cat='game',
@@ -1519,28 +1536,28 @@ local game={
         cat='game',
         word="ttt",
         title="Tetris Trainer Très-Bien",
-        text="(原作者こな)简称TTT 可玩 非官块 网页 主单机 音画廉价 电脑 不可调控制 题库游戏 创新：Tspin教程\n现代方块特殊操作手把手教程，推荐能纯消四完成40L挑战的人学习，内含T-Spin、极简、SRS、部分对战定式介绍等教程",
+        text="(原作者こな)简称TTT 可玩 题库游戏 非官块 网页 主单机 音画廉价 电脑 不可调控制 创新：Tspin教程\n现代方块特殊操作手把手教程，推荐能纯消四完成40L挑战的人学习，内含T-Spin、极简、SRS、部分对战定式介绍等教程",
         link="(翻译后挂在茶服的版本) teatube.cn/ttt",
     },
     {
         cat='game',
         word="ttpc",
         title="TETRIS Perfect Clear Challenge",
-        text="(原作者chokotia)简称TTPC 可玩 非官块 网页 主单机 音画廉价 电脑 不可调控制 题库游戏\nSRS+Bag7方块游戏全消开局定式的教程（只能键盘操作）。推荐完成了TTT的人学习（必须先学会SRS）",
+        text="(原作者chokotia)简称TTPC 可玩 题库游戏 非官块 网页 主单机 音画廉价 电脑 不可调控制\nSRS+Bag7方块游戏全消开局定式的教程（只能键盘操作）。推荐完成了TTT的人学习（必须先学会SRS）",
         link="(翻译后挂在茶服的版本) teatube.cn/ttpc",
     },
     {
         cat='game',
         word="tpo",
         title="Tetris Puzzle O",
-        text="简称TPO 可玩 非官块 网页 主单机 音画廉价 电脑+手机 不可调控制 题库游戏\n由TCV100制作的题库网站，内含部分nazo的题",
+        text="简称TPO 可玩 题库游戏 非官块 网页 主单机 音画廉价 电脑+手机 不可调控制\n由TCV100制作的题库网站，内含部分nazo的题",
         link="47.92.33.38/tpo",
     },
     {
         cat='game',
         word="nazo",
         title="NAZO",
-        text="可玩 非官块 网页 主单机 音画廉价 电脑 不可调控制 题库游戏\n内含各种T-Spin/All-Spin题目，简单到极难题目都有",
+        text="可玩 题库游戏 非官块 网页 主单机 音画廉价 电脑 不可调控制\n内含各种T-Spin/All-Spin题目，简单到极难题目都有",
         link="(翻译后挂在茶服的版本) teatube.cn/nazo",
     },
     -- 已逝
