@@ -140,7 +140,7 @@ local rules={
         text="<干旱>",
         rule=function(seq) return not find(seq,'I') end,
     },
-    { -- SZJLTI中最多有两个
+    { -- 无O
         id=10,
         text="<每一块的长度都达到了3>",
         rule=function(seq) return not find(seq,'O') end,
@@ -198,6 +198,9 @@ local rules={
         text="<这四块开局可以在第二行消除>",
         rule=function(seq)
             local i=count(seq,'I')
+            if count(seq,'[SZO]')*2+count(seq,'[JLT]')*3+i*4<10 then
+                return false
+            end
             if i==0 then
                 -- 杀O[JL]{3}
                 return not (find(seq,'O') and count(seq,'[JL]')==3)
