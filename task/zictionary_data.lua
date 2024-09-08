@@ -26,14 +26,6 @@ local meta={
         title="本词(字?)典是收集方块游戏相关词汇并加以解释供人检查参考的工具",
     },
     {
-        word="表格;游戏表格",
-        text=CQpic(Config.extraData.imgPath.."方块游戏表格.png"),
-    },
-    {
-        word="赞助;打钱",
-        text=CQpic(Config.extraData.imgPath.."pay.png"),
-    },
-    {
         word="提问",
         text="提问时请尽量完整地描述问题，这样别人才更容易一句话解决问题，而不是不得不反复要求补充更多条件，一个人回答浪费一分钟，群里几百个人浪费几百分钟",
         detail="例：“【问题现象截图】我使用【设备类型】在【游戏名】【版本号】中遇到了【现象】，并且能用【具体操作】反复触发，这是bug吗？”\ngist.github.com/burningtnt/360d2b93452560c0413ac1a6e3515642",
@@ -50,6 +42,14 @@ local meta={
     {
         word="分类",
         text=CQpic(Config.extraData.imgPath.."方块游戏分类.png"),
+    },
+    {
+        word="表格;游戏表格",
+        text=CQpic(Config.extraData.imgPath.."方块游戏表格.png"),
+    },
+    {
+        word="赞助;打钱",
+        text=CQpic(Config.extraData.imgPath.."pay.png"),
     },
     {
         word="zone22;22zone;impossibilitris",
@@ -72,22 +72,9 @@ local meta={
         link="tetris.huijiwiki.com",
     },
     {
-        word="harddrop wiki",
-        title="Hard Drop Wiki",
-        text="(英文)Hard Drop社区的维基百科，位于Hard Drop社区网站",
-        link="harddrop.com/wiki",
-    },
-    {
-        word="tetris wiki",
-        title="Tetris Wiki",
-        text="(英文)一个俄罗斯方块的维基百科，由Myndzi在2015年创办\n与tetris.fandom.com是不同的网站",
-        link="tetris.wiki",
-    },
-    {
-        word="fandom;wiki fandom;tetris wiki fandom",
-        title="Tetris Wiki Fandom",
-        text="(英文)一个俄罗斯方块的维基百科，位于fandom平台\n与tetris.wiki是不同的网站",
-        link="tetris.fandom.com",
+        word="其他wiki;wiki列表;harddrop wiki;tetris wiki;fandom;wiki fandom;tetris wiki fandom",
+        title="一些英文wiki",
+        text="harddrop.com/wiki（Hard Drop社区的维基百科）\nhttps://tetris.wiki）（Myndzi在2015年创办）\ntetris.fandom.com",
     },
     {
         word="fumen;编辑器",
@@ -286,7 +273,7 @@ local main={
     {
         word="踢墙;踢墙表;旋转系统;rs;rotation system",
         title="旋转系统",
-        text="现代方块游戏中，方块一般能绕着固定的旋转中心旋转。如果旋转后和场地或墙壁有重合，会根据一些规则尝试移动方块到附近的空位来让旋转成立而不是卡住转不动",
+        text="现代方块游戏中，方块一般能绕着固定的旋转中心旋转。"..CQpic(Config.extraData.imgPath.."旋转中心.gif").."如果旋转后和场地或墙壁有重合，会根据一些规则尝试移动方块到附近的空位来让旋转成立而不是卡住转不动",
         detail="(类)SRS旋转系统通常根据【从哪个方向转到哪个方向】选取一个偏移列表（也叫踢墙表），方块根据这个列表进行位置偏移（这个过程叫踢墙），于是就可以钻进入一些特定形状的洞。不同旋转系统的具体踢墙表可以在各大Wiki查到",
     },
     {
@@ -360,7 +347,7 @@ local main={
     {
         word="tetrimino;tetromino;tetramino;四连块;四联块;形状;方块形状",
         title="四连块",
-        text="四个正方形共用边连接成的形状，在不允许翻转的情况下共有七种，根据形状命名为Z S J L T O I",
+        text="四个正方形共用边连接成的形状，在不允许翻转的情况下共有七种，根据形状命名为Z S J L T O I"..CQpic(Config.extraData.imgPath.."七块.jpg"),
     },
     {
         word="pentamino;pentomino;五连块;五联块",
@@ -1383,7 +1370,7 @@ local game={
         word="tgm;tetris the grand master;tetris grand master",
         title="Tetris The Grand Master",
         text="简称TGM 官块 要下载 单人 音画优秀 有电脑移植版 不可调控制\n聚焦于高重力快节奏玩法，S13/GM等称号都出自该作，其中TGM3比较普遍，部分模式说明发送“##”查看",
-        detail="Master：大师模式，有段位评价，拿到更高段位点的要求：非消一的连击和消四，字幕战中消除和通关，每100的前70小于【标准时间，上一个0~70秒数+2】中小的一个，每100总用时不能超过限定值（不然取消上一个方法的加分并反扣点数）；到500若没有进标准时间会强制结束游戏（称为铁门）；字幕战有两个难度，半隐和全隐，后者必须拿到几乎全部的段位点才能进，消除奖励的段位点也更多\n\nShirase：死亡模式，类似于techmino中的20G-极限，开局就是高速20G，500和1000有铁门，500开始底下开始涨垃圾行，1000开始出现骨块，1300通关进入大方块字幕战；段位结算：每通100加1段从S1到S13，若通关了字幕战就会有金色的S13",
+        detail="Master：大师模式，有段位评价，拿到更高段位点的要求：非消一的连击和消四，字幕战中消除和通关，每100的前70小于【标准时间，上一个0~70秒数+2】中小的一个，每100总用时不能超过限定值（不然取消上一个方法的加分并反扣点数）；到500若没有进标准时间会强制结束游戏（称为铁门）；字幕战有两个难度，半隐和全隐，后者必须拿到几乎全部的段位点才能进，消除奖励的段位点也更多\n\nShirase：死亡模式，类似于techmino中的20G-极限，开局就是高速20G，500和1000有铁门，500~1000会涨垃圾行，1000~1300为骨块，1300后进入大方块字幕战；段位结算：每通100加1段从S1到S13，若通关了字幕战就会有金色的S13",
         link="teatube.cn/TGMGUIDE",
     },
     {
