@@ -142,12 +142,12 @@ local rules={
     },
     { -- 无O
         id=10,
-        text="<每一块的长度都达到了3>",
+        text="<每一块的长度都不小于三>",
         rule=function(seq) return not find(seq,'O') end,
     },
     { -- SZJL中最多有两个
         id=11,
-        text="<能spinPC的块不超过两个>",
+        text="<不超过两个块能spinPC>",
         rule=function(seq) return count(seq,'[SZJL]')<=2 end,
     },
     {
