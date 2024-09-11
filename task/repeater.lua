@@ -60,7 +60,7 @@ return {
             D.messageCharge=0
             D.repMesCount=-1 -- Mark current round as repeated
             S:lock('repeater_cooldown',26)
-            S:send(mes)
+            S:delaySend(MATH.rand(2.6,6.2),mes)
         end
         return true
     end,
