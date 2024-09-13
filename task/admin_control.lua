@@ -173,14 +173,20 @@ return {
                     setfenv(func,codeEnv)
                     local suc,res=pcall(func)
                     if suc then
-                        returnMes="好了喵"..(res~=nil and "\n"..tostring(res) or "")
+                        if res then
+                            returnMes=tostring(res)
+                        else
+                            returnMes="好了喵"
+                        end
                     else
                         returnMes="坏了！\n"..tostring(res)
                     end
                 elseif err then
                     returnMes="不对！\n"..tostring(err)
                 end
-                S:send(returnMes)
+                if returnMes then
+                    S:send(returnMes)
+                end
                 return true
             elseif mes:sub(1,1)=='%' then
                 local args=STRING.split(mes,' ')
