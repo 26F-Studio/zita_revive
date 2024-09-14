@@ -493,6 +493,7 @@ local scene={}
 function scene.load() end
 function scene.update()
     if ws.state=='dead' then
+        Bot.restart()
         if TASK.getLock('bot_lock') then return end
         TASK.unlock('bot_running')
         Bot.stat.connectAttempts=Bot.stat.connectAttempts+1
