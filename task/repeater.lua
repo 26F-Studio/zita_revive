@@ -1,4 +1,4 @@
-local badWords=STRING.split("& cq: zita z酱 mrz tech 我 妈 丁 傻 逼 菜 弱 典 孝 急 绷 色 操 屄 吐"," ")
+local badWords=STRING.split("& cq: zita z酱 mrz tech 我 妈 马 🐎 丁 傻 逼 菜 弱 典 孝 急 绷 色 操 屄 吐"," ")
 local goodWords=STRING.split("太强了 厉害 牛逼 大神 好玩"," ")
 local signs=TABLE.getValueSet(STRING.split([[` ~ ! @ # $ % ^ & * ( ) _ + - = [ ] \ { } | ; ' : " , . / < > ?]]," "))
 ---@type Task_raw
