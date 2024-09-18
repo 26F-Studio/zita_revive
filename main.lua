@@ -149,6 +149,14 @@ function Bot.deleteMsg(mes_id)
         },
     }
 end
+function Bot.sendSticker(mes_id)
+    -- Bot._send{
+    --     action='msg_emoji_like',
+    --     params={
+    --         message_id=mes_id,
+    --     },
+    -- }
+end
 ---@param group_id number
 ---@param user_id number
 ---@param time? number
@@ -220,8 +228,10 @@ function Bot._update()
             S:receive(res)
         elseif res.post_type=='notice' then
             -- TODO
+            print("notice",TABLE.dump(res))
         elseif res.post_type=='request' then
             -- TODO
+            print("request",TABLE.dump(res))
         end
     elseif op~='pong' then
         print("[inside: "..op.."]")
@@ -435,6 +445,10 @@ function Session:delete(id)
             self.echos[id]=nil
         end
     end
+end
+---@param M LLOneBot.Event.Message
+function Session:sticker(M)
+    Bot.sendSticker(M.message_id)
 end
 
 ---Notice that time must be less than 86400 (1 day)
