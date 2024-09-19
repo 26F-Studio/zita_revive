@@ -77,7 +77,7 @@ local meta={
         text="harddrop.com/wiki（Hard Drop社区的维基百科）\nhttps://tetris.wiki）（Myndzi在2015年创办）\ntetris.fandom.com",
     },
     {
-        word="fumen;编辑器",
+        word="fumen;方块谱;编辑器",
         title="Fumen",
         text="一个方块版面编辑器，可以用于分享定式，PC解法等，用处很多。设置里可以启用英文版",
         link="fumen.zui.jp  knewjade.github.io/fumen-for-mobile",
@@ -89,7 +89,7 @@ local meta={
         link="github.com/26F-Studio/Techmino",
     },
     {
-        word="宝石;宝石迷阵;bej;bej3;bejeweled;bejeweled3",
+        word="宝石;宝石迷阵;bejeweled;bej;bej1;bej2;bej3;bejT;bejeweled1;bejeweled2;bejeweled3;bejeweled twist",
         title="Bejeweled",
         text="三消系列神作，类比现代块之于经典块的进步，Bej系列每一作都是前无古人后无来者的“现代三消”，BejT和Bej3的三消玩法至今未被超越",
         link="b23.tv/BV1sE421P7dE  b23.tv/BV1TE421A7wG",
@@ -1601,7 +1601,7 @@ local extra_tetrio={
     {
         word="hyperspeed;速通模式",
         title="QP2 Hyperspeed",
-        text="当玩家在1/2/3/4/5层时推进器等级就达到8/8/9/9/10时会进入速通模式，掉到6级时会退出速通模式\n进入速通模式时会出现致敬Bejeweled Twist的动画和专属速通音乐，达到十层时完成速通模式可以获得一个隐藏成就",
+        text="当玩家在1/2/3/4/5层时推进器等级就达到8/8/9/9/10时会进入速通模式，掉到6级时会退出速通模式\n进入速通模式时会出现致敬Bejeweled Twist的动画和专属速通音乐，达到十层时完成速通模式，会获得一个隐藏成就",
     },
     {
         word="疲劳;疲劳时间",
