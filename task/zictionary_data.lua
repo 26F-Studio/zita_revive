@@ -90,14 +90,14 @@ local meta={
     },
     {
         word="宝石;宝石迷阵;bejeweled;bej;bej1;bej2;bej3;bejT;bejeweled1;bejeweled2;bejeweled3;bejeweled twist",
-        title="Bejeweled",
+        title="Bejeweled Series",
         text="三消系列神作，类比现代块之于经典块的进步，Bej系列每一作都是前无古人后无来者的“现代三消”，BejT和Bej3的三消玩法至今未被超越",
         link="b23.tv/BV1sE421P7dE  b23.tv/BV1TE421A7wG",
     },
     {
         word="气泡;魔法气泡;噗哟;噗哟噗哟;puyo;puyopuyo",
-        title="魔法气泡",
-        text="（不熟，有请其他群友解释）",
+        title="",
+        text="魔法气泡，一款相同颜色连起来就消除的游戏（有请其他群友解释）",
     },
 }
 ---@type ZictEntry[]
@@ -345,14 +345,18 @@ local main={
         text="“经典方块”是一个模糊的概念，指设计比较简单（通常是因为时间早，所以才称经典）的方块游戏，和“现代方块”对立\n另见 #现代方块",
     },
     {
-        word="tetrimino;tetromino;tetramino;四连块;四联块;形状;方块形状",
+        word="tetrimino;tetromino;tetramino;四连块;四联块;四连方块;四联方块;形状;方块形状",
         title="四连块",
         text="四个正方形共用边连接成的形状，在不允许翻转的情况下共有七种，根据形状命名为Z S J L T O I"..CQpic(Config.extraData.imgPath.."七块.jpg"),
     },
     {
-        word="pentamino;pentomino;五连块;五联块",
+        word="pentamino;pentomino;五连块;五联块;五连方块;五联方块",
         title="五连块",
         text="类似四连块但增加到五个正方形，在不允许翻转的情况下共有18种，命名方案不统一，其中一套是S5 Z5 P Q F E T5 U V W X J5 L5 R Y N H I5",
+    },
+    {
+        word="二连块;三连块;六连块;七连块;八连块;九连块;二十六连块",
+        text="别闹",
     },
     {
         word="配色;颜色;方块颜色;标准配色;方块配色",
@@ -1456,10 +1460,17 @@ local game={
     },
     {
         cat='game',
-        word="chextris",
-        title="Chextris",
-        text="非官块 要下载 有单机 音画优秀 电脑 有自定义\n除了几个主模式外还有一个变革模式包含几十个创意规则可挑战",
-        link="rayblastgames.com/spiritdrop.php",
+        word="betrix;chextris",
+        title="Betrix & Chextris",
+        text="非官块 要下载 主单机 音画优秀 电脑 有自定义 创新\n在方块里加入了音游元素，也有40L等基础模式",
+        link="store.steampowered.com/app/2007710\nchemicalex.itch.io/chextris",
+    },
+    {
+        cat='game',
+        word="C::Reactris;c4r;c::r;Reactris",
+        title="C::Reactris",
+        text="非官块 要下载 主单机 音画优秀 电脑+手机 有自定义 创新\n在方块里加入了丰富的Minecraft元素，有大量创意玩法",
+        link="b23.tv/BV13u411G75m",
     },
     {
         cat='game',

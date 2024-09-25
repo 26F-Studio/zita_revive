@@ -228,10 +228,10 @@ function Bot._update()
             S:receive(res)
         elseif res.post_type=='notice' then
             -- TODO
-            print("notice",TABLE.dump(res))
+            -- print("notice",TABLE.dump(res))
         elseif res.post_type=='request' then
             -- TODO
-            print("request",TABLE.dump(res))
+            -- print("request",TABLE.dump(res))
         end
     elseif op~='pong' then
         print("[inside: "..op.."]")
