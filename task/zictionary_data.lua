@@ -23,7 +23,7 @@
 local meta={
     {
         word="词典;小z词典;zict;zictionary",
-        title="本词(字?)典是收集方块游戏相关词汇并加以解释供人检查参考的工具",
+        title="本词典是收集方块游戏相关词汇并加以解释供人检查参考的工具", --[[是词典，参见新华字典&现代汉语词典]]
     },
     {
         word="提问",
@@ -68,16 +68,16 @@ local meta={
     {
         word="wiki;维基;中文wiki;中文维基;灰机;huiji;灰机wiki",
         title="俄罗斯方块中文维基",
-        text="由中国玩家建立的中文的俄罗斯方块百科全书，位于灰机wiki平台\n推荐新人有不懂的知识先查阅百科再提问，也欢迎各位玩家作出编辑贡献\n早期大部分条目译自Hard Drop Wiki和Tetris Wiki",
+        text="俄罗斯方块中文百科全书，由中文玩家搭建于灰机wiki平台。\n推荐新人有不懂的知识先查阅百科再提问，也欢迎各位玩家作出编辑贡献\n早期大部分条目译自Hard Drop Wiki和Tetris Wiki",
         link="tetris.huijiwiki.com",
     },
     {
         word="其他wiki;wiki列表;harddrop wiki;tetris wiki;fandom;wiki fandom;tetris wiki fandom",
         title="一些英文wiki",
-        text="harddrop.com/wiki（Hard Drop社区的维基百科）\nhttps://tetris.wiki）（Myndzi在2015年创办）\ntetris.fandom.com",
+        text="harddrop.com/wiki（Hard Drop社区的百科）\nhttps://tetris.wiki）（Myndzi在2015年创办）\ntetris.fandom.com",
     },
     {
-        word="fumen;方块谱;编辑器",
+        word="fumen;方块谱;编辑器;铺面",
         title="Fumen",
         text="一个方块版面编辑器，可以用于分享定式，PC解法等，用处很多。设置里可以启用英文版",
         link="fumen.zui.jp  knewjade.github.io/fumen-for-mobile",
@@ -121,7 +121,7 @@ local main={
     {
         word="blitz;blitz模式",
         title="Blitz模式",
-        text="TETR.IO结合马拉松与限时打分两大传统模式的新规则限时打分，考察2分钟内的得分，但是等级/重力/倍率逐渐增加\n另见 #Tetris Blitz",
+        text="TETR.IO结合马拉松与限时打分两大传统模式的新规则限时打分，考察2分钟内的得分，但是等级/重力/得分倍率逐渐增加\n另见 #Tetris Blitz",
     },
     {
         word="zen;禅;禅模式",
@@ -131,7 +131,7 @@ local main={
     {
         word="mph",
         title="Memoryless-Previewless-Holdless",
-        text="一个游戏模式，纯随机块序+无Next+无Hold完成40L，一个非常考验玩家反应速度的模式",
+        text="一个游戏模式，纯随机块序+无Next+无Hold，目标通常是完成40L，非常考验玩家反应速度",
     },
     {
         word="lpm;bpm;ppm;pps;kpm;kps",
@@ -157,7 +157,7 @@ local main={
     {
         word="adpm;vs",
         title="Atk & Dig per Min",
-        text="每分钟攻击+挖掘行数，衡量玩家对战水平的指标，比APM更准确一些。在TETR.IO中叫“VS”的数据实质与ADPM相同，只是考虑到数据大小从每分钟调整为每100秒（也就是Atk & Dig per 100s）",
+        text="每分钟攻击+挖掘行数，衡量玩家对战水平的指标，比APM更准确一些。在TETR.IO中叫“VS Score”的数据实质与ADPM相同，只是考虑到数据大小从每分钟调整为每100秒（也就是Atk & Dig per 100s）",
     },
     {
         word="apl;效率",
@@ -183,7 +183,7 @@ local main={
     {
         word="sub",
         title="sub",
-        text="在……之下\n用于表示成绩，不说项目默认是40L，单位一般可不写，比如40L成绩Sub 30是秒，1000行Sub 15是分钟",
+        text="英语词缀，在……之下\n用于表示成绩，不说项目默认是40L，单位一般可不写，比如40L成绩Sub 30是秒，1000行Sub 15是分钟",
         detail="例：39.95s是Sub 40，40.1s不是Sub 40\n不建议使用Sub 62之类的词，因为sub本身就是表示大约，一分钟左右的成绩精确到5~10s就可以了，大约30s内的成绩用sub表示的时候精确到1s才比较合适",
     },
     {
@@ -219,16 +219,16 @@ local main={
         word="quad;techrash;消四",
         title="消四",
         text="一次消除四行",
-        detail="Tetris中的消四有特殊的名称Tetris，非官方游戏中有的考虑到版权问题抛弃了这个习惯称其为Quad，也有一些游戏保留了这个传统，会给消四安排一个特殊的名称，例如在Techmino称消四为Techrash",
+        detail="Tetris中的消四有特殊的名称Tetris，有的非官方游戏考虑到版权问题，使用Quad替换，也有一些游戏保留了这个传统，会给消四安排一个特殊的名称，例如Techmino里的Techrash",
     },
     {
         word="tetris",
         title="Tetris",
         text="商标，Tetris游戏名，同时也是“消四行”的名字\n另见 #消四",
-        detail="含义是Tetra（四，古希腊语词根）+Tennis（网球 游戏原作者喜欢的运动）\n现在版权在TTC (The Tetris Company)手上，其他公司比如任天堂和世嘉是获得TTC授权才开发方块游戏的，并不持有Tetris的版权",
+        detail="含义是Tetra（四，古希腊语词根）+Tennis（网球 游戏原作者喜欢的运动）\n现在商标权在TTC (The Tetris Company)手上，任天堂、是获得TTC授权才开发方块游戏的，并不拥有Tetris这一商标",
     },
     {
-        word="全消;全清;ac;pc;all clear;perfect clear",
+        word="全消;全清;ac;pc;all clear;perfect clear;bravo", --[[bravo 见于TGM系列]]
         title="All Clear",
         text="消除场地上所有的方块，也叫Perfect Clear，全消，或全清\n另见 #Half Clear #Color Clear #全消开局",
     },
@@ -326,7 +326,7 @@ local main={
     {
         word="b2b;back to back",
         title="Back to Back",
-        text="简称B2B，连续的消行都是特殊消行（Spin或消四），中间不夹杂普通消行",
+        text="直译背靠背（极不常用），简称B2B，连续的消行都是特殊消行（Spin或消四），中间不夹杂普通消行",
     },
     {
         word="fin;neo;iso;特殊t2;可移动t2",
@@ -377,7 +377,7 @@ local main={
     {
         word="暂存;交换;hold",
         title="暂存",
-        text="将手里的方块和Hold槽中的交换，用来调整块序，更容易摆出你想要的形状",
+        text="将手上的方块丢入Hold槽中，否则和已有的方块交换。用来调整块序，更容易摆出你想要的形状",
     },
     {
         word="深降;deepdrop",
@@ -402,7 +402,7 @@ local main={
     {
         word="攻击;进攻;防守;防御;攻防",
         title="对战攻防",
-        text="攻击：通过消除给对手发送垃圾行；\n防御(相杀)：用攻击抵消别人送来但还没上涨的垃圾行；\n反击：故意吃下对手的攻击（不抵消）然后再进行反击",
+        text="攻击：通过消除给对手发送垃圾行；\n防御(相杀)：用攻击抵消别人送来但还没上涨的垃圾行；\n反击：故意吃下对手的攻击（不抵消）然后再进行反击", --[[为什么中英文括号混用（]]
     },
     {
         word="连击;combo;ren",
@@ -424,7 +424,7 @@ local main={
         word="s2w",
         title="Side 2 Wide",
         text="旁边空2列，是常见的连击打法",
-        detail="难度很低，现代方块对战中新手可以使用，结合Hold可以很轻松地打出大连击。高手场使用不多，因为准备时间太长，会被对面提前打进垃圾行，导致连击数减少或者直接Top Out，效率也没有特别高，故一套打完也不一定能杀人",
+        detail="难度很低，现代方块对战中新手可以使用，结合Hold可以很轻松地打出大连击。高手场使用不多，因为准备时间太长，会被对面提前打进垃圾行，导致连击数减少或者暴毙，效率也没有特别高，故一套打完也不一定能杀人",
     },
     {
         word="s3w",
@@ -599,12 +599,12 @@ local main={
     {
         word="堆叠;stack",
         title="堆叠",
-        text="一般指将方块无缝隙地堆起来。需要玩家有预读Next的能力，可以练习不使用Hold同时用十个消四完成40L模式",
+        text="一般指将方块无缝隙地堆起来。需要玩家有预读Next的能力，可以练习不使用Hold，十个消四完成40L模式",
     },
     {
         word="双旋",
         title="双旋",
-        text="会使用顺时针/逆时针两个旋转键，原来要转三下的情况可以反向转一下就够，减少繁琐操作，这也是学习Finesse的必要前提",
+        text="会使用顺时针/逆时针两个旋转键，原来要转三下的情况可以反向转一下就够，减少繁琐操作，这也是学习Finesse的必要前提\n另见 #三旋",
     },
     {
         word="三旋",
@@ -1248,7 +1248,7 @@ local game={
         cat='game',
         word="屁块;tetrjs;tetr.js",
         title="Tetr.js",
-        text="简称屁块（作者网名Farter） 非官块 网页 主单机 音画廉价 电脑+手机 键盘可改键触屏不行\n有一些创意模式",
+        text="简称屁块（作者网名Farter） 非官块 网页 主单机 音画廉价 电脑+手机 键盘可改键触屏不行\n有较多创意模式",
         link="farter.cn/t",
     },
     {
@@ -1424,7 +1424,7 @@ local game={
         cat='game',
         word="t99;tetris 99",
         title="Tetris 99",
-        text="简称T99 官块 要下载 主联机有单机 音画优秀 主机 部分改键 不可调控制 正版付费\n主打99人混战的吃鸡模式，也有一些常用单机模式如马拉松等",
+        text="简称T99 官块 要下载 主联机有单机 音画优秀 主机 部分改键 不可调控制 正版付费\n主打99人混战的吃鸡模式，也有一些常用单机模式如马拉松等\n游戏基础模式Nintendo Switch Online会员免费开放，马拉松等模式需要额外购买。",--[[好久没玩了，好像是这样，等个review。]]
     },
     {
         cat='game',
@@ -1449,7 +1449,7 @@ local game={
         cat='game',
         word="ultimate;tetris ultimate",
         title="Tetris Ultimate",
-        text="离线 官块 要下载 单机联机都有 音画优秀 电脑 不可改键 不可调控制 正版付费\n有周期隐形/山体滑坡/双人同版等有趣模式，目前已下架",
+        text="离线 官块 要下载 单机联机都有 音画优秀 电脑 不可改键 不可调控制 正版付费\n有周期隐形/山体滑坡/双人同版等有趣模式，目前已下架",--[[”灵堂音乐“=优秀，这……]]
     },
     {
         cat='game',
@@ -1513,7 +1513,7 @@ local game={
         cat='game',
         word="royale;tetris royale;tetris n3twork;tetris n3t",
         title="Tetris (N3TWORK)",
-        text="官块 要下载 单机联机都有 音画优秀 手机限定 不可改键 不可调控制\nN3TWORK开发，Play Studio代理",
+        text="官块 要下载 单机联机都有 音画优秀 手机限定 不可改键 不可调控制\nN3TWORK开发，现由Play Studio运营",
     },
     {
         cat='game',
