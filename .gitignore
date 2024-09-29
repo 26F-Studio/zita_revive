@@ -1,6 +1,5 @@
 conf.luaon
 task/response.lua
-task/purify.lua
 task/uuz_reducer.lua
 
 .vscode
