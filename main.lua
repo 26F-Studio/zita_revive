@@ -37,16 +37,16 @@ Config={
     extraData=nil,
 }
 xpcall(function()
-    local data=FILE.load('conf.luaon','-luaon')
+    local data=FILE.load('botconf.lua','-lua')
     ---@cast data Data
     Config.adminName=data.adminName
     Config.superAdminID=TABLE.getValueSet(data.superAdminID)
     Config.groupManaging=TABLE.getValueSet(data.groupManaging)
     Config.safeSessionID=TABLE.getValueSet(data.safeSessionID)
     Config.extraData=data.extraData
-    print("conf.luaon successfully loaded")
+    print("botconf.lua successfully loaded")
 end,function(mes)
-    print("Error in loading conf.luaon: "..mes)
+    print("Error in loading botconf.lua: "..mes)
     print("Some settings may not be loaded correctly")
 end)
 print("--------------------------")

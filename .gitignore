@@ -1,4 +1,4 @@
-conf.luaon
+botconf.lua
 task/response.lua
 task/uuz_reducer.lua
 
