@@ -379,10 +379,10 @@ local function sendMes(S,M,D,mode)
             }
             if reward<=3 then
                 for i=1,reward do
-                    S:delaySend(i*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                    S:delaySend(i*delays.send_reward,CQpic(getRnd(Config.extraData.touhouImages)))
                 end
             else
-                S:delaySend(1*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                S:delaySend(1*delays.send_reward,CQpic(getRnd(Config.extraData.touhouImages)))
                 S:delaySend(2*delays.send_reward,CQpic(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg'))
             end
             t=t.."\n"..("(%.2f/6 | %d)"):format(point,reward)
@@ -394,7 +394,7 @@ local function sendMes(S,M,D,mode)
         elseif #D.answer==1 then
             t=t..repD(text.lose.hardAlmost,concat(D.answer[1]))
             if Config.extraData.family[S.uid] then
-                S:delaySend(delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                S:delaySend(delays.send_reward,CQpic(getRnd(Config.extraData.touhouImages)))
             end
         else
             local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))
@@ -476,7 +476,7 @@ return {
                 if #D.answer==1 then
                     S:send(repD(text.forfeit.hardAlmost,concat(D.answer[1])))
                     if D.chances>=2 then
-                        S:send(CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                        S:send(CQpic(getRnd(Config.extraData.touhouImages)))
                     end
                 else
                     local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))
