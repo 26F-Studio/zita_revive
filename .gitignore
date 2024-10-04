@@ -1,4 +1,5 @@
 botconf.lua
+task/repeater.lua
 task/response.lua
 task/uuz_reducer.lua
 
