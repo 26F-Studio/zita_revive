@@ -279,7 +279,7 @@ local main={
         word="ospin;o-spin",
         title="O-Spin",
         text="由于O块旋转不变只能左右移所以经常被卡住，于是就有了O-Spin这个梗",
-        detail="有人做了T99/TF中的O块变形的特效视频广为流传；\n一些旋转系统允许O块旋进坑；\nTech设计的变形系统中可以旋转O来变形/传送进入一些特定形状的洞",
+        detail="有人做了T99/TF中的O块变形的特效视频广为流传；\n一些旋转系统允许O块旋进坑；\nTech设计的变形系统中可以旋转O来变形/传送进入一些特定形状的洞\n"..CQpic(Config.extraData.imgPath.."ospin.gif"),
     },
     {
         word="踢墙;踢墙表;旋转系统;rs;rotation system",
