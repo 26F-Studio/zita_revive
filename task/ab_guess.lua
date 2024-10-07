@@ -262,9 +262,9 @@ do
             end
         end
     end
-    print('Hard quest lib length: '..#hardLib)
 end
 if not TABLE.find(arg,'startWithNotice') then
+    print('Hard quest lib length: '..#hardLib)
     for _,r in next,rules do
         local cnt=0
         local cntSimp=0
