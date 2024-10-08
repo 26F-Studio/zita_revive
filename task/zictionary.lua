@@ -34,7 +34,7 @@ return {
         -- Daily
         local daily
         if mes=='#' then
-            if S:lock('dailyEntry',600) then
+            if S:lock('dailyEntry',626) then
                 math.randomseed(tonumber(os.date('%Y%m%d')) or 26)
                 for _=1,42 do math.random() end
                 mes='#'..entryList[math.random(#entryList)].word
