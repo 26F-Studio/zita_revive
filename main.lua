@@ -24,17 +24,19 @@ local ws=WS.new{
     sleepInterval=0.1,
 }
 Config={
-    adminName="管理员",
     receiveDelay=0.26,
     maxCharge=620,
     debugLog_send=false,
     debugLog_receive=false,
     debugLog_response=false,
     safeMode=false,
+    adminName="管理员",
     superAdminID={},
     groupManaging={},
     safeSessionID={},
-    extraData=nil,
+    privTask={},
+    groupTask={},
+    extraData={},
 }
 xpcall(function()
     local data=FILE.load('botconf.lua','-lua')
@@ -43,7 +45,11 @@ xpcall(function()
     Config.superAdminID=TABLE.getValueSet(data.superAdminID)
     Config.groupManaging=TABLE.getValueSet(data.groupManaging)
     Config.safeSessionID=TABLE.getValueSet(data.safeSessionID)
-    Config.extraData=data.extraData
+    Config.privTask=data.privTask or Config.privTask
+    Config.groupTask=data.groupTask or Config.groupTask
+    Config.extraTask=data.extraTask or Config.extraTask
+    Config.extraData=data.extraData or Config.extraData
+
     print("botconf.lua successfully loaded")
 end,function(mes)
     print("Error in loading botconf.lua: "..mes)
@@ -59,25 +65,7 @@ print("# Safe session ID:")
 for id in next,Config.safeSessionID do print(id) end
 --------------------------------------------------------------
 Bot={
-    taskPriv={
-        {'log',-100},
-        {'admin_control',-99},
-        {'help_public',1},
-        {'zictionary',2},
-        {'phtool',3},
-        {'ab_guess',4},
-    },
-    taskGroup={
-        {'log',-100},
-        {'admin_control',-99},
-        {'help_public',1},
-        {'banBuffet',2},
-        {'response',3},
-        {'ab_guess',4},
-        {'zictionary',5},
-        {'repeater',100},
-    },
-    msgDelQueue={},
+    delayedAction={},
     stat={
         connectAttempts=0,
         launchTime=Time(),
@@ -243,8 +231,8 @@ end
 --------------------------------------------------------------
 ---@alias Session.data table
 ---@class Session
----@field id number
----@field uid string just 'p' or 'g' + id, for being used as unique key in SessionMap
+---@field id number Number, may collide (privID & groupID)
+---@field uid string just 'p' or 'g' + id, for being used as unique key in SessionMap, etc.
 ---@field priv boolean
 ---@field group boolean #not priv
 ---@field taskList Task[]
@@ -285,15 +273,12 @@ function Session.new(id,priv)
     }
     setmetatable(s,{__index=Session})
 
-    local template=priv and Bot.taskPriv or Bot.taskGroup
+    local template=priv and Config.privTask or Config.groupTask
     for _,task in next,template do
         s:newTask(task[1],task[2])
     end
-    local extra=Config.extraData.extraTask[s.uid]
-    if extra then
-        for i=1,#extra do
-            s:newTask(extra[i][1],extra[i][2])
-        end
+    for _,exTask in next,Config.extraTask[s.uid] or {} do
+        s:newTask(unpack(exTask))
     end
     return s
 end
@@ -310,7 +295,7 @@ function Session:newTask(id,prio)
     for i=1,#self.taskList do
         local t=self.taskList[i]
         if id==t.id then
-            print("Task created failed: Task '"..task.."' already exists")
+            print("Task created failed: Task '"..id.."' already exists")
             return
         elseif prio==t.prio then
             print("Task created failed: Prio '"..prio.."' already used by task '"..t.id.."'")
@@ -453,7 +438,7 @@ function Session:sticker(M)
 end
 
 ---Notice that time must be less than 86400 (1 day)
----@param time number|nil
+---@param time number|nil seconds
 ---@param text string
 ---@param echo? string
 function Session:delaySend(time,text,echo)
@@ -463,7 +448,7 @@ function Session:delaySend(time,text,echo)
     self:_timeTask(self.send,time,{self,text,echo})
 end
 ---Notice that time must be less than 86400 (1 day)
----@param time number
+---@param time number seconds
 ---@param id number|string string means search id from Session.echos
 function Session:delayDelete(time,id)
     if time and time>86400 then return end
@@ -471,11 +456,11 @@ function Session:delayDelete(time,id)
     self:_timeTask(self.delete,time,{self,id})
 end
 ---@param action function
----@param time number
+---@param time number seconds
 ---@param data any[]
 function Session:_timeTask(action,time,data)
     time=Time()+time
-    local queue=Bot.msgDelQueue
+    local queue=Bot.delayedAction
     local insPos
     if not queue[1] or time<queue[1].time then
         insPos=1
@@ -535,10 +520,10 @@ function scene.update()
         end
         if TASK.lock('bot_timing',1) then
             while true do
-                local m=Bot.msgDelQueue[1]
+                local m=Bot.delayedAction[1]
                 if not m or Time()<m.time then break end
                 m.func(unpack(m.data))
-                rem(Bot.msgDelQueue,1)
+                rem(Bot.delayedAction,1)
             end
         end
         repeat until not Bot._update()
@@ -571,5 +556,5 @@ TASK.new(function()
 end)
 
 print("--------------------------")
-for i=1,#Bot.taskPriv do require('task.'..Bot.taskPriv[i][1]) end
-for i=1,#Bot.taskGroup do require('task.'..Bot.taskGroup[i][1]) end
+for _,t in next,Config.privTask do require('task.'..t[1]) end
+for _,t in next,Config.groupTask do require('task.'..t[1]) end
