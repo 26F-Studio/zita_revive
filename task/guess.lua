@@ -3,6 +3,11 @@ local ins,rem,concat=table.insert,table.remove,table.concat
 local count,repD=STRING.count,STRING.repD
 local copy,getRnd=TABLE.copy,TABLE.getRandom
 
+local circLetter={
+    A="Ⓐ",B="Ⓑ",C="Ⓒ",D="Ⓓ",E="Ⓔ",F="Ⓕ",G="Ⓖ",H="Ⓗ",I="Ⓘ",J="Ⓙ",K="Ⓚ",L="Ⓛ",M="Ⓜ",N="Ⓝ",O="Ⓞ",P="Ⓟ",Q="Ⓠ",R="Ⓡ",S="Ⓢ",T="Ⓣ",U="Ⓤ",V="Ⓥ",W="Ⓦ",X="Ⓧ",Y="Ⓨ",Z="Ⓩ",
+    a="ⓐ",b="ⓑ",c="ⓒ",d="ⓓ",e="ⓔ",f="ⓕ",g="ⓖ",h="ⓗ",i="ⓘ",j="ⓙ",k="ⓚ",l="ⓛ",m="ⓜ",n="ⓝ",o="ⓞ",p="ⓟ",q="ⓠ",r="ⓡ",s="ⓢ",t="ⓣ",u="ⓤ",v="ⓥ",w="ⓦ",x="ⓧ",y="ⓨ",z="ⓩ",
+}
+
 local cooldown=2600
 local cooldownSkip={}
 for k,v in next,{
@@ -31,6 +36,8 @@ local hdWeights={
 local score={
     easy={[0]=0,0.5,1,4,5},
     hard={[0]=1,2,3,5,6},
+    wdez={[0]=0,0.5,1,4,5},
+    wdhd={[0]=1,2,3,5,6},
 }
 local rewardList={
     {98,56,31,10,05,00,00}, -- 1
