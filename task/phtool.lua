@@ -7,6 +7,13 @@ for i,str in next,STRING.split('xz xa xq xw xe xd xc za zq wd zw ze zd zc aq aw 
 end
 flagData['xx'],flagData['XX']=' ',' '
 
+local constants={
+    pi=math.pi,
+    e=math.exp(1),
+    phi=(1+5^.5)/2,
+    z=26,
+}
+
 ---@type table<string,{func:fun(args:string[]):string?|string}>
 local tools={
     ['/flag']={
@@ -34,10 +41,10 @@ local tools={
     ['/calc']={
         help="计算器\n/calc 1+1 → 2",
         func=function(args)
-            args=table.concat(args):gsub('[^0-9+/exp%^%.%(%)%*%%%-]','')
+            args=table.concat(args):gsub('[^0-9%.+%-%*/%%^()ehipxz','')
             local f=loadstring('return '..args)
             if not f then return "表达式有误" end
-            setfenv(f,{})
+            setfenv(f,constants)
             local ok,res=pcall(f)
             if not ok then return "计算有误" end
             return '='..res
