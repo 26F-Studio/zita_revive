@@ -37,12 +37,12 @@ local qdWeights={
 local basePoint={
     easy=0.26,
     hard=1.26,
-    quandle=1,
+    quandle=0.626,
 }
 local score={
     easy={[0]=0,0.5,1,4,5},
     hard={[0]=1,2,3,5,6},
-    quandle={[0]=1,1.5,2,3,4},
+    quandle={[0]=1,1.5,2,3,4,5,6},
 }
 local rewardList={
     {98,56,31,10,05,00,00}, -- 1
@@ -463,8 +463,10 @@ local function guess(D,g)---@return 'duplicate'|'win'|nil
             hisList[26]=nil
             D.stage=math.min(TABLE.count(hisList,concat(g)),3)
             if D.stage>=2 then
+                D.chances=D.chances+1
                 TABLE.connect(D.answer,quandleLib.cet6[D.length])
                 if D.stage>=3 then
+                    D.chances=D.chances+1
                     TABLE.connect(D.answer,quandleLib.tem8[D.length])
                     TABLE.connect(D.answer,quandleLib.gre[D.length])
                 end
@@ -582,7 +584,7 @@ local function sendMes(S,M,D,mode)
             end
         elseif D.mode=='quandle' then
             if #D.answer==1 then
-                t=t..repD(text.lose.quandleAlmost,concat(D.answer[1]))
+                t=t..repD(text.lose.quandleAlmost,D.answer[1])
                 if Config.extraData.family[S.uid] then
                     S:delaySend(delays.send_reward,CQpic(getRnd(Config.extraData.touhouImages)))
                 end
