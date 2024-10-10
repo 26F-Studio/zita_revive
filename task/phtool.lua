@@ -7,19 +7,31 @@ for i,str in next,STRING.split('xz xa xq xw xe xd xc za zq wd zw ze zd zc aq aw 
 end
 flagData['xx'],flagData['XX']=' ',' '
 
----@type table<string,fun(S:Session,args:string[]):string?|string>
+---@type table<string,{func:fun(args:string[]):string?|string}>
 local tools={
-    ['/flag']=function(args)
-        local res=""
-        for i=1,#args do
-            for ch in args[i]:gmatch('..') do
-                res=res..(flagData[ch] or '?')
+    ['/flag']={
+        help="旗语转换，qweadzxc表示方向\n/flagzxDC → aZ",
+        func=function(args)
+            local res=""
+            for i=1,#args do
+                for ch in args[i]:gmatch('..') do
+                    res=res..(flagData[ch] or '?')
+                end
             end
-        end
-        return res
-    end,['/旗语']="/flag",
+            return res
+        end,
+    },
+    ['/inv']={
+        help="字母补集\n/inv aeiou → [辅音字母]",
+        func=function(args)
+            local res='aeiou bcdfghjklmnpqrstvwxyz'
+            for c in args[1]:gmatch('%a') do
+                res=res:gsub(c,'')
+            end
+            return res
+        end,
+    },
 }
-TABLE.reIndex(tools)
 ---@type Task_raw
 return {
     func=function(S,M)
@@ -27,8 +39,12 @@ return {
         local args=STRING.split(STRING.trim(RawStr(M.raw_message)),' ')
         local tool=tools[table.remove(args,1)]
         if tool then
-            local res=tool(args)
-            S:send(res and tostring(res) or "[无输出结果]")
+            if #args==0 then
+                S:send(tool.help)
+            else
+                local res=tool.func(args)
+                S:send(res and tostring(res) or "[无输出结果]")
+            end
         end
         return false
     end,
