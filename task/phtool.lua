@@ -31,6 +31,18 @@ local tools={
             return res
         end,
     },
+    ['/calc']={
+        help="计算器\n/calc 1+1 → 2",
+        func=function(args)
+            args=table.concat(args):gsub('[^0-9+/exp%^%.%(%)%*%%%-]','')
+            local f=loadstring('return '..args)
+            if not f then return "表达式有误" end
+            setfenv(f,{})
+            local ok,res=pcall(f)
+            if not ok then return "计算有误" end
+            return '='..res
+        end,
+    },
 }
 ---@type Task_raw
 return {
