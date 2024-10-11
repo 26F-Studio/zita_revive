@@ -459,7 +459,7 @@ local function guess(D,g)---@return 'duplicate'|'win'|nil
         -- Punish repeating recent 25 words
         local hisList=D.quandleLongHis[D.length]
         if #D.guessHis==1 then
-            D.stage=math.min(TABLE.count(hisList,concat(g)),3)
+            D.stage=MATH.clamp(TABLE.count(hisList,concat(g)),1,3)
             if D.stage>=2 then
                 TABLE.connect(D.answer,quandleLib.cet6[D.length])
                 if D.stage>=3 then
