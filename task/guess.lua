@@ -654,6 +654,12 @@ return {
             privGame=true
         end
 
+        local quandleLength
+        if mes:sub(-1):match('%d') then
+            quandleLength=tonumber(mes:sub(-1))
+            mes=mes:sub(1,-2)
+        end
+
         if keyword.help[mes] then
             if S:lock('guess_help',26) then
                 S:send(mes:find('qd') and text.helpQD or text.helpAB)
@@ -767,7 +773,7 @@ return {
             elseif D.mode=='quandle' then
                 initQuandleLib()
                 D.chances=D.length<=6 and 6 or 5
-                D.length=MATH.randFreq({0,0,0,2,6,5,3,2,1,1})
+                D.length=quandleLength or MATH.randFreq({0,0,0,2,6,5,3,2,1,1})
                 D.repPoint=0
                 D.stage=1
 
