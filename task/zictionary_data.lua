@@ -1303,6 +1303,13 @@ local game={
     },
     {
         cat='game',
+        word="tetrio.io;tetrioio;ioio",
+        title="TETRIO.IO",
+        text="网页 主多人 音画一般 电脑 创新\n无hold有next的对战块，但两个玩家在同一个场地的两头拔河，说不太清总之很好玩，有简单的分数系统能匹配对战，或者约好友\n注：本游戏和TETR.IO完全无关",
+        link="tetrio.io",
+    },
+    {
+        cat='game',
         word="nuke;nuketris",
         title="Nuketris",
         text="可玩 非官块 网页 主单机有联机 音画廉价 电脑 不可调控制\n有几个基础单机模式和1V1排位",
