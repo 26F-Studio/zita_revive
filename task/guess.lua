@@ -655,9 +655,9 @@ return {
         end
 
         local quandleLength
-        if mes:sub(-1):match('%d') then
-            quandleLength=tonumber(mes:sub(-1))
-            mes=mes:sub(1,-2)
+        if mes:match('%d+$') then
+            quandleLength=tonumber(mes:match('%d+$'))
+            mes=mes:match('^%D+')
         end
 
         if keyword.help[mes] then
@@ -773,7 +773,7 @@ return {
             elseif D.mode=='quandle' then
                 initQuandleLib()
                 D.chances=D.length<=6 and 6 or 5
-                D.length=quandleLength or MATH.randFreq({0,0,0,2,6,5,3,2,1,1})
+                D.length=MATH.clamp(math.floor(quandleLength or MATH.randFreq({0,0,0,2,6,5,3,2,1,1})),4,10)
                 D.repPoint=0
                 D.stage=1
 
