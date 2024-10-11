@@ -6,7 +6,7 @@ local envValues={
     'math','string','table',
     'MATH','STRING','TABLE',
     'Config','SessionMap','Bot','Session',
-    'Time',
+    'Time','CQpic',
 }
 table.sort(envValues)
 local codeEnv={}
@@ -167,11 +167,11 @@ return {
             if mes:sub(1,1)=='!' then
                 if #mes<6.26 then return false end
                 if level<2 then noPermission(S) return true end
-                local func,err=loadstring(mes:sub(2))
+                local func,err=loadstring("local S=...\n"..mes:sub(2))
                 local returnMes
                 if func then
                     setfenv(func,codeEnv)
-                    local suc,res=pcall(func)
+                    local suc,res=pcall(func,S)
                     if suc then
                         if res then
                             returnMes=tostring(res)
