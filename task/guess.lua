@@ -42,7 +42,7 @@ local basePoint={
 local score={
     easy={[0]=0,0.5,1,4,5},
     hard={[0]=1,2,3,5,6},
-    quandle={[0]=1,1.5,2,3,4,5,6},
+    quandle={[0]=0.5,1,1.5,2,3,4,5},
 }
 local rewardList={
     {98,56,31,10,05,00,00}, -- 1
@@ -457,13 +457,10 @@ local function guess(D,g)---@return 'duplicate'|'win'|nil
         end
     elseif D.mode=='quandle' then
         -- Punish repeating recent 25 words
+        local hisList=D.quandleLongHis[D.length]
         if #D.guessHis==1 then
-            local hisList=D.quandleLongHis[D.length]
-            ins(hisList,1,concat(g))
-            hisList[26]=nil
             D.stage=math.min(TABLE.count(hisList,concat(g)),3)
             if D.stage>=2 then
-                D.chances=D.chances+1
                 TABLE.connect(D.answer,quandleLib.cet6[D.length])
                 if D.stage>=3 then
                     D.chances=D.chances+1
@@ -474,6 +471,8 @@ local function guess(D,g)---@return 'duplicate'|'win'|nil
         else
             D.repPoint=D.repPoint+TABLE.count(D.quandleLongHis[D.length],concat(g))
         end
+        ins(hisList,1,concat(g))
+        hisList[26]=nil
 
         resultSets={}
         for _,answer in next,D.answer do
@@ -549,7 +548,7 @@ local function sendMes(S,M,D,mode)
         if Config.extraData.family[S.uid] then
             point=point+(basePoint[D.mode])*math.random()+(score[D.mode][D.chances] or 2.6)
             if D.mode=='quandle' then
-                point=point+(D.stage-1)
+                point=point+(D.stage-1)/2
                 point=math.max(point-D.repPoint^.62*.62,0)
             end
             local reward=MATH.randFreq{
@@ -747,11 +746,11 @@ return {
             D.guessHis={}
             D.textHis=""
             if D.mode=='easy' then
-                D.chances=5
+                D.chances=6
                 D.answer=randomGuess()
                 guess(D,randomGuess(D.mode=='easy' and D.answer))
             elseif D.mode=='hard' then
-                D.chances=5
+                D.chances=6
                 D.answer=copy(hardLib,0)
                 local r=getRnd(rules)
                 local newAns={}
