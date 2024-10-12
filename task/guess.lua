@@ -654,9 +654,9 @@ return {
         end
 
         local quandleLength
-        if mes:match('%d+$') then
-            quandleLength=tonumber(mes:match('%d+$'))
-            mes=mes:match('^%D+')
+        if mes:match('^#%D+%d+$') then
+            quandleLength=tonumber(mes:match('%d+'))
+            mes=mes:match('%D+')
         end
 
         if keyword.help[mes] then
