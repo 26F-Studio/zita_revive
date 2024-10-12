@@ -42,7 +42,7 @@ local basePoint={
 local score={
     easy={[0]=0,0.5,1,4,5},
     hard={[0]=1,2,3,5,6},
-    quandle={[0]=0.5,1,1.5,2,3,4,5},
+    quandle={[0]=0.5,1,1.5,2,2.6,4.2,6},
 }
 local rewardList={
     {98,56,31,10,05,00,00}, -- 1
@@ -76,7 +76,7 @@ local keyword={
 }
 local text={
     helpAB="AB猜方块：有一组四个不同的方块，玩家猜测后会提示几A几B，A是存在且位置也对，B是存在但位置不对\n#ab普通开始，#abandon放弃，##ab勿扰模式，#abhd困难模式（允许每种块出现两次，ZJJO猜ZJZJ会得到2A2B，数量溢出也给B计数）",
-    helpQD="Quandle：有一个单词，玩家猜测后会给出一定的提示，带圈字母表示位置正确，大写存在但位置不对，小写不存在\n#qd开始，#quitom放弃，##qd勿扰模式",
+    helpQD="Quandle：有一个单词，玩家猜测后会给出一定的提示，带圈字母表示位置正确，大写存在但位置不对，小写不存在\n#qd开始，#quitom放弃，#qd5指定长度开始（4~10），##qd勿扰模式",
     guessed={"这个已经猜过了喵","已经猜过这个了喵","前面猜过这个了喵"},
     gameNotStarted={"本来也没在玩喵！","你在干什么喵…"},
     notFinished={"上一局还没结束喵~","上一把还没玩完喵"},
@@ -462,10 +462,9 @@ local function guess(D,g)---@return 'duplicate'|'win'|nil
         if #D.guessHis==1 then
             D.stage=math.min(repCount+1,3)
             if D.stage>=2 then
-                TABLE.connect(D.answer,quandleLib.cet6[D.length])
+                TABLE.connect(D.answer,quandleLib.tem8[D.length])
                 if D.stage>=3 then
                     D.chances=D.chances+1
-                    TABLE.connect(D.answer,quandleLib.tem8[D.length])
                     TABLE.connect(D.answer,quandleLib.gre[D.length])
                 end
             end
@@ -549,7 +548,7 @@ local function sendMes(S,M,D,mode)
         if Config.extraData.family[S.uid] then
             point=point+(basePoint[D.mode])*math.random()+(score[D.mode][D.chances] or 2.6)
             if D.mode=='quandle' then
-                point=point+D.stage-(D.length-2)^.5+1
+                point=point+D.stage/2-(D.length-2)^.5+1
                 point=math.max(point-D.repPoint^.62*.62,0)
             end
             local reward=MATH.randFreq{
@@ -668,7 +667,7 @@ return {
                 S:delayDelete(delays.del_help,M.message_id)
             end
             return true
-        elseif mes=='#abandon' then
+        elseif mes=='#abandon' or mes=='#quitom' then
             if not D.playing then
                 if S:lock('guess_abandon',26) then
                     S:send(getRnd(text.gameNotStarted))
@@ -779,6 +778,7 @@ return {
 
                 D.answer={}
                 TABLE.connect(D.answer,quandleLib.cet4[D.length])
+                TABLE.connect(D.answer,quandleLib.cet6[D.length])
             end
             sendMes(S,M,D,'start')
             D.lastInterectTime=Time()
