@@ -136,12 +136,27 @@ local rules={
     { -- 同时有SZ或者JL
         id=1,
         text="<有两块互为镜像对称>",
-        rule=function(seq) return find(seq,'Z') and find(seq,'S') or find(seq,'J') and find(seq,'L') end,
+        rule=function(seq)
+            return
+                find(seq,'Z') and find(seq,'S') or
+                find(seq,'J') and find(seq,'L') or
+                count(seq,'T')>=2 or
+                count(seq,'O')>=2 or
+                count(seq,'I')>=2
+        end,
     },
     { -- 不同时有SZ或者JL
         id=2,
         text="<两两都不镜像对称>",
-        rule=function(seq) return not (find(seq,'Z') and find(seq,'S') or find(seq,'J') and find(seq,'L')) end,
+        rule=function(seq)
+            return not (
+                find(seq,'Z') and find(seq,'S') or
+                find(seq,'J') and find(seq,'L') or
+                count(seq,'T')>=2 or
+                count(seq,'O')>=2 or
+                count(seq,'I')>=2
+            )
+        end,
     },
     { -- 包含T或者JL总数为偶数
         id=3,
