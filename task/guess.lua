@@ -546,6 +546,7 @@ local function sendMes(S,M,D,mode)
             point=point+1
         end
         if Config.extraData.family[S.uid] then
+            for _=1,26 do math.random() end
             point=point+basePoint[D.mode]*math.random()+(score[D.mode][D.chances] or 2.6)
             if D.mode=='quandle' then
                 point=point+D.stage/2-((D.length-1)^.5-1)
