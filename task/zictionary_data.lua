@@ -1620,8 +1620,7 @@ local extra_tetrio={
     {
         word="qp2;io qp2;io s2;爬塔;zenith;zenith tower",
         title="TETR.IO QP2",
-        text="随开随打不需要等待的第二代快速游戏，发送攻击打败对手来爬升高度达到 #十层 ！\n另见 #Surge #推进器 #速通模式 #疲劳时间 #QP2 Mod",
-        link="github.com/MrZ626/io_qp2_rule",
+        text="随开随打不需要等待的第二代快速游戏，发送攻击升级 #推进器，在 #疲劳时间 前打败对手爬升高度达到 #十层 ！\n另见 #Surge #速通模式 #QP2 Mod\n详细规则（非官方）见 github.com/MrZ626/io_qp2_rule",
     },
     {
         word="十层;楼层;f10;floor;floors",
