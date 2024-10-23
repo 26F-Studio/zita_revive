@@ -1635,7 +1635,7 @@ local extra_tetrio={
     {
         word="推进器",
         title="QP2 推进器",
-        text="爬塔增加高度时有一个倍率的加成，这个倍率从0.25开始每次升级+0.25，但等级会随着时间流失，级别越高流失越快\n每一级的颜色：无/红/橙/黄绿/蓝/紫/亮橙/青绿/青蓝/亮紫/白/白/…\n可能致敬了Bejeweled Twist中的倍乘器系统\n另见#速通模式",
+        text="爬塔增加高度时有一个倍率的加成，×0.25开始每升一级多0.25，不过等级会随着时间流失，级别越高越快\n每一级的颜色：无/红/橙/黄绿/蓝/紫/亮橙/青绿/青蓝/亮紫/白/白/…\n另见#速通模式",
     },
     {
         word="hyperspeed;速通模式",
@@ -1651,12 +1651,12 @@ local extra_tetrio={
     {
         word="qp2 mod;qp mod;io mod;tarot",
         title="QP2 Mod",
-        text="Mod列表：专家(EX)、无暂存(NH)、混乱垃圾行(MS)、高重力(GV)、不稳定垃圾行(VL)、双洞垃圾行(DH)、隐形(IN)、All-Spin(AS)、双人2P\n另见 #mod EX/NH/...",
+        text="Mod列表：专家(EX)、无暂存(NH)、混乱垃圾行(MS)、高重力(GV)、不稳定垃圾行(VL)、双洞垃圾行(DH)、隐形(IN)、All-Spin(AS)、双人(2P)\n另见 #mod EX/NH/...",
     },
     {
         word="mod EX; expert ; expert mod ; mod expert ; emperor",
         title="QP2 Expert mod",
-        text="专家（塔罗牌：皇帝 Emperor）\n各方面都变难一些：垃圾行瞬间出现、增加垃圾混乱度、失去“危急时降低受击概率”的保护、禁用qp非专家模式里的“1连击消1有1攻击”",
+        text="专家（塔罗牌：皇帝 Emperor）\n各方面都变难一些：垃圾行瞬间出现、增加垃圾混乱度、禁用“危急时降低受击概率”、禁用qp非专家模式里的“非连击消一有1攻击”、禁用消行/抵消加推进器经验",
     },
     {
         word="mod NH; nohold ; nohold mod ; mod nohold ; temperance",
