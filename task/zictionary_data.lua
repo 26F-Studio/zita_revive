@@ -1768,7 +1768,8 @@ local contributor={
     },
     {
         word="Z120;渣渣;渣渣120",
-        text="Z120.渣渣120，做了块群查成绩Bot和TETR.IO的【汉化+Plus+Verge】三合一客户端"
+        text="Z120.渣渣120，做了块群查成绩Bot和TETR.IO的【汉化+Plus+Verge】三合一客户端",
+        link="space.bilibili.com/24267334",
     },
     {
         word="TTTT;Farter;屁;屁爷",
