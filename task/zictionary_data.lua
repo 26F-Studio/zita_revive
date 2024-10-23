@@ -40,6 +40,10 @@ local meta={
         text=CQpic(Config.extraData.imgPath.."新人引导.png"),
     },
     {
+        word="推荐;游戏推荐",
+        text="对战→io js tec ppt\n单机→tech js tetr tec\n偷玩→tetr tech",
+    },
+    {
         word="分类",
         text=CQpic(Config.extraData.imgPath.."方块游戏分类.png"),
     },
