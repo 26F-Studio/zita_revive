@@ -1,5 +1,5 @@
 Time=love.timer.getTime
-love._openConsole()
+if love._openConsole then love._openConsole() end
 --------------------------------------------------------------
 local ins,rem=table.insert,table.remove
 require'Zenitha'
