@@ -70,15 +70,15 @@ local meta={
         detail="需要指出，要能熟练做出各种T-Spin并不是只看着T-Spin的那一小部分地形就可以玩好的，对玩家堆叠能力和计算next能力同样也有较高的要求。故如果目的主要是提升打块能力、没什么娱乐随便玩玩的成分时，推荐在基础能力没达到上述要求前不用去详细了解具体的T-Spin构造知识，把重点放在前置基本功的练习上就可以了",
     },
     {
-        word="wiki;维基;中文wiki;中文维基;灰机;huiji;灰机wiki",
+        word="wiki;维基;中文wiki;中文维基",
         title="俄罗斯方块中文维基",
-        text="俄罗斯方块中文百科全书，由中文玩家搭建于灰机wiki平台。\n推荐新人有不懂的知识先查阅百科再提问，也欢迎各位玩家作出编辑贡献\n早期大部分条目译自Hard Drop Wiki和Tetris Wiki",
-        link="tetris.huijiwiki.com",
+        text="俄罗斯方块中文百科全书，由中文玩家建立和维护。\n推荐新人有不懂的知识先查阅百科再提问，也欢迎各位玩家作出编辑贡献\n早期大部分条目译自Hard Drop Wiki和Tetris Wiki",
+        link="tetriswiki.cn 或 t-wiki.cn 或 tetris.link",
     },
     {
         word="其他wiki;wiki列表;harddrop wiki;tetris wiki;fandom;wiki fandom;tetris wiki fandom",
         title="一些英文wiki",
-        text="harddrop.com/wiki（Hard Drop社区的百科）\nhttps://tetris.wiki）（Myndzi在2015年创办）\ntetris.fandom.com",
+        text="harddrop.com/wiki（Hard Drop社区的百科）\nhttps://tetris.wiki（Myndzi在2015年创办）\ntetris.fandom.com",
     },
     {
         word="fumen;方块谱;编辑器;铺面",
