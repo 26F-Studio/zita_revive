@@ -529,15 +529,6 @@ function scene.update()
         repeat until not Bot._update()
     end
 end
-function scene.keyDown(k)
-    if k=='s' then
-        print("--------------------------")
-        print("Statistics:")
-        print("Alive time: "..STRING.time(Time()-Bot.stat.connectTime))
-        print("Messages sent: "..Bot.stat.messageSent)
-    end
-end
-function scene.draw() end
 function scene.unload() end
 
 SCN.add('main', scene)
