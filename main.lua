@@ -24,7 +24,8 @@ local ws=WS.new{
     sleepInterval=0.1,
 }
 Config={
-    connectInterval=600,
+    connectInterval=2.6,
+    reconnectInterval=600,
     receiveDelay=0.26,
     maxCharge=620,
     debugLog_send=false,
@@ -536,6 +537,9 @@ function scene.update()
         Bot.state='connecting'
         TASK.lock('bot_blockRestart',Config.connectInterval)
         Bot.stat.connectAttempts=Bot.stat.connectAttempts+1
+        if Bot.stat.connectAttempts>=10 then
+            Config.connectInterval=Config.reconnectInterval
+        end
         ws:connect()
         print("--------------------------")
         print(STRING.repD("[?] Connecting... ($1)",Bot.stat.connectAttempts))
@@ -544,6 +548,7 @@ function scene.update()
     elseif ws.state=='running' then
         if Bot.state~='running' then
             Bot.state='running'
+            Config.connectInterval=Config.reconnectInterval
             print("[+] Connected")
             if TABLE.find(arg,"startWithNotice") then
                 Bot.adminNotice(Bot.stat.connectAttempts==1 and "小z启动了喵！" or STRING.repD("小z回来了喵…（第$1次）",Bot.stat.connectAttempts))
