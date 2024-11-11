@@ -24,6 +24,7 @@ local ws=WS.new{
     sleepInterval=0.1,
 }
 Config={
+    connectInterval=600,
     receiveDelay=0.26,
     maxCharge=620,
     debugLog_send=false,
@@ -65,14 +66,12 @@ print("# Safe session ID:")
 for id in next,Config.safeSessionID do print(id) end
 --------------------------------------------------------------
 Bot={
-    delayedAction={},
+    state='dead', ---@type 'dead'|'connecting'|'running'
+    delayedAction={}, ---@type {time:number, func:function, data:any}[]
     stat={
         connectAttempts=0,
         launchTime=Time(),
         totalMessageSent=0,
-
-        connectLogDelay=0,
-        connectLogDelaySum=0,
 
         connectTime=Time(),
         messageSent=0,
@@ -105,22 +104,21 @@ function Bot._send(data)
     end
 end
 ---@param message string
----@param group? number
----@param user? number
+---@param uid string 'p123456' or 'g123456'
 ---@param echo? string
-function Bot.sendMsg(message,group,user,echo)
+function Bot.sendMsg(message,uid,echo)
+    if tonumber(uid) then uid='g'..uid end
     local mes={
         action='send_msg',
         params={
-            user_id=user,
-            group_id=group,
+            [uid:sub(1,1)=='g' and 'group_id' or 'user_id']=tonumber(uid:sub(2)),
             message=message,
         },
         echo=echo,
     }
-    if Config.safeMode and not Config.safeSessionID[group and 'g'..group or 'p'..user] then
+    if Config.safeMode and not Config.safeSessionID[uid] then
         if TASK.lock('safeModeBlock',10) then
-            print("Message blocked in safe mode")
+            print("Message (to"..uid..") blocked in safe mode")
         end
         return
     end
@@ -162,16 +160,16 @@ function Bot.ban(group_id,user_id,time)
 end
 function Bot.adminNotice(text)
     for id in next,Config.superAdminID do
-        Bot.sendMsg(text,nil,id)
+        Bot.sendMsg(text,'p'..id)
     end
 end
-function Bot.restart()
+function Bot.reset()
     for id in next,SessionMap do
         SessionMap[id]=nil
     end
 end
 function Bot.stop(time)
-    TASK.forceLock('bot_lock',time or 600)
+    TASK.forceLock('bot_blockRestart',time or 600)
     ws:close()
 end
 
@@ -414,11 +412,7 @@ end
 function Session:send(text,echo)
     if not self:isAlive() then return end
     if echo then echo=self.uid..':'..echo end
-    if self.priv then
-        Bot.sendMsg(text,nil,self.id,echo)
-    else
-        Bot.sendMsg(text,self.id,nil,echo)
-    end
+    Bot.sendMsg(text,self.uid,echo)
 end
 ---@param id number|string string means search id from Session.echos
 function Session:delete(id)
@@ -491,32 +485,69 @@ ZENITHA.globalEvent.clickFX=NULL
 local scene={}
 
 function scene.load() end
+
+local userInput=love.thread.getChannel('userInput')
+local cmdList
+cmdList={
+    help=function()
+        print("[Help]")
+        print("Available commands: "..table.concat(TABLE.getKeys(cmdList),","))
+    end,
+    echo=function(...)
+        print("[Echo]")
+        print(...)
+    end,
+    send=function(uid,...)
+        Bot.sendMsg(table.concat({...}," "),uid)
+    end,
+    stat=function()
+        print("\n[Statistics]")
+        print("Alive time: "..STRING.time(Time()-Bot.stat.connectTime))
+        print("Messages sent: "..Bot.stat.messageSent)
+    end,
+    exit=function()
+        print("\n[EXIT]")
+        Bot.reset()
+        Bot.stop(MATH.inf)
+        love.event.quit()
+    end,
+}
 function scene.update()
+    if userInput:getCount()>0 then
+        local args=STRING.split(userInput:pop(),' ')
+        local cmd=table.remove(args,1)
+        local func=cmdList[cmd] or cmdList.help
+        func(unpack(args))
+    end
     if ws.state=='dead' then
-        Bot.restart()
-        if TASK.getLock('bot_lock') then return end
-        TASK.unlock('bot_running')
+        if Bot.state=='running' then
+            -- Disconnected from running state
+            Bot.reset()
+            print("[!] Disconnected")
+            print("Retry after "..Config.connectInterval.."s...")
+            Bot.state='dead'
+        elseif Bot.state=='connecting' then
+            -- Disconnected from connecting state
+            print("[X] Cannot connect")
+            print("Retry after "..Config.connectInterval.."s...")
+            Bot.state='dead'
+        end
+        if TASK.getLock('bot_blockRestart') then return end
+        Bot.state='connecting'
+        TASK.lock('bot_blockRestart',Config.connectInterval)
         Bot.stat.connectAttempts=Bot.stat.connectAttempts+1
-        Bot.stat.connectLogDelay=10
-        Bot.stat.connectLogDelaySum=0
-        TASK.forceLock('connect_message',Bot.stat.connectLogDelay)
         ws:connect()
         print("--------------------------")
-        print("Connecting to LLOneBot...")
+        print(STRING.repD("[?] Connecting... ($1)",Bot.stat.connectAttempts))
     elseif ws.state=='connecting' then
         ws:update()
-        if TASK.lock('connect_message',Bot.stat.connectLogDelay) then
-            Bot.stat.connectLogDelaySum=Bot.stat.connectLogDelaySum+Bot.stat.connectLogDelay
-            print(STRING.repD("Connecting... ($1s taken)",Bot.stat.connectLogDelaySum))
-            Bot.stat.connectLogDelay=math.min(Bot.stat.connectLogDelay*2,3600)
-        end
     elseif ws.state=='running' then
-        if not TASK.getLock('bot_running') then
-            TASK.lock('bot_running')
-            print("CONNECTED")
-            -- if TABLE.find(arg,"startWithNotice") then
-            --     Bot.adminNotice(Bot.stat.connectAttempts==1 and "小z启动了喵！" or STRING.repD("小z回来了喵…（第$1次）",Bot.stat.connectAttempts))
-            -- end
+        if Bot.state~='running' then
+            Bot.state='running'
+            print("[+] Connected")
+            if TABLE.find(arg,"startWithNotice") then
+                Bot.adminNotice(Bot.stat.connectAttempts==1 and "小z启动了喵！" or STRING.repD("小z回来了喵…（第$1次）",Bot.stat.connectAttempts))
+            end
         end
         if TASK.lock('bot_timing',1) then
             while true do
@@ -531,13 +562,15 @@ function scene.update()
 end
 function scene.unload() end
 
+love.thread.newThread('io_thread.lua'):start()
+
 SCN.add('main', scene)
 ZENITHA.setFirstScene('main')
 
 TASK.new(function()
     while true do
         TASK.yieldT(10*60)
-        if TASK.getLock('bot_running') then
+        if Bot.state=='running' then
             TASK.freshLock()
             for _,S in next,SessionMap do
                 S:freshLock()

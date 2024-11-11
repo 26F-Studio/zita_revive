@@ -35,7 +35,7 @@ local commands={
         print("[RESTART]")
         if args[1]=='all' then
             S:send("（咚）\n……\n我是谁来着喵？")
-            Bot.restart()
+            Bot.reset()
         elseif args[1] then
             local uid=args[1]
             if not SessionMap[uid] then

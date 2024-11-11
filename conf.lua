@@ -3,7 +3,7 @@ function love.conf(t)
     t.version="11.5"
 
     local M=t.modules
-    M.window,M.system,M.event,M.thread=true,true,true,true
+    M.window,M.system,M.event,M.thread=false,true,true,true
     M.timer,M.math,M.data=true,false,false
     M.video,M.audio,M.sound=false,false,false
     M.graphics,M.font,M.image=false,false,false
