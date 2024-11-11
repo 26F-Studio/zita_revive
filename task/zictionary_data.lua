@@ -824,7 +824,7 @@ local pattern={
         word="impeldown",
         title="Impeldown",
         text="一个三连t2的复合构造，在t2上搭建 #皇家十字",
-        link="",
+        link="tetriswiki.cn/p/Impeldown",
     },
     {
         word="black cross;黑色十字",
