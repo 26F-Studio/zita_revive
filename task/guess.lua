@@ -544,7 +544,7 @@ end
 ---@param S Session
 ---@param M OneBot.Event.GroupMessage
 local function sendMes(S,M,D,mode)
-    local t=S.group and "[CQ:at,qq="..M.user_id.."]\n" or ""
+    local t=S.group and CQ.at(M.user_id) or ""
     if mode=='notFinished' then
         t=t..getRnd(text.notFinished).."\n"
     elseif mode=='start' then
@@ -575,11 +575,11 @@ local function sendMes(S,M,D,mode)
             }
             if reward<=3 then
                 for i=1,reward do
-                    S:delaySend(i*delays.send_reward,CQpic(getRnd(Config.extraData.touhouImages)))
+                    S:delaySend(i*delays.send_reward,CQ.img(getRnd(Config.extraData.touhouImages)))
                 end
             else
-                S:delaySend(1*delays.send_reward,CQpic(getRnd(Config.extraData.touhouImages)))
-                S:delaySend(2*delays.send_reward,CQpic(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg'))
+                S:delaySend(1*delays.send_reward,CQ.img(getRnd(Config.extraData.touhouImages)))
+                S:delaySend(2*delays.send_reward,CQ.img(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg'))
             end
             t=t.."\n"..("(%.2f/6 | %d)"):format(point,reward)
         end
@@ -591,7 +591,7 @@ local function sendMes(S,M,D,mode)
             if #D.answer==1 then
                 t=t..repD(text.lose.hardAlmost,concat(D.answer[1]))
                 if Config.extraData.family[S.uid] then
-                    S:delaySend(delays.send_reward,CQpic(getRnd(Config.extraData.touhouImages)))
+                    S:delaySend(delays.send_reward,CQ.img(getRnd(Config.extraData.touhouImages)))
                 end
             else
                 local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))
@@ -601,7 +601,7 @@ local function sendMes(S,M,D,mode)
             if #D.answer==1 then
                 t=t..repD(text.lose.quandleAlmost,D.answer[1])
                 if Config.extraData.family[S.uid] then
-                    S:delaySend(delays.send_reward,CQpic(getRnd(Config.extraData.touhouImages)))
+                    S:delaySend(delays.send_reward,CQ.img(getRnd(Config.extraData.touhouImages)))
                 end
             else
                 local ans1,ans2=TABLE.popRandom(D.answer),TABLE.popRandom(D.answer)
@@ -704,7 +704,7 @@ return {
                 if #D.answer==1 then
                     S:send(repD(text.forfeit.hardAlmost,concat(D.answer[1])))
                     if D.chances>=2 then
-                        S:send(CQpic(getRnd(Config.extraData.touhouImages)))
+                        S:send(CQ.img(getRnd(Config.extraData.touhouImages)))
                     end
                 else
                     local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))

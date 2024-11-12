@@ -14,7 +14,10 @@ function RawStr(s) -- Unescape & Remove username in CQ:at
     for k,v in next,esc do s=s:gsub(k,v) end
     return s
 end
-function CQpic(path) return "[CQ:image,file=file:///"..path:gsub("/","\\").."]" end -- Encode cq path
+CQ={
+    at=function(data) return "[CQ:at,qq="..data.."]" end,
+    img=function(data) return "_ZQIMG_"..data.."_ZQIMG_" end,
+}
 function AdminMsg(M) return M.sender and (M.sender.role=='owner' or M.sender.role=='admin') end -- Encode cq path
 --------------------------------------------------------------
 local ws=WS.new{
@@ -109,6 +112,20 @@ end
 ---@param echo? string
 function Bot.sendMsg(message,uid,echo)
     if tonumber(uid) then uid='g'..uid end
+    if message:find("_ZQIMG_") then
+        -- Split strings to text,path,text,path,...
+        local mesArray=STRING.split(message,"_ZQIMG_")
+        -- Encode path to base64 string
+        for i=2,#mesArray,2 do
+            local p=io.popen('base64 -w 0 '..mesArray[i])
+            if p then
+                mesArray[i]="[CQ:image,file=base64://"..p:read('*a')..']'
+                p:close()
+            end
+        end
+        -- Reconstruct message
+        message=table.concat(mesArray)
+    end
     local mes={
         action='send_msg',
         params={

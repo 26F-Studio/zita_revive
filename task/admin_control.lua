@@ -6,7 +6,7 @@ local envValues={
     'math','string','table',
     'MATH','STRING','TABLE',
     'Config','SessionMap','Bot','Session',
-    'Time','CQpic',
+    'Time','CQ',
 }
 table.sort(envValues)
 local codeEnv={}

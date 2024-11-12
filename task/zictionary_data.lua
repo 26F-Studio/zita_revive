@@ -37,7 +37,7 @@ local meta={
     },
     {
         word="新人;萌新",
-        text=CQpic(Config.extraData.imgPath.."新人引导.png"),
+        text=CQ.img(Config.extraData.imgPath.."新人引导.png"),
     },
     {
         word="推荐;游戏推荐",
@@ -45,23 +45,23 @@ local meta={
     },
     {
         word="分类",
-        text=CQpic(Config.extraData.imgPath.."方块游戏分类.png"),
+        text=CQ.img(Config.extraData.imgPath.."方块游戏分类.png"),
     },
     {
         word="表格;游戏表格",
-        text=CQpic(Config.extraData.imgPath.."方块游戏表格.png"),
+        text=CQ.img(Config.extraData.imgPath.."方块游戏表格.png"),
     },
     {
         word="赞助;打钱",
-        text=CQpic(Config.extraData.imgPath.."pay.png"),
+        text=CQ.img(Config.extraData.imgPath.."pay.png"),
     },
     {
         word="zone22;22zone;impossibilitris",
-        text=CQpic(Config.extraData.imgPath.."zone22教程.jpg"),
+        text=CQ.img(Config.extraData.imgPath.."zone22教程.jpg"),
     },
     {
         word="zone23;23zone;infinitris",
-        text=CQpic(Config.extraData.imgPath.."zone23教程.png"),
+        text=CQ.img(Config.extraData.imgPath.."zone23教程.png"),
     },
     {
         word="学习tspin;学习t旋",
@@ -278,12 +278,12 @@ local main={
         word="ospin;o-spin",
         title="O-Spin",
         text="由于O块旋转不变只能左右移所以经常被卡住，于是就有了O-Spin这个梗",
-        detail="有人做了T99/TF中的O块变形的特效视频广为流传；\n一些旋转系统允许O块旋进坑；\nTech设计的变形系统中可以旋转O来变形/传送进入一些特定形状的洞\n"..CQpic(Config.extraData.imgPath.."ospin.gif"),
+        detail="有人做了T99/TF中的O块变形的特效视频广为流传；\n一些旋转系统允许O块旋进坑；\nTech设计的变形系统中可以旋转O来变形/传送进入一些特定形状的洞\n"..CQ.img(Config.extraData.imgPath.."ospin.gif"),
     },
     {
         word="踢墙;踢墙表;旋转系统;rs;rotation system",
         title="旋转系统",
-        text="现代方块游戏中，方块一般能绕着固定的旋转中心旋转："..CQpic(Config.extraData.imgPath.."旋转中心.gif").."如果旋转后和场地或墙壁有重合，会根据一些规则尝试移动方块到附近的空位来让旋转成立而不是卡住转不动",
+        text="现代方块游戏中，方块一般能绕着固定的旋转中心旋转："..CQ.img(Config.extraData.imgPath.."旋转中心.gif").."如果旋转后和场地或墙壁有重合，会根据一些规则尝试移动方块到附近的空位来让旋转成立而不是卡住转不动",
         detail="(类)SRS旋转系统通常根据【从哪个方向转到哪个方向】选取一个偏移列表（也叫踢墙表），方块根据这个列表进行位置偏移（这个过程叫踢墙），于是就可以钻进入一些特定形状的洞。不同旋转系统的具体踢墙表可以在各大Wiki查到",
     },
     {
@@ -357,7 +357,7 @@ local main={
     {
         word="tetrimino;tetromino;tetramino;四连块;四联块;四连方块;四联方块;形状;方块形状",
         title="四连块",
-        text="四个正方形共用边连接成的形状，在不允许翻转的情况下共有七种，根据形状命名为Z S J L T O I"..CQpic(Config.extraData.imgPath.."七块.jpg"),
+        text="四个正方形共用边连接成的形状，在不允许翻转的情况下共有七种，根据形状命名为Z S J L T O I"..CQ.img(Config.extraData.imgPath.."七块.jpg"),
     },
     {
         word="pentamino;pentomino;五连块;五联块;五连方块;五联方块",
