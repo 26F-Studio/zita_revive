@@ -270,6 +270,11 @@ local main={
         text="规则名，指用所有方块进行Spin消除都能获得奖励，而不是通常仅T-Spin才能打出攻击(T-Spin Only)",
     },
     {
+        word="all mini;all-mini",
+        title="All-Mini",
+        text="IO专有的All-Spin的一个亚种，相比原来的仅T-Spin，其余方块使用不可移动的spin判定不过都视为mini（基础攻击=行数-1，计b2b）。此规则已默认用于TL和QP。",
+    },
+    {
         word="tss;tsd;tst",
         title="TSS/TSD/TST",
         text="T-Spin Single/Double/Triple，使用T方块Spin并消除1/2/3行，也称T1/T2/T3。其中T3需要旋转系统支持才可能打出",
