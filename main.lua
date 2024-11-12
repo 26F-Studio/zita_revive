@@ -80,7 +80,7 @@ Bot={
 }
 
 ---@class Task_raw
----@field func fun(S:Session, M: LLOneBot.Event.Message, D:Session.data):boolean
+---@field func fun(S:Session, M: OneBot.Event.Message, D:Session.data):boolean
 ---@field init fun(S:Session, D:Session.data)?
 
 ---@class Task : Task_raw
@@ -180,19 +180,19 @@ function Bot._update()
     if not pack then return end
     if op=='text' then
         local suc,res=pcall(JSON.decode,pack)
-        ---@cast res LLOneBot.Event.Base
+        ---@cast res OneBot.Event.Base
         if not suc then
             print("Error decoding json: "..res)
             print(pack)
             return true
         end
         if res.post_type=='meta_event' then
-            ---@cast res LLOneBot.Event.Meta
+            ---@cast res OneBot.Event.Meta
             if res.meta_event_type=='lifecycle' then
                 print("Lifecycle event: "..res.sub_type)
             end
         elseif rawget(res,'retcode') then
-            ---@cast res LLOneBot.Event.Response
+            ---@cast res OneBot.Event.Response
             if res.echo then
                 local uid=STRING.before(res.echo,':')
                 local S=SessionMap[uid]
@@ -204,7 +204,7 @@ function Bot._update()
                 print(TABLE.dump(res))
             end
         elseif res.post_type=='message' then
-            ---@cast res LLOneBot.Event.Message
+            ---@cast res OneBot.Event.Message
             local priv=res.message_type=='private'
             local id=priv and res.user_id or res.group_id
             local S=SessionMap[(priv and 'p' or 'g')..id]
@@ -427,7 +427,7 @@ function Session:delete(id)
         end
     end
 end
----@param M LLOneBot.Event.Message
+---@param M OneBot.Event.Message
 function Session:sticker(M)
     Bot.sendSticker(M.message_id)
 end

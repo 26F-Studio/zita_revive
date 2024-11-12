@@ -1,10 +1,10 @@
----@class LLOneBot.Sender CAUTION: May not accurate
+---@class OneBot.Sender CAUTION: May not accurate
 ---@field user_id number QQ号
 ---@field nickname string 昵称
 ---@field sex 'male'|'female'|'unknown'
 ---@field age number
 
----@class LLOneBot.Sender.Group : LLOneBot.Sender
+---@class OneBot.Sender.Group : OneBot.Sender
 ---@field card string 群名片/备注
 ---@field area string 地区
 ---@field level string 等级
@@ -13,7 +13,7 @@
 
 
 
----@class LLOneBot.SimpMes
+---@class OneBot.SimpMes
 ---@field group? number
 ---@field user? number
 ---
@@ -21,11 +21,11 @@
 
 
 
----@class LLOneBot.Event.Base
+---@class OneBot.Event.Base
 ---@field post_type 'message'|'notice'|'request'|'meta_event'
 ---@field time number
 
----@class LLOneBot.Event.Meta : LLOneBot.Event.Base
+---@class OneBot.Event.Meta : OneBot.Event.Base
 ---@field post_type 'meta_event'
 ---@field meta_event_type 'lifecycle'|'heartbeat'
 ---@field sub_type 'connect'|'enable'|'disable'
@@ -46,29 +46,29 @@
 ---@field type 'reply'
 ---@field data {id:number}
 
----@class LLOneBot.Event.PrivateMessage : LLOneBot.Event.Base
+---@class OneBot.Event.PrivateMessage : OneBot.Event.Base
 ---@field post_type 'message'
 ---@field message_type 'private'
 ---@field sub_type 'friend'|'group'|'other'
 ---@field user_id number
 ---@field raw_message string
 ---
----@field sender LLOneBot.Sender
+---@field sender OneBot.Sender
 ---@field message Segment[]
 ---
 ---@field font number
 ---@field message_id number
 
----@class LLOneBot.Event.GroupMessage : LLOneBot.Event.PrivateMessage
+---@class OneBot.Event.GroupMessage : OneBot.Event.PrivateMessage
 ---@field message_type 'group'
 ---@field sub_type 'normal'|'anonymous'|'notice'
 ---@field group_id number
----@field sender LLOneBot.Sender.Group
+---@field sender OneBot.Sender.Group
 
----@alias LLOneBot.Event.Message LLOneBot.Event.PrivateMessage|LLOneBot.Event.GroupMessage
+---@alias OneBot.Event.Message OneBot.Event.PrivateMessage|OneBot.Event.GroupMessage
 
 
----@class LLOneBot.Event.FriendRequest : LLOneBot.Event.Base
+---@class OneBot.Event.FriendRequest : OneBot.Event.Base
 ---@field post_type 'request'
 ---@field request_type 'friend'
 ---@field self_id number 自己的QQ号
@@ -76,15 +76,15 @@
 ---@field comment string 验证信息
 ---@field flag string 请求flag，处理时传回
 
----@class LLOneBot.Event.GroupRequest : LLOneBot.Event.FriendRequest
+---@class OneBot.Event.GroupRequest : OneBot.Event.FriendRequest
 ---@field request_type 'group'
 ---@field sub_type 'add'|'invite'
 ---@field group_id number 群号
 
----@class LLOneBot.Event.Notice : LLOneBot.Event.Base
+---@class OneBot.Event.Notice : OneBot.Event.Base
 ---@field TODO any
 
----@class LLOneBot.Event.Response
+---@class OneBot.Event.Response
 ---@field retcode number
 ---@field status 'ok'|'async'
 ---@field wording string 未知

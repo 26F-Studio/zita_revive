@@ -158,7 +158,7 @@ end
 ---@type Task_raw
 return {
     func=function(S,M)
-        ---@cast M LLOneBot.Event.PrivateMessage
+        ---@cast M OneBot.Event.PrivateMessage
 
         local level=Bot.isAdmin(M.user_id) and 2 or AdminMsg(M) and 1 or 0
 

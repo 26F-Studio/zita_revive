@@ -542,7 +542,7 @@ local function guess(D,g)---@return 'duplicate'|'win'|nil
     if res=='4A0B' then return 'win' end
 end
 ---@param S Session
----@param M LLOneBot.Event.GroupMessage
+---@param M OneBot.Event.GroupMessage
 local function sendMes(S,M,D,mode)
     local t=S.group and "[CQ:at,qq="..M.user_id.."]\n" or ""
     if mode=='notFinished' then
@@ -658,7 +658,7 @@ return {
         for i=1,10 do D.quandleLongHis[i]={} end
     end,
     func=function(S,M,D)
-        ---@cast M LLOneBot.Event.GroupMessage
+        ---@cast M OneBot.Event.GroupMessage
         -- Log
         local mes=SimpStr(M.raw_message)
         if #mes>=12.6 then return false end

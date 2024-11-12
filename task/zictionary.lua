@@ -11,7 +11,7 @@ return {
         D.lastDetailEntry=false
     end,
     func=function(S,M,D)
-        ---@cast M LLOneBot.Event.PrivateMessage|LLOneBot.Event.GroupMessage
+        ---@cast M OneBot.Event.PrivateMessage|OneBot.Event.GroupMessage
 
         local mes=STRING.trim(RawStr(M.raw_message))
 
