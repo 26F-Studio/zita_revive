@@ -487,6 +487,7 @@ SessionMap={}
 --------------------------------------------------------------
 ZENITHA.globalEvent.drawCursor=NULL
 ZENITHA.globalEvent.clickFX=NULL
+ZENITHA.globalEvent.quit=function() ws:close() end
 local scene={}
 
 function scene.load() end
