@@ -7,18 +7,6 @@ ZENITHA.setMaxFPS(30)
 ZENITHA.setDrawFreq(10)
 ZENITHA.setUpdateFreq(100)
 ZENITHA.setVersionText('')
-function SimpStr(s) return s:gsub('%s',''):lower() end -- Remove spaces and lower case
-local esc={['&amp;']='&',['&#91;']='[',['&#93;']=']',['&#44;']=','}
-function RawStr(s) -- Unescape & Remove username in CQ:at
-    s=s:gsub('%[CQ:at,qq=(%d+),name=.-%]','[CQ:at,qq=%1]')
-    for k,v in next,esc do s=s:gsub(k,v) end
-    return s
-end
-CQ={
-    at=function(data) return "[CQ:at,qq="..data.."]" end,
-    img=function(data) return "[CQ:image,file=http://localhost:3002/"..data.."]" end,
-}
-function AdminMsg(M) return M.sender and (M.sender.role=='owner' or M.sender.role=='admin') end -- Encode cq path
 --------------------------------------------------------------
 local ws=WS.new{
     host='localhost',
@@ -68,6 +56,19 @@ print("# Group managing:")
 for id in next,Config.groupManaging do print(id) end
 print("# Safe session ID:")
 for id in next,Config.safeSessionID do print(id) end
+--------------------------------------------------------------
+function SimpStr(s) return s:gsub('%s',''):lower() end -- Remove spaces and lower case
+local esc={['&amp;']='&',['&#91;']='[',['&#93;']=']',['&#44;']=','}
+function RawStr(s) -- Unescape & Remove username in CQ:at
+    s=s:gsub('%[CQ:at,qq=(%d+),name=.-%]','[CQ:at,qq=%1]')
+    for k,v in next,esc do s=s:gsub(k,v) end
+    return s
+end
+CQ={
+    at=function(data) return "[CQ:at,qq="..data.."]" end,
+    img=function(data) return "[CQ:image,file="..data.."]" end,
+}
+function AdminMsg(M) return M.sender and (M.sender.role=='owner' or M.sender.role=='admin') end -- Encode cq path
 --------------------------------------------------------------
 Bot={
     state='dead', ---@type 'dead'|'connecting'|'running'
