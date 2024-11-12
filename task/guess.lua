@@ -544,7 +544,7 @@ end
 ---@param S Session
 ---@param M OneBot.Event.GroupMessage
 local function sendMes(S,M,D,mode)
-    local t=S.group and CQ.at(M.user_id) or ""
+    local t=S.group and CQ.at(M.user_id).."\n" or ""
     if mode=='notFinished' then
         t=t..getRnd(text.notFinished).."\n"
     elseif mode=='start' then
