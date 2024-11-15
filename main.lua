@@ -406,7 +406,7 @@ function Session:receive(M)
         if suc2 then
             if res2==true then break end
         else
-            print(STRING.repD("Session-$1 Task-$2 Error:\n$3",self.id,task.id,res2))
+            print(STRING.repD("Session-$1 Task-$2 ($3) Error:\n$4",self.id,task.id,os.date("%m/%d %H:%M:%S"),res2))
             break
         end
     end
