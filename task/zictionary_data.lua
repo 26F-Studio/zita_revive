@@ -1567,6 +1567,12 @@ local game={
         title="Tetris (NES, Nintendo)",
         text="nes平台上的块 官块 主单机 音画优秀 需要模拟器 不可调控制\n最普及的经典俄罗斯方块之一，因各种因素硬抗住了方块现代化的进程活到了现在，CTWC比赛用的就是这个游戏",
     },
+    {
+        cat='game',
+        word="tetris forever;forever",
+        title="Tetris Forever",
+        text="主要部分不是游戏 官块 主单机 音画优秀 不可调控制\n俄罗斯方块40周年作，总体上是一个电子展览馆，按Tetris的历史发展排列了一份纪录片和各种图片资料，还内置了模拟器用来体验一些老游戏",
+    },
     -- 题库
     {
         cat='game',
@@ -1637,7 +1643,7 @@ local extra_tetrio={
         text="十层分别是：初始大厅、酒店(50m)、赌场(150m)、竞技场(300m)、博物馆(450m)、废弃办公楼(650m)、实验室(850m)、核心(1100m)、污染区(1350m)、神之境(1650m)",
     },
     {
-        word="surge;surge b2b",
+        word="surge;surge b2b;b2b charging;b2b charge",
         title="Surge B2B",
         text="充能B2B系统，达到b2b×4然后中断时会打出一发和b2b数同样的超大攻击（分成三节）\n目前TETR.IO的TL第二赛季和QP2都使用此新系统（QP中参数略不同）",
     },
