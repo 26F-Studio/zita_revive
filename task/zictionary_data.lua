@@ -1376,7 +1376,7 @@ local game={
     },
     {
         cat='game',
-        word="Techmino Galaxy;Techmino: Galaxy;盖勒克希;铁壳米诺盖勒克希",
+        word="Techmino Galaxy;Techmino: Galaxy;TG;铁盖;盖勒克希;铁壳米诺盖勒克希",
         title="Techmino: Galaxy",
         text="一款谜之前端",
     },
