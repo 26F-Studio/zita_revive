@@ -1806,7 +1806,7 @@ local contributor={
         text="T1069.苏云，主办过不少中文社区方块赛事和活动",
     },
     {
-        word="T043;xb;xb2002b;allustrate",
+        word="T043;xb;xb2002b",
         text="T043.xb，主办过不少中文社区方块赛事，曾经是中文维基最主要的编辑者和翻译者",
     },
     {
