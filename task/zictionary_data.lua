@@ -87,10 +87,16 @@ local meta={
         link="fumen.zui.jp  knewjade.github.io/fumen-for-mobile",
     },
     {
-        word="github",
-        title="GitHub",
-        text="Techmino的GitHub仓库地址，欢迎Star！",
-        link="github.com/26F-Studio/Techmino",
+        word="tech仓库;techmino仓库",
+        text="github.com/26F-Studio/Techmino\nTechmino的GitHub仓库地址，欢迎Star！",
+    },
+    {
+        word="铁壳ios",
+        text="【暂无数据】",
+    },
+    {
+        word="铁壳mac",
+        text=CQ.img(Config.extraData.imgPath.."techmino_mac.jpg"),
     },
     {
         word="宝石;宝石迷阵;bejeweled;bej;bej1;bej2;bej3;bejT;bejeweled1;bejeweled2;bejeweled3;bejeweled twist",
@@ -1371,7 +1377,7 @@ local game={
         cat='game',
         word="tech;techmino;铁壳;铁壳米诺",
         title="Techmino",
-        text="简称Tech 非官块 要下载 主单机有联机 音画优秀 电脑+手机 有自定义\n大规模缝合了常见现代块内容，可练习可挑战\n目前最新版本0.17.21，可以和约好友联机对战",
+        text="简称Tech 非官块 要下载 主单机有联机 音画优秀 电脑+手机 有自定义\n大规模缝合了常见现代块内容，可练习可挑战\n目前最新版本0.17.21，可以和约好友联机对战\n苹果用户另见 #铁壳ios #铁壳mac",
         link="studio26f.org",
     },
     {
