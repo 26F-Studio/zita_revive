@@ -273,7 +273,7 @@ local main={
     {
         word="all spin;all-spin",
         title="All-Spin",
-        text="规则名，指用所有方块进行Spin消除都能获得奖励，而不是通常仅T-Spin才能打出攻击(T-Spin Only)",
+        text="规则名，指用所有方块进行Spin消除都能获得奖励，而不是通常仅T-Spin才能打出攻击(T-Spin Only)\n另见 #All-Mini",
     },
     {
         word="all mini;all-mini",
