@@ -43,10 +43,10 @@ xpcall(function()
     Config.extraTask=data.extraTask or Config.extraTask
     Config.extraData=data.extraData or Config.extraData
 
-    print("botconf.lua successfully loaded")
+    LOG('info',"botconf.lua successfully loaded")
 end,function(mes)
-    print("Error in loading botconf.lua: "..mes)
-    print("Some settings may not be loaded correctly")
+    LOG('error',"Error in loading botconf.lua: "..mes)
+    LOG('error',"Some settings may not be loaded correctly")
 end)
 print("--------------------------")
 print("Admin name: "..Config.adminName)
@@ -105,7 +105,7 @@ function Bot._send(data)
         ws:send(res)
         return true
     else
-        print("Error encoding json:\n"..debug.traceback(res))
+        LOG('warn',"Error encoding json:\n"..debug.traceback(res))
     end
 end
 ---@param message string
@@ -123,7 +123,7 @@ function Bot.sendMsg(message,uid,echo)
     }
     if Config.safeMode and not Config.safeSessionID[uid] then
         if TASK.lock('safeModeBlock',10) then
-            print("Message (to"..uid..") blocked in safe mode")
+            LOG("Message (to"..uid..") blocked in safe mode")
         end
         return
     end
@@ -186,14 +186,14 @@ function Bot._update()
         local suc,res=pcall(JSON.decode,pack)
         ---@cast res OneBot.Event.Base
         if not suc then
-            print("Error decoding json: "..res)
+            LOG('info',"Error decoding json: "..res)
             print(pack)
             return true
         end
         if res.post_type=='meta_event' then
             ---@cast res OneBot.Event.Meta
             if res.meta_event_type=='lifecycle' then
-                print("Lifecycle event: "..res.sub_type)
+                LOG("Lifecycle event: "..res.sub_type)
             end
         elseif rawget(res,'retcode') then
             ---@cast res OneBot.Event.Response
@@ -298,10 +298,10 @@ function Session:newTask(id,prio)
     for i=1,#self.taskList do
         local t=self.taskList[i]
         if id==t.id then
-            print("Task created failed: Task '"..id.."' already exists")
+            LOG('info',"Task created failed: Task '"..id.."' already exists")
             return
         elseif prio==t.prio then
-            print("Task created failed: Prio '"..prio.."' already used by task '"..t.id.."'")
+            LOG('info',"Task created failed: Prio '"..prio.."' already used by task '"..t.id.."'")
             return
         elseif not insPos and prio<t.prio then
             insPos=i
@@ -320,7 +320,7 @@ end
 function Session:removeTask_id(id)
     for i=1,#self.taskList do
         if self.taskList[i].id==id then
-            print("Task removed: "..id)
+            LOG('info',"Task removed: "..id)
             rem(self.taskList,i)
             return
         end
@@ -332,7 +332,7 @@ function Session:removeAllTask()
             self.taskList[id]=nil
         end
     end
-    print("All user tasks cleared")
+    LOG('info',"All user tasks cleared")
 end
 
 ---@param name any
@@ -406,7 +406,7 @@ function Session:receive(M)
         if suc2 then
             if res2==true then break end
         else
-            print(STRING.repD("Session-$1 Task-$2 ($3) Error:\n$4",self.id,task.id,os.date("%m/%d %H:%M:%S"),res2))
+            LOG('warn',STRING.repD("Session-$1 Task-$2 ($3) Error:\n$4",self.id,task.id,os.date("%m/%d %H:%M:%S"),res2))
             break
         end
     end
@@ -529,32 +529,32 @@ function scene.update()
         if Bot.state=='running' then
             -- Disconnected from running state
             Bot.reset()
-            print("[!] Disconnected")
-            print("Retry after "..Config.connectInterval.."s...")
+            LOG('error',"Disconnected")
+            LOG('info',"Retry after "..Config.connectInterval.."s...")
             Bot.state='dead'
         elseif Bot.state=='connecting' then
             -- Disconnected from connecting state
-            print("[X] Cannot connect")
-            print("Retry after "..Config.connectInterval.."s...")
+            LOG('error',"Cannot connect")
+            LOG('info',"Retry after "..Config.connectInterval.."s...")
             Bot.state='dead'
         end
         if TASK.getLock('bot_blockRestart') then return end
         Bot.state='connecting'
-        TASK.lock('bot_blockRestart',Config.connectInterval)
         Bot.stat.connectAttempts=Bot.stat.connectAttempts+1
         if Bot.stat.connectAttempts>=10 then
             Config.connectInterval=Config.reconnectInterval
         end
+        TASK.lock('bot_blockRestart',Config.connectInterval)
         ws:connect()
         print("--------------------------")
-        print(STRING.repD("[?] Connecting... ($1)",Bot.stat.connectAttempts))
+        LOG('info',STRING.repD("Connecting... ($1)",Bot.stat.connectAttempts))
     elseif ws.state=='connecting' then
         ws:update()
     elseif ws.state=='running' then
         if Bot.state~='running' then
             Bot.state='running'
             Config.connectInterval=Config.reconnectInterval
-            print("[+] Connected")
+            LOG('info',"Connected")
             if TABLE.find(arg,"startWithNotice") then
                 Bot.adminNotice(Bot.stat.connectAttempts==1 and "小z启动了喵！" or STRING.repD("小z回来了喵…（第$1次）",Bot.stat.connectAttempts))
             end
