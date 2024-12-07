@@ -84,8 +84,8 @@ Bot={
 }
 
 ---@class Task_raw
----@field func fun(S:Session, M: OneBot.Event.Message, D:Session.data):boolean
----@field init fun(S:Session, D:Session.data)?
+---@field func fun(S:Session, M: OneBot.Event.Message, D:Session.data):boolean true means message won't be passed to next task
+---@field init fun(S:Session, D:Session.data)? if exist, execute when task created, jsut after launching
 
 ---@class Task : Task_raw
 ---@field id string
