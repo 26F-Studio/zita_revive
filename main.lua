@@ -23,6 +23,7 @@ Config={
     debugLog_receive=false,
     debugLog_response=false,
     safeMode=false,
+    botID=false,
     adminName="管理员",
     superAdminID={},
     groupManaging={},
@@ -34,6 +35,7 @@ Config={
 xpcall(function()
     local data=FILE.load('botconf.lua','-lua')
     ---@cast data Data
+    Config.botID=data.botID
     Config.adminName=data.adminName
     Config.superAdminID=TABLE.getValueSet(data.superAdminID)
     Config.groupManaging=TABLE.getValueSet(data.groupManaging)
@@ -49,6 +51,7 @@ end,function(mes)
     LOG('error',"Some settings may not be loaded correctly")
 end)
 print("--------------------------")
+print("Bot ID: "..Config.botID)
 print("Admin name: "..Config.adminName)
 print("# Super admin ID:")
 for id in next,Config.superAdminID do print(id) end
