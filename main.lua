@@ -94,6 +94,8 @@ Bot={
 ---@field id string
 ---@field prio number
 
+---@alias Sendable string|number|boolean|string.buffer
+
 function Bot.isAdmin(id)
     return Config.superAdminID[id]
 end
@@ -111,7 +113,7 @@ function Bot._send(data)
         LOG('warn',"Error encoding json:\n"..debug.traceback(res))
     end
 end
----@param message string
+---@param message Sendable
 ---@param uid string 'p123456' or 'g123456'
 ---@param echo? string
 function Bot.sendMsg(message,uid,echo)
@@ -120,7 +122,7 @@ function Bot.sendMsg(message,uid,echo)
         action='send_msg',
         params={
             [uid:sub(1,1)=='g' and 'group_id' or 'user_id']=tonumber(uid:sub(2)),
-            message=message,
+            message=tostring(message),
         },
         echo=echo,
     }
@@ -415,7 +417,7 @@ function Session:receive(M)
     end
 end
 
----@param text string
+---@param text Sendable
 ---@param echo? string
 function Session:send(text,echo)
     if not self:isAlive() then return end

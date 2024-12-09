@@ -1,5 +1,5 @@
 local ins=table.insert
----@type Map<ZictEntry>
+---@type Map<Zict.Entry>
 local zict=FILE.load('task/zictionary_data.lua','-lua')
 local entryList=zict.entryList
 zict.entryList=nil
@@ -60,7 +60,7 @@ return {
         end
 
         -- Get entry from dict data
-        ---@type ZictEntry
+        ---@type Zict.Entry
         local entry
         if startPos==1 then
             entry=zict[SimpStr(phrase)]

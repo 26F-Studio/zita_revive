@@ -1,4 +1,4 @@
----@class ZictEntry
+---@class Zict.Entry
 ---@field word string
 ---@field title? string
 ---@field text? string|fun(S:Session):string
@@ -19,7 +19,7 @@
     func，可选，用于实现特殊词条
 ]]
 
----@type ZictEntry[]
+---@type Zict.Entry[]
 local meta={
     {
         word="词典;小z词典;zict;zictionary",
@@ -109,7 +109,7 @@ local meta={
         text="魔法气泡，一款相同颜色连起来就消除的游戏（有请其他群友解释）",
     },
 }
----@type ZictEntry[]
+---@type Zict.Entry[]
 local main={
     -- 缩写
     {
@@ -700,7 +700,7 @@ local main={
         detail="如果你想开发以Tetris为大标题的“官方”俄罗斯方块游戏，必须经过他们的同意且支付大额授权费用，这对于个人开发者来说是几乎不可能的",
     },
 }
----@type ZictEntry[]
+---@type Zict.Entry[]
 local pattern={
     {
         word="定式;开局定式",
@@ -1264,7 +1264,7 @@ local pattern={
         link="tetriswiki.cn/p/Aoiro_Cannon",
     },
 }
----@type ZictEntry[]
+---@type Zict.Entry[]
 local game={
     -- 网页
     {
@@ -1635,7 +1635,7 @@ local game={
         text="非官块 要下载 主联机有单机 音画廉价 电脑 不可调控制\n腾讯游戏大厅的方块，12宽场地的经典块，攻击方式只有消4打3和消3打2，垃圾行为国际象棋棋盘式，几乎不可能挖掘",
     },
 }
----@type ZictEntry[]
+---@type Zict.Entry[]
 local extra_tetrio={
     {
         word="qp2;io qp2;io s2;爬塔;zenith;zenith tower",
@@ -1719,7 +1719,7 @@ local extra_tetrio={
         text="双人（塔罗牌：恋人 The Lovers）\n会员玩家可以邀请其他人和自己两个人一起玩此模式，两个人发送出去给别人的伤害数值减半，一个人死了后另一个人可以做任务复活队友",
     },
 }
----@type ZictEntry[]
+---@type Zict.Entry[]
 local contributor={
     {
         word="26f studio;26f;26楼;26楼工作室",
