@@ -143,10 +143,8 @@ local denyTexts={
     "你没有足够的权限喵",
     "Permission Denied喵",
     "你是谁！（后跳）",
-    "听不懂喵！！！！！",
     Config.adminName.."才能这样做喵",
-    "只有"..Config.adminName.."才能让我这样做喵！！",
-    "只有"..Config.adminName.."才能这样命令我喵！！",
+    "我只听"..Config.adminName.."的喵！",
 }
 ---@param S Session
 local function noPermission(S)
