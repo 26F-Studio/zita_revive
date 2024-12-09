@@ -206,7 +206,8 @@ local texts={
     wrongCmd="用法详见#duel help",
 
     game_moreLine="(还有$1行未显示)",
-    game_clear={'single','double','triple','tetris'},
+    game_spin="旋",
+    game_clear={'单行','双清','三消','四方','五行','六边','七色','八门','九莲','十面'},
 }
 
 ---@type Map<BrikDuel.Duel>
@@ -924,7 +925,7 @@ return {
                 for _,clear in next,clears do
                     buf:put("\n")
                     if clear.spin then
-                        buf:put(clear.piece..'-spin '..texts.game_clear[clear.line])
+                        buf:put(clear.piece..texts.game_spin..texts.game_clear[clear.line])
                     else
                         buf:put('('..clear.piece..')'..texts.game_clear[clear.line])
                     end
