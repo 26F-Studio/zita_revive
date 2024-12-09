@@ -106,7 +106,6 @@ local meta={
     },
     {
         word="气泡;魔法气泡;噗哟;噗哟噗哟;puyo;puyopuyo",
-        title="",
         text="魔法气泡，一款相同颜色连起来就消除的游戏（有请其他群友解释）",
     },
 }
@@ -1575,7 +1574,7 @@ local game={
     },
     {
         cat='game',
-        word="tetris forever;forever",
+        word="tetris forever;forever;永恒;永恒篇",
         title="Tetris Forever",
         text="主要部分不是游戏 官块 主单机 音画优秀 不可调控制\n俄罗斯方块40周年作，总体上是一个电子展览馆，按Tetris的历史发展排列了一份纪录片和各种图片资料，还内置了模拟器用来体验一些老游戏",
     },
