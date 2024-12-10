@@ -22,6 +22,8 @@ local repD,trimIndent=STRING.repD,STRING.trimIndent
 ---@field drop integer piece dropped
 ---@field line integer line cleared
 ---@field atk integer attack sent
+---@field spin integer
+---@field allclear integer
 ---@field overkill number
 ---@field overkill_max number
 
@@ -40,6 +42,8 @@ local repD,trimIndent=STRING.repD,STRING.trimIndent
 ---@field drop integer
 ---@field line integer
 ---@field atk integer
+---@field spin integer
+---@field allclear integer
 
 ---@class BrikDuel.Duel
 ---@field id number
@@ -135,8 +139,10 @@ local skins={
 }
 local marks=setmetatable({
     "１２３４５６７８９０",
-    emoji="1⃣2⃣3⃣4⃣5⃣6⃣7⃣8⃣9⃣0⃣",
     norm="⬛⬛⬛ ４  ５  ６  ７ ⬛⬛⬛",
+    emoji="1⃣2⃣3⃣4⃣5⃣6⃣7⃣8⃣9⃣0⃣",
+    han_x="一二三四五六七八九〇",
+    han_y="壹贰叁肆伍陆柒捌玖零",
 },{__index=function(t) return t[1] end})
 local keyword={
     accept=TABLE.getValueSet{"接受","同意","accept","ok"},
@@ -223,6 +229,16 @@ local texts={
     game_spin="旋",
     game_clear={'单行','双清','三消','四方','五行','六边','七色','八门','九莲','十面'},
     game_allclear="全消",
+    game_allclearFX={
+        "𝖠𝖫𝖫 𝖢𝖫𝖤𝖠𝖱",
+        "𝙰𝙻𝙻 𝙲𝙻𝙴𝙰𝚁",
+        "𝐀𝐋𝐋 𝐂𝐋𝐄𝐀𝐑",
+        "𝘼𝙇𝙇 𝘾𝙇𝙀𝘼𝙍",
+        "𝑨𝑳𝑳 𝑪𝑳𝑬𝑨𝑹",
+        "𝓐𝓛𝓛 𝓒𝓛𝓔𝓐𝓡",
+        "𝕬𝕷𝕷 𝕮𝕷𝕰𝕬𝕽",
+        "𝒜𝒯𝒯 𝒟𝒯𝒥𝒜𝒵",
+    },
 
     notInRoom="你在干什么喵？",
     wrongCmd="用法详见#duel help",
@@ -255,6 +271,7 @@ function User.get(id)
         stat={
             game=0,win=0,lose=0,
             move=0,drop=0,line=0,atk=0,
+            spin=0,allclear=0,
             overkill=0,overkill_max=0,
         },
         pfpMino=TABLE.getRandom(TABLE.getValues(pfpMino)),
@@ -428,8 +445,8 @@ function Game:parse(str)
             ctrl=false
         end
     end
-    assertf(#controls>0,"指令序列为空")
-    assertf(clean,"指令结束时有多余操作未硬降确认")
+    assertf(#controls>0,"[-]指令序列为空")
+    assertf(clean,"[-]最后有多余操作未硬降确认")
     return controls
 end
 
@@ -437,7 +454,7 @@ function Game:spawnPiece()
     local piece=self.sequence[1]
     if not piece then return 0,0,0,NONE end
     local data=brikData[piece]
-    return data.x,100,0,data.mat
+    return data.x,41-#data.mat,0,data.mat
 end
 
 function Game:ifoverlap(field,piece,cx,cy)
@@ -538,6 +555,8 @@ function Game:execute(controls)
             rem(self.sequence,1)
             curX,curY,dir,mat=self:spawnPiece()
             self.stat.drop=self.stat.drop+1
+            if tuck then self.stat.spin=self.stat.spin+1 end
+            if #field==0 then self.stat.allclear=self.stat.allclear+1 end
         end
         self.stat.move=self.stat.move+1
     end
@@ -566,7 +585,12 @@ function Game:getFullStateText()
         end
         buf:put("\n")
     end
-    buf:put(marks[User.get(self.uid).skin].."\n")
+    if h>0 then
+        buf:put(marks[User.get(self.uid).skin].."\n")
+    else
+        self.stat.allclear=self.stat.allclear+1
+        buf:put(texts.game_allclearFX[self.stat.allclear<=5 and self.stat.allclear or 6+self.stat.allclear%3].."\n")
+    end
     if h>10 then buf:put(repD(texts.game_moreLine.."\n",h-10)) end
     buf:put(self:getSequenceText())
     return tostring(buf)
@@ -836,7 +860,6 @@ return {
                 local newDuel=Duel.new(S.id,M.user_id)
                 if newDuel then
                     D.matches[M.user_id]=newDuel
-                    newDuel:save()
                     S:send(repD(texts.new_free,newDuel.id))
                 else
                     if S:lock('brikduel_failed',26) then
@@ -925,7 +948,6 @@ return {
                     if newDuel then
                         D.matches[M.user_id]=newDuel
                         D.matches[opID]=newDuel
-                        newDuel:save()
                         S:send(repD(texts.new_room,newDuel.id,TABLE.getRandom(TABLE.getKeys(keyword.accept))))
                     else
                         if S:lock('brikduel_failed',26) then
@@ -989,6 +1011,10 @@ return {
                     if clear.allclear then
                         buf:put(texts.game_allclear)
                     end
+                end
+                if true then
+                    -- TODO
+                    curDuel:save()
                 end
                 S:send(buf)
 
