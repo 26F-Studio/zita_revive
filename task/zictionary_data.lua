@@ -375,7 +375,7 @@ local main={
         text="类似四连块但增加到五个正方形，在不允许翻转的情况下共有18种，命名方案不统一，其中一套是S5 Z5 P Q F E T5 U V W X J5 L5 R Y N H I5",
     },
     {
-        word="二连块;三连块;六连块;七连块;八连块;九连块;二十六连块",
+        word="一连块;二连块;三连块;六连块;七连块;八连块;九连块;二十六连块",
         text="别闹",
     },
     {
@@ -1820,7 +1820,11 @@ local contributor={
     },
     {
         word="Dr.ocelot;Dr ocelot;ocelot",
-        text="Dr.Ocelot，制作了TETR.IO的音频，编写了QP2模式的所有音乐",
+        text="Dr.Ocelot，制作了TETR.IO的音频，编写了QP2模式的所有音乐；Tetra Legends的作者",
+    },
+    {
+        word="T6623;Aqua6623;Aquamarine6623;海兰",
+        text="T6623.海兰，Aquamino的作者",
     },
     {
         word="garbo",
