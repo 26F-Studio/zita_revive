@@ -6,8 +6,9 @@ local repD,trimIndent=STRING.repD,STRING.trimIndent
 ---@class BrikDuel.User
 ---@field id number
 ---@field stat BrikDuel.UserStat
----@field skin BrikDuel.Skin
 ---@field coin integer
+---@field skin BrikDuel.Skin
+---@field skinTime number
 ---@field pfpMino string
 ---@field pfpChar string
 ---@field pfpMinoTime number
@@ -31,6 +32,7 @@ local repD,trimIndent=STRING.repD,STRING.trimIndent
 ---@field sequence string[]
 ---@field garbageH integer
 ---@field stat BrikDuel.GameStat
+---@field startTime number
 ---@field lastUpdateTime number
 
 ---@class BrikDuel.GameStat
@@ -124,13 +126,18 @@ local fullwidthMap={
 }
 ---@enum (key) BrikDuel.Skin
 local skins={
-    norm={[0]="       ","🟥","🟩","🟦","🟧","🟪","🟨","🟫"," ⛝ "}, -- [0] 5d2c
-    emoji={[0]="　 ","🈲","🈚","🚸","🈯","💠","♿️","💟","🔳"}, -- [0] 1n1h
-    hanX={[0]="　","囜","囡","团","団","囚","回","囬","囗"}, -- [0] 1n
-    hanY={[0]="　","园","圃","囦","囷","圙","圐","圊","囧"}, -- [0] 1n
+    norm={[0]="⬜","🟥","🟩","🟦","🟧","🟪","🟨","🟫"," ⛝ "},
+    emoji={[0]="◽","🈲","🈯","♿","🈚","💟","🚸","💠","🔳"},
+    han_x={[0]="　","囜","囡","团","団","囚","回","囬","囗"}, -- [0] 1n
+    han_y={[0]="　","园","圃","囦","囷","圙","圐","圊","囧"}, -- [0] 1n
     circ={[0]="　","Ⓩ","Ⓢ","Ⓙ","Ⓛ","Ⓣ","Ⓞ","Ⓘ","⓪"}, -- [0] 1n
-    puyo={[0]="　","Ⓡ","Ⓖ","Ⓑ","Ⓟ","Ⓨ","　","　","Ⓧ㉖Ⓕ"}, -- [0] 1n
+    puyo={[0]="　","Ⓡ","Ⓖ","Ⓑ","Ⓟ","Ⓨ","　","　","㉖"}, -- [0] 1n
 }
+local marks=setmetatable({
+    "１２３４５６７８９０",
+    emoji="1⃣2⃣3⃣4⃣5⃣6⃣7⃣8⃣9⃣0⃣",
+    norm="⬛⬛⬛ ４  ５  ６  ７ ⬛⬛⬛",
+},{__index=function(t) return t[1] end})
 local keyword={
     accept=TABLE.getValueSet{"接受","同意","accept","ok"},
     cancel=TABLE.getValueSet{"算了","不打了","算了不打了","睡了","走了","溜了"},
@@ -140,10 +147,12 @@ local texts={
     help=trimIndent[[
         #duel（可略作#dl） 后接：
         (留空) 空房等人   @某人 发起决斗
+        solo 单人模式   see 查看场地
+        stat 个人信息
         rule 规则手册   man 操作手册
         join/query [房号] 进房/查看房间状态
         end 取消/结束   leave 离开（保留房间）
-        stat 个人信息   setm/setc [Z/💠] 设置头像块/标
+        setm/setc/sets [Z/💠/norm] 设置个性块/字符/皮肤
     ]],
     rule=trimIndent([[
         方块⚔决斗  规则手册
@@ -152,8 +161,6 @@ local texts={
         SRS，场地十宽∞高，出现20垃圾行判负
         消N打N 卡块*2(不可移动) 连击+1 AC+4
         使用交换预览而非暂存(功能一致)
-        传统移动撞墙计一步，快捷操作计极简步数
-        强制结束的对局谁
     ]],true),
     manual=trimIndent([[
         方块⚔决斗  操作手册
@@ -167,8 +174,8 @@ local texts={
             位置(1~9):将方块最左列置于场地指定列，10写作0
             可选软降(数字):软降到离地指定高度而不自动硬降
             例 ir0=i块竖着在十列硬降 tl90=t块朝左在第九十列软降
-        每两块之间的指令中间可以插入空格作为自动检查；
-        不合语法的指令不会真正执行，会提示错误信息；
+        方块不在原位时可用空格代替d硬降
+        语法错误时会提示错误信息，不会执行
     ]],true),
     stat=trimIndent[[
         %s %s
@@ -182,8 +189,11 @@ local texts={
     setm_success="个性方块设置成功喵\n当前组合标识符：$1",
     setc_wrongLength="个性字符必须是严格的一个UTF8字符但获取到了$1个共$2字节，你需要的是$3($4字节)吗？",
     setc_success="个性字符设置成功喵\n当前组合标识符：$1",
+    sets_skinList="可用皮肤名称: $1",
+    sets_success="皮肤设置成功喵",
     set_collide="你的个性方块+字符的组合和别人重复了喵",
     set_tooFrequent="每十分钟只能设置一次喵",
+
     new_selfInGame="你有一场正在进行的决斗喵，这样不是很礼貌！",
     new_opInGame="对方正在一场决斗中喵，这样不是很礼貌！",
     new_withSelf="不能和自己决斗喵，一个人玩推荐下载Techmino，发送#tech了解详情",
@@ -191,23 +201,32 @@ local texts={
     new_free="对局创建成功喵($1)\n其他人可以发送“#duel join (房间号)”来加入",
     new_room="对局创建成功喵($1)\n被邀请人快发送“$2”来正式开始",
     new_failed="对局创建失败了喵，你的运气不太好",
+
     join_wrongFormat="房间号格式不对喵，应该是一个数字",
     join_noRoom="不存在这个房间喵",
     join_notWait="这个房间并不在等人喵",
+
     query="房间$1：\n$2 vs $3\n$4",
+    query_noRoom="找不到此房间",
     query_tooFrequent="查询太频繁了喵",
+
+    see_noRoom="不在房间中",
+
     room_start="决斗开始！\n$1\n$2\nvs\n$3\n$4",
     room_startSolo="单人模式",
     room_cancel="对局($1)已取消",
     room_finish="对局($1)结束，结果为$2",
     room_finishSolo="对局($1)结束",
     room_interrupt="对局($1)强制结束，结果为$2",
-    leave_nothing="你在干什么喵？",
-    wrongCmd="用法详见#duel help",
 
     game_moreLine="(还有$1行未显示)",
     game_spin="旋",
     game_clear={'单行','双清','三消','四方','五行','六边','七色','八门','九莲','十面'},
+    game_allclear="全消",
+
+    notInRoom="你在干什么喵？",
+    wrongCmd="用法详见#duel help",
+    syntax_error="语法错误：",
 }
 
 ---@type Map<BrikDuel.Duel>
@@ -219,7 +238,13 @@ local rng=love.math.newRandomGenerator()
 local users
 
 ---@class BrikDuel.User
-local User={}
+local User={
+    coin=0,
+    skin='norm',
+    skinTime=0,
+    pfpMinoTime=0,
+    pfpCharTime=0,
+}
 User.__index=User
 
 ---@return BrikDuel.User,boolean isNewPlayerCreated?
@@ -227,8 +252,6 @@ function User.get(id)
     if users[id] then return users[id],false end
     local user=setmetatable({
         id=id,
-        skin='norm',
-        coin=0,
         stat={
             game=0,win=0,lose=0,
             move=0,drop=0,line=0,atk=0,
@@ -236,8 +259,6 @@ function User.get(id)
         },
         pfpMino=TABLE.getRandom(TABLE.getValues(pfpMino)),
         pfpChar=STRING.UTF8(math.random(0x1F300,0x1F5FF)),
-        pfpMinoTime=0,
-        pfpCharTime=0,
     },User)
     users[id]=user
     FILE.save(users,'brikduel/userdata.luaon','-luaon')
@@ -267,6 +288,7 @@ function Game.new(uid,seed)
         sequence={},
         garbageH=0,
         stat={move=0,drop=0,line=0,atk=0},
+        startTime=os.time(),
         lastUpdateTime=os.time(),
     },Game)
     return game
@@ -298,7 +320,7 @@ local cmdMap={
     c='rotate',C='rotate',f='rotate',
     d='drop',D='drop',
     x='swap',
-    [' ']='check',
+    [' ']='sep',
 }
 function Game:parse(str)
     local buf=STRING.newBuf()
@@ -393,8 +415,12 @@ function Game:parse(str)
                 tempSeq[1],tempSeq[2]=tempSeq[2],tempSeq[1]
                 clean=true
                 ctrl={act='swap'}
-            elseif cmd=='check' then
-                assertf(clean,"[%d]有空格出现在了块的操作和锁定之间",ptr)
+            elseif cmd=='sep' then
+                if not clean then
+                    rem(tempSeq,1)
+                    clean=true
+                    ctrl={act='drop'}
+                end
             end
         end
         if ctrl then
@@ -506,6 +532,7 @@ function Game:execute(controls)
                     piece=self.sequence[1],
                     spin=tuck,
                     line=clear,
+                    allclear=#field==0,
                 })
             end
             rem(self.sequence,1)
@@ -514,6 +541,7 @@ function Game:execute(controls)
         end
         self.stat.move=self.stat.move+1
     end
+    self.lastUpdateTime=os.time()
     return clears
 end
 
@@ -538,6 +566,7 @@ function Game:getFullStateText()
         end
         buf:put("\n")
     end
+    buf:put(marks[User.get(self.uid).skin].."\n")
     if h>10 then buf:put(repD(texts.game_moreLine.."\n",h-10)) end
     buf:put(self:getSequenceText())
     return tostring(buf)
@@ -631,7 +660,9 @@ function Duel:finish(S,D,reason,uid)
         S:send(repD(texts.room_cancel,self.id))
     elseif reason=='interrupt' or reason=='finish' then
         if self.mode=='solo' then
-            S:send(repD(texts.room_finishSolo,self.id))
+            if reason=='interrupt' then
+                S:send(repD(texts.room_finishSolo,self.id))
+            end
         else
             local result
             -- TODO
@@ -707,14 +738,45 @@ return {
             -- Convert alias "#duel" to "#dl"
             if mes:sub(1,5)=='#duel' then mes='#dl'..mes:sub(6) end
 
-            if mes:sub(1,3)~='#dl' then return false end
-
-            if     mes:sub(1,7)=='#dlhelp'  then if S:lock('brikduel_help',62)  then S:send(texts.help)   end return true
-            elseif mes:sub(1,7)=='#dlrule'  then if S:lock('brikduel_rule',62)  then S:send(texts.rule)   end return true
-            elseif mes:sub(1,6)=='#dlman'   then if S:lock('brikduel_man',62)   then S:send(texts.manual) end return true
-            elseif mes:sub(1,8)=='#dlquery' then
+            if not mes:find('^#dl') then return false
+            elseif mes:find('^#dlhelp')  then
+                if S:lock('brikduel_help',62) then S:send(texts.help) end return true
+            elseif mes:find('^#dlrule')  then
+                if S:lock('brikduel_rule',62) then S:send(texts.rule) end return true
+            elseif mes:find('^#dlman')   then
+                if S:lock('brikduel_man',62) then S:send(texts.manual) end return true
+            elseif mes:find('^#dlsee')   then
+                if not curDuel then
+                    if S:lock('brikduel_notInRoom',12) then S:send(texts.notInRoom) end
+                end
+                local pid=TABLE.find(curDuel.member,M.user_id)
+                local game=curDuel.game[pid]
+                S:send(game:getFullStateText())
+                return true
+            elseif mes:find('^#dlstat')  then
+                if S:lock('brikduel_stat_'..M.user_id,26) then
+                    local user,new=User.get(M.user_id)
+                    local info=STRING.newBuf()
+                    if new then info:put(texts.emptyStat.."\n") end
+                    info:put(texts.stat:format(
+                        user:getPfp(), CQ.at(user.id),
+                        user.stat.game, user.stat.win, user.stat.lose, math.ceil(user.stat.win/max(user.stat.win+user.stat.lose,1)*100),
+                        user.stat.move, user.stat.drop, user.stat.atk,
+                        user.stat.overkill,user.stat.overkill_max,
+                        user.coin
+                    ))
+                    if curDuel then
+                        info:put("\n有一场对局("..D.matches[M.user_id].id..")进行中")
+                    end
+                    S:send(info)
+                else
+                    S:send(texts.stat_tooFrequent)
+                end
+                return true
+            elseif mes:find('^#dlquery') then
                 if S:lock('brikduel_query',12) then
                     local duel=duelPool[tonumber(mes:match('%d+'))]
+                    if not duel then duel=D.matches[M.user_id] end
                     if duel then
                         S:send(repD(texts.query,
                             duel.id,
@@ -724,7 +786,7 @@ return {
                         ))
                     else
                         if S:lock('brikduel_noRoom',12) then
-                            S:send(texts.query_tooFrequent)
+                            S:send(texts.query_noRoom)
                         end
                     end
                 else
@@ -733,43 +795,7 @@ return {
                     end
                 end
                 return true
-            elseif mes:sub(1,7)=='#dlsetm'  then
-                local newMino=pfpMino[mes:sub(8):lower()]
-                local user=User.get(M.user_id)
-                if os.time()-user.pfpMinoTime<pfpLimitTime then if S:lock('brikduel_setTooFrequent',26) then S:send(texts.set_tooFrequent) end return true end
-                if not newMino then S:send(texts.setm_wrongFormat) return true end
-                for _,v in next,users do
-                    if user.pfpChar==v.pfpChar and newMino==v.pfpMino and M.user_id~=user.id then
-                        S:send(texts.set_collide)
-                        return true
-                    end
-                end
-                user.pfpMino=newMino
-                user.pfpMinoTime=os.time()
-                User.save()
-                S:send(repD(texts.setm_success,user:getPfp()))
-                return true
-            elseif mes:sub(1,7)=='#dlsetc' then
-                local newChar=mes:sub(8)
-                local user=User.get(M.user_id)
-                if os.time()-user.pfpCharTime<pfpLimitTime then if S:lock('brikduel_setTooFrequent',6) then S:send(texts.set_tooFrequent) end return true end
-                if STRING.u8len(newChar)>1 then
-                    local autoClip=newChar:sub(1,STRING.u8offset(newChar,2)-1)
-                    S:send(repD(texts.setc_wrongLength,STRING.u8len(newChar),#newChar,autoClip,#autoClip))
-                    return true
-                end
-                for _,v in next,users do
-                    if newChar==v.pfpChar and v.pfpMino==v.pfpMino and M.user_id~=user.id then
-                        S:send(texts.set_collide)
-                        return true
-                    end
-                end
-                user.pfpChar=newChar
-                user.pfpCharTime=os.time()
-                User.save()
-                S:send(repD(texts.setc_success,user:getPfp()))
-                return true
-            elseif mes:sub(1,7)=='#dljoin' then
+            elseif mes:find('^#dljoin')  then
                 -- Ensure not in duel
                 if curDuel then if S:lock('brikduel_inDuel',26) then S:send(texts.new_selfInGame) end return true end
 
@@ -789,43 +815,23 @@ return {
                 end
 
                 return true
-            elseif mes=='#dlend' then
+            elseif mes:find('^#dlend')   then
                 if curDuel then
                     curDuel:finish(S,D,'interrupt',M.user_id)
                 else
-                    if S:lock('brikduel_quitNothing',26) then S:send(texts.leave_nothing) end
+                    if S:lock('brikduel_notInRoom',26) then S:send(texts.notInRoom) end
                 end
                 return true
-            elseif mes=='#dlleave' then
+            elseif mes:find('^#dlleave') then
                 if curDuel then
                     -- TODO
                 else
-                    if S:lock('brikduel_quitNothing',26) then S:send(texts.leave_nothing) end
+                    if S:lock('brikduel_notInRoom',26) then S:send(texts.notInRoom) end
                 end
                 return true
-            elseif mes=='#dlstat' then
-                if S:lock('brikduel_stat_'..M.user_id,26) then
-                    local user,new=User.get(M.user_id)
-                    local info=STRING.newBuf()
-                    if new then info:put(texts.emptyStat.."\n") end
-                    info:put(texts.stat:format(
-                        user:getPfp(), CQ.at(user.id),
-                        user.stat.game, user.stat.win, user.stat.lose, math.ceil(user.stat.win/max(user.stat.win+user.stat.lose,1)*100),
-                        user.stat.move, user.stat.drop, user.stat.atk,
-                        user.stat.overkill,user.stat.overkill_max,
-                        user.coin
-                    ))
-                    if D.matches[M.user_id] then
-                        info:put("\n有一场对局("..D.matches[M.user_id].id..")进行中")
-                    end
-                    S:send(info)
-                else
-                    S:send(texts.stat_tooFrequent)
-                end
-                return true
-            elseif mes=='#dl' then
+            elseif mes:find('^#dl$')     then
                 -- Free room
-                if D.matches[M.user_id] then if S:lock('brikduel_inDuel',26) then S:send(texts.new_selfInGame) end return true end
+                if curDuel then if S:lock('brikduel_inDuel',26) then S:send(texts.new_selfInGame) end return true end
 
                 local newDuel=Duel.new(S.id,M.user_id)
                 if newDuel then
@@ -838,9 +844,11 @@ return {
                     end
                 end
                 return true
-            elseif mes:sub(1,7)=='#dlsolo' then
+            elseif mes:find('^#dlsolo')  then
                 -- Solo room
-                if D.matches[M.user_id] then if S:lock('brikduel_inDuel',26) then S:send(texts.new_selfInGame) end return true end
+                if curDuel then
+                    curDuel:finish(S,D,'finish')
+                end
 
                 local newDuel=Duel.new(S.id,M.user_id)
                 if newDuel then
@@ -851,6 +859,55 @@ return {
                     if S:lock('brikduel_failed',26) then
                         S:send(texts.new_failed)
                     end
+                end
+                return true
+            elseif mes:find('^#dlsetm')  then
+                local newMino=pfpMino[mes:sub(8):lower()]
+                local user=User.get(M.user_id)
+                if os.time()-user.pfpMinoTime<pfpLimitTime then if S:lock('brikduel_setTooFrequent',26) then S:send(texts.set_tooFrequent) end return true end
+                if not newMino then S:send(texts.setm_wrongFormat) return true end
+                for _,v in next,users do
+                    if user.pfpChar==v.pfpChar and newMino==v.pfpMino and M.user_id~=user.id then
+                        S:send(texts.set_collide)
+                        return true
+                    end
+                end
+                user.pfpMino=newMino
+                user.pfpMinoTime=os.time()
+                User.save()
+                S:send(repD(texts.setm_success,user:getPfp()))
+                return true
+            elseif mes:find('^#dlsetc')  then
+                local newChar=mes:sub(8)
+                local user=User.get(M.user_id)
+                if os.time()-user.pfpCharTime<pfpLimitTime then if S:lock('brikduel_setTooFrequent',6) then S:send(texts.set_tooFrequent) end return true end
+                if STRING.u8len(newChar)>1 then
+                    local autoClip=newChar:sub(1,STRING.u8offset(newChar,2)-1)
+                    S:send(repD(texts.setc_wrongLength,STRING.u8len(newChar),#newChar,autoClip,#autoClip))
+                    return true
+                end
+                for _,v in next,users do
+                    if newChar==v.pfpChar and v.pfpMino==v.pfpMino and M.user_id~=user.id then
+                        S:send(texts.set_collide)
+                        return true
+                    end
+                end
+                user.pfpChar=newChar
+                user.pfpCharTime=os.time()
+                User.save()
+                S:send(repD(texts.setc_success,user:getPfp()))
+                return true
+            elseif mes:find('^#dlsets')  then
+                local newSkin=mes:sub(8):lower()
+                local user=User.get(M.user_id)
+                if os.time()-user.pfpMinoTime<pfpLimitTime then if S:lock('brikduel_setTooFrequent',26) then S:send(texts.set_tooFrequent) end return true end
+                if skins[newSkin] then
+                    user.skin=newSkin
+                    user.skinTime=os.time()
+                    User.save()
+                    S:send(texts.sets_success)
+                else
+                    S:send(repD(texts.sets_skinList,table.concat(TABLE.getKeys(skins),' ')))
                 end
                 return true
             else
@@ -883,7 +940,7 @@ return {
                     return true
                 end
             end
-        elseif D.matches[M.user_id] then
+        elseif curDuel then
             local pid=TABLE.find(curDuel.member,M.user_id)
             if     curDuel.state=='wait' then
                 if keyword.cancel[mes] then
@@ -910,7 +967,7 @@ return {
                 local game=curDuel.game[pid]
                 local suc,controls=pcall(game.parse,game,ctrlMes)
                 if not suc then
-                    S:send("解析错误："..controls:sub((controls:find('%['))))
+                    S:send(texts.syntax_error..controls:sub((controls:find('%['))))
                     return true
                 end
 
@@ -920,25 +977,25 @@ return {
                     game:supplyNext(7)
                 end
                 local buf=STRING.newBuf()
-                buf:put(CQ.at(M.user_id).."\n")
+                -- buf:put(CQ.at(M.user_id).."\n")
                 buf:put(game:getFullStateText())
-                for _,clear in next,clears do
-                    buf:put("\n")
+                for i,clear in next,clears do
+                    buf:put(i==1 and "\n" or "  ")
                     if clear.spin then
                         buf:put(clear.piece..texts.game_spin..texts.game_clear[clear.line])
                     else
                         buf:put('('..clear.piece..')'..texts.game_clear[clear.line])
                     end
+                    if clear.allclear then
+                        buf:put(texts.game_allclear)
+                    end
                 end
-
-                S:send(tostring(buf))
+                S:send(buf)
 
                 return true
             else
                 error("WTF")
             end
-
-            -- local game=duel.game[pid]
         else
             return false
         end
