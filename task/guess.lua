@@ -477,10 +477,10 @@ local function guess(D,g)---@return 'duplicate'|'win'|nil
         if #D.guessHis==1 then
             D.stage=math.min(repCount+1,3)
             if D.stage>=2 then
-                TABLE.connect(D.answer,quandleLib.tem8[D.length])
+                TABLE.append(D.answer,quandleLib.tem8[D.length])
                 if D.stage>=3 then
                     D.chances=D.chances+1
-                    TABLE.connect(D.answer,quandleLib.gre[D.length])
+                    TABLE.append(D.answer,quandleLib.gre[D.length])
                 end
             end
         else
@@ -793,8 +793,8 @@ return {
                 D.stage=1
 
                 D.answer={}
-                TABLE.connect(D.answer,quandleLib.cet4[D.length])
-                TABLE.connect(D.answer,quandleLib.cet6[D.length])
+                TABLE.append(D.answer,quandleLib.cet4[D.length])
+                TABLE.append(D.answer,quandleLib.cet6[D.length])
             end
             sendMes(S,M,D,'start')
             D.lastInterectTime=Time()
