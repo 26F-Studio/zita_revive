@@ -3,71 +3,6 @@ local ins,rem=table.insert,table.remove
 
 local repD,trimIndent=STRING.repD,STRING.trimIndent
 
----@class BrikDuel.User
----@field id number
----@field stat BrikDuel.UserStat
----@field set BrikDuel.UserSetting
----@field rec BrikDuel.UserRecord
----@field coin integer
-
----@class BrikDuel.UserSetting
----@field mino string
----@field char string
----@field skin BrikDuel.Skin
----@field mark BrikDuel.Mark
----@field next string
----@field __index BrikDuel.UserSetting
-
----@class BrikDuel.UserStat
----@field game integer
----@field win integer
----@field lose integer
----@field move integer command executed
----@field drop integer piece dropped
----@field line integer line cleared
----@field atk integer attack sent
----@field spin integer
----@field ac integer
----@field err integer
----@field overkill number
----@field overkill_max number
----@field __index BrikDuel.UserStat
-
----@class BrikDuel.UserRecord
----@field ac? integer
----@field ['10l']? integer
-
----@class BrikDuel.Game
----@field uid number
----@field rngState string
----@field field Mat<number>
----@field sequence string[]
----@field garbageH integer
----@field rule table
----@field stat BrikDuel.GameStat
----@field startTime number
----@field lastUpdateTime number
-
----@class BrikDuel.GameStat
----@field move integer
----@field drop integer
----@field line integer
----@field atk integer
----@field spin integer
----@field ac integer
----@field err integer
-
----@class BrikDuel.Duel
----@field id number
----@field sid number Session ID
----@field member number[]
----@field game BrikDuel.Game[]
----@field autoSave boolean
----@field disposable boolean
----@field killReward boolean
----@field state 'wait'|'ready'|'play'|'finish'
----@field finishedMes? string
-
 local bag0=STRING.atomize('ZSJLTOI')
 local minoId={Z=1,S=2,J=3,L=4,T=5,O=6,I=7}
 local minoEmoji={Z="🟥",S="🟩",J="🟦",L="🟧",T="🟪",O="🟨",I="🟫"}
@@ -145,6 +80,12 @@ local RS={
         [02]={{0,0}},[20]={{0,0}},[13]={{0,0}},[31]={{0,0}},
     },
 } TABLE.reIndex(RS)
+local keyword={
+    accept=TABLE.getValueSet{"接受","同意","accept","ok"},
+    cancel=TABLE.getValueSet{"算了","不打了","算了不打了","睡了","走了","溜了"},
+    forfeit=TABLE.getValueSet{"gg","寄","认输","似了","死了"},
+}
+
 ---@enum (key) BrikDuel.Skin
 local skins={
     norm={[0]="⬜","🟥","🟩","🟦","🟧","🟪","🟨","🟫","⬛️"},
@@ -163,11 +104,6 @@ local marks={
     text="１２３４５６７８９０",
     han_x="一二三四五六七八九〇",
     han_y="壹贰叁肆伍陆柒捌玖零",
-}
-local keyword={
-    accept=TABLE.getValueSet{"接受","同意","accept","ok"},
-    cancel=TABLE.getValueSet{"算了","不打了","算了不打了","睡了","走了","溜了"},
-    forfeit=TABLE.getValueSet{"gg","寄","认输","似了","死了"},
 }
 local texts={
     help=trimIndent[[
@@ -210,7 +146,6 @@ local texts={
         %d步 %d块 %d攻 %d超杀(%d爆)
         %d币
     ]],
-    emptyStat="还没有决斗过喵，新账户创建好了",
     stat_tooFrequent="查询太频繁了喵",
     setm_wrongFormat="个性方块必须是方块名称之一(ZSJLTOI)",
     setm_success="个性方块设置成功喵\n当前组合标识符：$1",
@@ -341,10 +276,42 @@ local duelPool
 
 local rng=love.math.newRandomGenerator()
 
----@type table<number,BrikDuel.User>
+---@type table<integer,BrikDuel.User>
 local userLib
 
+---@class BrikDuel.UserStat
+---@field game integer
+---@field win integer
+---@field lose integer
+---@field move integer command executed
+---@field drop integer piece dropped
+---@field line integer line cleared
+---@field atk integer attack sent
+---@field spin integer
+---@field ac integer
+---@field err integer
+---@field overkill integer
+---@field overkill_max integer
+---@field __index BrikDuel.UserStat
+
+---@class BrikDuel.UserSetting
+---@field mino string
+---@field char string
+---@field skin BrikDuel.Skin
+---@field mark BrikDuel.Mark
+---@field next string
+---@field __index BrikDuel.UserSetting
+
+---@class BrikDuel.UserRecord
+---@field ac? integer
+---@field ['10l']? integer
+
 ---@class BrikDuel.User
+---@field id integer
+---@field stat BrikDuel.UserStat
+---@field set BrikDuel.UserSetting
+---@field rec BrikDuel.UserRecord
+---@field coin integer
 local User={
     id=-1,
     stat={
@@ -394,7 +361,25 @@ function User:getPfp()
     return self.set.char..self.set.mino
 end
 
+---@class BrikDuel.GameStat
+---@field move integer
+---@field drop integer
+---@field line integer
+---@field atk integer
+---@field spin integer
+---@field ac integer
+---@field err integer
+
 ---@class BrikDuel.Game
+---@field uid integer
+---@field rngState string
+---@field field Mat<integer>
+---@field sequence string[]
+---@field garbageH integer
+---@field rule table
+---@field stat BrikDuel.GameStat
+---@field startTime integer
+---@field lastUpdateTime integer
 Game={}
 Game.__index=Game
 
@@ -712,12 +697,21 @@ function Game:getFullStateText()
 end
 
 ---@class BrikDuel.Duel
+---@field id integer
+---@field sid integer Session ID
+---@field member integer[]
+---@field game BrikDuel.Game[]
+---@field autoSave boolean
+---@field disposable boolean
+---@field killReward boolean
+---@field state 'wait'|'ready'|'play'|'finish'
+---@field finishedMes? string
 local Duel={}
 Duel.__index=Duel
 
----@param sid number
----@param user1 number
----@param user2? number
+---@param sid integer
+---@param user1 integer
+---@param user2? integer
 ---@return BrikDuel.Duel|false
 function Duel.new(sid,user1,user2)
     local duel=setmetatable({
@@ -741,8 +735,9 @@ function Duel:getFile()
 end
 
 ---@param S Session
+---@param D table
 ---@param rule table
-function Duel:start(S,rule)
+function Duel:start(S,D,rule)
     self.state='play'
     math.randomseed(os.time())
     for i=1,#self.member do self.game[i]=Game.new(self.member[i],math.random(2^50)) end
@@ -762,6 +757,8 @@ function Duel:start(S,rule)
             game:supplyNext(game.rule.nextCount)
         end
     end
+
+    if self.autoSave then self:save() end
 
     if rule.welcomeText=='duel' then
         S:send(repD(texts.game_start.duel,
@@ -822,7 +819,7 @@ function Duel:afterMove(S,D)
     end
 end
 
----@return number winnerID 0: Tie
+---@return integer winnerID 0: Tie
 function Duel:getTimeState()
     return 0
 
@@ -984,9 +981,8 @@ return {
                 return true
             elseif mes:find('^#dlstat')  then
                 if S:lock('brikduel_stat_'..M.user_id,26) then
-                    local user,new=User.get(M.user_id)
+                    local user=User.get(M.user_id)
                     local info=STRING.newBuf()
-                    if new then info:put(texts.emptyStat.."\n") end
                     info:put(texts.stat:format(
                         user:getPfp(), CQ.at(user.id),
                         user.stat.game, user.stat.win, user.stat.lose, math.ceil(user.stat.win/max(user.stat.win+user.stat.lose,1)*100),
@@ -1038,7 +1034,7 @@ return {
 
                 curDuel.member[2]=M.user_id
                 if #curDuel.game==0 then
-                    curDuel:start(S,ruleLib.duel)
+                    curDuel:start(S,D,ruleLib.duel)
                 else
                     curDuel.state='play'
                 end
@@ -1173,7 +1169,7 @@ return {
                     local newDuel=Duel.new(S.id,M.user_id)
                     if newDuel then
                         D.matches[M.user_id]=newDuel
-                        newDuel:start(S,ruleLib.solo[exData] or {
+                        newDuel:start(S,D,ruleLib.solo[exData] or {
                             modeName='custom',
                             updStat=false,
                             seqType='none',
@@ -1224,7 +1220,7 @@ return {
                 end
             elseif curDuel.state=='ready' then
                 if keyword.accept[mes] then
-                    curDuel:start(S,ruleLib.duel)
+                    curDuel:start(S,D,ruleLib.duel)
                     return true
                 elseif keyword.cancel[mes] then
                     curDuel:finish(S,D,{result='cancel'})
