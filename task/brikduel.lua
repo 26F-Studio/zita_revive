@@ -3,6 +3,14 @@ local ins,rem=table.insert,table.remove
 
 local repD,trimIndent=STRING.repD,STRING.trimIndent
 
+local echoCnt=26
+---@param S Session
+local function tempSend(S,str)
+    S:send(str,tostring(echoCnt))
+    S:delayDelete(Config.groupManaging[S.id] and 260 or 100,tostring(echoCnt))
+    echoCnt=echoCnt%2600+1
+end
+
 local bag0=STRING.atomize('ZSJLTOI')
 local minoId={Z=1,S=2,J=3,L=4,T=5,O=6,I=7}
 local minoEmoji={Z="🟥",S="🟩",J="🟦",L="🟧",T="🟪",O="🟨",I="🟫"}
@@ -1182,7 +1190,14 @@ return {
                     end
                 else
                     -- Versus modes
-                    if curDuel then if S:lock('brikduel_inDuel',26) then S:send(texts.new_selfInGame) end return true end
+                    if curDuel then
+                        if curDuel.disposable then
+                            curDuel:finish(S,D,{noOutput=true})
+                        else
+                            if S:lock('brikduel_inDuel',26) then S:send(texts.new_selfInGame) end
+                            return true
+                        end
+                    end
 
                     local opID=tonumber(M.raw_message:match('CQ:at,qq=(%d+)'))
                     if opID then
@@ -1236,7 +1251,7 @@ return {
                 local suc,controls=pcall(game.parse,game,ctrlMes)
                 if not suc then
                     game.stat.err=game.stat.err+1
-                    S:send(texts.syntax_error..controls:sub((controls:find('%['))))
+                    tempSend(S,texts.syntax_error..controls:sub((controls:find('%['))))
                     return true
                 end
 
@@ -1262,8 +1277,10 @@ return {
                 end
                 if curDuel.finishedMes then
                     buf:put("\n"..curDuel.finishedMes)
+                    S:send(buf)
+                else
+                    tempSend(S,buf)
                 end
-                S:send(buf)
 
                 return true
             else
