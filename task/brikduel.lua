@@ -232,6 +232,7 @@ local texts={
         cancel="对局($1)取消",
         norm="对局($1)结束",
         solo="游戏($1)结束",
+        suffocate="游戏($1)结束：窒息",
     },
 
     notInRoom="你在干什么喵？",
@@ -266,12 +267,14 @@ local ruleLib={
         },
         ac={
             modeName='ac',
+            fieldH=13,
             tar='ac',
             tarDat=1,
             timeRec=true,
         },
         ['10l']={
             modeName='10l',
+            fieldH=13,
             tar='line',
             tarDat=10,
             timeRec=true,
@@ -381,6 +384,7 @@ end
 ---@class BrikDuel.Game
 ---@field uid integer
 ---@field rngState string
+---@field dieReason string|false
 ---@field field Mat<integer>
 ---@field sequence string[]
 ---@field garbageH integer
@@ -399,6 +403,7 @@ function Game.new(uid,seed)
     local game=setmetatable({
         uid=uid,
         rngState=rng:getState(),
+        dieReason=false,
         field={},
         sequence={},
         garbageH=0,
@@ -583,6 +588,9 @@ function Game:execute(controls)
     local clears={}
     local field=self.field
     local curX,curY,dir,mat=self:spawnPiece()
+    if self:ifoverlap(field,mat,curX,curY) then
+        curY=#field+1
+    end
     for i=1,#controls do
         local ctrl=controls[i]
         local dropped
@@ -590,6 +598,10 @@ function Game:execute(controls)
             if ctrl.pID==2 then
                 self.sequence[1],self.sequence[2]=self.sequence[2],self.sequence[1]
                 curX,curY,dir,mat=self:spawnPiece()
+                if self:ifoverlap(field,mat,curX,curY) then
+                    self.dieReason='suffocate'
+                    break
+                end
             end
             curX=ctrl.pos
             dir=ctrl.dir
@@ -634,6 +646,10 @@ function Game:execute(controls)
         elseif ctrl.act=='swap' then
             self.sequence[1],self.sequence[2]=self.sequence[2],self.sequence[1]
             curX,curY,dir,mat=self:spawnPiece()
+            if self:ifoverlap(field,mat,curX,curY) then
+                self.dieReason='suffocate'
+                break
+            end
         end
         if dropped then
             local tuck=self:ifoverlap(field,mat,curX,curY+1)
@@ -660,6 +676,10 @@ function Game:execute(controls)
 
             rem(self.sequence,1)
             curX,curY,dir,mat=self:spawnPiece()
+            if self:ifoverlap(field,mat,curX,curY) then
+                self.dieReason='suffocate'
+                break
+            end
         end
         self.stat.move=self.stat.move+1
     end
@@ -680,28 +700,31 @@ function Game:getSequenceText()
     return tostring(buf)
 end
 
----@return string
-function Game:getFullStateText()
-    local buf=STRING.newBuf()
+function Game:getFieldText()
     local field=self.field
-    local skin=skins[User.get(self.uid).set.skin]
     local h=#field
     if h>0 then
+        local buf=STRING.newBuf()
+        local skin=skins[User.get(self.uid).set.skin]
         for y=h,max(h-9,1),-1 do
-            for x=1,10 do
-                buf:put(skin[field[y][x]])
+            if y~=h then buf:put("\n") end
+            for x=1,10 do buf:put(skin[field[y][x]]) end
+            if self.rule.tar=='line' and y==self.rule.tarDat then
+                buf:put('<<')
             end
-            buf:put("\n")
         end
-        buf:put(marks[User.get(self.uid).set.mark].."\n")
+        buf:put("\n"..marks[User.get(self.uid).set.mark])
         if h>10 then
-            buf:put(repD(texts.game_moreLine.."\n",h-10))
+            buf:put("\n"..repD(texts.game_moreLine,h-10))
         end
+        return tostring(buf)
     else
-        buf:put(texts.game_acFX[self.stat.ac<=5 and self.stat.ac or 6+self.stat.ac%3].."\n")
+        return texts.game_acFX[self.stat.ac<=5 and self.stat.ac or 6+self.stat.ac%3]
     end
-    buf:put(self:getSequenceText())
-    return tostring(buf)
+end
+
+function Game:getFullStateText()
+    return self:getFieldText().."\n"..self:getSequenceText()
 end
 
 ---@class BrikDuel.Duel
@@ -793,25 +816,30 @@ function Duel:afterMove(S,D)
     local finish
     for i=1,#self.game do
         local game=self.game[i]
-        if game.rule.tar then
-            if game.rule.tar=='ac' then
-                if game.stat.ac>=game.rule.tarDat then
-                    finish={reason='win',id=i}
-                    break
-                end
-            elseif game.rule.tar=='line' then
-                if game.stat.line>=game.rule.tarDat then
-                    finish={reason='win',id=i}
-                    break
+        if game.dieReason then
+            finish={reason=game.dieReason,id=i}
+            break
+        else
+            if game.rule.tar then
+                if game.rule.tar=='ac' then
+                    if game.stat.ac>=game.rule.tarDat then
+                        finish={reason='win',id=i}
+                        break
+                    end
+                elseif game.rule.tar=='line' then
+                    if game.stat.line>=game.rule.tarDat then
+                        finish={reason='win',id=i}
+                        break
+                    end
                 end
             end
-        end
-        if game.rule.seqType=='bag' then
-            game:supplyNext(7)
-        end
-        if #game.sequence==0 then
-            finish={reason='starve',id=i}
-            break
+            if game.rule.seqType=='bag' then
+                game:supplyNext(7)
+            end
+            if #game.sequence==0 then
+                finish={reason='starve',id=i}
+                break
+            end
         end
     end
 
@@ -899,6 +927,8 @@ function Duel:finish(S,D,info)
                     self.finishedMes=repD(texts.game_notRecord,newTime.."秒",oldTime.."秒")
                 end
             end
+        elseif info.reason=='suffocate' then
+            self.finishedMes=repD(texts.game_finish.solo,self.id).."：窒息"
         elseif #self.game==1 then
             self.finishedMes=repD(texts.game_finish.solo,self.id)
         else
