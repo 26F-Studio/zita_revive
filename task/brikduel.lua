@@ -97,12 +97,13 @@ local keyword={
 ---@enum (key) BrikDuel.Skin
 local skins={
     norm={[0]="⬜","🟥","🟩","🟦","🟧","🟪","🟨","🟫","⬛️"},
+    puyo={[0]="◽","🔴","🟢","🔵","🟠","🟣","🟡","🟤","⚫️"},
     emoji={[0]="◽","🈲","🈯","♿","🈚","💟","🚸","💠","🔲"},
     star={[0]="◽","♈","♎","♐","♊","♒","♌","⛎","🔳"},
-    puyo={[0]="◽","🔴","🟢","🔵","🟠","🟣","🟡","🟤","⚫️"}, -- [0] 1n
+    heart={[0]="◽","❤","💚","💙","🧡","💜","💛","🩵","🖤"},
+    circ={[0]="　","Ⓩ","Ⓢ","Ⓙ","Ⓛ","Ⓣ","Ⓞ","Ⓘ","⓪"}, -- [0] 1n
     han_x={[0]="　","囜","囡","团","団","囚","回","囬","囗"}, -- [0] 1n
     han_y={[0]="　","园","圃","囦","囷","圙","圐","圊","囧"}, -- [0] 1n
-    circ={[0]="　","Ⓩ","Ⓢ","Ⓙ","Ⓛ","Ⓣ","Ⓞ","Ⓘ","⓪"}, -- [0] 1n
 }
 ---@enum (key) BrikDuel.Mark
 local marks={
@@ -153,6 +154,7 @@ local texts={
         %d局 %d胜 %d负 (%.1f%%)
         %d步 %d块 %d攻 %d超杀(%d爆)
         %d币
+        %s
     ]],
     stat_tooFrequent="查询太频繁了喵",
     setm_wrongFormat="个性方块必须是方块名称之一(ZSJLTOI)",
@@ -165,6 +167,7 @@ local texts={
         puyo:🔴🟠🟡🟢🟤🔵🟣◽⚫️
         emoji:🈲🈚🚸🈯💠♿💟◽🔲
         star:♈♊♌♎⛎♐♒◽🔳
+        heart:❤🧡💛💚🩵💙💜◽🖤
         circ:ⓏⓁⓄⓈⒾⒿⓉ　⓪
         han_x:囜団回囡囬团囚　囗
         han_y:园囷圐圃圊囦圙　囧
@@ -212,7 +215,7 @@ local texts={
         ac="全消",
         ['10l']="十行",
     },
-    game_moreLine="(还有$1行未显示)",
+    game_moreLine="⤾$1行隐藏",
     game_spin="旋",
     game_clear={'单行','双清','三消','四方','五行','六边','七色','八门','九莲','十面'},
     game_ac="全消",
@@ -259,7 +262,7 @@ local ruleLib={
         fieldH=40,
         disposable=false,
         welcomeText='duel',
-        killReward=true,
+        reward=10,
     },
     solo={
         solo={
@@ -271,6 +274,7 @@ local ruleLib={
             tar='ac',
             tarDat=1,
             timeRec=true,
+            reward=2,
         },
         ['10l']={
             modeName='10l',
@@ -278,6 +282,7 @@ local ruleLib={
             tar='line',
             tarDat=10,
             timeRec=true,
+            reward=3,
         },
     }
 }
@@ -372,6 +377,14 @@ function User:getPfp()
     return self.set.char..self.set.mino
 end
 
+function User:getRec()
+    local buf=STRING.newBuf()
+    for k,v in next,self.rec do
+        buf:put(k:upper()..": "..v.."秒   ")
+    end
+    return buf:get(#buf-3)
+end
+
 ---@class BrikDuel.GameStat
 ---@field move integer
 ---@field drop integer
@@ -387,6 +400,7 @@ end
 ---@field dieReason string|false
 ---@field field Mat<integer>
 ---@field sequence string[]
+---@field seqBuffer string[]
 ---@field garbageH integer
 ---@field rule table
 ---@field stat BrikDuel.GameStat
@@ -406,6 +420,7 @@ function Game.new(uid,seed)
         dieReason=false,
         field={},
         sequence={},
+        seqBuffer={},
         garbageH=0,
         rule={},
         stat={move=0,drop=0,line=0,atk=0,spin=0,ac=0,err=0},
@@ -417,10 +432,13 @@ end
 
 function Game:supplyNext(count)
     while #self.sequence<count do
-        local bag=TABLE.copy(bag0)
-        while bag[1] do
-            ins(self.sequence,rem(bag,self:random(#bag)))
+        if #self.seqBuffer==0 then
+            local bag=TABLE.copy(bag0)
+            while bag[1] do
+                ins(self.seqBuffer,rem(bag,self:random(#bag)))
+            end
         end
+        ins(self.sequence,rem(self.seqBuffer))
     end
 end
 
@@ -474,6 +492,7 @@ function Game:parse(str)
             assertf(posX and posX>=0 and posX<=9,"[%d]快捷操作的位置字符错误（应为0-9）",ptr)
             ctrl.pos=posX
             if ctrl.pos==0 then ctrl.pos=10 end
+            assertf(ctrl.pos+pieceWidth[ctrl.piece][ctrl.dir]-1<=10,"[%d]快捷操作的位置超出场地",ptr)
             c=string.char(buf:ref()[0])
             if tonumber(c) then
                 -- 软降不锁定，模拟读取成功
@@ -482,7 +501,6 @@ function Game:parse(str)
                 buf:skip(1) ptr=ptr+1
             else
                 -- 默认硬降，多余读取
-                assertf(ctrl.pos+pieceWidth[ctrl.piece][ctrl.dir]-1<=10,"[%d]快捷操作的位置超出场地",ptr)
                 rem(tempSeq,ctrl.pID)
                 clean=true
             end
@@ -709,14 +727,10 @@ function Game:getFieldText()
         for y=h,max(h-9,1),-1 do
             if y~=h then buf:put("\n") end
             for x=1,10 do buf:put(skin[field[y][x]]) end
-            if self.rule.tar=='line' and y==self.rule.tarDat then
-                buf:put('<<')
-            end
+            if self.rule.tar=='line' and y==self.rule.tarDat-self.stat.line then buf:put('<<') end
         end
+        if h>10 then buf:put(repD(texts.game_moreLine,h-10)) end
         buf:put("\n"..marks[User.get(self.uid).set.mark])
-        if h>10 then
-            buf:put("\n"..repD(texts.game_moreLine,h-10))
-        end
         return tostring(buf)
     else
         return texts.game_acFX[self.stat.ac<=5 and self.stat.ac or 6+self.stat.ac%3]
@@ -734,7 +748,6 @@ end
 ---@field game BrikDuel.Game[]
 ---@field autoSave boolean
 ---@field disposable boolean
----@field killReward boolean
 ---@field state 'wait'|'ready'|'play'|'finish'
 ---@field finishedMes? string
 local Duel={}
@@ -777,7 +790,6 @@ function Duel:start(S,D,rule)
 
     self.autoSave=rule.autoSave
     self.disposable=rule.disposable
-    self.killReward=rule.killReward
 
     for _,game in next,self.game do
         game.rule=rule
@@ -883,32 +895,46 @@ function Duel:finish(S,D,info)
         D.matches[self.member[i]]=nil
     end
 
+    local survivor
+    for id,game in next,self.game do
+        if not game.dieReason then
+            if survivor==nil then
+                survivor=id
+            elseif survivor then
+                survivor=false
+            end
+        end
+    end
+
     -- Update stat
     local needSave
     for id,game in next,self.game do
+        local user=User.get(self.member[id])
         if game.rule.updStat then
-            local user=User.get(self.member[id])
             for k,v in next,game.stat do
                 user.stat[k]=user.stat[k]+v
             end
             needSave=true
         end
+        if id==survivor and not game.dieReason then
+            if game.rule.reward then
+                user.coin=user.coin+game.rule.reward
+                needSave=true
+            end
+            if #self.game>1 then
+                local atkOverflow=max(self.game[survivor%#self.game+1].garbageH-20,0)
+                user.stat.overkill=user.stat.overkill+atkOverflow
+                user.stat.overkill_max=max(user.stat.overkill_max,atkOverflow)
+                if game.rule.reward then
+                    user.coin=user.coin+min(math.floor(atkOverflow/5),5)
+                end
+                needSave=true
+            end
+        end
     end
 
     -- Result and dialog
-    if self.killReward and info.result=='finish' then
-        self.finishedMes=repD(texts.game_finish.norm,self.id)
-        -- TODO
-        -- for id,game in next,self.game do
-        --     local user=User.get(uid)
-        --     user.coin=user.coin+10
-        --     local overkill=max(self.game[3-TABLE.find(self.member,uid)].garbageH-20,0)
-        --     user.stat.overkill=user.stat.overkill+overkill
-        --     user.stat.overkill_max=max(user.stat.overkill_max,overkill)
-        --     user.coin=user.coin+min(math.floor(overkill/5),5)
-        --     needSave=true
-        -- end
-    elseif info.result=='cancel' then
+    if info.result=='cancel' then
         self.finishedMes=repD(texts.game_finish.cancel,self.id)
     elseif info.result=='finish' then
         if info.reason=='win' then
@@ -1026,7 +1052,8 @@ return {
                         user.stat.game, user.stat.win, user.stat.lose, math.ceil(user.stat.win/max(user.stat.win+user.stat.lose,1)*100),
                         user.stat.move, user.stat.drop, user.stat.atk,
                         user.stat.overkill,user.stat.overkill_max,
-                        user.coin
+                        user.coin,
+                        user:getRec()
                     ))
                     if curDuel then
                         info:put("\n有一场对局("..D.matches[M.user_id].id..")进行中")
@@ -1422,4 +1449,8 @@ print(output)
 🟥🟩🟦🟧🟪🟨🟫⬜⬛️ ⛝ 
 🈲🈯♿🈚💟🚸💠🔲
 ♈♎♐♊♒♌⛎🔳
+❤💚💙🧡💜💛🩵🤍🖤
+
+💓💕💖💗💘💝💞💟
+💔🤎🩷🩶
 ]]
