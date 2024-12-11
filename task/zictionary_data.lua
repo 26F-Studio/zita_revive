@@ -1815,16 +1815,16 @@ local contributor={
         text="T043.xb，主办过不少中文社区方块赛事，曾经是中文维基最主要的编辑者和翻译者",
     },
     {
+        word="T6623;Aqua6623;Aquamarine6623;海兰",
+        text="T6623.海兰，Aquamino的作者",
+    },
+    {
         word="osk",
         text="OSK，创立了TETR.IO",
     },
     {
         word="Dr.ocelot;Dr ocelot;ocelot",
         text="Dr.Ocelot，制作了TETR.IO的音频，编写了QP2模式的所有音乐；Tetra Legends的作者",
-    },
-    {
-        word="T6623;Aqua6623;Aquamarine6623;海兰",
-        text="T6623.海兰，Aquamino的作者",
     },
     {
         word="garbo",
