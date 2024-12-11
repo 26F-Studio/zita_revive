@@ -11,10 +11,11 @@ local repD,trimIndent=STRING.repD,STRING.trimIndent
 ---@field coin integer
 
 ---@class BrikDuel.UserSetting
----@field next string
----@field skin BrikDuel.Skin
----@field char string
 ---@field mino string
+---@field char string
+---@field skin BrikDuel.Skin
+---@field mark BrikDuel.Mark
+---@field next string
 ---@field __index BrikDuel.UserSetting
 
 ---@class BrikDuel.UserStat
@@ -146,20 +147,23 @@ local RS={
 } TABLE.reIndex(RS)
 ---@enum (key) BrikDuel.Skin
 local skins={
-    norm={[0]="⬜","🟥","🟩","🟦","🟧","🟪","🟨","🟫"," ⛝ "},
-    emoji={[0]="◽","🈲","🈯","♿","🈚","💟","🚸","💠","🔳"},
+    norm={[0]="⬜","🟥","🟩","🟦","🟧","🟪","🟨","🟫","⬛️"},
+    emoji={[0]="◽","🈲","🈯","♿","🈚","💟","🚸","💠","🔲"},
+    star={[0]="◽","♈","♎","♐","♊","♒","♌","⛎","🔳"},
+    puyo={[0]="◽","🔴","🟢","🔵","🟠","🟣","🟡","🟤","⚫️"}, -- [0] 1n
     han_x={[0]="　","囜","囡","团","団","囚","回","囬","囗"}, -- [0] 1n
     han_y={[0]="　","园","圃","囦","囷","圙","圐","圊","囧"}, -- [0] 1n
     circ={[0]="　","Ⓩ","Ⓢ","Ⓙ","Ⓛ","Ⓣ","Ⓞ","Ⓘ","⓪"}, -- [0] 1n
-    puyo={[0]="　","Ⓡ","Ⓖ","Ⓑ","Ⓞ","Ⓟ","Ⓨ","Ⓒ","㉖"}, -- [0] 1n
 }
-local marks=setmetatable({
-    "１２３４５６７８９０",
+---@enum (key) BrikDuel.Mark
+local marks={
     norm="⬛⬛⬛ ４  ５  ６  ７ ⬛⬛⬛",
+    norm2="⬛⬛⬛4⃣5⃣6⃣7⃣⬛⬛⬛",
     emoji="1⃣2⃣3⃣4⃣5⃣6⃣7⃣8⃣9⃣0⃣",
+    text="１２３４５６７８９０",
     han_x="一二三四五六七八九〇",
     han_y="壹贰叁肆伍陆柒捌玖零",
-},{__index=function(t) return t[1] end})
+}
 local keyword={
     accept=TABLE.getValueSet{"接受","同意","accept","ok"},
     cancel=TABLE.getValueSet{"算了","不打了","算了不打了","睡了","走了","溜了"},
@@ -175,7 +179,7 @@ local texts={
         join/query [房号] 进房/查看房间状态
         end 取消/结束   leave 离开（保留房间）
         setm/setc 设置个性块/字符
-        sets/setn 设置皮肤/预览样式
+        sets/setx/setn 设置皮肤/列号/预览样式
     ]],
     rule=trimIndent([[
         方块⚔决斗  规则手册
@@ -210,11 +214,30 @@ local texts={
     stat_tooFrequent="查询太频繁了喵",
     setm_wrongFormat="个性方块必须是方块名称之一(ZSJLTOI)",
     setm_success="个性方块设置成功喵\n当前组合标识符：$1",
-    setc_wrongLength="个性字符必须是严格的一个UTF8字符但获取到了$1个共$2字节，你需要的是$3($4字节)吗？",
+    setc_wizard="个性字符必须是严格的一个UTF8字符但获取到了$1个共$2字节，你需要的是$3($4字节)吗？",
     setc_success="个性字符设置成功喵\n当前组合标识符：$1",
-    sets_skinList="可用皮肤名称: $1",
+    sets_help=trimIndent[[
+        可用皮肤名称：
+        norm:🟥🟧🟨🟩🟫🟦🟪⬜⬛️
+        puyo:🔴🟠🟡🟢🟤🔵🟣◽⚫️
+        emoji:🈲🈚🚸🈯💠♿💟◽🔲
+        star:♈♊♌♎⛎♐♒◽🔳
+        circ:ⓏⓁⓄⓈⒾⒿⓉ　⓪
+        han_x:囜団回囡囬团囚　囗
+        han_y:园囷圐圃圊囦圙　囧
+    ]],
     sets_success="皮肤设置成功喵",
-    setn_wrongFormat="text:文字预览 [皮肤名]:皮肤预览",
+    setx_help=trimIndent[[
+        可用列号名称：
+        norm: ⬛ ６ 
+        norm2: ⬛6⃣
+        emoji: 2⃣6⃣
+        text: ２６
+        han_x: 二六
+        han_y: 贰陆
+    ]],
+    setx_success="列号设置成功喵",
+    setn_help="text:文字预览 [皮肤名]:皮肤预览",
     setn_success="预览模式设置成功喵",
     set_collide="你的个性方块+字符的组合和别人重复了喵",
     set_tooFrequent="每十分钟只能设置一次喵",
@@ -260,8 +283,8 @@ local texts={
         "𝕬𝕷𝕷 𝕮𝕷𝕰𝕬𝕽",
         "𝒜𝒯𝒯 𝒟𝒯𝒥𝒜𝒵",
     },
-    game_newRecord="$1 新纪录！！ （原$2）",
-    game_notRecord="$1！  （最佳成绩$2）",
+    game_newRecord="🏆 $1 新纪录！ （原$2）",
+    game_notRecord="✅ $1 （最佳成绩$2）",
     game_finish={
         cancel="对局($1)取消",
         norm="对局($1)结束",
@@ -270,12 +293,13 @@ local texts={
 
     notInRoom="你在干什么喵？",
     wrongCmd="用法详见#duel help",
-    syntax_error="语法错误：",
+    syntax_error="❌",
 }
 local ruleLib={
     default={
         modeName='none',
         fieldH=20,
+        nextCount=7,
         updStat=true,
         autoSave=true,
         disposable=true,
@@ -333,10 +357,11 @@ local User={
     rec={},
     coin=0,
     set={
-        next='text',
-        skin='norm',
         mino="🟥",
         char="㉖",
+        skin='norm',
+        mark='norm',
+        next='text',
         __index=nil,
     },
 }
@@ -675,7 +700,7 @@ function Game:getFullStateText()
             end
             buf:put("\n")
         end
-        buf:put(marks[User.get(self.uid).set.skin].."\n")
+        buf:put(marks[User.get(self.uid).set.mark].."\n")
         if h>10 then
             buf:put(repD(texts.game_moreLine.."\n",h-10))
         end
@@ -734,7 +759,7 @@ function Duel:start(S,rule)
             TABLE.append(game.sequence,rule.startSeq)
         end
         if rule.seqType=='bag' then
-            game:supplyNext(7)
+            game:supplyNext(game.rule.nextCount)
         end
     end
 
@@ -878,7 +903,7 @@ function Duel:finish(S,D,info)
         self.finishedMes=repD(texts.game_finish.norm,self.id)
     end
 
-    if not info.noOutput then
+    if not info.noOutput and #self.finishedMes>0 then
         S:send(self.finishedMes)
     end
 
@@ -1074,7 +1099,7 @@ return {
                 end
                 if STRING.u8len(newChar)>1 then
                     local autoClip=newChar:sub(1,STRING.u8offset(newChar,2)-1)
-                    S:send(repD(texts.setc_wrongLength,STRING.u8len(newChar),#newChar,autoClip,#autoClip))
+                    S:send(repD(texts.setc_wizard,STRING.u8len(newChar),#newChar,autoClip,#autoClip))
                     return true
                 end
                 for _,v in next,userLib do
@@ -1099,7 +1124,22 @@ return {
                     User.save()
                     S:send(texts.sets_success)
                 else
-                    S:send(repD(texts.sets_skinList,table.concat(TABLE.getKeys(skins),' ')))
+                    S:send(texts.sets_help)
+                end
+                return true
+            elseif mes:find('^#dlsetx')  then
+                local newNum=mes:sub(8):lower()
+                local user=User.get(M.user_id)
+                if marks[newNum] then
+                    if not S:lock('brikduel_setx'..M.user_id,setLimitTime) then
+                        if S:lock('brikduel_set',6) then S:send(texts.set_tooFrequent) end
+                        return true
+                    end
+                    user.set.mark=newNum
+                    User.save()
+                    S:send(texts.setx_success)
+                else
+                    S:send(texts.setx_help)
                 end
                 return true
             elseif mes:find('^#dlsetn')  then
@@ -1114,7 +1154,7 @@ return {
                     User.save()
                     S:send(texts.setn_success)
                 else
-                    S:send(texts.setn_wrongFormat)
+                    S:send(texts.setn_help)
                 end
                 return true
             else
@@ -1123,7 +1163,7 @@ return {
                     -- Solo modes
                     if curDuel then
                         if curDuel.disposable then
-                            curDuel:finish(S,D,{})
+                            curDuel:finish(S,D,{noOutput=true})
                         else
                             if S:lock('brikduel_inDuel',26) then S:send(texts.new_selfInGame) end
                             return true
@@ -1334,4 +1374,9 @@ print(output)
 ⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙
 ㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴
 ㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿
+
+🔴🟢🔵🟠🟣🟡🟤⚪️⚫️
+🟥🟩🟦🟧🟪🟨🟫⬜⬛️ ⛝ 
+🈲🈯♿🈚💟🚸💠🔲
+♈♎♐♊♒♌⛎🔳
 ]]
