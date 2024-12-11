@@ -385,7 +385,7 @@ function Game.new(uid,seed)
         sequence={},
         garbageH=0,
         rule={},
-        stat={move=0,drop=0,line=0,atk=0,spin=0,ac=0},
+        stat={move=0,drop=0,line=0,atk=0,spin=0,ac=0,err=0},
         startTime=os.time(),
         lastUpdateTime=os.time(),
     },Game)
@@ -668,18 +668,20 @@ function Game:getFullStateText()
     local field=self.field
     local skin=skins[User.get(self.uid).set.skin]
     local h=#field
-    for y=h,max(h-9,1),-1 do
-        for x=1,10 do
-            buf:put(skin[field[y][x]])
-        end
-        buf:put("\n")
-    end
     if h>0 then
+        for y=h,max(h-9,1),-1 do
+            for x=1,10 do
+                buf:put(skin[field[y][x]])
+            end
+            buf:put("\n")
+        end
         buf:put(marks[User.get(self.uid).set.skin].."\n")
+        if h>10 then
+            buf:put(repD(texts.game_moreLine.."\n",h-10))
+        end
     else
         buf:put(texts.game_acFX[self.stat.ac<=5 and self.stat.ac or 6+self.stat.ac%3].."\n")
     end
-    if h>10 then buf:put(repD(texts.game_moreLine.."\n",h-10)) end
     buf:put(self:getSequenceText())
     return tostring(buf)
 end
@@ -784,15 +786,14 @@ function Duel:afterMove(S,D)
     end
 
     if finish then
-        self:finish(D,{
+        self:finish(S,D,{
             result='finish',
             reason=finish.reason,
             uid=self.member[finish.id],
+            noOutput=true,
         })
-    else
-        if self.autoSave then
-            self:save()
-        end
+    elseif self.autoSave then
+        self:save()
     end
 end
 
@@ -816,8 +817,8 @@ function Duel:getTimeState()
 end
 
 ---@param D table
----@param info {result?:'cancel'|'interrupt'|'finish', reason?:string, uid?:number}
-function Duel:finish(D,info)
+---@param info {result?:'cancel'|'interrupt'|'finish', reason?:string, uid?:number, noOutput:boolean}
+function Duel:finish(S,D,info)
     self.finishedMes=""
     -- Remove link to user
     for i=1,#self.member do
@@ -875,6 +876,10 @@ function Duel:finish(D,info)
         end
     elseif info.result=='interrupt' then
         self.finishedMes=repD(texts.game_finish.norm,self.id)
+    end
+
+    if not info.noOutput then
+        S:send(self.finishedMes)
     end
 
     if needSave then User.save() end
@@ -1016,7 +1021,7 @@ return {
                 return true
             elseif mes:find('^#dlend')   then
                 if curDuel then
-                    curDuel:finish(D,{result='interrupt',uid=M.user_id})
+                    curDuel:finish(S,D,{result='interrupt',uid=M.user_id})
                 else
                     if S:lock('brikduel_notInRoom',26) then S:send(texts.notInRoom) end
                 end
@@ -1118,7 +1123,7 @@ return {
                     -- Solo modes
                     if curDuel then
                         if curDuel.disposable then
-                            curDuel:finish(D,{})
+                            curDuel:finish(S,D,{})
                         else
                             if S:lock('brikduel_inDuel',26) then S:send(texts.new_selfInGame) end
                             return true
@@ -1172,7 +1177,7 @@ return {
             local pid=TABLE.find(curDuel.member,M.user_id)
             if     curDuel.state=='wait' then
                 if keyword.cancel[mes] then
-                    curDuel:finish(D,{result='cancel'})
+                    curDuel:finish(S,D,{result='cancel'})
                     return true
                 else
                     return false
@@ -1182,7 +1187,7 @@ return {
                     curDuel:start(S,ruleLib.duel)
                     return true
                 elseif keyword.cancel[mes] then
-                    curDuel:finish(D,{result='cancel'})
+                    curDuel:finish(S,D,{result='cancel'})
                     return true
                 else
                     return false
