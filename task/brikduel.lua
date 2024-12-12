@@ -105,19 +105,19 @@ local skins={
     chx={[0]="　","囜","囡","团","団","囚","回","囬","囗","困"}, -- [0] 1n
     chy={[0]="　","园","圃","囦","囷","圙","圐","圊","囧","圞"}, -- [0] 1n
 
-    text={_next=true,"Z","S","J","L","T","O","I"},
-    mino={_next=true," ▜▖","▗▛ "," ▙▖","▗▟ "," ▟▖","⬛️"," ▀▀ "},
+    text={_next=true,"Ｚ","Ｓ","Ｊ","Ｌ","Ｔ","Ｏ","Ｉ"},
+    mino={_next=true," ▜▖","▗▛ "," ▙▖","▗▟ "," ▟▖"," ▇ "," ▀▀ "},
 }
 local _skin_help=trimIndent[[
-    可用皮肤名称：
-    norm:🟥🟧🟨🟩🟫🟦🟪⬜⬛️
-    puyo:🔴🟠🟡🟢🟤🔵🟣◽⚫️
-    emoji:🈲🈚🚸🈯💠♿💟◽🔲
-    star:♈♊♌♎⛎♐♒◽🔳
-    heart:❤🧡💛💚🩵💙💜◽🖤
-    circ:ⓏⓁⓄⓈⒾⒿⓉ　⓪
-    chx:囜団回囡囬团囚　囗
-    chy:园囷圐圃圊囦圙　囧
+    方块⚔决斗 「皮肤列表」
+    🟥🟧🟨🟩🟫🟦🟪⬜⬛️ (norm)
+    🔴🟠🟡🟢🟤🔵🟣◽⚫️ (puyo)
+    🈲🈚🚸🈯💠♿💟◽🔲 (emoji)
+    ♈♊♌♎⛎♐♒◽🔳 (star)
+    ❤🧡💛💚🩵💙💜◽🖤 (heart)
+    ⓏⓁⓄⓈⒾⒿⓉ　⓪ (circ)
+    囜団回囡囬团囚　囗 (chx)
+    园囷圐圃圊囦圙　囧 (chy)
 ]]
 ---@enum (key) BrikDuel.Mark
 local marks={
@@ -130,12 +130,12 @@ local marks={
 }
 local _mark_help=trimIndent[[
     可用列号名称：
-    norm: ⬛ ６ 
-    normoji: ⬛6⃣
-    emoji: 2⃣6⃣
-    text: ２６
-    chs: 二六
-    cht: 贰陆
+    ⬛ ６  (norm)
+    ⬛6⃣ (normoji)
+    2⃣6⃣ (emoji)
+    ２６ (text)
+    二六 (chs)
+    贰陆 (cht)
 ]]
 local texts={
     help=trimIndent[[
@@ -146,51 +146,67 @@ local texts={
         rule 规则手册   man 操作手册
         join/query [房号] 进房/查看房间状态
         end 取消/结束   leave 离开（保留房间）
-        setm/setc 设置个性块/字符
+        setm/setc/setk 设置个性块/头像/键位
         sets/setx/setn 设置皮肤/列号/预览样式
     ]],
     rule=trimIndent([[
-        方块⚔决斗  规则手册
+        方块⚔决斗 「规则手册」
         控制指令可随意拼接并发送，指令表见操作手册
         当前块的位置信息不保存，必须一次性把块落到位
         SRS，场地十宽∞高，出现20垃圾行判负
-        消N打N 卡块*2(不可移动) 连击+1 AC+4
+        消N打N 卡块*2(不可移动) 连击+1 AC+2
         使用交换预览而非暂存(功能一致)
     ]],true),
     manual=trimIndent([[
-        方块⚔决斗  操作手册
+        方块⚔决斗 「操作手册」
+        （此处均为默认键位，如要更改见setk命令）
         ⌨️传统操作
-            q/w:左/右移一格，可追加格数，大写Q/W移动到底
-            c/C/f:顺/逆/180°旋转 x:交换预览
-            d:硬降,大写软降到底，可追加目标离地高度
-        👆快捷操作 [块名][朝向][位置](软降)
+            q/w:左右   Q/W:左右到底
+            c/C/f:顺逆180°  x:交换预览
+            d:硬降  D:软降到底(可追加离地高度)
+        👆块捷操作 [块名][朝向][位置](软降)
             块名(zsjltoi):必须从前两块里选
-            朝向(0rfl或0123):旋转到指定朝向
-            位置(1~9):将方块最左列置于场地指定列，10写作0
-            可选软降(数字):软降到离地指定高度而不自动硬降
+            朝向(0123)
+            位置(1234567890):方块最左列置于指定列
+            软降(0~9):可选，软降到指定离地高度且不自动硬降
             例 ir0=i块竖着在十列硬降 tl90=t块朝左在第九十列软降
-        方块不在原位时可用空格代替d硬降
-        语法错误时会提示错误信息，不会执行
+        遇到空格或者指令结束时，如方块不在原位会自动硬降
+        语法错误时不会执行而是弹出说明
     ]],true),
     stat=trimIndent[[
         %s %s
         %d局 %d胜 %d负 (%.1f%%)
         %d步 %d块 %d攻 %d超杀(%d爆)
         %d币
-        %s
+        单机成绩：%s
     ]],
     stat_tooFrequent="查询太频繁了喵",
     setm_wrongFormat="个性方块必须是方块名称之一(ZSJLTOI)",
     setm_success="个性方块设置成功喵\n当前组合标识符：$1",
-    setc_wizard="个性字符必须是严格的一个UTF8字符但获取到了$1个共$2字节，你需要的是$3($4字节)吗？",
-    setc_success="个性字符设置成功喵\n当前组合标识符：$1",
+    setc_wizard="个性头像必须是严格的一个UTF8字符但获取到了$1个共$2字节，你需要的是$3($4字节)吗？",
+    setc_success="个性头像设置成功喵\n当前组合标识符：$1",
+    setk_help=trimIndent[[
+        方块⚔决斗 「键位设置」
+        左@1 右@2 左到底@3 右到底@4
+        顺@5 逆@6 180@7 交换@8 硬降@9 软降@10
+        块捷七块@11@12@13@14@15@16@17 朝向@18@19@20@21 起始列@22
+        当前配置=$1
+        在setk后列出配置即可设置，或者reset重置
+        注意有大小写，且不能冲突(不计块捷朝向/起始列)
+    ]],
+    setk_wrongChar="键位配置不能使用特殊字符喵...",
+    setk_wrongFormat="键位配置必须是22个字符",
+    setk_conflict="键位配置有冲突",
+    setk_base01="键位配置起始列只能是0或1",
+    setk_reset="键位恢复默认配置了喵",
+    setk_success="键位设置成功喵",
     sets_help=_skin_help,
     sets_success="皮肤设置成功喵",
     setx_help=_mark_help,
     setx_success="列号设置成功喵",
     setn_help="预览模式： text-文字 mino-图形 [皮肤名]-皮肤",
     setn_success="预览模式设置成功喵",
-    set_collide="你的个性方块+字符的组合和别人重复了喵",
+    set_collide="你的个性方块+头像的组合和别人重复了喵",
     set_tooFrequent="每十分钟只能设置一次喵",
 
     new_selfInGame="你有一场正在进行的决斗喵，这样不是很礼貌！",
@@ -234,6 +250,7 @@ local texts={
         "𝕬𝕷𝕷 𝕮𝕷𝕰𝕬𝕽",
         "𝒜𝒯𝒯 𝒟𝒯𝒥𝒜𝒵",
     },
+    game_tarLine="<<",
     game_newRecord="🏆 $1 新纪录！ （原$2）",
     game_notRecord="✅ $1 （最佳成绩$2）",
     game_finish={
@@ -315,6 +332,7 @@ local userLib
 ---@field __index BrikDuel.UserStat
 
 ---@class BrikDuel.UserSetting
+---@field key string
 ---@field mino string
 ---@field char string
 ---@field skin BrikDuel.Skin
@@ -344,6 +362,7 @@ local User={
     rec={},
     coin=0,
     set={
+        key='qwQWcCfxdDzsjltoi01231',
         mino="🟥",
         char="㉖",
         skin='norm',
@@ -456,47 +475,77 @@ function Game:random(i,j)
     return r
 end
 
-local cmdMap={
-    z='pick',s='pick',j='pick',l='pick',t='pick',o='pick',i='pick',
-    Z='pick',S='pick',J='pick',L='pick',T='pick',O='pick',I='pick',
-    q='move',w='move',Q='move',W='move',
-    c='rotate',C='rotate',f='rotate',
-    d='drop',D='drop',
-    x='swap',
-    [' ']='sep',
-}
 function Game:parse(str)
     local buf=STRING.newBuf()
     buf:put(str)
+    local keyMap=' '..User.get(self.uid).set.key
+    local simSeq=TABLE.copy(self.sequence)
+    local c,ptr='',0
     local controls={}
     local clean=true -- Whether current piece is moved
     local ctrl
-    local tempSeq=TABLE.copy(self.sequence)
-    local c,ptr='',0
     while true do
         c=buf:get(1) ptr=ptr+1
-        assertf(tempSeq[1] or c=='','[%d]序列空了后不能有多余的指令',ptr)
+        assertf(simSeq[1] or c=='','[%d]序列空了后不能有多余的指令',ptr)
         if c=='' then break end
 
-        local cmd=cmdMap[c]
-        assertf(cmd,"[%d]字符%s不能作为指令开头",ptr,c)
-        if cmd=='pick' then
-            -- 快捷操作
+        -- User.set.key='qwQWcCfxdDzsjltoi01231'
+        local cmd=keyMap:find(c) or 0
+        cmd=cmd-1
+        if cmd==0 then
+            -- 空格分隔 0
+            if not clean then
+                rem(simSeq,1)
+                clean=true
+                ctrl={act='drop'}
+            end
+        elseif cmd<=4 then
+            -- 移动 1 2 3 4
+            clean=false
+            ctrl={act='move',dx=cmd==1 and -1 or cmd==2 and 1 or cmd==3 and -26 or 26}
+        elseif cmd<=7 then
+            -- 旋转 5 6 7
+            clean=false
+            ctrl={act='rotate',dir=cmd==5 and 1 or cmd==6 and 3 or 2}
+        elseif cmd==8 then
+            -- 交换预览 8
+            assertf(#simSeq>=2,"[%d]交换预览时序列长度不足2",ptr)
+            simSeq[1],simSeq[2]=simSeq[2],simSeq[1]
+            clean=true
+            ctrl={act='swap'}
+        elseif cmd==9 then
+            -- 硬降 9
+            rem(simSeq,1)
+            clean=true
+            ctrl={act='drop'}
+        elseif cmd==10 then
+            -- 软降 10
+            clean=false
+            c=string.char(buf:ref()[0])
+            if tonumber(c) then
+                -- 指定软降高度，模拟读取成功
+                ctrl={act='drop',soft=tonumber(c)}
+                buf:skip(1) ptr=ptr+1
+            else
+                -- 普通软降到底
+                ctrl={act='drop',soft=0}
+            end
+        elseif cmd<=17 then
+            -- 块捷操作 11 12 13 14 15 16 17
+            assertf(clean,"[%d]块捷操作时方块%s必须在初始位置",ptr,c)
             ctrl={act='pick'}
-            assertf(clean,"[%d]快捷操作时方块%s必须在初始位置",ptr,c)
-            local piece=TABLE.find(tempSeq,c:upper())
-            assertf(piece and piece<=2,"[%d]快捷操作时方块%s必须在序列前两个",ptr,c)
-            ctrl.pID=piece
-            ctrl.piece=c:upper()
+            ctrl.piece=bag0[cmd-10]
+            ctrl.pID=TABLE.find(simSeq,ctrl.piece)
+            assertf(ctrl.pID and ctrl.pID<=2,"[%d]块捷操作时方块%s必须在序列前两个",ptr,c)
             c=buf:get(1) ptr=ptr+1
-            assertf(c:match('[0123rfl]'),"[%d]快捷操作的朝向字符错误（应为0123rfl之一）",ptr)
-            ctrl.dir=c=='0' and 0 or (c=='1' or c=='r') and 1 or (c=='2' or c=='f') and 2 or 3
+            local dir=keyMap:sub(-5,-2):find(c)
+            assertf(dir,"[%d]块捷操作朝向错误",ptr)
+            ctrl.dir=dir-1
             c=buf:get(1) ptr=ptr+1
-            local posX=tonumber(c)
-            assertf(posX and posX>=0 and posX<=9,"[%d]快捷操作的位置字符错误（应为0-9）",ptr)
-            ctrl.pos=posX
-            if ctrl.pos==0 then ctrl.pos=10 end
-            assertf(ctrl.pos+pieceWidth[ctrl.piece][ctrl.dir]-1<=10,"[%d]快捷操作的位置超出场地",ptr)
+            ctrl.pos=tonumber(c)
+            assertf(ctrl.pos,"[%d]块捷操作位置错误（应为0-9）",ptr)
+            ctrl.pos=keyMap:sub(-1)=='0' and ctrl.pos+1 or ctrl.pos==0 and 10 or ctrl.pos -- Re-base the x-pos number
+            assertf(ctrl.pos+pieceWidth[ctrl.piece][ctrl.dir]-1<=10,"[%d]块捷操作位置超出场地",ptr)
             c=string.char(buf:ref()[0])
             if tonumber(c) then
                 -- 软降不锁定，模拟读取成功
@@ -505,66 +554,11 @@ function Game:parse(str)
                 buf:skip(1) ptr=ptr+1
             else
                 -- 默认硬降，多余读取
-                rem(tempSeq,ctrl.pID)
+                rem(simSeq,ctrl.pID)
                 clean=true
             end
         else
-            -- 传统操作
-            if cmd=='move' then
-                -- 移动
-                clean=false
-                if c=='q' or c=='w' then
-                    ctrl={act='move',dx=c=='q' and -1 or 1}
-                    c=string.char(buf:ref()[0])
-                    if tonumber(c) then
-                        -- 指定移动格数，模拟读取成功
-                        assertf(tonumber(c)~=0,"[%d]移动0格？",ptr)
-                        ctrl.dx=ctrl.dx*tonumber(c)
-                        buf:skip(1) ptr=ptr+1
-                    else
-                        -- 普通移动一格，无需调整ctrl.dx
-                    end
-                elseif c=='Q' or c=='W' then
-                    -- 移动到底
-                    ctrl={act='move',dx=c=='Q' and -9 or 9}
-                else
-                    error("WTF")
-                end
-            elseif cmd=='rotate' then
-                -- 旋转
-                clean=false
-                ctrl={act='rotate',dir=c=='c' and 1 or c=='C' and 3 or 2}
-            elseif cmd=='drop' then
-                if c=='d' then
-                    rem(tempSeq,1)
-                    clean=true
-                    ctrl={act='drop'}
-                elseif c=='D' then
-                    clean=false
-                    c=string.char(buf:ref()[0])
-                    if tonumber(c) then
-                        -- 指定软降高度，模拟读取成功
-                        ctrl={act='drop',soft=tonumber(c)}
-                        buf:skip(1) ptr=ptr+1
-                    else
-                        -- 普通软降到底
-                        ctrl={act='drop',soft=0}
-                    end
-                else
-                    error("WTF")
-                end
-            elseif cmd=='swap' then
-                assertf(#tempSeq>=2,"[%d]交换预览时序列长度不足2",ptr)
-                tempSeq[1],tempSeq[2]=tempSeq[2],tempSeq[1]
-                clean=true
-                ctrl={act='swap'}
-            elseif cmd=='sep' then
-                if not clean then
-                    rem(tempSeq,1)
-                    clean=true
-                    ctrl={act='drop'}
-                end
-            end
+            assertf(cmd,"[%d]字符%s不能作为指令开头",ptr,c)
         end
         if ctrl then
             ins(controls,ctrl)
@@ -686,12 +680,15 @@ function Game:execute(controls)
                 end
             end
             if clear>0 then
+                local atk=clear*(tuck and 2 or 1)+(#field==0 and 2 or 0)
                 ins(clears,{
                     piece=self.sequence[1],
                     spin=tuck,
                     line=clear,
                     ac=#field==0,
+                    atk=atk,
                 })
+                self.stat.atk=self.stat.atk+atk
             end
             self.stat.drop=self.stat.drop+1
             if tuck then self.stat.spin=self.stat.spin+1 end
@@ -710,7 +707,6 @@ function Game:execute(controls)
     if self.dieReason then
         self:lockPiece(field,mat,curX,curY)
     end
-    -- TODO: ?
     return clears
 end
 
@@ -732,13 +728,13 @@ function Game:getFieldText()
         for y=h,max(h-9,1),-1 do
             if y~=h then buf:put("\n") end
             for x=1,10 do buf:put(skin[field[y][x]]) end
-            if self.rule.tar=='line' and y==self.rule.tarDat-self.stat.line then buf:put('<<') end
+            if self.rule.tar=='line' and y==self.rule.tarDat-self.stat.line then buf:put(texts.game_tarLine) end
         end
         if h>10 then buf:put(repD(texts.game_moreLine,h-10)) end
         buf:put("\n"..marks[User.get(self.uid).set.mark])
         return tostring(buf)
     else
-        return texts.game_acFX[self.stat.ac<=5 and self.stat.ac or 6+self.stat.ac%3]
+        return texts.game_acFX[self.stat.ac<=5 and self.stat.ac or 6+self.stat.ac%3] or ""
     end
 end
 
@@ -1022,14 +1018,15 @@ return {
         end
     end,
     func=function(S,M,D)
-        local mes=SimpStr(M.raw_message)
+        local mes=STRING.trim(M.raw_message)
 
         ---@type BrikDuel.Duel
         local curDuel=D.matches[M.user_id]
+        local curUser=User.get(M.user_id)
 
         if mes:sub(1,1)=='#' then
-            -- Convert alias "#duel" to "#dl"
-            if mes:sub(1,5)=='#duel' then mes='#dl'..mes:sub(6) end
+            -- Convert alias
+            mes=mes:gsub('^#du?e?l ?','#dl',1)
 
             if not mes:find('^#dl') then
                 return false
@@ -1050,15 +1047,14 @@ return {
                 return true
             elseif mes:find('^#dlstat')  then
                 if S:lock('brikduel_stat_'..M.user_id,26) then
-                    local user=User.get(M.user_id)
                     local info=STRING.newBuf()
                     info:put(texts.stat:format(
-                        user:getPfp(), CQ.at(user.id),
-                        user.stat.game, user.stat.win, user.stat.lose, math.ceil(user.stat.win/max(user.stat.win+user.stat.lose,1)*100),
-                        user.stat.move, user.stat.drop, user.stat.atk,
-                        user.stat.overkill,user.stat.overkill_max,
-                        user.coin,
-                        user:getRec()
+                        curUser:getPfp(), CQ.at(curUser.id),
+                        curUser.stat.game, curUser.stat.win, curUser.stat.lose, math.ceil(curUser.stat.win/max(curUser.stat.win+curUser.stat.lose,1)*100),
+                        curUser.stat.move, curUser.stat.drop, curUser.stat.atk,
+                        curUser.stat.overkill,curUser.stat.overkill_max,
+                        curUser.coin,
+                        curUser:getRec()
                     ))
                     if curDuel then
                         info:put("\n有一场对局("..D.matches[M.user_id].id..")进行中")
@@ -1140,53 +1136,92 @@ return {
                 return true
             elseif mes:find('^#dlsetm')  then
                 local newMino=minoEmoji[mes:sub(8):upper()]
-                local user=User.get(M.user_id)
                 if not S:lock('brikduel_setm'..M.user_id,setLimitTime) then
                     if S:lock('brikduel_set',6) then S:send(texts.set_tooFrequent) end
                     return true
                 end
                 if not newMino then S:send(texts.setm_wrongFormat) return true end
                 for _,v in next,userLib do
-                    if user.set.char==v.set.char and newMino==v.set.mino and M.user_id~=user.id then
+                    if curUser.set.char==v.set.char and newMino==v.set.mino and M.user_id~=curUser.id then
                         S:send(texts.set_collide)
                         return true
                     end
                 end
-                user.set.mino=newMino
+                curUser.set.mino=newMino
                 User.save()
-                S:send(repD(texts.setm_success,user:getPfp()))
+                S:send(repD(texts.setm_success,curUser:getPfp()))
                 return true
             elseif mes:find('^#dlsetc')  then
-                local newChar=mes:sub(8)
-                local user=User.get(M.user_id)
                 if not S:lock('brikduel_setc'..M.user_id,setLimitTime) then
                     if S:lock('brikduel_set',6) then S:send(texts.set_tooFrequent) end
                     return true
                 end
+                local newChar=mes:sub(8)
                 if STRING.u8len(newChar)>1 then
                     local autoClip=newChar:sub(1,STRING.u8offset(newChar,2)-1)
                     S:send(repD(texts.setc_wizard,STRING.u8len(newChar),#newChar,autoClip,#autoClip))
                     return true
                 end
                 for _,v in next,userLib do
-                    if newChar==v.set.char and v.set.mino==v.set.mino and M.user_id~=user.id then
+                    if newChar==v.set.char and v.set.mino==v.set.mino and M.user_id~=curUser.id then
                         S:send(texts.set_collide)
                         return true
                     end
                 end
-                user.set.char=newChar
+                curUser.set.char=newChar
                 User.save()
-                S:send(repD(texts.setc_success,user:getPfp()))
+                S:send(repD(texts.setc_success,curUser:getPfp()))
                 return true
+            elseif mes:find('^#dlsetk')  then
+                if mes=='#dlsetk' then
+                    if S:lock('brikduel_setk_help',26) then
+                        local keyMap=curUser.set.key
+                        local helpText=texts.setk_help:gsub('@(%d+)',function(n) return keyMap:sub(n,n) end)
+                        S:send(repD(helpText,keyMap))
+                    end
+                    return true
+                else
+                    -- if not S:lock('brikduel_setk'..M.user_id,setLimitTime) then
+                    --     if S:lock('brikduel_set',6) then S:send(texts.set_tooFrequent) end
+                    --     return true
+                    -- end
+                    -- User.set.key='qwQWcCfxdDzsjltoi01231'
+                    local newSet=mes:match('k ?(.+)')
+                    if newSet=='reset' then
+                        curUser.set.key=User.set.key
+                        User.save()
+                        S:send(texts.setk_reset..'('..User.set.key..')')
+                        return true
+                    end
+                    if not newSet:find('[a-zA-Z0-9!@#&_={};:,/<>|`~]') then
+                        S:send(texts.setk_wrongChar)
+                        return true
+                    elseif #newSet~=22 then
+                        S:send(texts.setk_wrongFormat)
+                        return true
+                    elseif newSet:sub(1,17):find('(.).*%1') or newSet:sub(18,21):find('(.).*%1') then
+                        S:send(texts.setk_conflict)
+                        return true
+                    elseif not newSet:sub(-1):find('[01]') then
+                        S:send(texts.setk_base01)
+                        return true
+                    else
+                        -- Correct
+                        curUser.set.key=newSet
+                        User.save()
+                        S:send(texts.setk_success)
+                        -- TODO
+                        return true
+                    end
+                end
             elseif mes:find('^#dlsets')  then
                 local newSkin=mes:sub(8):lower()
-                local user=User.get(M.user_id)
                 if skins[newSkin] and not skins[newSkin]._next then
                     if not S:lock('brikduel_sets'..M.user_id,setLimitTime) then
                         if S:lock('brikduel_set',6) then S:send(texts.set_tooFrequent) end
                         return true
                     end
-                    user.set.skin=newSkin
+                    curUser.set.skin=newSkin
                     User.save()
                     S:send(texts.sets_success)
                 else
@@ -1195,13 +1230,12 @@ return {
                 return true
             elseif mes:find('^#dlsetx')  then
                 local newNum=mes:sub(8):lower()
-                local user=User.get(M.user_id)
                 if marks[newNum] then
                     if not S:lock('brikduel_setx'..M.user_id,setLimitTime) then
                         if S:lock('brikduel_set',6) then S:send(texts.set_tooFrequent) end
                         return true
                     end
-                    user.set.mark=newNum
+                    curUser.set.mark=newNum
                     User.save()
                     S:send(texts.setx_success)
                 else
@@ -1210,13 +1244,12 @@ return {
                 return true
             elseif mes:find('^#dlsetn')  then
                 local newNext=mes:sub(8):lower()
-                local user=User.get(M.user_id)
                 if skins[newNext] then
                     if not S:lock('brikduel_setn'..M.user_id,setLimitTime) then
                         if S:lock('brikduel_set',6) then S:send(texts.set_tooFrequent) end
                         return true
                     end
-                    user.set.next=newNext
+                    curUser.set.next=newNext
                     User.save()
                     S:send(texts.setn_success)
                 else
@@ -1225,7 +1258,7 @@ return {
                 return true
             else
                 local exData=mes:sub(4)
-                if ruleLib.solo[exData] or exData:match('^[zsjltoi]+$') then
+                if ruleLib.solo[exData] or exData:find('^[zsjltoi]+$') then
                     -- Solo modes
                     if curDuel then
                         if curDuel.disposable then
@@ -1306,7 +1339,7 @@ return {
                     return false
                 end
             elseif curDuel.state=='play' then
-                local ctrlMes=M.raw_message:match('^[qwQWcCfdDxzsjltoiZSJLTOIr0-9 ]+')
+                local ctrlMes=M.raw_message:match('^['..curUser.set.key..'0-9 ]+')
                 if not ctrlMes then return false end
 
                 local game=curDuel.game[pid]
@@ -1318,8 +1351,7 @@ return {
                 end
 
                 if #controls==0 then return false end
-
-                -- print(TABLE.dumpDeflate(controls))
+                print(TABLE.dumpDeflate(controls))
                 local clears=game:execute(controls)
                 curDuel:afterMove(S,D)
 
@@ -1465,6 +1497,7 @@ print(output)
 ㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴
 ㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿
 
+◼
 🔴🟢🔵🟠🟣🟡🟤⚪️⚫️
 🟥🟩🟦🟧🟪🟨🟫⬜⬛️ ⛝ 
 🈲🈯♿🈚💟🚸💠🔲
