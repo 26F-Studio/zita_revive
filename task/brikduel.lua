@@ -121,12 +121,12 @@ local _skin_help=trimIndent[[
 ]]
 ---@enum (key) BrikDuel.Mark
 local marks={
-    norm="⬛⬛⬛ ４  ５  ６  ７ ⬛⬛⬛",
-    normoji="⬛⬛⬛4⃣5⃣6⃣7⃣⬛⬛⬛",
-    emoji="1⃣2⃣3⃣4⃣5⃣6⃣7⃣8⃣9⃣0⃣",
-    text="１２３４５６７８９０",
-    chs="一二三四五六七八九〇",
-    cht="壹贰叁肆伍陆柒捌玖零",
+    norm={"⬛⬛⬛ ３  ４  ５  ６ ⬛⬛⬛","⬛⬛⬛ ４  ５  ６  ７ ⬛⬛⬛"},
+    normoji={"⬛⬛⬛3⃣4⃣5⃣6⃣⬛⬛⬛","⬛⬛⬛4⃣5⃣6⃣7⃣⬛⬛⬛"},
+    emoji={"0⃣1⃣2⃣3⃣4⃣5⃣6⃣7⃣8⃣9⃣","1⃣2⃣3⃣4⃣5⃣6⃣7⃣8⃣9⃣0⃣"},
+    text={"０１２３４５６７８９","１２３４５６７８９０"},
+    chs={"〇一二三四五六七八九","一二三四五六七八九〇"},
+    cht={"零壹贰叁肆伍陆柒捌玖","壹贰叁肆伍陆柒捌玖零"},
 }
 local _mark_help=trimIndent[[
     可用列号名称：
@@ -199,7 +199,13 @@ local texts={
     setk_conflict="键位配置有冲突",
     setk_base01="键位配置起始列只能是0或1",
     setk_reset="键位恢复默认配置了喵",
-    setk_success="键位设置成功喵",
+    setk_success=trimIndent[[
+        设置成功喵，当前键位：
+        左右@1@2 左右底@3@4
+        顺逆180°@5@6@7 换@8 硬@9 软@10
+        Z@11 S@12 J@13 L@14 T@15 O@16 I@17
+        朝向@18@19@20@21 起始列@22
+    ]],
     sets_help=_skin_help,
     sets_success="皮肤设置成功喵",
     setx_help=_mark_help,
@@ -731,7 +737,8 @@ function Game:getFieldText()
             if self.rule.tar=='line' and y==self.rule.tarDat-self.stat.line then buf:put(texts.game_tarLine) end
         end
         if h>10 then buf:put(repD(texts.game_moreLine,h-10)) end
-        buf:put("\n"..marks[User.get(self.uid).set.mark])
+        local set=User.get(self.uid).set
+        buf:put("\n"..marks[set.mark][set.key:sub(-1)+1])
         return tostring(buf)
     else
         return texts.game_acFX[self.stat.ac<=5 and self.stat.ac or 6+self.stat.ac%3] or ""
@@ -1025,7 +1032,7 @@ return {
         local curUser=User.get(M.user_id)
 
         if mes:sub(1,1)=='#' then
-            -- Convert alias
+            -- 缩写
             mes=mes:gsub('^#du?e?l ?','#dl',1)
 
             if not mes:find('^#dl') then
@@ -1087,10 +1094,10 @@ return {
                 end
                 return true
             elseif mes:find('^#dljoin')  then
-                -- Ensure not in duel
+                -- 确保不在对局中
                 if curDuel then if S:lock('brikduel_inDuel',26) then S:send(texts.new_selfInGame) end return true end
 
-                -- Parse roomID
+                -- 解析房间号
                 local roomID=tonumber(mes:match('%d+'))
                 if not roomID then if S:lock('brikduel_wrongRoomID',6) then S:send(texts.join_wrongFormat) end return true end
                 if not duelPool[roomID] then if S:lock('brikduel_noRoomID',6) then S:send(texts.join_noRoom) end return true end
@@ -1121,7 +1128,7 @@ return {
                 end
                 return true
             elseif mes:find('^#dl$')     then
-                -- Free room
+                -- 自由房间
                 if curDuel then if S:lock('brikduel_inDuel',26) then S:send(texts.new_selfInGame) end return true end
 
                 local newDuel=Duel.new(S.id,M.user_id)
@@ -1206,11 +1213,12 @@ return {
                         S:send(texts.setk_base01)
                         return true
                     else
-                        -- Correct
+                        -- 终于对了
                         curUser.set.key=newSet
                         User.save()
-                        S:send(texts.setk_success)
-                        -- TODO
+                        local keyMap=curUser.set.key
+                        local sucText=texts.setk_success:gsub('@(%d+)',function(n) return keyMap:sub(n,n) end)
+                        S:send(repD(sucText,keyMap))
                         return true
                     end
                 end
@@ -1259,7 +1267,7 @@ return {
             else
                 local exData=mes:sub(4)
                 if ruleLib.solo[exData] or exData:find('^[zsjltoi]+$') then
-                    -- Solo modes
+                    -- 单人
                     if curDuel then
                         if curDuel.disposable then
                             curDuel:finish(S,D,{noOutput=true})
@@ -1284,7 +1292,7 @@ return {
                         end
                     end
                 else
-                    -- Versus modes
+                    -- 多人
                     if curDuel then
                         if curDuel.disposable then
                             curDuel:finish(S,D,{noOutput=true})
@@ -1296,7 +1304,7 @@ return {
 
                     local opID=tonumber(M.raw_message:match('CQ:at,qq=(%d+)'))
                     if opID then
-                        -- Invite mode
+                        -- 邀请
                         -- if opID==Config.botID   then if S:lock('brikduel_wrongOp',26)  then S:send(texts.new_botRefuse) end return true end
                         if opID==M.user_id then if S:lock('brikduel_wrongOp',26)  then S:send(texts.new_withSelf) end return true end
                         if D.matches[opID] then if S:lock('brikduel_opInDuel',26) then S:send(texts.new_opInGame) end return true end
