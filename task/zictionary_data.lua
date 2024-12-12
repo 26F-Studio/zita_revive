@@ -432,7 +432,7 @@ local main={
     {
         word="连击;combo;ren",
         title="连击",
-        text="连续落块都完成消除。从第二次起称为 1 Combo，攻击数取决于具体游戏。\n“REN”的说法来源于日语的“連”(れん)",
+        text="连续落块并完成消除。从第二次起称为 1 Combo，攻击数取决于具体游戏。\n“REN”的说法来源于日语的“連”(れん)",
     },
     {
         word="spike",
@@ -490,6 +490,21 @@ local main={
         title="6–3堆叠法",
         text="指左边6列右边3列的堆叠方式。在玩家有足够的计算能力后可以减少堆叠所用的按键数（反之可能甚至会增加），是主流的用于减少操作数的高端40L堆叠方式，原理跟出块位置是中间偏左有关",
     },
+	{
+		word="27堆叠",
+		title="2-7堆叠法",
+		text="左边两列右边七列的堆叠方式。最常见的2-7堆叠是用来打20TSD的LST。",
+	},
+	{
+		word="18堆叠;1-8 stacking",
+		title="1-8堆叠法",
+		text="在最左丢 I，空出第二列，而在右边八列堆叠的玩法。是TETR.IO一项挑战性成就（使用这种堆叠进行10次消四，完成40行）。",
+	},
+	{
+		word="45堆叠",
+		title="4-5堆叠法",
+		text="猜你想找：平衡法",
+	},
     {
         word="block out;lock out;top out;死亡;死亡判定",
         title="死亡判定",
@@ -947,7 +962,7 @@ local pattern={
     {
         word="lst;lst stacking;lst堆叠",
         title="LST堆叠",
-        text="一种极常见的堆叠模式，维持2-7地形，组合使用LS块与JZ块不断进行固定方法的t2，技术好的玩家可以近乎无限循环",
+        text="一种极常见的堆叠模式，维持2-7堆叠地形，组合使用LS块与JZ块不断进行固定方法的t2，技术好的玩家可以近乎无限循环",
         link="tetriswiki.cn/p/LST_Stacking",
     },
     {
@@ -1812,11 +1827,11 @@ local contributor={
     },
     {
         word="T043;xb;xb2002b",
-        text="T043.xb，主办过不少中文社区方块赛事，曾经是中文维基最主要的编辑者和翻译者",
+        text="T043.xb，曾主办过不少中文社区方块赛事，是中文维基主要的编辑者之一",
     },
     {
         word="osk",
-        text="OSK，创立了TETR.IO",
+        text="osk，创立了TETR.IO",
     },
     {
         word="Dr.ocelot;Dr ocelot;ocelot",
