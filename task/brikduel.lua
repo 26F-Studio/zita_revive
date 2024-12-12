@@ -4,22 +4,22 @@ local ins,rem=table.insert,table.remove
 local repD,trimIndent=STRING.repD,STRING.trimIndent
 
 local echoCnt=26
----@param S Session
-local function tempSend(S,str)
+local function longSend(S,M,str)
     S:send(str,tostring(echoCnt))
     S:delayDelete(Config.groupManaging[S.id] and 260 or 100,tostring(echoCnt))
+    if M then S:delayDelete(100,M.message_id) end
+    echoCnt=echoCnt%2600+1
+end
+local function shortSend(S,M,str)
+    S:send(str,tostring(echoCnt))
+    S:delayDelete(26,tostring(echoCnt))
+    if M then S:delayDelete(26,M.message_id) end
     echoCnt=echoCnt%2600+1
 end
 
 local bag0=STRING.atomize('ZSJLTOI')
 local minoId={Z=1,S=2,J=3,L=4,T=5,O=6,I=7}
 local minoEmoji={Z="🟥",S="🟩",J="🟦",L="🟧",T="🟪",O="🟨",I="🟫"}
-local fullwidthMap={
-    A='Ａ',B='Ｂ',C='Ｃ',D='Ｄ',E='Ｅ',F='Ｆ',G='Ｇ',H='Ｈ',I='Ｉ',J='Ｊ',K='Ｋ',L='Ｌ',M='Ｍ',N='Ｎ',O='Ｏ',P='Ｐ',Q='Ｑ',R='Ｒ',S='Ｓ',T='Ｔ',U='Ｕ',V='Ｖ',W='Ｗ',X='Ｘ',Y='Ｙ',Z='Ｚ',
-    a='ａ',b='ｂ',c='ｃ',d='ｄ',e='ｅ',f='ｆ',g='ｇ',h='ｈ',i='ｉ',j='ｊ',k='ｋ',l='ｌ',m='ｍ',n='ｎ',o='ｏ',p='ｐ',q='ｑ',r='ｒ',s='ｓ',t='ｔ',u='ｕ',v='ｖ',w='ｗ',x='ｘ',y='ｙ',z='ｚ',
-    ['0']='０',['1']='１',['2']='２',['3']='３',['4']='４',['5']='５',['6']='６',['7']='７',['8']='８',['9']='９',
-    [' ']='　',
-}
 
 local setLimitTime=26
 local maxThinkTime=2*3600
@@ -197,11 +197,11 @@ local texts={
     setk_wrongChar="键位配置不能使用特殊字符喵...",
     setk_wrongFormat="键位配置必须是22个字符",
     setk_conflict="键位配置有冲突",
-    setk_base01="键位配置起始列只能是0或1",
-    setk_reset="键位恢复默认配置了喵",
-    setk_success=trimIndent[[
-        设置成功喵，当前键位：
-        左右@1@2 左右底@3@4
+    setk_base01="块捷起始列只能是0或1",
+    setk_reset="键位恢复默认了喵",
+    setk_success="键位设置成功了喵",
+    setk_current=trimIndent[[
+        当前键位： 左右@1@2 到底@3@4
         顺逆180°@5@6@7 换@8 硬@9 软@10
         Z@11 S@12 J@13 L@14 T@15 O@16 I@17
         朝向@18@19@20@21 起始列@22
@@ -702,10 +702,12 @@ function Game:execute(controls)
             if #field==0 then self.stat.ac=self.stat.ac+1 end
 
             rem(self.sequence,1)
-            curX,curY,dir,mat=self:spawnPiece()
-            if self:ifoverlap(field,mat,curX,curY) then
-                self.dieReason='suffocate'
-                break
+            if self.sequence[1] then
+                curX,curY,dir,mat=self:spawnPiece()
+                if self:ifoverlap(field,mat,curX,curY) then
+                    self.dieReason='suffocate'
+                    break
+                end
             end
         end
         self.stat.move=self.stat.move+1
@@ -1147,44 +1149,44 @@ return {
                     if S:lock('brikduel_set',6) then S:send(texts.set_tooFrequent) end
                     return true
                 end
-                if not newMino then S:send(texts.setm_wrongFormat) return true end
+                if not newMino then shortSend(S,M,texts.setm_wrongFormat) return true end
                 for _,v in next,userLib do
                     if curUser.set.char==v.set.char and newMino==v.set.mino and M.user_id~=curUser.id then
-                        S:send(texts.set_collide)
+                        shortSend(S,M,texts.set_collide)
                         return true
                     end
                 end
                 curUser.set.mino=newMino
                 User.save()
-                S:send(repD(texts.setm_success,curUser:getPfp()))
+                shortSend(S,M,repD(texts.setm_success,curUser:getPfp()))
                 return true
             elseif mes:find('^#dlsetc')  then
                 if not S:lock('brikduel_setc'..M.user_id,setLimitTime) then
-                    if S:lock('brikduel_set',6) then S:send(texts.set_tooFrequent) end
+                    if S:lock('brikduel_set',6) then shortSend(S,M,texts.set_tooFrequent) end
                     return true
                 end
                 local newChar=mes:sub(8)
                 if STRING.u8len(newChar)>1 then
                     local autoClip=newChar:sub(1,STRING.u8offset(newChar,2)-1)
-                    S:send(repD(texts.setc_wizard,STRING.u8len(newChar),#newChar,autoClip,#autoClip))
+                    shortSend(S,M,repD(texts.setc_wizard,STRING.u8len(newChar),#newChar,autoClip,#autoClip))
                     return true
                 end
                 for _,v in next,userLib do
                     if newChar==v.set.char and v.set.mino==v.set.mino and M.user_id~=curUser.id then
-                        S:send(texts.set_collide)
+                        shortSend(S,M,texts.set_collide)
                         return true
                     end
                 end
                 curUser.set.char=newChar
                 User.save()
-                S:send(repD(texts.setc_success,curUser:getPfp()))
+                shortSend(S,M,repD(texts.setc_success,curUser:getPfp()))
                 return true
             elseif mes:find('^#dlsetk')  then
                 if mes=='#dlsetk' then
                     if S:lock('brikduel_setk_help',26) then
                         local keyMap=curUser.set.key
                         local helpText=texts.setk_help:gsub('@(%d+)',function(n) return keyMap:sub(n,n) end)
-                        S:send(repD(helpText,keyMap))
+                        shortSend(S,M,repD(helpText,keyMap))
                     end
                     return true
                 else
@@ -1197,28 +1199,26 @@ return {
                     if newSet=='reset' then
                         curUser.set.key=User.set.key
                         User.save()
-                        S:send(texts.setk_reset..'('..User.set.key..')')
+                        shortSend(S,M,texts.setk_reset.."，"..texts.setk_current:gsub('@(%d+)',function(n) return curUser.set.key:sub(n,n) end))
                         return true
                     end
                     if not newSet:find('[a-zA-Z0-9!@#&_={};:,/<>|`~]') then
-                        S:send(texts.setk_wrongChar)
+                        shortSend(S,M,texts.setk_wrongChar)
                         return true
                     elseif #newSet~=22 then
-                        S:send(texts.setk_wrongFormat)
+                        shortSend(S,M,texts.setk_wrongFormat)
                         return true
                     elseif newSet:sub(1,17):find('(.).*%1') or newSet:sub(18,21):find('(.).*%1') then
-                        S:send(texts.setk_conflict)
+                        shortSend(S,M,texts.setk_conflict)
                         return true
                     elseif not newSet:sub(-1):find('[01]') then
-                        S:send(texts.setk_base01)
+                        shortSend(S,M,texts.setk_base01)
                         return true
                     else
                         -- 终于对了
                         curUser.set.key=newSet
                         User.save()
-                        local keyMap=curUser.set.key
-                        local sucText=texts.setk_success:gsub('@(%d+)',function(n) return keyMap:sub(n,n) end)
-                        S:send(repD(sucText,keyMap))
+                        shortSend(S,M,texts.setk_success.."，"..texts.setk_current:gsub('@(%d+)',function(n) return curUser.set.key:sub(n,n) end))
                         return true
                     end
                 end
@@ -1226,42 +1226,42 @@ return {
                 local newSkin=mes:sub(8):lower()
                 if skins[newSkin] and not skins[newSkin]._next then
                     if not S:lock('brikduel_sets'..M.user_id,setLimitTime) then
-                        if S:lock('brikduel_set',6) then S:send(texts.set_tooFrequent) end
+                        if S:lock('brikduel_set',6) then shortSend(S,M,texts.set_tooFrequent) end
                         return true
                     end
                     curUser.set.skin=newSkin
                     User.save()
-                    S:send(texts.sets_success)
+                    shortSend(S,M,texts.sets_success)
                 else
-                    S:send(texts.sets_help)
+                    shortSend(S,M,texts.sets_help)
                 end
                 return true
             elseif mes:find('^#dlsetx')  then
                 local newNum=mes:sub(8):lower()
                 if marks[newNum] then
                     if not S:lock('brikduel_setx'..M.user_id,setLimitTime) then
-                        if S:lock('brikduel_set',6) then S:send(texts.set_tooFrequent) end
+                        if S:lock('brikduel_set',6) then shortSend(S,M,texts.set_tooFrequent) end
                         return true
                     end
                     curUser.set.mark=newNum
                     User.save()
-                    S:send(texts.setx_success)
+                    shortSend(S,M,texts.setx_success)
                 else
-                    S:send(texts.setx_help)
+                    shortSend(S,M,texts.setx_help)
                 end
                 return true
             elseif mes:find('^#dlsetn')  then
                 local newNext=mes:sub(8):lower()
                 if skins[newNext] then
                     if not S:lock('brikduel_setn'..M.user_id,setLimitTime) then
-                        if S:lock('brikduel_set',6) then S:send(texts.set_tooFrequent) end
+                        if S:lock('brikduel_set',6) then shortSend(S,M,texts.set_tooFrequent) end
                         return true
                     end
                     curUser.set.next=newNext
                     User.save()
-                    S:send(texts.setn_success)
+                    shortSend(S,M,texts.setn_success)
                 else
-                    S:send(texts.setn_help)
+                    shortSend(S,M,texts.setn_help)
                 end
                 return true
             else
@@ -1354,12 +1354,12 @@ return {
                 local suc,controls=pcall(game.parse,game,ctrlMes)
                 if not suc then
                     game.stat.err=game.stat.err+1
-                    tempSend(S,texts.syntax_error..controls:sub((controls:find('%['))))
+                    longSend(S,M,texts.syntax_error..controls:sub((controls:find('%['))))
                     return true
                 end
 
                 if #controls==0 then return false end
-                print(TABLE.dumpDeflate(controls))
+                -- print(TABLE.dumpDeflate(controls))
                 local clears=game:execute(controls)
                 curDuel:afterMove(S,D)
 
@@ -1381,7 +1381,7 @@ return {
                     buf:put("\n"..curDuel.finishedMes)
                     S:send(buf)
                 else
-                    tempSend(S,buf)
+                    longSend(S,nil,buf)
                 end
 
                 return true
