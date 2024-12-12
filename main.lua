@@ -1,5 +1,5 @@
 Time=love.timer.getTime
-love._openConsole()
+if love._openConsole then love._openConsole() end
 --------------------------------------------------------------
 local ins,rem=table.insert,table.remove
 require'Zenitha'
@@ -7,15 +7,6 @@ ZENITHA.setMaxFPS(30)
 ZENITHA.setDrawFreq(10)
 ZENITHA.setUpdateFreq(100)
 ZENITHA.setVersionText('')
-function SimpStr(s) return s:gsub('%s',''):lower() end -- Remove spaces and lower case
-local esc={['&amp;']='&',['&#91;']='[',['&#93;']=']',['&#44;']=','}
-function RawStr(s) -- Unescape & Remove username in CQ:at
-    s=s:gsub('%[CQ:at,qq=(%d+),name=.-%]','[CQ:at,qq=%1]')
-    for k,v in next,esc do s=s:gsub(k,v) end
-    return s
-end
-function CQpic(path) return "[CQ:image,file=file:///"..path:gsub("/","\\").."]" end -- Encode cq path
-function AdminMsg(M) return M.sender and (M.sender.role=='owner' or M.sender.role=='admin') end -- Encode cq path
 --------------------------------------------------------------
 local ws=WS.new{
     host='localhost',
@@ -24,32 +15,43 @@ local ws=WS.new{
     sleepInterval=0.1,
 }
 Config={
-    adminName="管理员",
+    connectInterval=2.6,
+    reconnectInterval=600,
     receiveDelay=0.26,
     maxCharge=620,
     debugLog_send=false,
     debugLog_receive=false,
     debugLog_response=false,
     safeMode=false,
+    botID=false,
+    adminName="管理员",
     superAdminID={},
     groupManaging={},
     safeSessionID={},
-    extraData=nil,
+    privTask={},
+    groupTask={},
+    extraData={},
 }
 xpcall(function()
-    local data=FILE.load('conf.luaon','-luaon')
+    local data=FILE.load('botconf.lua','-lua')
     ---@cast data Data
+    Config.botID=data.botID
     Config.adminName=data.adminName
     Config.superAdminID=TABLE.getValueSet(data.superAdminID)
     Config.groupManaging=TABLE.getValueSet(data.groupManaging)
     Config.safeSessionID=TABLE.getValueSet(data.safeSessionID)
-    Config.extraData=data.extraData
-    print("conf.luaon successfully loaded")
+    Config.privTask=data.privTask or Config.privTask
+    Config.groupTask=data.groupTask or Config.groupTask
+    Config.extraTask=data.extraTask or Config.extraTask
+    Config.extraData=data.extraData or Config.extraData
+
+    LOG('info',"botconf.lua successfully loaded")
 end,function(mes)
-    print("Error in loading conf.luaon: "..mes)
-    print("Some settings may not be loaded correctly")
+    LOG('error',"Error in loading botconf.lua: "..mes)
+    LOG('error',"Some settings may not be loaded correctly")
 end)
 print("--------------------------")
+print("Bot ID: "..Config.botID)
 print("Admin name: "..Config.adminName)
 print("# Super admin ID:")
 for id in next,Config.superAdminID do print(id) end
@@ -58,32 +60,26 @@ for id in next,Config.groupManaging do print(id) end
 print("# Safe session ID:")
 for id in next,Config.safeSessionID do print(id) end
 --------------------------------------------------------------
+function SimpStr(s) return s:gsub('%s',''):lower() end -- Remove spaces and lower case
+local esc={['&amp;']='&',['&#91;']='[',['&#93;']=']',['&#44;']=','}
+function RawStr(s) -- Unescape & Remove username in CQ:at
+    s=s:gsub('%[CQ:at,qq=(%d+),name=.-%]','[CQ:at,qq=%1]')
+    for k,v in next,esc do s=s:gsub(k,v) end
+    return s
+end
+CQ={
+    at=function(data) return "[CQ:at,qq="..data.."]" end,
+    img=function(data) return "[CQ:image,file="..data.."]" end,
+}
+function AdminMsg(M) return M.sender and (M.sender.role=='owner' or M.sender.role=='admin') end -- Encode cq path
+--------------------------------------------------------------
 Bot={
-    taskPriv={
-        {'log',-100},
-        {'admin_control',-99},
-        {'help_public',1},
-        {'zictionary',2},
-        {'phtool',3},
-        {'ab_guess',4},
-    },
-    taskGroup={
-        {'log',-100},
-        {'admin_control',-99},
-        {'help_public',1},
-        {'response',2},
-        {'ab_guess',3},
-        {'zictionary',4},
-        {'repeater',100},
-    },
-    msgDelQueue={},
+    state='dead', ---@type 'dead'|'connecting'|'running'
+    delayedAction={}, ---@type {time:number, func:function, data:any}[]
     stat={
         connectAttempts=0,
         launchTime=Time(),
         totalMessageSent=0,
-
-        connectLogDelay=0,
-        connectLogDelaySum=0,
 
         connectTime=Time(),
         messageSent=0,
@@ -91,12 +87,14 @@ Bot={
 }
 
 ---@class Task_raw
----@field func fun(S:Session, M: LLOneBot.Event.Message, D:Session.data):boolean
----@field init fun(S:Session, D:Session.data)?
+---@field func fun(S:Session, M: OneBot.Event.Message, D:Session.data):boolean true means message won't be passed to next task
+---@field init fun(S:Session, D:Session.data)? if exist, execute when task created, jsut after launching
 
 ---@class Task : Task_raw
 ---@field id string
 ---@field prio number
+
+---@alias Sendable string|number|boolean|string.buffer
 
 function Bot.isAdmin(id)
     return Config.superAdminID[id]
@@ -112,26 +110,25 @@ function Bot._send(data)
         ws:send(res)
         return true
     else
-        print("Error encoding json:\n"..debug.traceback(res))
+        LOG('warn',"Error encoding json:\n"..debug.traceback(res))
     end
 end
----@param message string
----@param group? number
----@param user? number
+---@param message Sendable
+---@param uid string 'p123456' or 'g123456'
 ---@param echo? string
-function Bot.sendMsg(message,group,user,echo)
+function Bot.sendMsg(message,uid,echo)
+    if tonumber(uid) then uid='g'..uid end
     local mes={
         action='send_msg',
         params={
-            user_id=user,
-            group_id=group,
-            message=message,
+            [uid:sub(1,1)=='g' and 'group_id' or 'user_id']=tonumber(uid:sub(2)),
+            message=tostring(message),
         },
         echo=echo,
     }
-    if Config.safeMode and not Config.safeSessionID[group and 'g'..group or 'p'..user] then
+    if Config.safeMode and not Config.safeSessionID[uid] then
         if TASK.lock('safeModeBlock',10) then
-            print("Message blocked in safe mode")
+            LOG("Message (to"..uid..") blocked in safe mode")
         end
         return
     end
@@ -173,16 +170,16 @@ function Bot.ban(group_id,user_id,time)
 end
 function Bot.adminNotice(text)
     for id in next,Config.superAdminID do
-        Bot.sendMsg(text,nil,id)
+        Bot.sendMsg(text,'p'..id)
     end
 end
-function Bot.restart()
+function Bot.reset()
     for id in next,SessionMap do
         SessionMap[id]=nil
     end
 end
 function Bot.stop(time)
-    TASK.forceLock('bot_lock',time or 600)
+    TASK.forceLock('bot_blockRestart',time or 600)
     ws:close()
 end
 
@@ -192,19 +189,19 @@ function Bot._update()
     if not pack then return end
     if op=='text' then
         local suc,res=pcall(JSON.decode,pack)
-        ---@cast res LLOneBot.Event.Base
+        ---@cast res OneBot.Event.Base
         if not suc then
-            print("Error decoding json: "..res)
+            LOG('info',"Error decoding json: "..res)
             print(pack)
             return true
         end
         if res.post_type=='meta_event' then
-            ---@cast res LLOneBot.Event.Meta
+            ---@cast res OneBot.Event.Meta
             if res.meta_event_type=='lifecycle' then
-                print("Lifecycle event: "..res.sub_type)
+                LOG("Lifecycle event: "..res.sub_type)
             end
         elseif rawget(res,'retcode') then
-            ---@cast res LLOneBot.Event.Response
+            ---@cast res OneBot.Event.Response
             if res.echo then
                 local uid=STRING.before(res.echo,':')
                 local S=SessionMap[uid]
@@ -216,7 +213,7 @@ function Bot._update()
                 print(TABLE.dump(res))
             end
         elseif res.post_type=='message' then
-            ---@cast res LLOneBot.Event.Message
+            ---@cast res OneBot.Event.Message
             local priv=res.message_type=='private'
             local id=priv and res.user_id or res.group_id
             local S=SessionMap[(priv and 'p' or 'g')..id]
@@ -242,8 +239,8 @@ end
 --------------------------------------------------------------
 ---@alias Session.data table
 ---@class Session
----@field id number
----@field uid string just 'p' or 'g' + id, for being used as unique key in SessionMap
+---@field id number Number, may collide (privID & groupID)
+---@field uid string just 'p' or 'g' + id, for being used as unique key in SessionMap, etc.
 ---@field priv boolean
 ---@field group boolean #not priv
 ---@field taskList Task[]
@@ -284,15 +281,12 @@ function Session.new(id,priv)
     }
     setmetatable(s,{__index=Session})
 
-    local template=priv and Bot.taskPriv or Bot.taskGroup
+    local template=priv and Config.privTask or Config.groupTask
     for _,task in next,template do
         s:newTask(task[1],task[2])
     end
-    local extra=Config.extraData.extraTask[s.uid]
-    if extra then
-        for i=1,#extra do
-            s:newTask(extra[i][1],extra[i][2])
-        end
+    for _,exTask in next,Config.extraTask[s.uid] or {} do
+        s:newTask(unpack(exTask))
     end
     return s
 end
@@ -309,10 +303,10 @@ function Session:newTask(id,prio)
     for i=1,#self.taskList do
         local t=self.taskList[i]
         if id==t.id then
-            print("Task created failed: Task '"..task.."' already exists")
+            LOG('info',"Task created failed: Task '"..id.."' already exists")
             return
         elseif prio==t.prio then
-            print("Task created failed: Prio '"..prio.."' already used by task '"..t.id.."'")
+            LOG('info',"Task created failed: Prio '"..prio.."' already used by task '"..t.id.."'")
             return
         elseif not insPos and prio<t.prio then
             insPos=i
@@ -331,7 +325,7 @@ end
 function Session:removeTask_id(id)
     for i=1,#self.taskList do
         if self.taskList[i].id==id then
-            print("Task removed: "..id)
+            LOG('info',"Task removed: "..id)
             rem(self.taskList,i)
             return
         end
@@ -343,7 +337,7 @@ function Session:removeAllTask()
             self.taskList[id]=nil
         end
     end
-    print("All user tasks cleared")
+    LOG('info',"All user tasks cleared")
 end
 
 ---@param name any
@@ -417,22 +411,18 @@ function Session:receive(M)
         if suc2 then
             if res2==true then break end
         else
-            print(STRING.repD("Session-$1 Task-$2 Error:\n$3",self.id,task.id,res2))
+            LOG('warn',STRING.repD("Session-$1 Task-$2 ($3) Error:\n$4",self.id,task.id,os.date("%m/%d %H:%M:%S"),res2))
             break
         end
     end
 end
 
----@param text string
+---@param text Sendable
 ---@param echo? string
 function Session:send(text,echo)
     if not self:isAlive() then return end
     if echo then echo=self.uid..':'..echo end
-    if self.priv then
-        Bot.sendMsg(text,nil,self.id,echo)
-    else
-        Bot.sendMsg(text,self.id,nil,echo)
-    end
+    Bot.sendMsg(text,self.uid,echo)
 end
 ---@param id number|string string means search id from Session.echos
 function Session:delete(id)
@@ -446,13 +436,13 @@ function Session:delete(id)
         end
     end
 end
----@param M LLOneBot.Event.Message
+---@param M OneBot.Event.Message
 function Session:sticker(M)
     Bot.sendSticker(M.message_id)
 end
 
 ---Notice that time must be less than 86400 (1 day)
----@param time number|nil
+---@param time number|nil seconds
 ---@param text string
 ---@param echo? string
 function Session:delaySend(time,text,echo)
@@ -462,7 +452,7 @@ function Session:delaySend(time,text,echo)
     self:_timeTask(self.send,time,{self,text,echo})
 end
 ---Notice that time must be less than 86400 (1 day)
----@param time number
+---@param time number seconds
 ---@param id number|string string means search id from Session.echos
 function Session:delayDelete(time,id)
     if time and time>86400 then return end
@@ -470,11 +460,11 @@ function Session:delayDelete(time,id)
     self:_timeTask(self.delete,time,{self,id})
 end
 ---@param action function
----@param time number
+---@param time number seconds
 ---@param data any[]
 function Session:_timeTask(action,time,data)
     time=Time()+time
-    local queue=Bot.msgDelQueue
+    local queue=Bot.delayedAction
     local insPos
     if not queue[1] or time<queue[1].time then
         insPos=1
@@ -502,57 +492,92 @@ SessionMap={}
 --------------------------------------------------------------
 ZENITHA.globalEvent.drawCursor=NULL
 ZENITHA.globalEvent.clickFX=NULL
+ZENITHA.globalEvent.quit=function() ws:close() end
 local scene={}
 
 function scene.load() end
+
+local userInput=love.thread.getChannel('userInput')
+local cmdList
+cmdList={
+    help=function()
+        print("[Help]")
+        print("Available commands: "..table.concat(TABLE.getKeys(cmdList),","))
+    end,
+    echo=function(...)
+        print("[Echo]")
+        print(...)
+    end,
+    send=function(uid,...)
+        Bot.sendMsg(table.concat({...}," "),uid)
+    end,
+    stat=function()
+        print("\n[Statistics]")
+        print("Alive time: "..STRING.time(Time()-Bot.stat.connectTime))
+        print("Messages sent: "..Bot.stat.messageSent)
+    end,
+    exit=function()
+        print("\n[EXIT]")
+        Bot.reset()
+        Bot.stop(MATH.inf)
+        love.event.quit()
+    end,
+}
 function scene.update()
+    if userInput:getCount()>0 then
+        local args=STRING.split(userInput:pop(),' ')
+        local cmd=table.remove(args,1)
+        local func=cmdList[cmd] or cmdList.help
+        func(unpack(args))
+    end
     if ws.state=='dead' then
-        Bot.restart()
-        if TASK.getLock('bot_lock') then return end
-        TASK.unlock('bot_running')
+        if Bot.state=='running' then
+            -- Disconnected from running state
+            Bot.reset()
+            LOG('error',"Disconnected")
+            LOG('info',"Retry after "..Config.connectInterval.."s...")
+            Bot.state='dead'
+        elseif Bot.state=='connecting' then
+            -- Disconnected from connecting state
+            LOG('error',"Cannot connect")
+            LOG('info',"Retry after "..Config.connectInterval.."s...")
+            Bot.state='dead'
+        end
+        if TASK.getLock('bot_blockRestart') then return end
+        Bot.state='connecting'
         Bot.stat.connectAttempts=Bot.stat.connectAttempts+1
-        Bot.stat.connectLogDelay=10
-        Bot.stat.connectLogDelaySum=0
-        TASK.forceLock('connect_message',Bot.stat.connectLogDelay)
+        if Bot.stat.connectAttempts>=10 then
+            Config.connectInterval=Config.reconnectInterval
+        end
+        TASK.lock('bot_blockRestart',Config.connectInterval)
         ws:connect()
         print("--------------------------")
-        print("Connecting to LLOneBot...")
+        LOG('info',STRING.repD("Connecting... ($1)",Bot.stat.connectAttempts))
     elseif ws.state=='connecting' then
         ws:update()
-        if TASK.lock('connect_message',Bot.stat.connectLogDelay) then
-            Bot.stat.connectLogDelaySum=Bot.stat.connectLogDelaySum+Bot.stat.connectLogDelay
-            print(STRING.repD("Connecting... ($1s taken)",Bot.stat.connectLogDelaySum))
-            Bot.stat.connectLogDelay=math.min(Bot.stat.connectLogDelay*2,3600)
-        end
     elseif ws.state=='running' then
-        if not TASK.getLock('bot_running') then
-            TASK.lock('bot_running')
-            print("CONNECTED")
-            -- if TABLE.find(arg,"startWithNotice") then
-            --     Bot.adminNotice(Bot.stat.connectAttempts==1 and "小z启动了喵！" or STRING.repD("小z回来了喵…（第$1次）",Bot.stat.connectAttempts))
-            -- end
+        if Bot.state~='running' then
+            Bot.state='running'
+            Config.connectInterval=Config.reconnectInterval
+            LOG('info',"Connected")
+            if TABLE.find(arg,"startWithNotice") then
+                Bot.adminNotice(Bot.stat.connectAttempts==1 and "小z启动了喵！" or STRING.repD("小z回来了喵…（第$1次）",Bot.stat.connectAttempts))
+            end
         end
         if TASK.lock('bot_timing',1) then
             while true do
-                local m=Bot.msgDelQueue[1]
+                local m=Bot.delayedAction[1]
                 if not m or Time()<m.time then break end
                 m.func(unpack(m.data))
-                rem(Bot.msgDelQueue,1)
+                rem(Bot.delayedAction,1)
             end
         end
         repeat until not Bot._update()
     end
 end
-function scene.keyDown(k)
-    if k=='s' then
-        print("--------------------------")
-        print("Statistics:")
-        print("Alive time: "..STRING.time(Time()-Bot.stat.connectTime))
-        print("Messages sent: "..Bot.stat.messageSent)
-    end
-end
-function scene.draw() end
 function scene.unload() end
+
+love.thread.newThread('io_thread.lua'):start()
 
 SCN.add('main', scene)
 ZENITHA.setFirstScene('main')
@@ -560,7 +585,7 @@ ZENITHA.setFirstScene('main')
 TASK.new(function()
     while true do
         TASK.yieldT(10*60)
-        if TASK.getLock('bot_running') then
+        if Bot.state=='running' then
             TASK.freshLock()
             for _,S in next,SessionMap do
                 S:freshLock()
@@ -570,5 +595,5 @@ TASK.new(function()
 end)
 
 print("--------------------------")
-for i=1,#Bot.taskPriv do require('task.'..Bot.taskPriv[i][1]) end
-for i=1,#Bot.taskGroup do require('task.'..Bot.taskGroup[i][1]) end
+for _,t in next,Config.privTask do require('task.'..t[1]) end
+for _,t in next,Config.groupTask do require('task.'..t[1]) end

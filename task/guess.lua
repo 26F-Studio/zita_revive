@@ -28,9 +28,21 @@ local hdWeights={
     {7,3},
     {1},
 }
+local qdWeights={
+    {3,4,5},
+    {3,3,3},
+    {3,2},
+    {1},
+}
+local basePoint={
+    easy=0.26,
+    hard=1.26,
+    quandle=0.626,
+}
 local score={
     easy={[0]=0,0.5,1,4,5},
     hard={[0]=1,2,3,5,6},
+    quandle={[0]=0.5,1,1.5,2,2.6,4.2,6},
 }
 local rewardList={
     {98,56,31,10,05,00,00}, -- 1
@@ -51,9 +63,21 @@ local rewardList={
 --     sum=sum/1e4
 --     print(point,sum)
 -- end
+local keyword={
+    help={
+        ['#abhelp']=0,['#about']=0,['#ab帮助']=0,['#ab说明']=0,
+        ['#qdhelp']=0,['#qdout']=0,['#qd帮助']=0,['#qd说明']=0,
+    },
+    start={
+        ['#ab']='easy',['#abez']='easy',['#abeasy']='easy',['#ab简单']='easy',
+        ['#abhd']='hard',['#abhard']='hard',['#ab困难']='hard',
+        ['#qd']='quandle',
+    },
+}
 local text={
-    help="AB猜方块：有一组四个不同的方块，玩家猜测后会提示几A几B，A是存在且位置也对，B是存在但位置不对\n#ab普通开始，#abandon放弃，##ab勿扰模式，#abhd困难模式（允许每种块出现两次，ZJJO猜ZJZJ会得到2A2B，数量溢出也给B计数）",
-    guessed={"这组块已经猜过了喵","已经猜过这个了喵"},
+    helpAB="AB猜方块：有一组四个不同的方块，玩家猜测后会提示几A几B，A是存在且位置也对，B是存在但位置不对\n#ab普通开始，#abandon放弃，##ab勿扰模式，#abhd困难模式（允许每种块出现两次，ZJJO猜ZJZJ会得到2A2B，数量溢出也给B计数）",
+    helpQD="Quandle：有一个单词，玩家猜测后会给出一定的提示，带圈字母表示位置正确，大写存在但位置不对，小写不存在\n#qd开始，#quitom放弃，#qd5指定长度开始（4~10），##qd勿扰模式",
+    guessed={"这个已经猜过了喵","已经猜过这个了喵","前面猜过这个了喵"},
     gameNotStarted={"本来也没在玩喵！","你在干什么喵…"},
     notFinished={"上一局还没结束喵~","上一把还没玩完喵"},
     realWord={"这是一个$1考试里的词汇喵！","这个词是真实的$1考试词汇喵！"},
@@ -64,38 +88,75 @@ local text={
     start={
         easy={"我想好了四个方块，开始猜吧喵！","四个方块想好了，可以开始猜了喵！"},
         hard={"四个块想好了！不会变的喵！","四个块想好了！真的想好了喵！"},
+        quandle={"我想好了一个$1个字母的单词，不会变的喵！"},
     },
     remain={
         easy="剩余机会:$1",
         hard="[HD]剩余机会:$1",
         hardAlmost="[HD]剩余机会:$1!",
+        quandle={
+            "剩余猜测:$1",
+            "剩余猜测*:$1",
+            "剩余猜测**:$1",
+        },
     },
     win={
-        easy="猜对了喵！答案是",
-        hard="不错喵！答案是",
+        easy={"猜对了喵！答案是","不错喵！答案是$1","可以喵！答案是$1"},
+        hard={"很强喵！确实是$1","好强喵！真的是$1"},
+        quandle={"好厉害喵！！单词是$1","太厉害了喵！！单词是$1"}, -- "fanyi.baidu.com/?query="
     },
     lose={
         easy="机会用完了喵…答案是$1",
         hard="哼哼，没猜出来喵~刚好我也忘了想的是$1还是$2了 欸嘿($3)",
         hardAlmost="答案是$1，差一点点就猜对了喵~",
+        quandle="没猜出来喵~刚好我也忘了想的是$1还是$2了 欸嘿($3)",
+        quandleAlmost="单词是$1，差一点点就猜对了喵~",
     },
     forfeit={
         easy="想不出来了喵？答案是$1",
         hard="认输了喵？刚好我也忘了想的是$1还是$2啦($3)",
         hardAlmost="诶？！好吧…答案是$1",
+        quandle="放弃了喵？行吧，单词是$1($2)",
+    },
+    quandleNotWord={
+        "喵…这是个单词吗？只能猜我认识的词哦~",
+        "好像没见过这个单词喵？换一个吧",
+        "是没见过的单词呢喵~要猜我知道的词哦~",
+    },
+    quandleNotWord2={
+        "这个词也没见过喵~",
+        "这好像也不是词喵？",
+        "这应该也不是单词喵？",
+        "没见过喵~再换一个词吧",
+        "也没见过喵~再换个词吧",
     },
 }
-local realWords={JOLT="GRE",LIST="CET4",LOLL="GRE",LOSS="CET4",SILL="GRE",SILT="GRE",SLIT="CET4",SLOT="GRE",SOIL="CET4",SOLO="CET6",SOOT="GRE",TILL="CET4",TILT="CET6",TOIL="GRE",TOLL="GRE",TOOL="CET4",TOSS="CET4"}
+local realWords={JOLT="GRE",LIST="CET4",LOLL="GRE",LOSS="CET4",SILL="GRE",SILT="GRE",SLIT="CET4",SLOT="GRE",SOIL="CET4",SOLO="CET6",SOOT="GRE",TILL="CET4",TILT="CET6",TOIL="GRE",TOLL="GRE",TOOL="CET4",TOSS="CET4",LOLI="【？】"}
 local rules={
     { -- 同时有SZ或者JL
         id=1,
         text="<有两块互为镜像对称>",
-        rule=function(seq) return find(seq,'Z') and find(seq,'S') or find(seq,'J') and find(seq,'L') end,
+        rule=function(seq)
+            return
+                find(seq,'Z') and find(seq,'S') or
+                find(seq,'J') and find(seq,'L') or
+                count(seq,'T')>=2 or
+                count(seq,'O')>=2 or
+                count(seq,'I')>=2
+        end,
     },
     { -- 不同时有SZ或者JL
         id=2,
         text="<两两都不镜像对称>",
-        rule=function(seq) return not (find(seq,'Z') and find(seq,'S') or find(seq,'J') and find(seq,'L')) end,
+        rule=function(seq)
+            return not (
+                find(seq,'Z') and find(seq,'S') or
+                find(seq,'J') and find(seq,'L') or
+                count(seq,'T')>=2 or
+                count(seq,'O')>=2 or
+                count(seq,'I')>=2
+            )
+        end,
     },
     { -- 包含T或者JL总数为偶数
         id=3,
@@ -226,18 +287,28 @@ local rules={
     },
 }
 local pieces=STRING.atomize('ZSJLTOI')
-local piecesFullWidth={
-    Z='Ｚ',S='Ｓ',J='Ｊ',L='Ｌ',T='Ｔ',O='Ｏ',I='Ｉ',
-    -- ['0']='０',['1']='１',['2']='２',['3']='３',['4']='４',['5']='５',['6']='６',['7']='７',['8']='８',['9']='９',
-    -- [' ']='　',A='Ａ',B='Ｂ',
+local fullwidthMap={
+    A='Ａ',B='Ｂ',C='Ｃ',D='Ｄ',E='Ｅ',F='Ｆ',G='Ｇ',H='Ｈ',I='Ｉ',J='Ｊ',K='Ｋ',L='Ｌ',M='Ｍ',N='Ｎ',O='Ｏ',P='Ｐ',Q='Ｑ',R='Ｒ',S='Ｓ',T='Ｔ',U='Ｕ',V='Ｖ',W='Ｗ',X='Ｘ',Y='Ｙ',Z='Ｚ',
+    a='ａ',b='ｂ',c='ｃ',d='ｄ',e='ｅ',f='ｆ',g='ｇ',h='ｈ',i='ｉ',j='ｊ',k='ｋ',l='ｌ',m='ｍ',n='ｎ',o='ｏ',p='ｐ',q='ｑ',r='ｒ',s='ｓ',t='ｔ',u='ｕ',v='ｖ',w='ｗ',x='ｘ',y='ｙ',z='ｚ',
+    ['0']='０',['1']='１',['2']='２',['3']='３',['4']='４',['5']='５',['6']='６',['7']='７',['8']='８',['9']='９',
+    [' ']='　',
 }
 local function toFullwidth(str)
     local res=''
     for c in str:gmatch('.') do
-        res=res..(piecesFullWidth[c] or c)
+        res=res..(fullwidthMap[c] or c)
     end
     return res
 end
+local circleMap={
+    A="Ⓐ",B="Ⓑ",C="Ⓒ",D="Ⓓ",E="Ⓔ",F="Ⓕ",G="Ⓖ",H="Ⓗ",I="Ⓘ",J="Ⓙ",K="Ⓚ",L="Ⓛ",M="Ⓜ",N="Ⓝ",O="Ⓞ",P="Ⓟ",Q="Ⓠ",R="Ⓡ",S="Ⓢ",T="Ⓣ",U="Ⓤ",V="Ⓥ",W="Ⓦ",X="Ⓧ",Y="Ⓨ",Z="Ⓩ",
+    a="ⓐ",b="ⓑ",c="ⓒ",d="ⓓ",e="ⓔ",f="ⓕ",g="ⓖ",h="ⓗ",i="ⓘ",j="ⓙ",k="ⓚ",l="ⓛ",m="ⓜ",n="ⓝ",o="ⓞ",p="ⓟ",q="ⓠ",r="ⓡ",s="ⓢ",t="ⓣ",u="ⓤ",v="ⓥ",w="ⓦ",x="ⓧ",y="ⓨ",z="ⓩ",
+    ['0']="⓪",['1']="①",['2']="②",['3']="③",['4']="④",['5']="⑤",['6']="⑥",['7']="⑦",['8']="⑧",['9']="⑨",['10']="⑩",
+    ['11']="⑪",['12']="⑫",['13']="⑬",['14']="⑭",['15']="⑮",['16']="⑯",['17']="⑰",['18']="⑱",['19']="⑲",['20']="⑳",
+    ['21']="㉑",['22']="㉒",['23']="㉓",['24']="㉔",['25']="㉕",['26']="㉖",['27']="㉗",['28']="㉘",['29']="㉙",['30']="㉚",
+    ['31']="㉛",['32']="㉜",['33']="㉝",['34']="㉞",['35']="㉟",['36']="㊱",['37']="㊲",['38']="㊳",['39']="㊴",['40']="㊵",
+    ['41']="㊶",['42']="㊷",['43']="㊸",['44']="㊹",['45']="㊺",['46']="㊻",['47']="㊼",['48']="㊽",['49']="㊾",['50']="㊿",
+}
 local function randomGuess(ans)
     local g
     repeat
@@ -262,9 +333,41 @@ do
             end
         end
     end
-    print('Hard quest lib length: '..#hardLib)
+end
+local quandleLib ---@type QuandleLib
+local function initQuandleLib()
+    local cet4=STRING.split(FILE.load('data/lib_cet4.txt','-string'):upper(),'\r\n')
+    local cet6=STRING.split(FILE.load('data/lib_cet6.txt','-string'):upper(),'\r\n')
+    local tem8=STRING.split(FILE.load('data/lib_tem8.txt','-string'):upper(),'\r\n')
+    local gre =STRING.split(FILE.load('data/lib_gre.txt' ,'-string'):upper(),'\r\n')
+    local full=STRING.split(FILE.load('data/lib_full.txt','-string'):upper(),'\r\n')
+    local ex  =STRING.split(FILE.load('data/lib_ex.txt'  ,'-string'):upper(),'\r\n')
+    ---@class QuandleLib
+    quandleLib={
+        cet4={},cet6={},tem8={},gre={},
+        fullHash=TABLE.getValueSet(full,'RND'), ---@type table<string,string>
+    }
+    TABLE.update(quandleLib.fullHash,TABLE.getValueSet(ex,'RND'))
+    local hash=quandleLib.fullHash
+    for _,w in next,gre do hash[w]='GRE' end
+    for _,w in next,tem8 do hash[w]='TEM8' end
+    for _,w in next,cet6 do hash[w]='CET6' end
+    for _,w in next,cet4 do hash[w]='CET4' end
+    for i=1,10 do
+        quandleLib.cet4[i]={}
+        quandleLib.cet6[i]={}
+        quandleLib.tem8[i]={}
+        quandleLib.gre[i]={}
+    end
+    for i=1,#cet4 do ins(quandleLib.cet4[#cet4[i]],cet4[i]) end
+    for i=1,#cet6 do ins(quandleLib.cet6[#cet6[i]],cet6[i]) end
+    for i=1,#tem8 do ins(quandleLib.tem8[#tem8[i]],tem8[i]) end
+    for i=1,#gre do ins(quandleLib.gre[#gre[i]],gre[i]) end
+    collectgarbage()
+    initQuandleLib=NULL
 end
 if not TABLE.find(arg,'startWithNotice') then
+    print('Hard quest lib length: '..#hardLib)
     for _,r in next,rules do
         local cnt=0
         local cntSimp=0
@@ -280,6 +383,7 @@ if not TABLE.find(arg,'startWithNotice') then
         end
     end
 end
+---@return string #example: "1A1B"
 local function comp(ANS,G)
     local aCount,bCount=0,0
     for i=1,4 do
@@ -301,13 +405,34 @@ local function comp(ANS,G)
     end
     return aCount..'A'..bCount..'B'
 end
+---@return string #example: "20100"
+local function compQuandle(ANS,G)
+    -- local output=concat(ANS)
+    local result=TABLE.new(0,#ANS)
+    for i=1,#ANS do
+        if ANS[i]==G[i] then
+            -- output=output.." ["..i.."] correct"
+            result[i]=2
+            ANS[i],G[i]=-1,-2
+        end
+    end
+    for i=1,#G do
+        local p=TABLE.find(ANS,G[i])
+        if p then
+            -- output=output.." ["..i.."] fuzzy"
+            ANS[p],G[i]=-1,-2
+            result[i]=1
+        end
+    end
+    -- print(output)
+    return concat(result)
+end
 local resultSets={}
 local function resultSorter(a,b) return #resultSets[a]>#resultSets[b] end
-local function guess(D,g)
+local function guess(D,g)---@return 'duplicate'|'win'|nil
     if TABLE.find(D.guessHis,concat(g)) then return 'duplicate' end
-
-    D.chances=D.chances-1
     ins(D.guessHis,concat(g))
+    D.chances=D.chances-1
 
     local res
     if D.mode=='easy' then
@@ -321,6 +446,7 @@ local function guess(D,g)
         end
         local keys=TABLE.getKeys(resultSets)
         TABLE.delete(keys,'4A0B')
+
         -- print("--------------------------")
         -- for _,key in next,keys do
         --     local set=resultSets[key]
@@ -332,6 +458,7 @@ local function guess(D,g)
         --         print(key,#set)
         --     end
         -- end
+
         if #keys==0 then
             -- Only one answer left
             res='4A0B'
@@ -343,34 +470,103 @@ local function guess(D,g)
             res=keys[r]
             D.answer=resultSets[res]
         end
+    elseif D.mode=='quandle' then
+        -- Punish repeating recent 25 words
+        local hisList=D.quandleLongHis[D.length]
+        local repCount=TABLE.count(hisList,concat(g))
+        if #D.guessHis==1 then
+            D.stage=math.min(repCount+1,3)
+            if D.stage>=2 then
+                TABLE.append(D.answer,quandleLib.tem8[D.length])
+                if D.stage>=3 then
+                    D.chances=D.chances+1
+                    TABLE.append(D.answer,quandleLib.gre[D.length])
+                end
+            end
+        else
+            D.repPoint=D.repPoint+repCount
+        end
+        ins(hisList,1,concat(g))
+        hisList[26]=nil
+
+        resultSets={}
+        for _,answer in next,D.answer do
+            local r=compQuandle(STRING.atomize(answer),copy(g))
+            if not resultSets[r] then resultSets[r]={} end
+            ins(resultSets[r],answer)
+        end
+        local keys=TABLE.getKeys(resultSets)
+        TABLE.delete(keys,string.rep('2',D.length))
+
+        -- print("--------------------------")
+        -- for _,key in next,keys do
+        --     local set=resultSets[key]
+        --     if #set<=10 then
+        --         local s=""
+        --         for _,_4 in next,set do s=s.._4.." " end
+        --         print(key,#set,s)
+        --     else
+        --         print(key,#set)
+        --     end
+        -- end
+
+        if #keys==0 then
+            -- Only one answer left
+            res='win'
+            for i=1,#g do g[i]=circleMap[g[i]] end
+            D.textHis=D.textHis.."\n"..concat(g)
+        else
+            -- Still has multiple possibilities
+            table.sort(keys,resultSorter)
+            local r=MATH.randFreq(qdWeights[math.min(#D.guessHis,#qdWeights)])
+            while not keys[r] do r=r-1 end
+            res=keys[r]
+            D.answer=resultSets[res]
+
+            for i=1,#g do
+                if res:sub(i,i)=='2' then
+                    g[i]=circleMap[g[i]]
+                elseif res:sub(i,i)=='1' then
+                    g[i]=fullwidthMap[g[i]:upper()]
+                else
+                    g[i]=fullwidthMap[g[i]:lower()]
+                end
+            end
+            if #D.guessHis>1 then D.textHis=D.textHis.."\n" end
+            D.textHis=D.textHis..concat(g)
+        end
+        return res
     end
-    if #D.guessHis>1 then
-        D.textHis=D.textHis..(#D.guessHis%2==0 and "   " or "\n")
-    end
+    if #D.guessHis>1 then D.textHis=D.textHis..(#D.guessHis%2==0 and "   " or "\n") end
     D.textHis=D.textHis..toFullwidth(concat(g)).." "..res
     if res=='4A0B' then return 'win' end
 end
 ---@param S Session
----@param M LLOneBot.Event.GroupMessage
+---@param M OneBot.Event.GroupMessage
 local function sendMes(S,M,D,mode)
-    local t="[CQ:at,qq="..M.user_id.."]\n"
+    local t=S.group and CQ.at(M.user_id).."\n" or ""
     if mode=='notFinished' then
         t=t..getRnd(text.notFinished).."\n"
     elseif mode=='start' then
-        t=t..getRnd(text.start[D.mode]).."\n"
+        t=t..repD(getRnd(text.start[D.mode]),D.length).."\n"
     end
-    t=t..D.textHis.."\n"
+    if #D.textHis>0 then t=t..D.textHis.."\n" end
     if D.privOwner then t=t.."#" end
     if mode=='win' then
         local lastGuess=D.guessHis[#D.guessHis]
-        t=t..text.win[D.mode]..lastGuess
+        t=t..repD(getRnd(text.win[D.mode]),lastGuess)
         local point=0
         if realWords[lastGuess] then
             t=t.."\n"..repD(getRnd(text.realWord),realWords[lastGuess])
             point=point+1
         end
         if Config.extraData.family[S.uid] then
-            point=point+(score[D.mode][D.chances] or 2.6)+(D.mode=='easy' and 0.26 or 1.26)*math.random()
+            for _=1,26 do math.random() end
+            point=point+basePoint[D.mode]*math.random()+(score[D.mode][D.chances] or 2.6)
+            if D.mode=='quandle' then
+                point=point+D.stage/2-((D.length-1)^.5-1)
+                point=math.max(point-D.repPoint^.62*.62,0)
+            end
             local reward=MATH.randFreq{
                 MATH.lLerp(rewardList[1],point/6),
                 MATH.lLerp(rewardList[2],point/6),
@@ -379,11 +575,11 @@ local function sendMes(S,M,D,mode)
             }
             if reward<=3 then
                 for i=1,reward do
-                    S:delaySend(i*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                    S:delaySend(i*delays.send_reward,CQ.img(getRnd(Config.extraData.touhouImages)))
                 end
             else
-                S:delaySend(1*delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
-                S:delaySend(2*delays.send_reward,CQpic(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg'))
+                S:delaySend(1*delays.send_reward,CQ.img(getRnd(Config.extraData.touhouImages)))
+                S:delaySend(2*delays.send_reward,CQ.img(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg'))
             end
             t=t.."\n"..("(%.2f/6 | %d)"):format(point,reward)
         end
@@ -391,18 +587,38 @@ local function sendMes(S,M,D,mode)
     elseif mode=='lose' then
         if D.mode=='easy' then
             t=t..repD(text.lose.easy,concat(D.answer))
-        elseif #D.answer==1 then
-            t=t..repD(text.lose.hardAlmost,concat(D.answer[1]))
-            if Config.extraData.family[S.uid] then
-                S:delaySend(delays.send_reward,CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+        elseif D.mode=='hard' then
+            if #D.answer==1 then
+                t=t..repD(text.lose.hardAlmost,concat(D.answer[1]))
+                if Config.extraData.family[S.uid] then
+                    S:delaySend(delays.send_reward,CQ.img(getRnd(Config.extraData.touhouImages)))
+                end
+            else
+                local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))
+                t=t..repD(text.lose.hard,ans1,ans2,#D.answer+2)
             end
-        else
-            local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))
-            t=t..repD(text.lose.hard,ans1,ans2,#D.answer+2)
+        elseif D.mode=='quandle' then
+            if #D.answer==1 then
+                t=t..repD(text.lose.quandleAlmost,D.answer[1])
+                if Config.extraData.family[S.uid] then
+                    S:delaySend(delays.send_reward,CQ.img(getRnd(Config.extraData.touhouImages)))
+                end
+            else
+                local ans1,ans2=TABLE.popRandom(D.answer),TABLE.popRandom(D.answer)
+                t=t..repD(text.lose.quandle,ans1,ans2,#D.answer+2)
+            end
         end
         S:send(t)
     else
-        t=t..repD(text.remain[D.mode=='hard' and #D.answer==1 and 'hardAlmost' or D.mode],D.chances)
+        local remainText
+        if D.mode=='hard' and #D.answer==1 then
+            remainText=text.remain.hardAlmost
+        elseif D.mode=='quandle' then
+            remainText=text.remain.quandle[D.stage]
+        else
+            remainText=text.remain[D.mode]
+        end
+        t=t..repD(remainText,D.chances)
         if delays.del_question then
             local mesID='abguess_history_'..math.random(262626,626262)
             S:send(t,mesID)
@@ -425,7 +641,7 @@ return {
         D.playing=false
         D.lastInterectTime=-1e99 -- time of last answer, for reset when timeout
 
-        D.mode=false -- 'easy' or 'hard'
+        D.mode=false -- 'easy' | 'hard' | 'quandle'
         D.answer={} -- {'1','2','3','4'} for Easy mode, {{'1','2','3','4'},{'5','6','7','8'},...} for Hard mode
         D.guessHis={}
         D.mesIDList={}
@@ -434,12 +650,18 @@ return {
 
         D.privOwner=false
         D.playerHis=TABLE.new(false,5)
+
+        D.quandleLongHis={}
+        D.length=5
+        D.stage=1
+        D.repPoint=0
+        for i=1,10 do D.quandleLongHis[i]={} end
     end,
     func=function(S,M,D)
-        ---@cast M LLOneBot.Event.GroupMessage
+        ---@cast M OneBot.Event.GroupMessage
         -- Log
         local mes=SimpStr(M.raw_message)
-        if #mes>=10 then return false end
+        if #mes>=12.6 then return false end
 
         local privGame=false
         if mes:sub(1,2)=='##' then
@@ -447,56 +669,64 @@ return {
             privGame=true
         end
 
-        if mes=='#abhelp' or mes=='#about' or mes=='#ab帮助' or mes=='#ab说明' then
-            if S:lock('ab_help',26) then
-                S:send(text.help)
+        local quandleLength
+        if mes:match('^#%D+%d+$') then
+            quandleLength=tonumber(mes:match('%d+'))
+            mes=mes:match('%D+')
+        end
+
+        if keyword.help[mes] then
+            if S:lock('guess_help',26) then
+                S:send(mes:find('qd') and text.helpQD or text.helpAB)
             end
             if delays.del_help and Config.groupManaging[S.id] then
                 S:delayDelete(delays.del_help,M.message_id)
             end
             return true
-        elseif mes=='#abandon' then
+        elseif mes=='#abandon' or mes=='#quitom' then
             if not D.playing then
-                if S:lock('ab_abandon',26) then
+                if S:lock('guess_abandon',26) then
                     S:send(getRnd(text.gameNotStarted))
                 end
                 return true
             end
             if D.privOwner and M.user_id~=D.privOwner then
-                if S:lock('ab_priv',12.6) then
+                if S:lock('guess_priv',12.6) then
                     S:send(getRnd(text.abandonOthers))
                 end
                 return true
             end
             D.playing=false
-            S:lock('ab_abandon',26)
+            S:lock('guess_abandon',26)
             if D.mode=='easy' then
                 S:send(repD(text.forfeit.easy,concat(D.answer)))
-            else
+            elseif D.mode=='hard' then
                 if #D.answer==1 then
                     S:send(repD(text.forfeit.hardAlmost,concat(D.answer[1])))
                     if D.chances>=2 then
-                        S:send(CQpic(Config.extraData.touhouPath..getRnd(Config.extraData.touhouImages)))
+                        S:send(CQ.img(getRnd(Config.extraData.touhouImages)))
                     end
                 else
                     local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))
                     S:send(repD(text.forfeit.hard,ans1,ans2,#D.answer+2))
                 end
+            elseif D.mode=='quandle' then
+                S:send(repD(text.forfeit.quandle,getRnd(D.answer):lower(),#D.answer))
             end
-            S:unlock('ab_help')
-            S:unlock('ab_playing')
-            S:unlock('ab_cd')
-            S:unlock('ab_duplicate')
+            S:unlock('guess_help')
+            S:unlock('guess_playing')
+            S:unlock('guess_cd')
+            S:unlock('guess_duplicate')
             D.lastInterectTime=Time()-cooldownSkip.giveup
             if delays.del_abandon and Config.groupManaging[S.id] then
                 S:delayDelete(delays.del_abandon,M.message_id)
             end
             return true
-        elseif mes=='#ab' or mes=='#abez' or mes=='#abeasy' or mes=='#ab简单' or mes=='#abhd' or mes=='#abhard' or mes=='#ab困难' then
+        elseif keyword.start[mes] then
             -- Start
             local timeSkip=Time()-D.lastInterectTime
             if D.playing and timeSkip<600 then
-                if S:lock('ab_playing',62) then
+                if S:lock('guess_playing',62) then
                     sendMes(S,M,D,'notFinished')
                 end
                 return true
@@ -504,11 +734,11 @@ return {
             if not Config.safeSessionID[S.uid] and S.group and not AdminMsg(M) and timeSkip<cooldown then
                 local timeRemain=cooldown-timeSkip+10
                 if timeRemain<60 then
-                    if S:lock('ab_cd',26) then
+                    if S:lock('guess_cd',26) then
                         S:send(repD("再等$1秒就能开局了喵",math.ceil(timeRemain)))
                     end
                 else
-                    if S:lock('ab_cd',62) then
+                    if S:lock('guess_cd',62) then
                         S:send(repD("$1等$2分钟才能再玩",getRnd(text.tooFreq),math.ceil(timeRemain/60)))
                     end
                 end
@@ -523,7 +753,7 @@ return {
                 if s<3 then
                     player=M.user_id
                 else
-                    if S:lock('ab_privLimit',26) then
+                    if S:lock('guess_privLimit',26) then
                         S:send(getRnd(text.privLimit))
                     end
                     return true
@@ -534,16 +764,17 @@ return {
 
             D.privOwner=player
             D.playing=true
-            D.mode=(mes:find("h") or mes:find("困"))  and 'hard' or 'easy'
-            D.answer={}
+            D.mode=keyword.start[mes]
             D.guessHis={}
             D.textHis=""
             if D.mode=='easy' then
+                D.chances=6
                 D.answer=randomGuess()
                 guess(D,randomGuess(D.mode=='easy' and D.answer))
-            else
+            elseif D.mode=='hard' then
+                D.chances=6
                 D.answer=copy(hardLib,0)
-                local r=rules[math.random(#rules)]
+                local r=getRnd(rules)
                 local newAns={}
                 for i=1,#D.answer do
                     if r.rule(concat(D.answer[i])) then
@@ -553,10 +784,18 @@ return {
                 assert(#newAns>0,"No answer after rule filter "..r.id)
                 D.answer=newAns
                 D.textHis=r.text.."\n"
-                local g=hardLib[math.random(#hardLib)]
-                guess(D,g)
+                guess(D,getRnd(hardLib))
+            elseif D.mode=='quandle' then
+                initQuandleLib()
+                D.chances=D.length<=6 and 6 or 5
+                D.length=MATH.clamp(math.floor(quandleLength or MATH.randFreq({0,0,0,2,6,5,3,2,1,1})),4,10)
+                D.repPoint=0
+                D.stage=1
+
+                D.answer={}
+                TABLE.append(D.answer,quandleLib.cet4[D.length])
+                TABLE.append(D.answer,quandleLib.cet6[D.length])
             end
-            D.chances=5
             sendMes(S,M,D,'start')
             D.lastInterectTime=Time()
             if delays.del_start and Config.groupManaging[S.id] then
@@ -564,21 +803,32 @@ return {
             end
             return true
         elseif D.playing then
-            if mes:sub(1,3)=='#ab' then mes=mes:sub(4) end
             mes=mes:upper()
-            if not mes:match('^[ZSJLTOI][ZSJLTOI][ZSJLTOI][ZSJLTOI]$') then return false end
+            if D.mode=='easy' or D.mode=='hard' then
+                if #mes~=4 or mes:find('[^ZSJLTOI]') then return false end
+            elseif D.mode=='quandle' then
+                if #mes~=D.length or mes:find('[^A-Z]') then return false end
+                if not quandleLib.fullHash[mes] then
+                    if S:lock('guess_notWord',12.6) then
+                        S:send(getRnd(text.quandleNotWord))
+                    else
+                        S:send(getRnd(text.quandleNotWord2))
+                    end
+                    return true
+                end
+            end
             if D.privOwner and M.user_id~=D.privOwner then
-                if S:lock('ab_priv',12.6) then
+                if S:lock('guess_priv',12.6) then
                     S:send(getRnd(text.privBlocked))
                 end
                 return true
             end
 
-            local res=guess(D,{mes:sub(1,1),mes:sub(2,2),mes:sub(3,3),mes:sub(4,4)})
+            local res=guess(D,STRING.atomize(mes))
             if res=='duplicate' then
                 -- Duplicate
                 local mesID='abguess_duplicate_'..math.random(262626,626262)
-                if S:lock('ab_duplicate',12.6) then
+                if S:lock('guess_duplicate',12.6) then
                     S:send(getRnd(text.guessed),mesID)
                     D.lastInterectTime=Time()
                     if delays.del_duplicate and Config.groupManaging[S.id] then
@@ -591,12 +841,12 @@ return {
                 if res=='win' then
                     -- Win
                     D.playing=false
-                    S:lock('ab_abandon',26)
+                    S:lock('guess_abandon',26)
                     sendMes(S,M,D,'win')
-                    S:unlock('ab_help')
-                    S:unlock('ab_playing')
-                    S:unlock('ab_cd')
-                    S:unlock('ab_duplicate')
+                    S:unlock('guess_help')
+                    S:unlock('guess_playing')
+                    S:unlock('guess_cd')
+                    S:unlock('guess_duplicate')
                     D.lastInterectTime=Time()-cooldownSkip.win
                     if delays.del_win and Config.groupManaging[S.id] then
                         S:delayDelete(delays.del_win,M.message_id)
@@ -628,12 +878,12 @@ return {
                 else
                     -- Lose
                     D.playing=false
-                    S:lock('ab_abandon',26)
+                    S:lock('guess_abandon',26)
                     sendMes(S,M,D,'lose')
-                    S:unlock('ab_help')
-                    S:unlock('ab_playing')
-                    S:unlock('ab_cd')
-                    S:unlock('ab_duplicate')
+                    S:unlock('guess_help')
+                    S:unlock('guess_playing')
+                    S:unlock('guess_cd')
+                    S:unlock('guess_duplicate')
                     D.lastInterectTime=Time()-cooldownSkip.lose
                     if delays.del_lose and Config.groupManaging[S.id] then
                         S:delayDelete(delays.del_lose,M.message_id)

@@ -1,5 +1,5 @@
 local ins=table.insert
----@type Map<ZictEntry>
+---@type Map<Zict.Entry>
 local zict=FILE.load('task/zictionary_data.lua','-lua')
 local entryList=zict.entryList
 zict.entryList=nil
@@ -11,7 +11,7 @@ return {
         D.lastDetailEntry=false
     end,
     func=function(S,M,D)
-        ---@cast M LLOneBot.Event.PrivateMessage|LLOneBot.Event.GroupMessage
+        ---@cast M OneBot.Event.PrivateMessage|OneBot.Event.GroupMessage
 
         local mes=STRING.trim(RawStr(M.raw_message))
 
@@ -34,10 +34,10 @@ return {
         -- Daily
         local daily
         if mes=='#' then
-            if S:lock('dailyEntry',600) then
+            if S:lock('dailyEntry',626) then
                 math.randomseed(tonumber(os.date('%Y%m%d')) or 26)
                 for _=1,42 do math.random() end
-                mes='#'..entryList[math.random(#entryList)].word
+                mes='#'..TABLE.getRandom(entryList).word
                 if mes:find(';') then mes=mes:match('(.-);') end
                 math.randomseed(os.time())
                 daily=true
@@ -60,7 +60,7 @@ return {
         end
 
         -- Get entry from dict data
-        ---@type ZictEntry
+        ---@type Zict.Entry
         local entry
         if startPos==1 then
             entry=zict[SimpStr(phrase)]

@@ -6,7 +6,7 @@ local envValues={
     'math','string','table',
     'MATH','STRING','TABLE',
     'Config','SessionMap','Bot','Session',
-    'Time',
+    'Time','CQ',
 }
 table.sort(envValues)
 local codeEnv={}
@@ -35,7 +35,7 @@ local commands={
         print("[RESTART]")
         if args[1]=='all' then
             S:send("（咚）\n……\n我是谁来着喵？")
-            Bot.restart()
+            Bot.reset()
         elseif args[1] then
             local uid=args[1]
             if not SessionMap[uid] then
@@ -143,10 +143,8 @@ local denyTexts={
     "你没有足够的权限喵",
     "Permission Denied喵",
     "你是谁！（后跳）",
-    "听不懂喵！！！！！",
     Config.adminName.."才能这样做喵",
-    "只有"..Config.adminName.."才能让我这样做喵！！",
-    "只有"..Config.adminName.."才能这样命令我喵！！",
+    "我只听"..Config.adminName.."的喵！",
 }
 ---@param S Session
 local function noPermission(S)
@@ -158,7 +156,7 @@ end
 ---@type Task_raw
 return {
     func=function(S,M)
-        ---@cast M LLOneBot.Event.PrivateMessage
+        ---@cast M OneBot.Event.PrivateMessage
 
         local level=Bot.isAdmin(M.user_id) and 2 or AdminMsg(M) and 1 or 0
 
@@ -167,11 +165,11 @@ return {
             if mes:sub(1,1)=='!' then
                 if #mes<6.26 then return false end
                 if level<2 then noPermission(S) return true end
-                local func,err=loadstring(mes:sub(2))
+                local func,err=loadstring("local S=...\n"..mes:sub(2))
                 local returnMes
                 if func then
                     setfenv(func,codeEnv)
-                    local suc,res=pcall(func)
+                    local suc,res=pcall(func,S)
                     if suc then
                         if res then
                             returnMes=tostring(res)
