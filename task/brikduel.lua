@@ -544,10 +544,12 @@ function Game:parse(str)
             ctrl.pID=TABLE.find(simSeq,ctrl.piece)
             assertf(ctrl.pID and ctrl.pID<=2,"[%d]块捷操作时方块%s必须在序列前两个",ptr,c)
             c=buf:get(1) ptr=ptr+1
+            if c=='' then c='__eof' end
             local dir=keyMap:sub(-5,-2):find(c)
             assertf(dir,"[%d]块捷操作朝向错误",ptr)
             ctrl.dir=dir-1
             c=buf:get(1) ptr=ptr+1
+            if c=='' then c='__eof' end
             ctrl.pos=tonumber(c)
             assertf(ctrl.pos,"[%d]块捷操作位置错误（应为0-9）",ptr)
             ctrl.pos=keyMap:sub(-1)=='0' and ctrl.pos+1 or ctrl.pos==0 and 10 or ctrl.pos -- Re-base the x-pos number
