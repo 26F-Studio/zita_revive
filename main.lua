@@ -575,13 +575,21 @@ function scene.update()
         repeat until not Bot._update()
     end
 end
+function scene.keyDown(k)
+    if k=='e' then
+        cmdList.exit()
+    elseif k=='s' then
+        cmdList.stat()
+    end
+end
 function scene.unload() end
 
-love.thread.newThread('io_thread.lua'):start()
+-- love.thread.newThread('io_thread.lua'):start()
 
 SCN.add('main', scene)
 ZENITHA.setFirstScene('main')
 
+-- Lock-freshing Daemon
 TASK.new(function()
     while true do
         TASK.yieldT(10*60)
