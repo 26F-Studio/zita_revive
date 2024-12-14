@@ -235,16 +235,23 @@ local texts={
 
     game_start={
         duel="($1) 决斗开始！\n$2\n$3\nvs\n$4\n$5",
-        solo="($1) 单人模式-$2\n$3",
+        solo="$1 ($2)单人模式-$3",
     },
     game_modeName={
         solo="自由",
         ac="全消",
         ['10l']="十行",
     },
+    game_renderRrror="喵喵喵！渲染失败了：",
     game_moreLine="⤾$1行隐藏",
     game_spin="旋",
-    game_clear={'单行','双清','三消','四方','五行','六边','七色','八门','九莲','十面'},
+    game_clear={
+        '单行','双清','三消','四方',
+        '五行','六边','七色','八门','九莲','十面',
+        '干雷','丰年','参天','谪置','三五',
+        '举鼎','毛戴','惊堂','十九','王',
+        '甘','田','质','天时','四分','正则'
+    },
     game_ac="全消",
     game_acFX={
         "𝖠𝖫𝖫 𝖢𝖫𝖤𝖠𝖱",
@@ -749,8 +756,183 @@ function Game:getFieldText()
     end
 end
 
+local bdLine=3
+local cLine=2
+local cSize=16
+local colNumH=16
+local nextBound=2
+local nextK1,nextK2,nextGap=9,6,2
+
+local simpStartH=cSize*7
+local fieldW,fieldH=cSize*10,cSize*12
+local nextH1,nextH2=nextK1*2+nextBound*2,nextK2*2+nextBound*2
+local totalW,totalH=fieldW+2*bdLine,fieldH+colNumH+nextH1+bdLine
+
+GC.setDefaultFilter('nearest','nearest')
+local texture={
+    canvas=GC.newCanvas(totalW,totalH),
+    board=GC.load{w=totalW,h=totalH,
+        {'clear',0,0,0},
+        {'move',bdLine,fieldH},
+        {'setCL',COLOR.L},
+        {'fRect',0,0,fieldW,-fieldH},
+        {'setCL',COLOR.dL},
+        {'fRect',1*cSize-1,0,2,-fieldH},{'fRect',2*cSize-1,0,2,-fieldH},{'fRect',3*cSize-1,0,2,-fieldH},
+        {'fRect',4*cSize-1,0,2,-fieldH},{'fRect',5*cSize-1,0,2,-fieldH},{'fRect',6*cSize-1,0,2,-fieldH},
+        {'fRect',7*cSize-1,0,2,-fieldH},{'fRect',8*cSize-1,0,2,-fieldH},{'fRect',9*cSize-1,0,2,-fieldH},
+        {'fRect',0,-1*cSize-1,fieldW,2},{'fRect',0,-2*cSize-1,fieldW,2},{'fRect',0,-3*cSize-1,fieldW,2},
+        {'fRect',0,-4*cSize-1,fieldW,2},{'fRect',0,-5*cSize-1,fieldW,2},{'fRect',0,-6*cSize-1,fieldW,2},
+        {'fRect',0,-7*cSize-1,fieldW,2},{'fRect',0,-8*cSize-1,fieldW,2},{'fRect',0,-9*cSize-1,fieldW,2},
+        {'fRect',0,-fieldW-1,fieldW,2},{'fRect',0,-11*cSize-1,fieldW,2},{'fRect',0,-cSize*cSize-1,fieldW,2},
+        {'setCL',COLOR.lD},
+        {'fRect',0,colNumH,4.7*cSize,nextH1},
+        {'fRect',4.7*cSize,colNumH+nextH1,6.26*cSize,-nextH2},
+    },
+    Z=GC.load{w=3,h=2,
+        {'setCL',COLOR.lR},
+        {'fRect',0,0,1,1},
+        {'fRect',1,0,1,1},
+        {'fRect',1,1,1,1},
+        {'fRect',2,1,1,1},
+    },
+    S=GC.load{w=3,h=2,
+        {'setCL',COLOR.lG},
+        {'fRect',1,0,1,1},
+        {'fRect',2,0,1,1},
+        {'fRect',0,1,1,1},
+        {'fRect',1,1,1,1},
+    },
+    J=GC.load{w=3,h=2,
+        {'setCL',COLOR.lB},
+        {'fRect',0,0,1,1},
+        {'fRect',0,1,1,1},
+        {'fRect',1,1,1,1},
+        {'fRect',2,1,1,1},
+    },
+    L=GC.load{w=3,h=2,
+        {'setCL',COLOR.lO},
+        {'fRect',2,0,1,1},
+        {'fRect',0,1,1,1},
+        {'fRect',1,1,1,1},
+        {'fRect',2,1,1,1},
+    },
+    T=GC.load{w=3,h=2,
+        {'setCL',COLOR.lV},
+        {'fRect',1,0,1,1},
+        {'fRect',0,1,1,1},
+        {'fRect',1,1,1,1},
+        {'fRect',2,1,1,1},
+    },
+    O=GC.load{w=2,h=2,{'clear',COLOR.lY}},
+    I=GC.load{w=4,h=1,{'clear',COLOR.LC}},
+}
+GC.setDefaultFilter('linear','linear')
+local cellColor={
+    {COLOR.R,COLOR.lR},
+    {COLOR.G,COLOR.lG},
+    {COLOR.B,COLOR.lB},
+    {COLOR.O,COLOR.lO},
+    {COLOR.V,COLOR.lV},
+    {COLOR.Y,COLOR.lY},
+    {COLOR.lC,COLOR.LC},
+    {COLOR.lD,COLOR.LD},
+    {COLOR.DR,COLOR.dR},
+}
 function Game:getFullStateText()
     return self:getFieldText().."\n"..self:getSequenceText()
+end
+
+function Game:renderImage()
+    local field=self.field
+    GC.setCanvas(texture.canvas)
+    GC.push('transform')
+        GC.clear()
+        GC.origin()
+
+        -- Base
+        GC.setColor(1,1,1)
+        GC.draw(texture.board)
+        GC.translate(bdLine,fieldH)
+
+        -- Field
+        if #field>0 then
+            local startH=math.max(#field-11,1)
+            for y=0,#field-startH do
+                for x=0,9 do
+                    local l0=field[y+1]
+                    local ld=field[y]
+                    local lu=field[y+2]
+                    local cell=l0[x+1]
+                    if cell>0 then
+                        GC.setColor(cellColor[cell][2])
+                        GC.rectangle('fill',x*cSize,-(y+1)*cSize,cSize,cSize)
+                        GC.setColor(cellColor[cell][1])
+                        if l0[x+1]~=l0[x+2] then GC.rectangle('fill',x*cSize+cSize,-(y+1)*cSize,-cLine,cSize) end
+                        if l0[x+1]~=l0[x] then GC.rectangle('fill',x*cSize,-(y+1)*cSize,cLine,cSize) end
+                        if not ld or l0[x+1]~=ld[x+1] then GC.rectangle('fill',x*cSize,-y*cSize,cSize,-cLine) end
+                        if not lu or l0[x+1]~=lu[x+1] then GC.rectangle('fill',x*cSize,-(y+1)*cSize,cSize,cLine) end
+                    end
+                end
+            end
+        elseif self.stat.ac>0 then
+            FONT.set(25)
+            GC.strokePrint('full',2,COLOR.O,COLOR.lY,"ALL CLEAR",5*cSize,-cSize*3,'center')
+            if self.stat.ac>=2 then
+                FONT.set(20)
+                GC.strokePrint('full',1,COLOR.O,COLOR.lY,"x "..self.stat.ac,8.6*cSize,-cSize*4.2,'right')
+            end
+        end
+
+        -- Watermark
+        FONT.set(15)
+        GC.setColor(.92,.92,.92)
+        GC.print("BrikDuel",6,-11*cSize,-.26)
+        GC.print(self.uid,6,-10*cSize,-.26)
+
+        -- Target line
+        if self.rule.tar=='line' then
+            local lineH=math.max(self.rule.tarDat-self.stat.line,0)
+            GC.translate(0,-cSize*lineH)
+            GC.setColor(COLOR.D)
+            GC.rectangle('fill',0,-bdLine,fieldW,2*bdLine)
+            GC.setColor(COLOR.L)
+            for x=0,9 do GC.rectangle('fill',cSize*x,0,cSize,x%2==0 and -bdLine+1 or bdLine-1) end
+            GC.translate(0,cSize*lineH)
+        end
+
+        -- Column number
+        GC.setColor(1,1,1)
+        FONT.set(15,'mono')
+        local base=tonumber(User.get(self.uid).set.key:sub(-1))
+        for x=0,9 do GC.print((x+base)%10,cSize*x+4,0) end
+
+        -- Nexts
+        GC.translate(nextBound,colNumH+nextH1-nextBound)
+        for i=1,#self.sequence do
+            local piece=self.sequence[i]
+            local img=texture[piece]
+            local k=i<=2 and nextK1 or nextK2
+            GC.draw(img,0,0,0,k,k,0,img:getHeight())
+            GC.translate(img:getWidth()*k+nextGap,0)
+        end
+    GC.pop()
+    GC.setCanvas()
+    if #field==0 then
+        GC.saveCanvas(texture.canvas,'canvas.png','png',0,1,0,simpStartH,totalW,totalH-simpStartH)
+    else
+        GC.saveCanvas(texture.canvas,'canvas.png','png')
+    end
+    local file=love.filesystem.getSaveDirectory()..'/canvas.png'
+    os.execute('chmod 644 '..file)
+    os.execute('mv '..file..' '..Config.extraData.sandboxRealPath..'canvas.png')
+    return CQ.img(Config.extraData.sandboxPath..'canvas.png')
+end
+
+function Game:getImage()
+    local suc,res=pcall(self.renderImage,self)
+    if suc then return res end
+    GC.setCanvas()
+    return texts.game_renderRrror..tostring(res)
 end
 
 ---@class BrikDuel.Duel
@@ -824,11 +1006,13 @@ function Duel:start(S,D,rule)
             CQ.at(self.member[2])
         ))
     elseif rule.welcomeText=='solo' then
-        S:send(repD(texts.game_start.solo,
-            self.id,
-            texts.game_modeName[rule.modeName] or rule.modeName:upper(),
-            self.game[1]:getSequenceText()
-        ))
+        S:send(
+            self.game[1]:getImage()..
+            repD(texts.game_start.solo,
+                User.get(self.game[1].uid):getPfp(),self.id,
+                texts.game_modeName[rule.modeName] or rule.modeName:upper()
+            )
+        )
     else
         error("WTF")
     end
@@ -840,30 +1024,29 @@ function Duel:afterMove(S,D)
     local finish
     for i=1,#self.game do
         local game=self.game[i]
-        if game.dieReason then
-            finish={reason=game.dieReason,id=i}
-            break
-        else
-            if game.rule.tar then
-                if game.rule.tar=='ac' then
-                    if game.stat.ac>=game.rule.tarDat then
-                        finish={reason='win',id=i}
-                        break
-                    end
-                elseif game.rule.tar=='line' then
-                    if game.stat.line>=game.rule.tarDat then
-                        finish={reason='win',id=i}
-                        break
-                    end
+        if game.rule.tar then
+            if game.rule.tar=='ac' then
+                if game.stat.ac>=game.rule.tarDat then
+                    finish={reason='win',id=i}
+                    break
+                end
+            elseif game.rule.tar=='line' then
+                if game.stat.line>=game.rule.tarDat then
+                    finish={reason='win',id=i}
+                    break
                 end
             end
-            if game.rule.seqType=='bag' then
-                game:supplyNext(7)
-            end
-            if #game.sequence==0 then
-                finish={reason='starve',id=i}
-                break
-            end
+        end
+        if game.rule.seqType=='bag' then
+            game:supplyNext(7)
+        end
+        if #game.sequence==0 then
+            finish={reason='starve',id=i}
+            break
+        end
+        if not finish and game.dieReason then
+            finish={reason=game.dieReason,id=i}
+            break
         end
     end
 
@@ -1053,7 +1236,7 @@ return {
                 else
                     local pid=TABLE.find(curDuel.member,M.user_id)
                     local game=curDuel.game[pid]
-                    S:send(game:getFullStateText())
+                    S:send(game:getImage())
                 end
                 return true
             elseif mes:find('^#dlstat')  then
@@ -1367,9 +1550,11 @@ return {
 
                 local buf=STRING.newBuf()
                 -- buf:put(CQ.at(M.user_id).."\n")
-                buf:put(game:getFullStateText())
+
+                buf:put(game:getImage())
                 for i,clear in next,clears do
-                    buf:put(i==1 and "\n" or "  ")
+                    -- buf:put(i==1 and "\n" or "  ")
+                    if i>=2 then buf:put("  ") end
                     if clear.spin then
                         buf:put(clear.piece..texts.game_spin..texts.game_clear[clear.line])
                     else
