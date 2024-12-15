@@ -756,24 +756,28 @@ function Game:getFieldText()
     end
 end
 
-local bdLine=3
-local cLine=2
+function Game:getFullStateText()
+    return self:getFieldText().."\n"..self:getSequenceText()
+end
+
+local boarderW=3
+local spawnLineR=1
+local gridLineR=2
 local cSize=16
 local colNumH=16
 local nextBound=2
 local nextK1,nextK2,nextGap=9,6,2
 
-local simpStartH=cSize*7
 local fieldW,fieldH=cSize*10,cSize*12
 local nextH1,nextH2=nextK1*2+nextBound*2,nextK2*2+nextBound*2
-local totalW,totalH=fieldW+2*bdLine,fieldH+colNumH+nextH1+bdLine
+local totalW,totalH=fieldW+2*boarderW,fieldH+colNumH+nextH1+boarderW
 
 GC.setDefaultFilter('nearest','nearest')
 local texture={
     canvas=GC.newCanvas(totalW,totalH),
     board=GC.load{w=totalW,h=totalH,
         {'clear',0,0,0},
-        {'move',bdLine,fieldH},
+        {'move',boarderW,fieldH},
         {'setCL',COLOR.L},
         {'fRect',0,0,fieldW,-fieldH},
         {'setCL',COLOR.dL},
@@ -838,10 +842,6 @@ local cellColor={
     {COLOR.lD,COLOR.LD},
     {COLOR.DR,COLOR.dR},
 }
-function Game:getFullStateText()
-    return self:getFieldText().."\n"..self:getSequenceText()
-end
-
 function Game:renderImage()
     local field=self.field
     GC.setCanvas(texture.canvas)
@@ -852,25 +852,36 @@ function Game:renderImage()
         -- Base
         GC.setColor(1,1,1)
         GC.draw(texture.board)
-        GC.translate(bdLine,fieldH)
+
+        local camStartH=max(#field-11,1)
+        local camEndH=#field==0 and 5 or #field+2
+        local imgStartH=cSize*max(0,12-camEndH)
+
+        GC.translate(boarderW,0)
+
+        -- Watermark
+        FONT.set(15)
+        GC.setColor(.92,.92,.92)
+        GC.print("BrikDuel",6,imgStartH+1*cSize,-.26)
+        GC.print(self.uid,6,imgStartH+2*cSize,-.26)
+
+        GC.translate(0,fieldH)
 
         -- Field
         if #field>0 then
-            local startH=math.max(#field-11,1)
-            for y=0,#field-startH do
+            for absY=camStartH,min(#field,camStartH+11) do
+                local y=absY-camStartH
                 for x=0,9 do
-                    local l0=field[y+1]
-                    local ld=field[y]
-                    local lu=field[y+2]
+                    local l0,ld,lu=field[absY],field[absY-1],field[absY+1]
                     local cell=l0[x+1]
                     if cell>0 then
                         GC.setColor(cellColor[cell][2])
                         GC.rectangle('fill',x*cSize,-(y+1)*cSize,cSize,cSize)
                         GC.setColor(cellColor[cell][1])
-                        if l0[x+1]~=l0[x+2] then GC.rectangle('fill',x*cSize+cSize,-(y+1)*cSize,-cLine,cSize) end
-                        if l0[x+1]~=l0[x] then GC.rectangle('fill',x*cSize,-(y+1)*cSize,cLine,cSize) end
-                        if not ld or l0[x+1]~=ld[x+1] then GC.rectangle('fill',x*cSize,-y*cSize,cSize,-cLine) end
-                        if not lu or l0[x+1]~=lu[x+1] then GC.rectangle('fill',x*cSize,-(y+1)*cSize,cSize,cLine) end
+                        if l0[x+1]~=l0[x+2] then GC.rectangle('fill',x*cSize+cSize,-(y+1)*cSize,-gridLineR,cSize) end
+                        if l0[x+1]~=l0[x] then GC.rectangle('fill',x*cSize,-(y+1)*cSize,gridLineR,cSize) end
+                        if not ld or l0[x+1]~=ld[x+1] then GC.rectangle('fill',x*cSize,-y*cSize,cSize,-gridLineR) end
+                        if not lu or l0[x+1]~=lu[x+1] then GC.rectangle('fill',x*cSize,-(y+1)*cSize,cSize,gridLineR) end
                     end
                 end
             end
@@ -883,22 +894,22 @@ function Game:renderImage()
             end
         end
 
-        -- Watermark
-        FONT.set(15)
-        GC.setColor(.92,.92,.92)
-        GC.print("BrikDuel",6,-11*cSize,-.26)
-        GC.print(self.uid,6,-10*cSize,-.26)
-
         -- Target line
         if self.rule.tar=='line' then
-            local lineH=math.max(self.rule.tarDat-self.stat.line,0)
-            GC.translate(0,-cSize*lineH)
-            GC.setColor(COLOR.D)
-            GC.rectangle('fill',0,-bdLine,fieldW,2*bdLine)
-            GC.setColor(COLOR.L)
-            for x=0,9 do GC.rectangle('fill',cSize*x,0,cSize,x%2==0 and -bdLine+1 or bdLine-1) end
-            GC.translate(0,cSize*lineH)
+            local lineH=max(self.rule.tarDat-self.stat.line,0)-(camStartH-1)
+            if lineH>=0 then
+                GC.translate(0,-cSize*lineH)
+                GC.setColor(COLOR.D)
+                GC.rectangle('fill',0,-boarderW,fieldW,2*boarderW)
+                GC.setColor(COLOR.L)
+                for x=0,9 do GC.rectangle('fill',cSize*x,0,cSize,x%2==0 and -boarderW+1 or boarderW-1) end
+                GC.translate(0,cSize*lineH)
+            end
         end
+
+        -- Spawn line
+        GC.setColor(COLOR.D)
+        GC.rectangle('fill',0,-cSize*self.rule.fieldH-spawnLineR,fieldW/2,2*spawnLineR)
 
         -- Column number
         GC.setColor(1,1,1)
@@ -917,11 +928,8 @@ function Game:renderImage()
         end
     GC.pop()
     GC.setCanvas()
-    if #field==0 then
-        GC.saveCanvas(texture.canvas,'canvas.png','png',0,1,0,simpStartH,totalW,totalH-simpStartH)
-    else
-        GC.saveCanvas(texture.canvas,'canvas.png','png')
-    end
+    GC.saveCanvas(texture.canvas,'canvas.png','png',0,1,0,imgStartH,totalW,totalH-imgStartH)
+
     local file=love.filesystem.getSaveDirectory()..'/canvas.png'
     os.execute('chmod 644 '..file)
     os.execute('mv '..file..' '..Config.extraData.sandboxRealPath..'canvas.png')
