@@ -7,7 +7,7 @@ local echoCnt=26
 local function longSend(S,M,str)
     S:send(str,tostring(echoCnt))
     S:delayDelete(Config.groupManaging[S.id] and 260 or 100,tostring(echoCnt))
-    if M then S:delayDelete(100,M.message_id) end
+    if M then S:delayDelete(62,M.message_id) end
     echoCnt=echoCnt%2600+1
 end
 local function shortSend(S,M,str)
@@ -19,7 +19,6 @@ end
 
 local bag0=STRING.atomize('ZSJLTOI')
 local minoId={Z=1,S=2,J=3,L=4,T=5,O=6,I=7}
-local minoEmoji={Z="🟥",S="🟩",J="🟦",L="🟧",T="🟪",O="🟨",I="🟫"}
 
 local setLimitTime=26
 local maxThinkTime=2*3600
@@ -96,6 +95,8 @@ local keyword={
 
 ---@enum (key) BrikDuel.Skin
 local skins={
+    image={},
+
     norm={[0]="⬜","🟥","🟩","🟦","🟧","🟪","🟨","🟫","⬛️","❌"},
     puyo={[0]="◽","🔴","🟢","🔵","🟠","🟣","🟡","🟤","⚫️","❌"},
     emoji={[0]="◽","🈲","🈯","♿","🈚","💟","🚸","💠","🔲","❌"},
@@ -110,6 +111,7 @@ local skins={
 }
 local _skin_help=trimIndent[[
     方块⚔决斗 「皮肤列表」
+    [图片输出]　　　　　　　　(image)
     🟥🟧🟨🟩🟫🟦🟪⬜⬛️ (norm)
     🔴🟠🟡🟢🟤🔵🟣◽⚫️ (puyo)
     🈲🈚🚸🈯💠♿💟◽🔲 (emoji)
@@ -141,13 +143,13 @@ local texts={
     help=trimIndent[[
         #duel（可略作#dl） 后接：
         (留空) 空房等人   @某人 发起决斗
-        solo/AC/10L/[自定序列] 单人
+        any/AC/10L/gm/[自定序列] 单人
         see 查看场地   stat 个人信息
         rule 规则手册   man 操作手册
         join/query [房号] 进房/查看房间状态
         end 取消/结束   leave 离开（保留房间）
-        setm/setc/setk 设置个性块/头像/键位
-        sets/setx/setn 设置皮肤/列号/预览样式
+        setk/sets 设置键位/皮肤
+        setx/setn 设置列号/预览样式
     ]],
     rule=trimIndent([[
         方块⚔决斗 「规则手册」
@@ -174,17 +176,13 @@ local texts={
         语法错误时不会执行而是弹出说明
     ]],true),
     stat=trimIndent[[
-        %s %s
+        %s
         %d局 %d胜 %d负 (%.1f%%)
         %d步 %d块 %d攻 %d超杀(%d爆)
         %d币
         单机成绩：%s
     ]],
     stat_tooFrequent="查询太频繁了喵",
-    setm_wrongFormat="个性方块必须是方块名称之一(ZSJLTOI)",
-    setm_success="个性方块设置成功喵\n当前组合标识符：$1",
-    setc_wizard="个性头像必须是严格的一个UTF8字符但获取到了$1个共$2字节，你需要的是$3($4字节)吗？",
-    setc_success="个性头像设置成功喵\n当前组合标识符：$1",
     setk_help=trimIndent[[
         方块⚔决斗 「键位设置」
         左@1 右@2 左到底@3 右到底@4
@@ -235,12 +233,13 @@ local texts={
 
     game_start={
         duel="($1) 决斗开始！\n$2\n$3\nvs\n$4\n$5",
-        solo="$1 ($2)单人模式-$3",
+        solo="($1)单人模式-$2",
     },
     game_modeName={
-        solo="自由",
+        any="自由",
         ac="全消",
         ['10l']="十行",
+        gm="盲打",
     },
     game_renderRrror="喵喵喵！渲染失败了：",
     game_moreLine="⤾$1行隐藏",
@@ -263,6 +262,7 @@ local texts={
         "𝕬𝕷𝕷 𝕮𝕷𝕰𝕬𝕽",
         "𝒜𝒯𝒯 𝒟𝒯𝒥𝒜𝒵",
     },
+    game_acGraphic="ALL CLEAR",
     game_tarLine="<<",
     game_newRecord="🏆 $1 新纪录！ （原$2）",
     game_notRecord="✅ $1 （最佳成绩$2）",
@@ -299,8 +299,9 @@ local ruleLib={
         reward=10,
     },
     solo={
-        solo={
-            modeName='solo',
+        any={
+            modeName='any',
+            fieldH=20,
         },
         ac={
             modeName='ac',
@@ -317,6 +318,15 @@ local ruleLib={
             tarDat=10,
             timeRec=true,
             reward=3,
+        },
+        gm={
+            modeName='gm',
+            fieldH=20,
+            tar='line',
+            tarDat=10,
+            timeRec=true,
+            reward=4,
+            noDisp=true,
         },
     }
 }
@@ -346,8 +356,6 @@ local userLib
 
 ---@class BrikDuel.UserSetting
 ---@field key string
----@field mino string
----@field char string
 ---@field skin BrikDuel.Skin
 ---@field mark BrikDuel.Mark
 ---@field next string
@@ -376,9 +384,7 @@ local User={
     coin=0,
     set={
         key='qwQWcCfxdDzsjltoi01231',
-        mino="🟥",
-        char="㉖",
-        skin='norm',
+        skin='image',
         mark='norm',
         next='text',
         __index=nil,
@@ -393,10 +399,7 @@ function User.get(id)
     if not userLib[id] then
         userLib[id]=setmetatable({
             id=id,
-            set=setmetatable({
-                mino=TABLE.getRandom(TABLE.getValues(minoEmoji)),
-                char=STRING.UTF8(math.random(0x1F300,0x1F5FF)),
-            },User.set),
+            set=setmetatable({},User.set),
             stat=setmetatable({},User.stat),
             rec={},
         },User)
@@ -409,14 +412,10 @@ function User.save()
     FILE.save(userLib,'brikduel/userdata.luaon','-luaon')
 end
 
-function User:getPfp()
-    return self.set.char..self.set.mino
-end
-
 function User:getRec()
     local buf=STRING.newBuf()
     for k,v in next,self.rec do
-        buf:put(k:upper()..": "..v.."秒   ")
+        buf:put(k:upper().." "..v.."秒   ")
     end
     return buf:get(#buf-3)
 end
@@ -491,7 +490,7 @@ end
 function Game:parse(str)
     local buf=STRING.newBuf()
     buf:put(str)
-    local keyMap=' '..User.get(self.uid).set.key
+    local keyMap=' '..self:getUsr().set.key
     local simSeq=TABLE.copy(self.sequence)
     local c,ptr='',0
     local controls={}
@@ -727,28 +726,30 @@ function Game:execute(controls)
     return clears
 end
 
-function Game:getSequenceText()
-    local buf=STRING.newBuf()
-    local user=User.get(self.uid)
-    buf:put(user:getPfp()..'  ')
-    local skin=skins[user.set.next]
-    for i=1,min(#self.sequence,7) do buf:put(skin[minoId[self.sequence[i]]]) end
-    return tostring(buf)
+function Game:getUsr()
+    return User.get(self.uid)
 end
 
-function Game:getFieldText()
+function Game:getText_seq()
+    local skin=skins[self:getUsr().set.next]
+    local buf=""
+    for i=1,#self.sequence do buf=buf..skin[minoId[self.sequence[i]]] end
+    return buf
+end
+
+function Game:getText_field()
     local field=self.field
     local h=#field
     if h>0 then
         local buf=STRING.newBuf()
-        local skin=skins[User.get(self.uid).set.skin]
+        local skin=skins[self:getUsr().set.skin]
         for y=h,max(h-9,1),-1 do
             if y~=h then buf:put("\n") end
             for x=1,10 do buf:put(skin[field[y][x]]) end
             if self.rule.tar=='line' and y==self.rule.tarDat-self.stat.line then buf:put(texts.game_tarLine) end
         end
         if h>10 then buf:put(repD(texts.game_moreLine,h-10)) end
-        local set=User.get(self.uid).set
+        local set=self:getUsr().set
         buf:put("\n"..marks[set.mark][set.key:sub(-1)+1])
         return tostring(buf)
     else
@@ -756,8 +757,8 @@ function Game:getFieldText()
     end
 end
 
-function Game:getFullStateText()
-    return self:getFieldText().."\n"..self:getSequenceText()
+function Game:getText()
+    return self:getText_field().."\n"..self:getText_seq()
 end
 
 local boarderW=3
@@ -853,68 +854,77 @@ function Game:renderImage()
         GC.setColor(1,1,1)
         GC.draw(texture.board)
 
-        local camStartH=max(#field-11,1)
-        local camEndH=#field==0 and 5 or #field+2
+        -- Camera
+        local camStartH=max(#field-9,1) -- 从最多看顶部10行的位置开始
+        local camEndH=#field==0 and 5 or #field+2 -- 到场地高度+2行结束（全消例外）
         local imgStartH=cSize*max(0,12-camEndH)
 
         GC.translate(boarderW,0)
 
         -- Watermark
         FONT.set(15)
-        GC.setColor(.92,.92,.92)
+        GC.setColor(.7023,.7023,.7023,.26)
         GC.print("BrikDuel",6,imgStartH+1*cSize,-.26)
         GC.print(self.uid,6,imgStartH+2*cSize,-.26)
 
         GC.translate(0,fieldH)
 
-        -- Field
-        if #field>0 then
-            for absY=camStartH,min(#field,camStartH+11) do
-                local y=absY-camStartH
-                for x=0,9 do
-                    local l0,ld,lu=field[absY],field[absY-1],field[absY+1]
-                    local cell=l0[x+1]
-                    if cell>0 then
-                        GC.setColor(cellColor[cell][2])
-                        GC.rectangle('fill',x*cSize,-(y+1)*cSize,cSize,cSize)
-                        GC.setColor(cellColor[cell][1])
-                        if l0[x+1]~=l0[x+2] then GC.rectangle('fill',x*cSize+cSize,-(y+1)*cSize,-gridLineR,cSize) end
-                        if l0[x+1]~=l0[x] then GC.rectangle('fill',x*cSize,-(y+1)*cSize,gridLineR,cSize) end
-                        if not ld or l0[x+1]~=ld[x+1] then GC.rectangle('fill',x*cSize,-y*cSize,cSize,-gridLineR) end
-                        if not lu or l0[x+1]~=lu[x+1] then GC.rectangle('fill',x*cSize,-(y+1)*cSize,cSize,gridLineR) end
+        -- In-Field things
+        GC.translate(0,(camStartH-1)*cSize)
+            -- Field
+            if #field>0 then
+                for y=camStartH,min(#field,camStartH+11) do
+                    for x=0,9 do
+                        local l0,ld,lu=field[y],field[y-1],field[y+1]
+                        local cell=l0[x+1]
+                        if cell>0 then
+                            GC.setColor(cellColor[cell][2])
+                            GC.rectangle('fill',x*cSize,-y*cSize,cSize,cSize)
+                            GC.setColor(cellColor[cell][1])
+                            if l0[x+1]~=l0[x+2] then           GC.rectangle('fill',x*cSize+cSize,-y*cSize      ,-gridLineR,cSize) end
+                            if l0[x+1]~=l0[x] then             GC.rectangle('fill',x*cSize      ,-y*cSize      ,gridLineR,cSize) end
+                            if not ld or l0[x+1]~=ld[x+1] then GC.rectangle('fill',x*cSize      ,-y*cSize+cSize,cSize,-gridLineR) end
+                            if not lu or l0[x+1]~=lu[x+1] then GC.rectangle('fill',x*cSize      ,-y*cSize      ,cSize,gridLineR) end
+                        end
                     end
                 end
+            elseif self.stat.ac>0 then
+                FONT.set(25)
+                GC.strokePrint('full',2,COLOR.O,COLOR.lY,texts.game_acGraphic,5*cSize,-cSize*3,'center')
+                if self.stat.ac>=2 then
+                    FONT.set(20)
+                    GC.strokePrint('full',1,COLOR.O,COLOR.lY,"x "..self.stat.ac,8.6*cSize,-cSize*4.2,'right')
+                end
             end
-        elseif self.stat.ac>0 then
-            FONT.set(25)
-            GC.strokePrint('full',2,COLOR.O,COLOR.lY,"ALL CLEAR",5*cSize,-cSize*3,'center')
-            if self.stat.ac>=2 then
-                FONT.set(20)
-                GC.strokePrint('full',1,COLOR.O,COLOR.lY,"x "..self.stat.ac,8.6*cSize,-cSize*4.2,'right')
-            end
-        end
 
-        -- Target line
-        if self.rule.tar=='line' then
-            local lineH=max(self.rule.tarDat-self.stat.line,0)-(camStartH-1)
-            if lineH>=0 then
-                GC.translate(0,-cSize*lineH)
-                GC.setColor(COLOR.D)
-                GC.rectangle('fill',0,-boarderW,fieldW,2*boarderW)
-                GC.setColor(COLOR.L)
-                for x=0,9 do GC.rectangle('fill',cSize*x,0,cSize,x%2==0 and -boarderW+1 or boarderW-1) end
-                GC.translate(0,cSize*lineH)
+            -- Target line
+            if self.rule.tar=='line' then
+                local lineH=max(self.rule.tarDat-self.stat.line,0)
+                if lineH>=0 then
+                    GC.translate(0,-cSize*lineH)
+                    GC.setColor(COLOR.D)
+                    GC.rectangle('fill',0,-boarderW,fieldW,2*boarderW)
+                    GC.setColor(COLOR.L)
+                    for x=0,9 do GC.rectangle('fill',cSize*x,0,cSize,x%2==0 and -boarderW+1 or boarderW-1) end
+                    GC.translate(0,cSize*lineH)
+                end
             end
-        end
 
-        -- Spawn line
-        GC.setColor(COLOR.D)
-        GC.rectangle('fill',0,-cSize*self.rule.fieldH-spawnLineR,fieldW/2,2*spawnLineR)
+            -- Spawn line
+            GC.setColor(COLOR.D)
+            GC.rectangle('fill',0,-cSize*(self.rule.fieldH)-spawnLineR,fieldW,2*spawnLineR)
+        GC.translate(0,-(camStartH-1)*cSize)
+
+        -- Hidden lines number
+        if camStartH>1 then
+            FONT.set(10,'mono')
+            GC.printf("+"..camStartH-1,0,-12,fieldW-2,'right')
+        end
 
         -- Column number
         GC.setColor(1,1,1)
         FONT.set(15,'mono')
-        local base=tonumber(User.get(self.uid).set.key:sub(-1))
+        local base=tonumber(self:getUsr().set.key:sub(-1))
         for x=0,9 do GC.print((x+base)%10,cSize*x+4,0) end
 
         -- Nexts
@@ -936,11 +946,16 @@ function Game:renderImage()
     return CQ.img(Config.extraData.sandboxPath..'canvas.png')
 end
 
-function Game:getImage()
-    local suc,res=pcall(self.renderImage,self)
-    if suc then return res end
-    GC.setCanvas()
-    return texts.game_renderRrror..tostring(res)
+---@param withRtn? boolean
+function Game:getContent(withRtn)
+    if self.rule.noDisp or self:getUsr().set.skin~='image' then
+        return withRtn and self:getText().."\n" or self:getText()
+    else
+        local suc,res=pcall(self.renderImage,self)
+        if suc then return res end
+        GC.setCanvas()
+        return texts.game_renderRrror..tostring(res)
+    end
 end
 
 ---@class BrikDuel.Duel
@@ -1006,20 +1021,21 @@ function Duel:start(S,D,rule)
     if self.autoSave then self:save() end
 
     if rule.welcomeText=='duel' then
-        S:send(repD(texts.game_start.duel,
-            self.id,
-            CQ.at(self.member[1]),
-            self.game[1]:getSequenceText(),
-            self.game[2]:getSequenceText(),
-            CQ.at(self.member[2])
-        ))
-    elseif rule.welcomeText=='solo' then
-        S:send(
-            self.game[1]:getImage()..
-            repD(texts.game_start.solo,
-                User.get(self.game[1].uid):getPfp(),self.id,
-                texts.game_modeName[rule.modeName] or rule.modeName:upper()
+        longSend(S,nil,
+            repD(texts.game_start.duel,
+                self.id,
+                CQ.at(self.member[1]),
+                self.game[1]:getText_seq(),
+                self.game[2]:getText_seq(),
+                CQ.at(self.member[2])
             )
+        )
+    elseif rule.welcomeText=='solo' then
+        longSend(S,nil,
+            repD(texts.game_start.solo,
+                self.id,
+                texts.game_modeName[rule.modeName] or rule.modeName:upper()
+            )..self.game[1]:getContent(nil)
         )
     else
         error("WTF")
@@ -1233,25 +1249,38 @@ return {
             if not mes:find('^#dl') then
                 return false
             elseif mes:find('^#dlhelp')  then
-                if S:lock('brikduel_help',62) then S:send(texts.help) end return true
+                if S:lock('brikduel_help',62) then
+                    S:send(texts.help)
+                    S:delayDelete(26,M.message_id)
+                end
+                return true
             elseif mes:find('^#dlrule')  then
-                if S:lock('brikduel_rule',62) then S:send(texts.rule) end return true
+                if S:lock('brikduel_rule',62) then
+                    S:send(texts.rule)
+                    S:delayDelete(26,M.message_id)
+                end
+                return true
             elseif mes:find('^#dlman')   then
-                if S:lock('brikduel_man',62) then S:send(texts.manual) end return true
+                if S:lock('brikduel_man',62) then
+                    S:send(texts.manual)
+                    S:delayDelete(26,M.message_id)
+                end
+                return true
             elseif mes:find('^#dlsee')   then
                 if not curDuel then
-                    if S:lock('brikduel_notInRoom',12) then S:send(texts.notInRoom) end
+                    if S:lock('brikduel_notInRoom',12) then shortSend(S,M,texts.notInRoom) end
                 else
                     local pid=TABLE.find(curDuel.member,M.user_id)
                     local game=curDuel.game[pid]
-                    S:send(game:getImage())
+                    S:send(game:getContent())
+                    S:delayDelete(26,M.message_id)
                 end
                 return true
             elseif mes:find('^#dlstat')  then
                 if S:lock('brikduel_stat_'..M.user_id,26) then
                     local info=STRING.newBuf()
                     info:put(texts.stat:format(
-                        curUser:getPfp(), CQ.at(curUser.id),
+                        CQ.at(curUser.id),
                         curUser.stat.game, curUser.stat.win, curUser.stat.lose, math.ceil(curUser.stat.win/max(curUser.stat.win+curUser.stat.lose,1)*100),
                         curUser.stat.move, curUser.stat.drop, curUser.stat.atk,
                         curUser.stat.overkill,curUser.stat.overkill_max,
@@ -1263,7 +1292,7 @@ return {
                     end
                     S:send(info)
                 else
-                    S:send(texts.stat_tooFrequent)
+                    shortSend(S,M,texts.stat_tooFrequent)
                 end
                 return true
             elseif mes:find('^#dlquery') then
@@ -1271,7 +1300,7 @@ return {
                     local duel=duelPool[tonumber(mes:match('%d+'))]
                     if not duel then duel=D.matches[M.user_id] end
                     if duel then
-                        S:send(repD(texts.query,
+                        longSend(S,M,repD(texts.query,
                             duel.id,
                             duel.member[1],
                             duel.member[2],
@@ -1279,26 +1308,26 @@ return {
                         ))
                     else
                         if S:lock('brikduel_noRoom',12) then
-                            S:send(texts.query_noRoom)
+                            shortSend(S,M,texts.query_noRoom)
                         end
                     end
                 else
                     if S:lock('brikduel_queryTooFrequent',12) then
-                        S:send(texts.query_tooFrequent)
+                        shortSend(S,M,texts.query_tooFrequent)
                     end
                 end
                 return true
             elseif mes:find('^#dljoin')  then
                 -- 确保不在对局中
-                if curDuel then if S:lock('brikduel_inDuel',26) then S:send(texts.new_selfInGame) end return true end
+                if curDuel then if S:lock('brikduel_inDuel',26) then shortSend(S,M,texts.new_selfInGame) end return true end
 
                 -- 解析房间号
                 local roomID=tonumber(mes:match('%d+'))
-                if not roomID then if S:lock('brikduel_wrongRoomID',6) then S:send(texts.join_wrongFormat) end return true end
-                if not duelPool[roomID] then if S:lock('brikduel_noRoomID',6) then S:send(texts.join_noRoom) end return true end
+                if not roomID then if S:lock('brikduel_wrongRoomID',6) then shortSend(S,M,texts.join_wrongFormat) end return true end
+                if not duelPool[roomID] then if S:lock('brikduel_noRoomID',6) then shortSend(S,M,texts.join_noRoom) end return true end
 
                 curDuel=duelPool[roomID]
-                if curDuel.state~='wait' then if S:lock('brikduel_notWait',26) then S:send(texts.join_notWait) return true end end
+                if curDuel.state~='wait' then if S:lock('brikduel_notWait',26) then shortSend(S,M,texts.join_notWait) return true end end
 
                 curDuel.member[2]=M.user_id
                 if #curDuel.game==0 then
@@ -1312,19 +1341,19 @@ return {
                 if curDuel then
                     curDuel:finish(S,D,{result='interrupt',uid=M.user_id})
                 else
-                    if S:lock('brikduel_notInRoom',26) then S:send(texts.notInRoom) end
+                    if S:lock('brikduel_notInRoom',26) then shortSend(S,M,texts.notInRoom) end
                 end
                 return true
             elseif mes:find('^#dlleave') then
                 if curDuel then
                     -- TODO
                 else
-                    if S:lock('brikduel_notInRoom',26) then S:send(texts.notInRoom) end
+                    if S:lock('brikduel_notInRoom',26) then shortSend(S,M,texts.notInRoom) end
                 end
                 return true
             elseif mes:find('^#dl$')     then
                 -- 自由房间
-                if curDuel then if S:lock('brikduel_inDuel',26) then S:send(texts.new_selfInGame) end return true end
+                if curDuel then if S:lock('brikduel_inDuel',26) then shortSend(S,M,texts.new_selfInGame) end return true end
 
                 local newDuel=Duel.new(S.id,M.user_id)
                 if newDuel then
@@ -1332,63 +1361,26 @@ return {
                     S:send(repD(texts.new_free,newDuel.id))
                 else
                     if S:lock('brikduel_failed',26) then
-                        S:send(texts.new_failed)
+                        shortSend(S,M,texts.new_failed)
                     end
                 end
-                return true
-            elseif mes:find('^#dlsetm')  then
-                local newMino=minoEmoji[mes:sub(8):upper()]
-                if not S:lock('brikduel_setm'..M.user_id,setLimitTime) then
-                    if S:lock('brikduel_set',6) then S:send(texts.set_tooFrequent) end
-                    return true
-                end
-                if not newMino then shortSend(S,M,texts.setm_wrongFormat) return true end
-                for _,v in next,userLib do
-                    if curUser.set.char==v.set.char and newMino==v.set.mino and M.user_id~=curUser.id then
-                        shortSend(S,M,texts.set_collide)
-                        return true
-                    end
-                end
-                curUser.set.mino=newMino
-                User.save()
-                shortSend(S,M,repD(texts.setm_success,curUser:getPfp()))
-                return true
-            elseif mes:find('^#dlsetc')  then
-                if not S:lock('brikduel_setc'..M.user_id,setLimitTime) then
-                    if S:lock('brikduel_set',6) then shortSend(S,M,texts.set_tooFrequent) end
-                    return true
-                end
-                local newChar=mes:sub(8)
-                if STRING.u8len(newChar)>1 then
-                    local autoClip=newChar:sub(1,STRING.u8offset(newChar,2)-1)
-                    shortSend(S,M,repD(texts.setc_wizard,STRING.u8len(newChar),#newChar,autoClip,#autoClip))
-                    return true
-                end
-                for _,v in next,userLib do
-                    if newChar==v.set.char and v.set.mino==v.set.mino and M.user_id~=curUser.id then
-                        shortSend(S,M,texts.set_collide)
-                        return true
-                    end
-                end
-                curUser.set.char=newChar
-                User.save()
-                shortSend(S,M,repD(texts.setc_success,curUser:getPfp()))
                 return true
             elseif mes:find('^#dlsetk')  then
                 if mes=='#dlsetk' then
                     if S:lock('brikduel_setk_help',26) then
                         local keyMap=curUser.set.key
                         local helpText=texts.setk_help:gsub('@(%d+)',function(n) return keyMap:sub(n,n) end)
-                        shortSend(S,M,repD(helpText,keyMap))
+                        S:send(repD(helpText,keyMap))
+                        S:delayDelete(26,M.message_id)
                     end
                     return true
                 else
                     -- if not S:lock('brikduel_setk'..M.user_id,setLimitTime) then
-                    --     if S:lock('brikduel_set',6) then S:send(texts.set_tooFrequent) end
+                    --     if S:lock('brikduel_set',6) then shortSend(S,M,texts.set_tooFrequent) end
                     --     return true
                     -- end
                     -- User.set.key='qwQWcCfxdDzsjltoi01231'
-                    local newSet=mes:match('k ?(.+)')
+                    local newSet=mes:match('setk ?(.+)')
                     if newSet=='reset' then
                         curUser.set.key=User.set.key
                         User.save()
@@ -1416,7 +1408,7 @@ return {
                     end
                 end
             elseif mes:find('^#dlsets')  then
-                local newSkin=mes:sub(8):lower()
+                local newSkin=mes:match('sets ?(.+)'):lower()
                 if skins[newSkin] and not skins[newSkin]._next then
                     if not S:lock('brikduel_sets'..M.user_id,setLimitTime) then
                         if S:lock('brikduel_set',6) then shortSend(S,M,texts.set_tooFrequent) end
@@ -1459,13 +1451,13 @@ return {
                 return true
             else
                 local exData=mes:sub(4)
-                if ruleLib.solo[exData] or exData:find('^[zsjltoi]+$') then
+                if ruleLib.solo[exData] or exData:find('^ [zsjltoi]+$') then
                     -- 单人
                     if curDuel then
                         if curDuel.disposable then
                             curDuel:finish(S,D,{noOutput=true})
                         else
-                            if S:lock('brikduel_inDuel',26) then S:send(texts.new_selfInGame) end
+                            if S:lock('brikduel_inDuel',26) then shortSend(S,M,texts.new_selfInGame) end
                             return true
                         end
                     end
@@ -1481,7 +1473,7 @@ return {
                         })
                     else
                         if S:lock('brikduel_failed',26) then
-                            S:send(texts.new_failed)
+                            shortSend(S,M,texts.new_failed)
                         end
                     end
                 else
@@ -1490,7 +1482,7 @@ return {
                         if curDuel.disposable then
                             curDuel:finish(S,D,{noOutput=true})
                         else
-                            if S:lock('brikduel_inDuel',26) then S:send(texts.new_selfInGame) end
+                            if S:lock('brikduel_inDuel',26) then shortSend(S,M,texts.new_selfInGame) end
                             return true
                         end
                     end
@@ -1498,9 +1490,9 @@ return {
                     local opID=tonumber(M.raw_message:match('CQ:at,qq=(%d+)'))
                     if opID then
                         -- 邀请
-                        -- if opID==Config.botID   then if S:lock('brikduel_wrongOp',26)  then S:send(texts.new_botRefuse) end return true end
-                        if opID==M.user_id then if S:lock('brikduel_wrongOp',26)  then S:send(texts.new_withSelf) end return true end
-                        if D.matches[opID] then if S:lock('brikduel_opInDuel',26) then S:send(texts.new_opInGame) end return true end
+                        -- if opID==Config.botID   then if S:lock('brikduel_wrongOp',26)  then shortSend(S,M,texts.new_botRefuse) end return true end
+                        if opID==M.user_id then if S:lock('brikduel_wrongOp',26)  then shortSend(S,M,texts.new_withSelf) end return true end
+                        if D.matches[opID] then if S:lock('brikduel_opInDuel',26) then shortSend(S,M,texts.new_opInGame) end return true end
 
                         local newDuel=Duel.new(S.id,M.user_id,opID)
                         if newDuel then
@@ -1509,12 +1501,12 @@ return {
                             S:send(repD(texts.new_room,newDuel.id,TABLE.getRandom(TABLE.getKeys(keyword.accept))))
                         else
                             if S:lock('brikduel_failed',26) then
-                                S:send(texts.new_failed)
+                                shortSend(S,M,texts.new_failed)
                             end
                         end
                     else
                         if S:lock('brikduel_wrongCmd',26) then
-                            S:send(texts.wrongCmd)
+                            shortSend(S,M,texts.wrongCmd)
                         end
                     end
                 end
@@ -1540,7 +1532,7 @@ return {
                     return false
                 end
             elseif curDuel.state=='play' then
-                local ctrlMes=M.raw_message:match('^['..curUser.set.key..'0-9 ]+')
+                local ctrlMes=M.raw_message:match('^['..curUser.set.key..'0-9 ]+$')
                 if not ctrlMes then return false end
 
                 local game=curDuel.game[pid]
@@ -1559,7 +1551,7 @@ return {
                 local buf=STRING.newBuf()
                 -- buf:put(CQ.at(M.user_id).."\n")
 
-                buf:put(game:getImage())
+                buf:put(game:getContent(true))
                 for i,clear in next,clears do
                     -- buf:put(i==1 and "\n" or "  ")
                     if i>=2 then buf:put("  ") end
