@@ -111,7 +111,7 @@ local skins={
 }
 local _skin_help=trimIndent[[
     方块⚔对决 「皮肤列表」
-    [图片输出]　　　　　　　　(image)
+    [图片输出，效果好但延迟高] (image)
     🟥🟧🟨🟩🟫🟦🟪⬜⬛️ (norm)
     🔴🟠🟡🟢🟤🔵🟣◽⚫️ (puyo)
     🈲🈚🚸🈯💠♿💟◽🔲 (emoji)
@@ -461,7 +461,7 @@ function Game.new(uid,seed)
         seqBuffer={},
         garbageH=0,
         rule={},
-        stat={move=0,drop=0,line=0,atk=0,spin=0,ac=0,err=0},
+        stat={move=0,err=0,drop=0,spin=0,ac=0,line=0,atk=0,spike=0},
         startTime=os.time(),
         lastUpdateTime=os.time(),
     },Game)
@@ -1447,7 +1447,7 @@ return {
                     --     return true
                     -- end
                     -- User.set.key='qwQWcCfxdDzsjltoi01231'
-                    local newSet=mes:match('setk ?(.+)')
+                    local newSet=mes:match('setk ?(.*)')
                     if newSet=='reset' then
                         curUser.set.key=User.set.key
                         User.save()
@@ -1475,7 +1475,7 @@ return {
                     end
                 end
             elseif mes:find('^#dlsets')  then
-                local newSkin=mes:match('sets ?(.+)'):lower()
+                local newSkin=mes:match('sets ?(.*)'):lower()
                 if skins[newSkin] and not skins[newSkin]._next then
                     if not S:lock('brikduel_sets'..M.user_id,setLimitTime) then
                         if S:lock('brikduel_set',6) then shortSend(S,M,texts.set_tooFrequent) end
@@ -1485,7 +1485,7 @@ return {
                     User.save()
                     shortSend(S,M,texts.sets_success)
                 else
-                    shortSend(S,M,texts.sets_help)
+                    longSend(S,M,texts.sets_help)
                 end
                 return true
             elseif mes:find('^#dlsetx')  then
@@ -1499,7 +1499,7 @@ return {
                     User.save()
                     shortSend(S,M,texts.setx_success)
                 else
-                    shortSend(S,M,texts.setx_help)
+                    longSend(S,M,texts.setx_help)
                 end
                 return true
             elseif mes:find('^#dlsetn')  then
