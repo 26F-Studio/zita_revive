@@ -5,6 +5,7 @@ local ins,rem=table.insert,table.remove
 require'Zenitha'
 ZENITHA.setMaxFPS(30)
 ZENITHA.setDrawFreq(10)
+ZENITHA.setShowFPS(false)
 ZENITHA.setUpdateFreq(100)
 ZENITHA.setVersionText('')
 --------------------------------------------------------------
@@ -492,7 +493,8 @@ SessionMap={}
 --------------------------------------------------------------
 ZENITHA.globalEvent.drawCursor=NULL
 ZENITHA.globalEvent.clickFX=NULL
-ZENITHA.globalEvent.quit=function() ws:close() end
+ZENITHA.globalEvent.quit=function() ws:close() ws:update() love.timer.sleep(0.0626) end
+
 local scene={}
 
 function scene.load() end
@@ -518,7 +520,6 @@ cmdList={
     end,
     exit=function()
         print("\n[EXIT]")
-        Bot.reset()
         Bot.stop(MATH.inf)
         love.event.quit()
     end,
