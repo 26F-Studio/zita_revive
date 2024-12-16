@@ -110,7 +110,7 @@ local skins={
     mino={_next=true," ▜▖","▗▛ "," ▙▖","▗▟ "," ▟▖"," ▇ "," ▀▀ "},
 }
 local _skin_help=trimIndent[[
-    方块⚔决斗 「皮肤列表」
+    方块⚔对决 「皮肤列表」
     [图片输出]　　　　　　　　(image)
     🟥🟧🟨🟩🟫🟦🟪⬜⬛️ (norm)
     🔴🟠🟡🟢🟤🔵🟣◽⚫️ (puyo)
@@ -152,7 +152,7 @@ local texts={
         setx/setn 设置列号/预览样式
     ]],
     rule=trimIndent([[
-        方块⚔决斗 「规则手册」
+        方块⚔对决 「规则手册」
         控制指令可随意拼接并发送，指令表见操作手册
         当前块的位置信息不保存，必须一次性把块落到位
         SRS，场地十宽∞高，出现20垃圾行判负
@@ -160,7 +160,7 @@ local texts={
         使用交换预览而非暂存(功能一致)
     ]],true),
     manual=trimIndent([[
-        方块⚔决斗 「操作手册」
+        方块⚔对决 「操作手册」
         （此处均为默认键位，如要更改见setk命令）
         ⌨️传统操作
             q/w:左右   Q/W:左右到底
@@ -176,15 +176,16 @@ local texts={
         语法错误时不会执行而是弹出说明
     ]],true),
     stat=trimIndent[[
-        %s
+        方块⚔对决 「统计」
+        %s  %d币
         %d局 %d胜 %d负 (%.1f%%)
-        %d步 %d块 %d攻 %d超杀(%d爆)
-        %d币
-        单机成绩：%s
+        %d步 %d误 %d块 %d旋 %d清
+        %d行 %d攻 %d爆 %d超杀
+        挑战成绩：%s
     ]],
     stat_tooFrequent="查询太频繁了喵",
     setk_help=trimIndent[[
-        方块⚔决斗 「键位设置」
+        方块⚔对决 「键位设置」
         左@1 右@2 左到底@3 右到底@4
         顺@5 逆@6 180@7 交换@8 硬降@9 软降@10
         块捷七块@11@12@13@14@15@16@17 朝向@18@19@20@21 起始列@22
@@ -346,14 +347,14 @@ local userLib
 ---@field win integer
 ---@field lose integer
 ---@field move integer command executed
+---@field err integer
 ---@field drop integer piece dropped
----@field line integer line cleared
----@field atk integer attack sent
 ---@field spin integer
 ---@field ac integer
----@field err integer
+---@field line integer line cleared
+---@field atk integer attack sent
+---@field spike integer
 ---@field overkill integer
----@field overkill_max integer
 ---@field __index BrikDuel.UserStat
 
 ---@class BrikDuel.UserSetting
@@ -377,9 +378,8 @@ local User={
     id=-1,
     stat={
         game=0,win=0,lose=0,
-        move=0,drop=0,line=0,atk=0,
-        spin=0,ac=0,err=0,
-        overkill=0,overkill_max=0,
+        move=0,err=0,drop=0,spin=0,ac=0,
+        line=0,atk=0,spike=0,overkill=0,
         __index=nil,
     },
     rec={},
@@ -424,12 +424,13 @@ end
 
 ---@class BrikDuel.GameStat
 ---@field move integer
+---@field err integer
 ---@field drop integer
----@field line integer
----@field atk integer
 ---@field spin integer
 ---@field ac integer
----@field err integer
+---@field line integer
+---@field atk integer
+---@field spike integer
 
 ---@class BrikDuel.Game
 ---@field uid integer
@@ -721,11 +722,13 @@ function Game:execute(controls)
         self.stat.move=self.stat.move+1
     end
     if self.rule.clearSys=='std' then
+        local spike=0
         for _,clear in next,clears do
-            local atk=clear*(clear.spin and 2 or 1)+(clear.ac and 3 or 0)
-            clear.atk=atk
-            self.stat.atk=self.stat.atk+atk
+            clear.atk=clear*(clear.spin and 2 or 1)+(clear.ac and 3 or 0)
+            spike=spike+clear.atk
+            self.stat.atk=self.stat.atk+clear.atk
         end
+        self.stat.spike=max(self.stat.spike,spike)
     elseif self.rule.clearSys=='nxt' then
         if clears[1] then
             local pieces=""
@@ -743,14 +746,16 @@ function Game:execute(controls)
                 if c.ac then ac=true end
             end
             if #pieces>4 then pieces="#"..#pieces end
+            local atk=math.floor(( (2+lines+spinLines+(ac and 2 or 0)) /3) ^ (2+spinCount/10))
             clears={{
                 piece=pieces,
                 line=lines,
                 spin=spinLines>=lines/2,
                 ac=ac,
-                atk=math.floor(((lines+2+(ac and 4 or 0))/3)^(1.6+spinCount/5)),
+                atk=atk,
             }}
-            self.stat.atk=self.stat.atk+clears[1].atk
+            self.stat.atk=self.stat.atk+atk
+            self.stat.spike=max(self.stat.spike,atk)
         end
     end
     self.clears=clears
@@ -1191,7 +1196,11 @@ function Duel:finish(S,D,info)
         local user=User.get(self.member[id])
         if game.rule.updStat then
             for k,v in next,game.stat do
-                user.stat[k]=user.stat[k]+v
+                if k=='spike' then
+                    user.stat[k]=max(user.stat[k],v)
+                else
+                    user.stat[k]=user.stat[k]+v
+                end
             end
             needSave=true
         end
@@ -1203,7 +1212,6 @@ function Duel:finish(S,D,info)
             if #self.game>1 then
                 local atkOverflow=max(self.game[survivor%#self.game+1].garbageH-20,0)
                 user.stat.overkill=user.stat.overkill+atkOverflow
-                user.stat.overkill_max=max(user.stat.overkill_max,atkOverflow)
                 if game.rule.reward then
                     user.coin=user.coin+min(math.floor(atkOverflow/5),5)
                 end
@@ -1340,11 +1348,10 @@ return {
                 if S:lock('brikduel_stat_'..M.user_id,26) then
                     local info=STRING.newBuf()
                     info:put(texts.stat:format(
-                        CQ.at(curUser.id),
+                        CQ.at(curUser.id), curUser.coin,
                         curUser.stat.game, curUser.stat.win, curUser.stat.lose, math.ceil(curUser.stat.win/max(curUser.stat.win+curUser.stat.lose,1)*100),
-                        curUser.stat.move, curUser.stat.drop, curUser.stat.atk,
-                        curUser.stat.overkill,curUser.stat.overkill_max,
-                        curUser.coin,
+                        curUser.stat.move, curUser.stat.err, curUser.stat.drop, curUser.stat.spin, curUser.stat.ac,
+                        curUser.stat.line, curUser.stat.atk, curUser.stat.spike, curUser.stat.overkill,
                         curUser:getRec()
                     ))
                     if curDuel then
@@ -1599,7 +1606,7 @@ return {
                 local suc,controls=pcall(game.parse,game,ctrlMes)
                 if not suc then
                     game.stat.err=game.stat.err+1
-                    longSend(S,M,texts.syntax_error..controls:sub((controls:find('%['))))
+                    longSend(S,nil,texts.syntax_error..controls:sub((controls:find('%['))))
                     return true
                 end
 
