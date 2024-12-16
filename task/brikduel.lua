@@ -262,6 +262,7 @@ local texts={
         "𝕬𝕷𝕷 𝕮𝕷𝕰𝕬𝕽",
         "𝒜𝒯𝒯 𝒟𝒯𝒥𝒜𝒵",
     },
+    game_noDisp="##无信号##",
     game_acGraphic="ALL CLEAR",
     game_tarLine="<<",
     game_newRecord="🏆 $1 新纪录！ （原$2）",
@@ -281,11 +282,12 @@ local ruleLib={
         modeName='none',
         fieldH=20,
         nextCount=7,
+        seqType='bag',
+        clearSys='nxt',
         updStat=true,
         autoSave=true,
         disposable=true,
         welcomeText='solo',
-        seqType='bag',
         startSeq=false,
         tar=false,
         tarDat=false,
@@ -549,6 +551,7 @@ function Game:parse(str)
             ctrl.piece=bag0[cmd-10]
             ctrl.pID=TABLE.find(simSeq,ctrl.piece)
             assertf(ctrl.pID and ctrl.pID<=2,"[%d]块捷操作时方块%s必须在序列前两个",ptr,c)
+            if ctrl.pID==2 then simSeq[1],simSeq[2]=simSeq[2],simSeq[1] end
             c=buf:get(1) ptr=ptr+1
             if c=='' then c='__eof' end
             local dir=keyMap:sub(-5,-2):find(c)
@@ -568,7 +571,7 @@ function Game:parse(str)
                 buf:skip(1) ptr=ptr+1
             else
                 -- 默认硬降，多余读取
-                rem(simSeq,ctrl.pID)
+                rem(simSeq,1)
                 clean=true
             end
         else
@@ -694,15 +697,12 @@ function Game:execute(controls)
                 end
             end
             if clear>0 then
-                local atk=clear*(tuck and 2 or 1)+(#field==0 and 2 or 0)
                 ins(clears,{
                     piece=self.sequence[1],
                     spin=tuck,
                     line=clear,
                     ac=#field==0,
-                    atk=atk,
                 })
-                self.stat.atk=self.stat.atk+atk
             end
             self.stat.drop=self.stat.drop+1
             if tuck then self.stat.spin=self.stat.spin+1 end
@@ -720,10 +720,44 @@ function Game:execute(controls)
         end
         self.stat.move=self.stat.move+1
     end
+    if self.rule.clearSys=='std' then
+        for _,clear in next,clears do
+            local atk=clear*(clear.spin and 2 or 1)+(clear.ac and 3 or 0)
+            clear.atk=atk
+            self.stat.atk=self.stat.atk+atk
+        end
+    elseif self.rule.clearSys=='nxt' then
+        if clears[1] then
+            local pieces=""
+            local lines=0
+            local spinLines=0
+            local spinCount=0
+            local ac=false
+            for _,c in next,clears do
+                pieces=pieces..c.piece
+                lines=lines+c.line
+                if c.spin then
+                    spinLines=spinLines+c.line
+                    spinCount=spinCount+1
+                end
+                if c.ac then ac=true end
+            end
+            if #pieces>4 then pieces="#"..#pieces end
+            clears={{
+                piece=pieces,
+                line=lines,
+                spin=spinLines>=lines/2,
+                ac=ac,
+                atk=math.floor(((lines+2+(ac and 4 or 0))/3)^(1.6+spinCount/5)),
+            }}
+            self.stat.atk=self.stat.atk+clears[1].atk
+        end
+    end
+    self.clears=clears
+
     if self.dieReason then
         self:lockPiece(field,mat,curX,curY)
     end
-    return clears
 end
 
 function Game:getUsr()
@@ -738,6 +772,7 @@ function Game:getText_seq()
 end
 
 function Game:getText_field()
+    if self.rule.noDisp then return texts.game_noDisp end
     local field=self.field
     local h=#field
     if h>0 then
@@ -755,10 +790,6 @@ function Game:getText_field()
     else
         return texts.game_acFX[self.stat.ac<=5 and self.stat.ac or 6+self.stat.ac%3] or ""
     end
-end
-
-function Game:getText()
-    return self:getText_field().."\n"..self:getText_seq()
 end
 
 local boarderW=3
@@ -857,6 +888,10 @@ function Game:renderImage()
         -- Camera
         local camStartH=max(#field-9,1) -- 从最多看顶部10行的位置开始
         local camEndH=#field==0 and 5 or #field+2 -- 到场地高度+2行结束（全消例外）
+        if self.rule.noDisp then
+            camStartH,camEndH=1,4
+        end
+
         local imgStartH=cSize*max(0,12-camEndH)
 
         GC.translate(boarderW,0)
@@ -872,7 +907,12 @@ function Game:renderImage()
         -- In-Field things
         GC.translate(0,(camStartH-1)*cSize)
             -- Field
-            if #field>0 then
+            if self.rule.noDisp then
+                for y=1,4 do for x=0,9 do
+                    GC.setColor(0,0,0,math.random())
+                    GC.rectangle('fill',x*cSize,-y*cSize,cSize,cSize)
+                end end
+            elseif #field>0 then
                 for y=camStartH,min(#field,camStartH+11) do
                     for x=0,9 do
                         local l0,ld,lu=field[y],field[y-1],field[y+1]
@@ -915,6 +955,16 @@ function Game:renderImage()
             GC.rectangle('fill',0,-cSize*(self.rule.fieldH)-spawnLineR,fieldW,2*spawnLineR)
         GC.translate(0,-(camStartH-1)*cSize)
 
+        -- Shadow of current piece
+        local cur=self.sequence[1]
+        local width=pieceWidth[cur][0]
+        local shadeStartX=math.floor(6-width/2)
+        GC.setColor(cellColor[TABLE.find(bag0,cur)][2])
+        for y=0,4 do
+            GC.setAlpha(.42-.062*y)
+            GC.rectangle('fill',(shadeStartX-1)*cSize,imgStartH-fieldH+y*cSize,width*cSize,cSize)
+        end
+
         -- Hidden lines number
         if camStartH>1 then
             FONT.set(10,'mono')
@@ -929,8 +979,7 @@ function Game:renderImage()
 
         -- Nexts
         GC.translate(nextBound,colNumH+nextH1-nextBound)
-        for i=1,#self.sequence do
-            local piece=self.sequence[i]
+        for i,piece in next,self.sequence do
             local img=texture[piece]
             local k=i<=2 and nextK1 or nextK2
             GC.draw(img,0,0,0,k,k,0,img:getHeight())
@@ -948,8 +997,8 @@ end
 
 ---@param withRtn? boolean
 function Game:getContent(withRtn)
-    if self.rule.noDisp or self:getUsr().set.skin~='image' then
-        return withRtn and self:getText().."\n" or self:getText()
+    if self:getUsr().set.skin~='image' then
+        return self:getText_field().."\n"..self:getText_seq()..(withRtn and "\n" or "")
     else
         local suc,res=pcall(self.renderImage,self)
         if suc then return res end
@@ -958,8 +1007,19 @@ function Game:getContent(withRtn)
     end
 end
 
+function Game:getText_clear()
+    local buf=STRING.newBuf()
+    for i,clear in next,self.clears do
+        if i>=2 then buf:put("  ") end
+        buf:put(clear.piece..(clear.spin and texts.game_spin or "")..texts.game_clear[clear.line])
+        if clear.ac then buf:put(texts.game_ac) end
+        if clear.atk then buf:put('('..clear.atk..'a)') end
+    end
+    return tostring(buf)
+end
+
 ---@class BrikDuel.Duel
----@field id integer
+---@field uid integer
 ---@field sid integer Session ID
 ---@field member integer[]
 ---@field game BrikDuel.Game[]
@@ -976,23 +1036,23 @@ Duel.__index=Duel
 ---@return BrikDuel.Duel|false
 function Duel.new(sid,user1,user2)
     local duel=setmetatable({
-        id=nil,
+        uid=nil,
         sid=sid,
         member={user1,user2},
         game={},
         state=user2 and 'ready' or 'wait',
     },Duel)
     for _=1,10 do
-        duel.id=math.random(1000,9999)
-        if not duelPool[duel.id] then break end
+        duel.uid=math.random(1000,9999)
+        if not duelPool[duel.uid] then break end
     end
-    if duelPool[duel.id] then return false end
-    duelPool[duel.id]=duel
+    if duelPool[duel.uid] then return false end
+    duelPool[duel.uid]=duel
     return duel
 end
 
 function Duel:getFile()
-    return 'brikduel/game_'..self.id
+    return 'brikduel/game_'..self.uid
 end
 
 ---@param S Session
@@ -1023,7 +1083,7 @@ function Duel:start(S,D,rule)
     if rule.welcomeText=='duel' then
         longSend(S,nil,
             repD(texts.game_start.duel,
-                self.id,
+                self.uid,
                 CQ.at(self.member[1]),
                 self.game[1]:getText_seq(),
                 self.game[2]:getText_seq(),
@@ -1033,7 +1093,7 @@ function Duel:start(S,D,rule)
     elseif rule.welcomeText=='solo' then
         longSend(S,nil,
             repD(texts.game_start.solo,
-                self.id,
+                self.uid,
                 texts.game_modeName[rule.modeName] or rule.modeName:upper()
             )..self.game[1]:getContent(nil)
         )
@@ -1154,7 +1214,7 @@ function Duel:finish(S,D,info)
 
     -- Result and dialog
     if info.result=='cancel' then
-        self.finishedMes=repD(texts.game_finish.cancel,self.id)
+        self.finishedMes=repD(texts.game_finish.cancel,self.uid)
     elseif info.result=='finish' then
         if info.reason=='win' then
             local game=self.game[TABLE.find(self.member,info.uid)]
@@ -1173,14 +1233,14 @@ function Duel:finish(S,D,info)
                 end
             end
         elseif info.reason=='suffocate' then
-            self.finishedMes=repD(texts.game_finish.solo,self.id).."：窒息"
+            self.finishedMes=repD(texts.game_finish.solo,self.uid).."：窒息"
         elseif #self.game==1 then
-            self.finishedMes=repD(texts.game_finish.solo,self.id)
+            self.finishedMes=repD(texts.game_finish.solo,self.uid)
         else
-            self.finishedMes=repD(texts.game_finish.norm,self.id)
+            self.finishedMes=repD(texts.game_finish.norm,self.uid)
         end
     elseif info.result=='interrupt' then
-        self.finishedMes=repD(texts.game_finish.norm,self.id)
+        self.finishedMes=repD(texts.game_finish.norm,self.uid)
     end
 
     if not info.noOutput and #self.finishedMes>0 then
@@ -1189,7 +1249,7 @@ function Duel:finish(S,D,info)
 
     if needSave then User.save() end
 
-    duelPool[self.id]=nil
+    duelPool[self.uid]=nil
     if FILE.exist(self:getFile()) then
         love.filesystem.remove(self:getFile())
     end
@@ -1288,7 +1348,7 @@ return {
                         curUser:getRec()
                     ))
                     if curDuel then
-                        info:put("\n有一场对局("..D.matches[M.user_id].id..")进行中")
+                        info:put("\n有一场对局("..D.matches[M.user_id].uid..")进行中")
                     end
                     S:send(info)
                 else
@@ -1301,7 +1361,7 @@ return {
                     if not duel then duel=D.matches[M.user_id] end
                     if duel then
                         longSend(S,M,repD(texts.query,
-                            duel.id,
+                            duel.uid,
                             duel.member[1],
                             duel.member[2],
                             table.concat(duel.game[1].sequence," ")
@@ -1358,7 +1418,7 @@ return {
                 local newDuel=Duel.new(S.id,M.user_id)
                 if newDuel then
                     D.matches[M.user_id]=newDuel
-                    S:send(repD(texts.new_free,newDuel.id))
+                    S:send(repD(texts.new_free,newDuel.uid))
                 else
                     if S:lock('brikduel_failed',26) then
                         shortSend(S,M,texts.new_failed)
@@ -1498,7 +1558,7 @@ return {
                         if newDuel then
                             D.matches[M.user_id]=newDuel
                             D.matches[opID]=newDuel
-                            S:send(repD(texts.new_room,newDuel.id,TABLE.getRandom(TABLE.getKeys(keyword.accept))))
+                            S:send(repD(texts.new_room,newDuel.uid,TABLE.getRandom(TABLE.getKeys(keyword.accept))))
                         else
                             if S:lock('brikduel_failed',26) then
                                 shortSend(S,M,texts.new_failed)
@@ -1545,25 +1605,14 @@ return {
 
                 if #controls==0 then return false end
                 -- print(TABLE.dumpDeflate(controls))
-                local clears=game:execute(controls)
+                game:execute(controls)
                 curDuel:afterMove(S,D)
 
                 local buf=STRING.newBuf()
                 -- buf:put(CQ.at(M.user_id).."\n")
 
                 buf:put(game:getContent(true))
-                for i,clear in next,clears do
-                    -- buf:put(i==1 and "\n" or "  ")
-                    if i>=2 then buf:put("  ") end
-                    if clear.spin then
-                        buf:put(clear.piece..texts.game_spin..texts.game_clear[clear.line])
-                    else
-                        buf:put('('..clear.piece..')'..texts.game_clear[clear.line])
-                    end
-                    if clear.ac then
-                        buf:put(texts.game_ac)
-                    end
-                end
+                buf:put(game:getText_clear())
                 if curDuel.finishedMes then
                     buf:put("\n"..curDuel.finishedMes)
                     S:send(buf)
