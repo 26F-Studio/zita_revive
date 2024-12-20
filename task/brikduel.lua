@@ -480,8 +480,8 @@ function Game:supplyNext(count)
                     ins(self.seqBuffer,rem(bag,self:random(#bag)))
                 end
             end
+            if not self.seqBuffer[1] then return end
         end
-        if not self.seqBuffer[1] then return end
         ins(self.sequence,rem(self.seqBuffer))
     end
 end
@@ -1091,9 +1091,7 @@ function Duel:start(S,D,rule)
     for _,game in next,self.game do
         game.rule=rule
         if rule.startSeq then
-            for _=1,rule.nextCount do
-                ins(game.sequence,rem(rule.startSeq,1))
-            end
+            game.seqBuffer=TABLE.copy(rule.startSeq)
         end
         game:supplyNext()
     end
@@ -1612,6 +1610,11 @@ return {
                     return false
                 end
             elseif curDuel.state=='play' then
+                if keyword.cancel[mes] then
+                    curDuel:finish(S,D,{result='interrupt',uid=M.user_id})
+                    return true
+                end
+
                 local ctrlMes=M.raw_message:match('^['..curUser.set.key..'0-9 ]+$')
                 if not ctrlMes then return false end
 
