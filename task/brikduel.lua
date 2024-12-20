@@ -180,7 +180,7 @@ local texts={
         %s  %d币
         %d局 %d胜 %d负 (%.1f%%)
         %d步 %d误 %d块 %d旋 %d清
-        %d行 %d攻 %d爆 %d超杀
+        %d行 %d攻 %d堆 %d爆 %d超杀
         挑战成绩：%s
     ]],
     stat_tooFrequent="查询太频繁了喵",
@@ -353,6 +353,7 @@ local userLib
 ---@field ac integer
 ---@field line integer line cleared
 ---@field atk integer attack sent
+---@field batch integer
 ---@field spike integer
 ---@field overkill integer
 ---@field __index BrikDuel.UserStat
@@ -379,7 +380,7 @@ local User={
     stat={
         game=0,win=0,lose=0,
         move=0,err=0,drop=0,spin=0,ac=0,
-        line=0,atk=0,spike=0,overkill=0,
+        line=0,atk=0,batch=0,spike=0,overkill=0,
         __index=nil,
     },
     rec={},
@@ -430,6 +431,7 @@ end
 ---@field ac integer
 ---@field line integer
 ---@field atk integer
+---@field batch integer
 ---@field spike integer
 
 ---@class BrikDuel.Game
@@ -461,7 +463,7 @@ function Game.new(uid,seed)
         seqBuffer={},
         garbageH=0,
         rule={},
-        stat={move=0,err=0,drop=0,spin=0,ac=0,line=0,atk=0,spike=0},
+        stat={move=0,err=0,drop=0,spin=0,ac=0,line=0,atk=0,batch=0,spike=0},
         startTime=os.time(),
         lastUpdateTime=os.time(),
     },Game)
@@ -469,13 +471,17 @@ function Game.new(uid,seed)
 end
 
 function Game:supplyNext(count)
+    if not count then count=self.rule.nextCount end
     while #self.sequence<count do
-        if #self.seqBuffer==0 then
-            local bag=TABLE.copy(bag0)
-            while bag[1] do
-                ins(self.seqBuffer,rem(bag,self:random(#bag)))
+        if not self.seqBuffer[1] then
+            if self.rule.seqType=='bag' then
+                local bag=TABLE.copy(bag0)
+                while bag[1] do
+                    ins(self.seqBuffer,rem(bag,self:random(#bag)))
+                end
             end
         end
+        if not self.seqBuffer[1] then return end
         ins(self.sequence,rem(self.seqBuffer))
     end
 end
@@ -722,12 +728,14 @@ function Game:execute(controls)
         self.stat.move=self.stat.move+1
     end
     if self.rule.clearSys=='std' then
-        local spike=0
+        local batch,spike=0,0
         for _,clear in next,clears do
+            batch=batch+clear.line
             clear.atk=clear*(clear.spin and 2 or 1)+(clear.ac and 3 or 0)
             spike=spike+clear.atk
             self.stat.atk=self.stat.atk+clear.atk
         end
+        self.stat.batch=max(self.stat.batch,batch)
         self.stat.spike=max(self.stat.spike,spike)
     elseif self.rule.clearSys=='nxt' then
         if clears[1] then
@@ -755,6 +763,7 @@ function Game:execute(controls)
                 atk=atk,
             }}
             self.stat.atk=self.stat.atk+atk
+            self.stat.batch=max(self.stat.batch,lines)
             self.stat.spike=max(self.stat.spike,atk)
         end
     end
@@ -879,6 +888,7 @@ local cellColor={
     {COLOR.lD,COLOR.LD},
     {COLOR.DR,COLOR.dR},
 }
+local imgCnt=0
 function Game:renderImage()
     local field=self.field
     GC.setCanvas(texture.canvas)
@@ -886,11 +896,11 @@ function Game:renderImage()
         GC.clear()
         GC.origin()
 
-        -- Base
+        -- 模板
         GC.setColor(1,1,1)
         GC.draw(texture.board)
 
-        -- Camera
+        -- 相机
         local camStartH=max(#field-9,1) -- 从最多看顶部10行的位置开始
         local camEndH=#field==0 and 5 or #field+2 -- 到场地高度+2行结束（全消例外）
         if self.rule.noDisp then
@@ -901,7 +911,7 @@ function Game:renderImage()
 
         GC.translate(boarderW,0)
 
-        -- Watermark
+        -- 水印
         FONT.set(15)
         GC.setColor(.7023,.7023,.7023,.26)
         GC.print("BrikDuel",6,imgStartH+1*cSize,-.26)
@@ -911,7 +921,7 @@ function Game:renderImage()
 
         -- In-Field things
         GC.translate(0,(camStartH-1)*cSize)
-            -- Field
+            -- 场地
             if self.rule.noDisp then
                 for y=1,4 do for x=0,9 do
                     GC.setColor(0,0,0,math.random())
@@ -942,7 +952,7 @@ function Game:renderImage()
                 end
             end
 
-            -- Target line
+            -- 目标线
             if self.rule.tar=='line' then
                 local lineH=max(self.rule.tarDat-self.stat.line,0)
                 if lineH>=0 then
@@ -955,19 +965,21 @@ function Game:renderImage()
                 end
             end
 
-            -- Spawn line
-            GC.setColor(COLOR.D)
+            -- 出生线
+            GC.setColor(COLOR.lD)
             GC.rectangle('fill',0,-cSize*(self.rule.fieldH)-spawnLineR,fieldW,2*spawnLineR)
         GC.translate(0,-(camStartH-1)*cSize)
 
-        -- Shadow of current piece
+        -- 影子
         local cur=self.sequence[1]
-        local width=pieceWidth[cur][0]
-        local shadeStartX=math.floor(6-width/2)
-        GC.setColor(cellColor[TABLE.find(bag0,cur)][2])
-        for y=0,4 do
-            GC.setAlpha(.42-.062*y)
-            GC.rectangle('fill',(shadeStartX-1)*cSize,imgStartH-fieldH+y*cSize,width*cSize,cSize)
+        if cur then
+            local width=pieceWidth[cur][0]
+            local shadeStartX=math.floor(6-width/2)
+            GC.setColor(cellColor[TABLE.find(bag0,cur)][2])
+            for y=0,4 do
+                GC.setAlpha(.42-.062*y)
+                GC.rectangle('fill',(shadeStartX-1)*cSize,imgStartH-fieldH+y*cSize,width*cSize,cSize)
+            end
         end
 
         -- Hidden lines number
@@ -982,9 +994,10 @@ function Game:renderImage()
         local base=tonumber(self:getUsr().set.key:sub(-1))
         for x=0,9 do GC.print((x+base)%10,cSize*x+4,0) end
 
-        -- Nexts
+        -- 预览
         GC.translate(nextBound,colNumH+nextH1-nextBound)
-        for i,piece in next,self.sequence do
+        for i=1,min(#self.sequence,self.rule.nextCount) do
+            local piece=self.sequence[i]
             local img=texture[piece]
             local k=i<=2 and nextK1 or nextK2
             GC.draw(img,0,0,0,k,k,0,img:getHeight())
@@ -992,12 +1005,14 @@ function Game:renderImage()
         end
     GC.pop()
     GC.setCanvas()
-    GC.saveCanvas(texture.canvas,'canvas.png','png',0,1,0,imgStartH,totalW,totalH-imgStartH)
+    local fileName='canvas_'..imgCnt..'.png'
+    imgCnt=(imgCnt+1)%6
+    GC.saveCanvas(texture.canvas,fileName,'png',0,1,0,imgStartH,totalW,totalH-imgStartH)
 
-    local file=love.filesystem.getSaveDirectory()..'/canvas.png'
+    local file=love.filesystem.getSaveDirectory()..'/'..fileName
     os.execute('chmod 644 '..file)
-    os.execute('mv '..file..' '..Config.extraData.sandboxRealPath..'canvas.png')
-    return CQ.img(Config.extraData.sandboxPath..'canvas.png')
+    os.execute('mv '..file..' '..Config.extraData.sandboxRealPath..fileName)
+    return CQ.img(Config.extraData.sandboxPath..fileName)
 end
 
 ---@param withRtn? boolean
@@ -1076,11 +1091,11 @@ function Duel:start(S,D,rule)
     for _,game in next,self.game do
         game.rule=rule
         if rule.startSeq then
-            TABLE.append(game.sequence,rule.startSeq)
+            for _=1,rule.nextCount do
+                ins(game.sequence,rem(rule.startSeq,1))
+            end
         end
-        if rule.seqType=='bag' then
-            game:supplyNext(game.rule.nextCount)
-        end
+        game:supplyNext()
     end
 
     if self.autoSave then self:save() end
@@ -1126,9 +1141,7 @@ function Duel:afterMove(S,D)
                 end
             end
         end
-        if game.rule.seqType=='bag' then
-            game:supplyNext(7)
-        end
+        game:supplyNext()
         if #game.sequence==0 then
             finish={reason='starve',id=i}
             break
@@ -1196,7 +1209,7 @@ function Duel:finish(S,D,info)
         local user=User.get(self.member[id])
         if game.rule.updStat then
             for k,v in next,game.stat do
-                if k=='spike' then
+                if k=='batch' or k=='spike' then
                     user.stat[k]=max(user.stat[k],v)
                 else
                     user.stat[k]=user.stat[k]+v
@@ -1312,7 +1325,7 @@ return {
 
         if mes:sub(1,1)=='#' then
             -- 缩写
-            mes=mes:gsub('^#du?e?l ?','#dl',1)
+            mes=mes:gsub('^#du?e?l *','#dl',1)
 
             if not mes:find('^#dl') then
                 return false
@@ -1351,7 +1364,7 @@ return {
                         CQ.at(curUser.id), curUser.coin,
                         curUser.stat.game, curUser.stat.win, curUser.stat.lose, math.ceil(curUser.stat.win/max(curUser.stat.win+curUser.stat.lose,1)*100),
                         curUser.stat.move, curUser.stat.err, curUser.stat.drop, curUser.stat.spin, curUser.stat.ac,
-                        curUser.stat.line, curUser.stat.atk, curUser.stat.spike, curUser.stat.overkill,
+                        curUser.stat.line, curUser.stat.atk, curUser.stat.batch, curUser.stat.spike, curUser.stat.overkill,
                         curUser:getRec()
                     ))
                     if curDuel then
@@ -1447,7 +1460,7 @@ return {
                     --     return true
                     -- end
                     -- User.set.key='qwQWcCfxdDzsjltoi01231'
-                    local newSet=mes:match('setk ?(.*)')
+                    local newSet=mes:match('setk%s*(.+)')
                     if newSet=='reset' then
                         curUser.set.key=User.set.key
                         User.save()
@@ -1475,7 +1488,7 @@ return {
                     end
                 end
             elseif mes:find('^#dlsets')  then
-                local newSkin=mes:match('sets ?(.*)'):lower()
+                local newSkin=mes:match('sets%s*(.+)'):lower()
                 if skins[newSkin] and not skins[newSkin]._next then
                     if not S:lock('brikduel_sets'..M.user_id,setLimitTime) then
                         if S:lock('brikduel_set',6) then shortSend(S,M,texts.set_tooFrequent) end
@@ -1518,7 +1531,7 @@ return {
                 return true
             else
                 local exData=mes:sub(4)
-                if ruleLib.solo[exData] or exData:find('^ [zsjltoi]+$') then
+                if ruleLib.solo[exData] or exData:find('^%s*[zsjltoiZSJLTOI]+$') then
                     -- 单人
                     if curDuel then
                         if curDuel.disposable then
@@ -1612,7 +1625,9 @@ return {
 
                 if #controls==0 then return false end
                 -- print(TABLE.dumpDeflate(controls))
+                local dropCnt,lineCnt=game.stat.drop,game.stat.line
                 game:execute(controls)
+                dropCnt,lineCnt=game.stat.drop-dropCnt,game.stat.line-lineCnt
                 curDuel:afterMove(S,D)
 
                 local buf=STRING.newBuf()
@@ -1621,7 +1636,14 @@ return {
                 buf:put(game:getContent(true))
                 buf:put(game:getText_clear())
                 if curDuel.finishedMes then
-                    buf:put("\n"..curDuel.finishedMes)
+                    local ptr,len=buf:ref()
+                    local lastChar=string.char(ptr[len-1])
+                    if not lastChar:match("[%]\n]") then buf:put("\n") end
+                    buf:put(curDuel.finishedMes)
+                    S:send(buf)
+                elseif dropCnt<=1 and lineCnt==0 then
+                    shortSend(S,nil,buf)
+                elseif S:lock('brikduel_speedLim_'..M.user_id,26) then
                     S:send(buf)
                 else
                     longSend(S,nil,buf)
