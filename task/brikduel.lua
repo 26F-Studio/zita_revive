@@ -140,16 +140,16 @@ local _mark_help=trimIndent[[
     贰陆 (cht)
 ]]
 local texts={
+    -- (留空) 空房等人   @某人 发起决斗
+    -- join/query [房号] 进房/查看房间状态
     help=trimIndent[[
         #duel（可略作#dl） 后接：
-        (留空) 空房等人   @某人 发起决斗
-        any/AC/10L/gm/[自定序列] 单人
-        see 查看场地   stat 个人信息
+        any/AC/10L/gm/[自定序列] 单人模式
+        stat 个人信息   see 查看场地
         rule 规则手册   man 操作手册
-        join/query [房号] 进房/查看房间状态
         end 取消/结束   leave 离开（保留房间）
         setk/sets 设置键位/皮肤
-        setx/setn 设置列号/预览样式
+        setx/setn 设置非图片模式下的列号/预览样式
     ]],
     rule=trimIndent([[
         方块⚔对决 「规则手册」
@@ -1650,7 +1650,7 @@ return {
                 elseif S:lock('brikduel_speedLim_'..M.user_id,26) then
                     S:send(buf)
                 elseif #ctrlMes<=3 then
-                    shortSend(S,nil,buf)
+                    shortSend(S,M,buf)
                 else
                     longSend(S,nil,buf)
                 end
