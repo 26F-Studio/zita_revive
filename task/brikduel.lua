@@ -902,7 +902,7 @@ function Game:renderImage()
 
         -- 相机
         local camStartH=max(#field-9,1) -- 从最多看顶部10行的位置开始
-        local camEndH=#field==0 and 5 or #field+2 -- 到场地高度+2行结束（全消例外）
+        local camEndH=#field==0 and (self.stat.ac==0 and 3 or 5) or #field+2 -- 到场地高度+2行结束（全消例外）
         if self.rule.noDisp then
             camStartH,camEndH=1,4
         end
@@ -976,7 +976,7 @@ function Game:renderImage()
             local width=pieceWidth[cur][0]
             local shadeStartX=math.floor(6-width/2)
             GC.setColor(cellColor[TABLE.find(bag0,cur)][2])
-            for y=0,4 do
+            for y=0,math.min(camEndH-1,4) do
                 GC.setAlpha(.42-.062*y)
                 GC.rectangle('fill',(shadeStartX-1)*cSize,imgStartH-fieldH+y*cSize,width*cSize,cSize)
             end
