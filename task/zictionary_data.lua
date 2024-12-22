@@ -1799,8 +1799,8 @@ local contributor={
     },
     {
         word="Z120;渣渣;120;渣渣120",
-        text="Z120.渣渣120, 块群查询 Bot 模板实现与开发以及 v2 模板设计, 并制作了 tetr.io 客户端三合一 (plus + verge + 中文翻译), 以及开发了 techmino 在线词典",
-        link="zhazha120.cn",
+        text="Z120.渣渣120，写了块群查成绩bot，做了TETR.IO【汉化+Plus+Verge】三合一客户端，和Techmino在线词典",
+        link="zhazha120.cn  26f-studio.github.io/techmino-online-dict",
     },
     {
         word="TTTT;Farter;屁;屁爷",
