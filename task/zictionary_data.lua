@@ -1803,9 +1803,9 @@ local contributor={
         link="space.bilibili.com/266621672",
     },
     {
-        word="Z120;渣渣;渣渣120",
-        text="Z120.渣渣120，做了块群查成绩Bot和TETR.IO的【汉化+Plus+Verge】三合一客户端",
-        link="space.bilibili.com/24267334",
+        word="Z120;渣渣;120;渣渣120",
+        text="Z120.渣渣120，写了块群查成绩bot，做了TETR.IO【汉化+Plus+Verge】三合一客户端，和Techmino在线词典",
+        link="zhazha120.cn  26f-studio.github.io/techmino-online-dict",
     },
     {
         word="TTTT;Farter;屁;屁爷",
