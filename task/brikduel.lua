@@ -503,7 +503,7 @@ function Game:parse(str)
     local simSeq=TABLE.copy(self.sequence)
     local c,ptr='',0
     local controls={}
-    local clean=true -- Whether current piece is moved
+    local clean=true -- 当前块是否移动过
     local ctrl
     while true do
         c=buf:get(1) ptr=ptr+1
@@ -568,7 +568,7 @@ function Game:parse(str)
             if c=='' then c='__eof' end
             ctrl.pos=tonumber(c)
             assertf(ctrl.pos,"[%d]块捷操作位置错误（应为0-9）",ptr)
-            ctrl.pos=keyMap:sub(-1)=='0' and ctrl.pos+1 or ctrl.pos==0 and 10 or ctrl.pos -- Re-base the x-pos number
+            ctrl.pos=keyMap:sub(-1)=='0' and ctrl.pos+1 or ctrl.pos==0 and 10 or ctrl.pos -- 0/1基数
             assertf(ctrl.pos+pieceWidth[ctrl.piece][ctrl.dir]-1<=10,"[%d]块捷操作位置超出场地",ptr)
             c=string.char(buf:ref()[0])
             if tonumber(c) then
@@ -919,7 +919,7 @@ function Game:renderImage()
 
         GC.translate(0,fieldH)
 
-        -- In-Field things
+        -- 场内元素
         GC.translate(0,(camStartH-1)*cSize)
             -- 场地
             if self.rule.noDisp then
@@ -982,14 +982,15 @@ function Game:renderImage()
             end
         end
 
-        -- Hidden lines number
+        -- 隐藏行数
         if camStartH>1 then
             FONT.set(10,'mono')
+            GC.setColor(COLOR.D)
             GC.printf("+"..camStartH-1,0,-12,fieldW-2,'right')
         end
 
-        -- Column number
-        GC.setColor(1,1,1)
+        -- 列号
+        GC.setColor(COLOR.L)
         FONT.set(15,'mono')
         local base=tonumber(self:getUsr().set.key:sub(-1))
         for x=0,9 do GC.print((x+base)%10,cSize*x+4,0) end
@@ -1185,7 +1186,7 @@ end
 ---@param info {result?:'cancel'|'interrupt'|'finish', reason?:string, uid?:number, noOutput:boolean}
 function Duel:finish(S,D,info)
     self.finishedMes=""
-    -- Remove link to user
+    -- 删除会话到对局的链接
     for i=1,#self.member do
         D.matches[self.member[i]]=nil
     end
@@ -1201,7 +1202,7 @@ function Duel:finish(S,D,info)
         end
     end
 
-    -- Update stat
+    -- 更新统计
     local needSave
     for id,game in next,self.game do
         local user=User.get(self.member[id])
@@ -1231,7 +1232,7 @@ function Duel:finish(S,D,info)
         end
     end
 
-    -- Result and dialog
+    -- 结束消息
     if info.result=='cancel' then
         self.finishedMes=repD(texts.game_finish.cancel,self.uid)
     elseif info.result=='finish' then
@@ -1648,6 +1649,8 @@ return {
                     shortSend(S,nil,buf)
                 elseif S:lock('brikduel_speedLim_'..M.user_id,26) then
                     S:send(buf)
+                elseif #ctrlMes<=3 then
+                    shortSend(S,nil,buf)
                 else
                     longSend(S,nil,buf)
                 end
