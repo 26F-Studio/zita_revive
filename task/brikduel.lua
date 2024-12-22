@@ -212,7 +212,7 @@ local texts={
     setn_help="预览模式： text-文字 mino-图形 [皮肤名]-皮肤",
     setn_success="预览模式设置成功喵",
     set_collide="你的个性方块+头像的组合和别人重复了喵",
-    set_tooFrequent="每十分钟只能设置一次喵",
+    set_tooFrequent="修改设置太频繁了喵",
 
     new_selfInGame="你有一场正在进行的决斗喵，这样不是很礼貌！",
     new_opInGame="对方正在一场决斗中喵，这样不是很礼貌！",
@@ -1459,7 +1459,7 @@ return {
                     --     return true
                     -- end
                     -- User.set.key='qwQWcCfxdDzsjltoi01231'
-                    local newSet=mes:match('setk%s*(.+)')
+                    local newSet=mes:sub(8):lower()
                     if newSet=='reset' then
                         curUser.set.key=User.set.key
                         User.save()
@@ -1487,7 +1487,7 @@ return {
                     end
                 end
             elseif mes:find('^#dlsets')  then
-                local newSkin=mes:match('sets%s*(.+)'):lower()
+                local newSkin=mes:sub(8):lower()
                 if skins[newSkin] and not skins[newSkin]._next then
                     if not S:lock('brikduel_sets'..M.user_id,setLimitTime) then
                         if S:lock('brikduel_set',6) then shortSend(S,M,texts.set_tooFrequent) end
