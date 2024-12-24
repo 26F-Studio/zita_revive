@@ -1459,14 +1459,14 @@ return {
                     --     return true
                     -- end
                     -- User.set.key='qwQWcCfxdDzsjltoi01231'
-                    local newSet=mes:sub(8):lower()
+                    local newSet=mes:sub(8)
                     if newSet=='reset' then
                         curUser.set.key=User.set.key
                         User.save()
                         shortSend(S,M,texts.setk_reset.."，"..texts.setk_current:gsub('@(%d+)',function(n) return curUser.set.key:sub(n,n) end))
                         return true
                     end
-                    if not newSet:find('[a-zA-Z0-9!@#&_={};:,/<>|`~]') then
+                    if newSet:find('[^a-zA-Z0-9!@#&_={};:,/<>|`~]') then
                         shortSend(S,M,texts.setk_wrongChar)
                         return true
                     elseif #newSet~=22 then
