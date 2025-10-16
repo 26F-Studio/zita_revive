@@ -290,7 +290,7 @@ local main={
     {
         word="all mini;all-mini",
         title="All-Mini",
-        text="IO专有的All-Spin的一个亚种，相比原来的仅T-Spin，其余方块使用不可移动的spin判定不过都视为mini（基础攻击=行数-1，计b2b）。此规则已默认用于TL和QP。",
+        text="IO专有的All-Spin的一个亚种，相比原来的仅T-Spin，其余方块使用不可移动的spin判定不过都视为mini（基础攻击=行数-1，计b2b）。此规则已默认用于TL和QP",
     },
     {
         word="tss;tsd;tst",
@@ -506,22 +506,22 @@ local main={
     {
         word="63;63堆;63堆叠;36;36堆;36堆叠",
         title="6–3堆叠",
-        text="指左边6列右边3列的堆叠方式。在玩家有足够的计算能力后可以减少堆叠所用的按键数（反之可能甚至会增加），是主流的用于减少操作数的高端40L堆叠方式，左6右3的原因与出块位置是中间偏左有关。",
+        text="指左边6列右边3列的堆叠方式。在玩家有足够的计算能力后可以减少堆叠所用的按键数（反之可能甚至会增加），是主流的用于减少操作数的高端40L堆叠方式，左6右3的原因与出块位置是中间偏左有关",
     },
     {
         word="72;72堆;72堆叠;27;27堆;27堆叠",
         title="7-2堆叠",
-        text="左边七列右边两列的堆叠方式。最常见的7-2堆叠是用来打20TSD的LST。",
+        text="左边七列右边两列的堆叠方式。最常见的7-2堆叠是用来打20TSD的LST",
     },
     {
         word="81;81堆;81堆叠;18;18堆;18堆叠;8-1 stacking;1-8 stacking",
         title="8-1堆叠",
-        text="左边八列右边一列的堆叠方式。在对战中，这是所有空一列(1w)堆叠策略中最难维持 B2B 的一种。\nTETR.IO有一项挑战性成就，就是使用8-1或1-8堆叠进行10次消四，完成40行。",
+        text="左边八列右边一列的堆叠方式。在对战中，这是所有空一列(1w)堆叠策略中最难维持 B2B 的一种。\nTETR.IO有一项挑战性成就，就是使用8-1或1-8堆叠进行10次消四，完成40行",
     },
     {
         word="54;54堆;54堆叠;45;45堆;45堆叠",
         title="5-4堆叠",
-        text="左边五列右边四列的堆叠方式，#c1w 的一种。",
+        text="左边五列右边四列的堆叠方式，#c1w 的一种",
     },
     {
         word="block out;lock out;top out;死亡;死亡判定",
@@ -1005,6 +1005,12 @@ local pattern={
         word="snake;snaking;蛇行;蛇形;hyper fractal;究极分形;zipper;拉链",
         text="不常用的堆叠模式，详见链接",
         link="tetriswiki.cn/p/T-Spin_Methods",
+    },
+    {
+        word="机心;鸡心;机械之心;mech;mech heart;mech hearts;mechanical hearts;mechanical heart",
+        text="一种堆叠模式，在allspin规则下能无限循环并产生大量火力，因包含巨量心形组合而得名",
+        detail="因其适配tetr.io的qp2模式规则，在进行一些后续开发后被用于打破了不少纪录，此过程中游戏策划多次增加针对性规则以对抗，攻防战持续至今未彻底结束",
+        link="http://tetriswiki.cn/p/Mechanical_Heart",
     },
     -- 开局定式·第一包mini
     {
