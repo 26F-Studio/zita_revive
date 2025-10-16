@@ -1,3 +1,6 @@
+---@type table<string,{func:fun(args:string[]):string?|string}>
+local tools={}
+
 local flagData={}
 for i,str in next,STRING.split('xz xa xq xw xe xd xc za zq wd zw ze zd zc aq aw ae ad ac qw qe wc ed ec qd dc',' ') do
     flagData[str]=string.char(96+i)
@@ -6,12 +9,47 @@ for i,str in next,STRING.split('xz xa xq xw xe xd xc za zq wd zw ze zd zc aq aw 
     flagData[str:reverse():upper()]=string.char(64+i)
 end
 flagData['xx'],flagData['XX']=' ',' '
+tools['/flag']={
+    help="旗语转换，qweadzxc表示方向\n/flag zxDC → aZ",
+    func=function(args)
+        local res=""
+        for i=1,#args do
+            for ch in args[i]:gmatch('..') do
+                res=res..(flagData[ch] or '?')
+            end
+        end
+        return res
+    end,
+}
+
+tools['/inv']={
+    help="字母补集\n/inv aeiou → [辅音字母]",
+    func=function(args)
+        local res='aeiou bcdfghjklmnpqrstvwxyz'
+        for c in args[1]:gmatch('%a') do
+            res=res:gsub(c,'')
+        end
+        return res
+    end,
+}
 
 local constants={
     pi=math.pi,
     e=math.exp(1),
     phi=(1+5^.5)/2,
     z=26,
+}
+tools['/calc']={
+    help="计算器\n/calc 1+1 → 2",
+    func=function(args)
+        args=table.concat(args):gsub('[^0-9%.+%-%*/%%^()xphiez','')
+        local f=loadstring('return '..args)
+        if not f then return "表达式有误" end
+        setfenv(f,constants)
+        local ok,res=pcall(f)
+        if not ok then return "计算有误" end
+        return '='..res
+    end,
 }
 
 local morseData={
@@ -29,54 +67,17 @@ local morseData={
     ['-.--.-']=')', ['.-...']='&', ['---.']='!', ['.-.-.']='+',
     ['.-..-.']='"', ['.--.-.']='@',
 }
-
----@type table<string,{func:fun(args:string[]):string?|string}>
-local tools={
-    ['/flag']={
-        help="旗语转换，qweadzxc表示方向\n/flagzxDC → aZ",
-        func=function(args)
-            local res=""
-            for i=1,#args do
-                for ch in args[i]:gmatch('..') do
-                    res=res..(flagData[ch] or '?')
-                end
-            end
-            return res
-        end,
-    },
-    ['/inv']={
-        help="字母补集\n/inv aeiou → [辅音字母]",
-        func=function(args)
-            local res='aeiou bcdfghjklmnpqrstvwxyz'
-            for c in args[1]:gmatch('%a') do
-                res=res:gsub(c,'')
-            end
-            return res
-        end,
-    },
-    ['/calc']={
-        help="计算器\n/calc 1+1 → 2",
-        func=function(args)
-            args=table.concat(args):gsub('[^0-9%.+%-%*/%%^()ehipxz','')
-            local f=loadstring('return '..args)
-            if not f then return "表达式有误" end
-            setfenv(f,constants)
-            local ok,res=pcall(f)
-            if not ok then return "计算有误" end
-            return '='..res
-        end,
-    },
-    ['/morse']={
-        help="摩斯电码\n/morse .... . .-.. .-.. --- → HELLO",
-        func=function(args)
-            local res=""
-            for i=1,#args do
-                res=res..(morseData[args[i]] or '?')
-            end
-            return res
-        end,
-    },
+tools['/morse']={
+    help="摩斯电码\n/morse .... . .-.. .-.. --- → HELLO",
+    func=function(args)
+        local res=""
+        for i=1,#args do
+            res=res..(morseData[args[i]] or '?')
+        end
+        return res
+    end,
 }
+
 ---@type Task_raw
 return {
     func=function(S,M)
