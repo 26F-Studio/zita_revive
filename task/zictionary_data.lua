@@ -48,7 +48,7 @@ local meta={
         text=CQ.img(Config.extraData.imgPath.."方块游戏分类.png"),
     },
     {
-        word="表格;游戏表格",
+        word="游戏;表格;游戏表格",
         text=CQ.img(Config.extraData.imgPath.."方块游戏表格.png"),
     },
     {

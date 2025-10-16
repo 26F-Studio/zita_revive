@@ -3,18 +3,11 @@ if love._openConsole then love._openConsole() end
 --------------------------------------------------------------
 local ins,rem=table.insert,table.remove
 require'Zenitha'
-ZENITHA.setMaxFPS(30)
-ZENITHA.setDrawFreq(10)
-ZENITHA.setShowFPS(false)
-ZENITHA.setUpdateFreq(100)
-ZENITHA.setVersionText('')
+ZENITHA.setMainLoopSpeed(30)
+ZENITHA.setRenderRate(10)
+ZENITHA.setUpdateRate(100)
+ZENITHA.setAppInfo('zita_revive','')
 --------------------------------------------------------------
-local ws=WS.new{
-    host='localhost',
-    port='3001',
-    connTimeout=2.6,
-    sleepInterval=0.1,
-}
 Config={
     connectInterval=2.6,
     reconnectInterval=600,
@@ -36,8 +29,12 @@ Config={
 xpcall(function()
     local data=FILE.load('botconf.lua','-lua')
     ---@cast data Data
+    Config.host=data.host
+    Config.port=data.port
+
     Config.botID=data.botID
     Config.adminName=data.adminName
+
     Config.superAdminID=TABLE.getValueSet(data.superAdminID)
     Config.groupManaging=TABLE.getValueSet(data.groupManaging)
     Config.safeSessionID=TABLE.getValueSet(data.safeSessionID)
@@ -60,6 +57,13 @@ print("# Group managing:")
 for id in next,Config.groupManaging do print(id) end
 print("# Safe session ID:")
 for id in next,Config.safeSessionID do print(id) end
+
+local ws=WS.new{
+    host='localhost',
+    port='3001',
+    connTimeout=2.6,
+    sleepInterval=0.1,
+}
 --------------------------------------------------------------
 function SimpStr(s) return s:gsub('%s',''):lower() end -- Remove spaces and lower case
 local esc={['&amp;']='&',['&#91;']='[',['&#93;']=']',['&#44;']=','}
@@ -257,7 +261,10 @@ end
 Session={}
 
 local lockMapMeta={
-    __index=function(self,k) rawset(self,k,-1e99) return -1e99 end,
+    __index=function(self,k)
+        rawset(self,k,-1e99)
+        return -1e99
+    end,
     __newindex=function(self,k) rawset(self,k,-1e99) end,
 }
 ---@return Session
@@ -493,7 +500,11 @@ SessionMap={}
 --------------------------------------------------------------
 ZENITHA.globalEvent.drawCursor=NULL
 ZENITHA.globalEvent.clickFX=NULL
-ZENITHA.globalEvent.quit=function() ws:close() ws:update() love.timer.sleep(0.0626) end
+ZENITHA.globalEvent.quit=function()
+    ws:close()
+    ws:update()
+    love.timer.sleep(0.0626)
+end
 
 local scene={}
 
