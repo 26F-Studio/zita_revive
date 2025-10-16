@@ -1,8 +1,15 @@
 local ins=table.insert
 ---@type Map<Zict.Entry>
-local zict=FILE.load('task/zictionary_data.lua','-lua')
-local entryList=zict.entryList
-zict.entryList=nil
+local zict
+local entryList
+
+local function reloadZict()
+    zict=FILE.load('task/zictionary_data.lua','-lua')
+    entryList=zict.entryList
+    zict.entryList=nil
+end
+reloadZict()
+
 assert(zict,"Dict data not found")
 
 ---@type Task_raw
@@ -36,45 +43,42 @@ return {
         if mes=='#' then
             if S:lock('dailyEntry',626) then
                 math.randomseed(tonumber(os.date('%Y%m%d')) or 26)
-                for _=1,42 do math.random() end
+                for _=1,26 do math.random() end
                 mes='#'..TABLE.getRandom(entryList).word
                 if mes:find(';') then mes=mes:match('(.-);') end
                 math.randomseed(os.time())
                 daily=true
             end
+        elseif mes=="#reload" then
+            reloadZict()
+            S:send("小z的知识库更新了！现在有"..TABLE.getSize(zict).."个词条喵")
+            return true
         end
 
         -- Get searching phrase
-        local phrase=mes:match('#.+')
-        if not phrase then return false end
-        local startPos=mes:find(phrase,1,true)
-        phrase=phrase:lower()
+        local queryPhrase=mes:match('#.+')
+        if not queryPhrase then return false end
 
         -- Remove '#'
         local showDetail
-        if phrase:sub(1,2)=='##' then
-            phrase=phrase:sub(3)
+        if queryPhrase:sub(1,2)=='##' then
+            queryPhrase=queryPhrase:sub(3)
             showDetail=true
         else
-            phrase=phrase:sub(2)
+            queryPhrase=queryPhrase:sub(2)
         end
 
         -- Get entry from dict data
         ---@type Zict.Entry
         local entry
-        if startPos==1 then
-            entry=zict[SimpStr(phrase)]
-        else
-            local words=STRING.split(phrase,'%s+',true)
-            while #words[#words]>26 do
-                table.remove(words)
-                if not words[1] then return false end
-            end
-            while #words>0 do
-                entry=zict[table.concat(words,'')]
-                if entry then break end
-                table.remove(words)
-            end
+        local words=STRING.split(queryPhrase:lower(),'%s+',true)
+        for i=#words,1,-1 do
+            if #words[i]>26 then table.remove(words,i) end
+        end
+        while words[1] do
+            entry=zict[table.concat(words,'')]
+            if entry then break end
+            table.remove(words)
         end
         if not entry then return false end
 
