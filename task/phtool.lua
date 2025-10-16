@@ -37,7 +37,7 @@ local mathEnv=setmetatable({},{__index=math})
 tools['/calc']={
     help="计算器\n/calc 1+1 → 2",
     func=function(args)
-        local expr=table.concat(args)
+        local expr=table.concat(args," ")
         if
             expr:match("while") or
             expr:match("for") or
@@ -53,7 +53,7 @@ tools['/calc']={
         setfenv(f,mathEnv)
         local suc,res=pcall(f)
         if not suc then return "计算过程出错: "..res end
-        return '='..res
+        return '='..tostring(res)
     end,
 }
 
