@@ -104,7 +104,7 @@ return {
         end
         local resultStr=table.concat(result,'\n')
 
-        if S.group and not AdminMsg(M) then
+        if S.group and not AdminMsg(M) and not Config.extraData.family[S.uid] then
             S:update()
             local chargeNeed=94.2+#resultStr/4.2
             if S.charge<math.min(94.2,chargeNeed) then

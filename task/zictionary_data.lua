@@ -1008,9 +1008,10 @@ local pattern={
     },
     {
         word="机心;鸡心;机械之心;mech;mech heart;mech hearts;mechanical hearts;mechanical heart",
+        title="机械之心",
         text="一种堆叠模式，在allspin规则下能无限循环并产生大量火力，因包含巨量心形组合而得名",
-        detail="因其适配tetr.io的qp2模式规则，在进行一些后续开发后被用于打破了不少纪录，此过程中游戏策划多次增加针对性规则以对抗，攻防战持续至今未彻底结束",
-        link="http://tetriswiki.cn/p/Mechanical_Heart",
+        detail="因其适配tetr.io的qp2模式规则，在进行一些后续开发后被用于打破了不少纪录。此过程中游戏策划多次增加针对性规则以对抗，攻防战持续至今未彻底结束",
+        link="tetriswiki.cn/p/Mechanical_Heart",
     },
     -- 开局定式·第一包mini
     {
