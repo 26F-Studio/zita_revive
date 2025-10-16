@@ -23,7 +23,7 @@
 local meta={
     {
         word="词典;小z词典;zict;zictionary",
-        title="本词典是收集方块游戏相关词汇并加以解释供人检查参考的工具", 
+        title="本词典是收集方块游戏相关词汇并加以解释供人检查参考的工具",
     },
     {
         word="提问",
@@ -44,11 +44,11 @@ local meta={
         text="对战→io js tec ppt\n单机→tech js tetr tec\n偷玩→tetr tech",
     },
     {
-        word="分类",
+        word="分类;游戏分类",
         text=CQ.img(Config.extraData.imgPath.."方块游戏分类.png"),
     },
     {
-        word="游戏;表格;游戏表格",
+        word="表格;游戏表格",
         text=CQ.img(Config.extraData.imgPath.."方块游戏表格.png"),
     },
     {
@@ -107,6 +107,19 @@ local meta={
     {
         word="气泡;魔法气泡;噗哟;噗哟噗哟;puyo;puyopuyo",
         text="魔法气泡，一款相同颜色连起来就消除的游戏（有请其他群友解释）",
+    },
+    {
+        word="音乐方块;lumine;lumines;lumines arise",
+        text="音乐方块，一款相同颜色拼成正方形就消除的游戏（有请其他群友解释）",
+    },
+    {
+        word="ZC;Zenith Clicker;点点乐;天穹点点乐;io点点乐",
+        text="天穹点点乐，tetr.io中qp2模式的戏仿游戏\nZ酱出品，随时随地爽爬塔！",
+        link="github.com/MrZ626/ZenithClicker",
+    },
+    {
+        word="7",
+        text="欢迎新人但是方块有7种"..CQ.img(Config.extraData.imgPath.."7.png"),
     },
 }
 ---@type Zict.Entry[]
@@ -561,7 +574,7 @@ local main={
     {
         word="1kf;一键到位;一键极简",
         title="1kf",
-        text="一键到位（One Key Finesse，简称 1kf，直译「一键极简」）是一种特殊的方块控制方式。组合所有10列的水平位置与4种旋转状态，用40个键足以覆盖所有的落块选择，使得把块落在任意位置都只需一次按键"
+        text="一键到位（One Key Finesse，简称 1kf，直译「一键极简」）是一种特殊的方块控制方式。组合所有10列的水平位置与4种旋转状态，用40个键足以覆盖所有的落块选择，使得把块落在任意位置都只需一次按键",
     },
     {
         word="科研",
@@ -1494,7 +1507,7 @@ local game={
         word="to;top;toj;tos;tetris online",
         title="Tetris Online",
         text="简称TO 私服 官块 要下载 主联机有单机 音画优秀 电脑 半可调控制\n主要用来6人内对战/单挑/刷每日40L榜/挖掘模式/打机器人",
-        detail="现在还开着的服务器有：TO-P（波兰服，服务器在波兰，可能会卡顿）；TO-S（研究服，研究群群友自己开的服更稳定）"
+        detail="现在还开着的服务器有：TO-P（波兰服，服务器在波兰，可能会卡顿）；TO-S（研究服，研究群群友自己开的服更稳定）",
     },
     {
         cat='game',

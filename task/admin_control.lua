@@ -1,4 +1,5 @@
-local envValues={
+local codeEnv={}
+for _,v in next,{
     'next','print',
     'tonumber','tostring',
     'ipairs','pairs',
@@ -7,12 +8,7 @@ local envValues={
     'MATH','STRING','TABLE',
     'Config','SessionMap','Bot','Session',
     'Time','CQ',
-}
-table.sort(envValues)
-local codeEnv={}
-for _,v in next,envValues do
-    codeEnv[v]=_G[v]
-end
+} do codeEnv[v]=_G[v] end
 
 ---@type table<string,string|{level:number,func:fun(S:Session,args:string[])}>
 local commands={
@@ -131,8 +127,7 @@ local commands={
     end},
     ['%!']={level=2,func=function(S)
         local vars=TABLE.getKeys(codeEnv)
-        table.sort(vars)
-        S:send("有这些变量喵："..table.concat(vars,', '))
+        S:send("有这些变量喵："..table.concat(TABLE.sort(vars),', '))
     end},
 }
 ---@cast commands table<string,{level:number,func:fun(S:Session,args:string[])}>
