@@ -1,4 +1,4 @@
----@type table<string,{func:fun(args:string[]):string?|string}>
+---@type table<string,{help:string, func:fun(args:string[]):string?|string}>
 local tools={}
 
 local flagData={}
@@ -46,25 +46,62 @@ tools['/calc']={
         TABLE.clear(mathEnv)
         setfenv(f,mathEnv)
         local suc,res=pcall(f)
-        if not suc then return "计算过程出错: "..res end
+        if not suc then return "计算过程出错: "..(res:match(".+%d:(.+)") or res) end
         return '='..tostring(res)
     end,
 }
 
 local morseData={
-    ['.-']='A',['-...']='B',['-.-.']='C',['-..']='D',['.']='E',
-    ['..-.']='F',['--.']='G',['....']='H',['..']='I',['.---']='J',
-    ['-.-']='K',['.-..']='L',['--']='M',['-.']='N',['---']='O',
-    ['.--.']='P',['--.-']='Q',['.-.']='R',['...']='S',['-']='T',
-    ['..-']='U',['...-']='V',['.--']='W',['-..-']='X',['-.--']='Y',
+    ['.-']='A',
+    ['-...']='B',
+    ['-.-.']='C',
+    ['-..']='D',
+    ['.']='E',
+    ['..-.']='F',
+    ['--.']='G',
+    ['....']='H',
+    ['..']='I',
+    ['.---']='J',
+    ['-.-']='K',
+    ['.-..']='L',
+    ['--']='M',
+    ['-.']='N',
+    ['---']='O',
+    ['.--.']='P',
+    ['--.-']='Q',
+    ['.-.']='R',
+    ['...']='S',
+    ['-']='T',
+    ['..-']='U',
+    ['...-']='V',
+    ['.--']='W',
+    ['-..-']='X',
+    ['-.--']='Y',
     ['--..']='Z',
-    ['-----']='0',['.----']='1',['..---']='2',['...--']='3',
-    ['....-']='4',['.....']='5',['-....']='6',['--...']='7',
-    ['---..']='8',['----.']='9',
-    ['.-.-.-']='.', ['--..--']=',', ['---...']=':', ['..--..']='?',
-    ['.----.']='\'', ['-....-']='-', ['-..-.']='/', ['-.--.']='(',
-    ['-.--.-']=')', ['.-...']='&', ['---.']='!', ['.-.-.']='+',
-    ['.-..-.']='"', ['.--.-.']='@',
+    ['-----']='0',
+    ['.----']='1',
+    ['..---']='2',
+    ['...--']='3',
+    ['....-']='4',
+    ['.....']='5',
+    ['-....']='6',
+    ['--...']='7',
+    ['---..']='8',
+    ['----.']='9',
+    ['.-.-.-']='.',
+    ['--..--']=',',
+    ['---...']=':',
+    ['..--..']='?',
+    ['.----.']='\'',
+    ['-....-']='-',
+    ['-..-.']='/',
+    ['-.--.']='(',
+    ['-.--.-']=')',
+    ['.-...']='&',
+    ['---.']='!',
+    ['.-.-.']='+',
+    ['.-..-.']='"',
+    ['.--.-.']='@',
 }
 tools['/morse']={
     help="摩斯电码\n/morse .... . .-.. .-.. --- → HELLO",
@@ -74,6 +111,36 @@ tools['/morse']={
             res=res..(morseData[args[i]] or '?')
         end
         return res
+    end,
+}
+
+tools['/ranksim']={
+    help="qp2等级模拟（无流失保护）\n/ranksim rank xp [frames=600]",
+    func=function(args)
+        local rank,xp=tonumber(args[1]),tonumber(args[2])
+        if not (rank and xp) then return "rank和xp需要数字" end
+
+        local steps=math.min(tonumber(args[3]) or 600, 1000)
+        for _=1,steps do
+            local tr=math.floor(rank)
+            xp=xp-3*(tr^2+tr)/3600
+
+            local nextRankXP=4*tr
+            local storedXP=4*(tr-1)
+            if xp<0 then
+                if tr<=1 then
+                    xp=0
+                else
+                    xp=xp+storedXP
+                    tr=tr-1
+                end
+            elseif xp>=nextRankXP then
+                xp=xp-nextRankXP
+                tr=tr+1
+            end
+            rank=tr+xp/(4*tr)
+        end
+        return ("%d帧后为%.2f级%.1f经验"):format(steps,rank,xp)
     end,
 }
 
