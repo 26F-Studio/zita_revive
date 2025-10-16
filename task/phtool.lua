@@ -38,15 +38,9 @@ tools['/calc']={
     help="计算器\n/calc 1+1 → 2",
     func=function(args)
         local expr=table.concat(args," ")
-        if
-            expr:match("while") or
-            expr:match("for") or
-            expr:match("repeat") or
-            expr:match("function") or
-            expr:match("[\"\']") or
-            expr:match("%[%[") or
-            expr:match("%[=")
-        then return "你是坏人。" end
+        if expr:match("while") or expr:match("for") then return "不许捣乱哦~" end
+        if expr:match("repeat") or expr:match("function") then return "你想干什么喵？" end
+        if expr:match("[\"\']") or expr:match("%[%[") or expr:match("%[=") or expr:match("%.%.") then return "你是坏人。" end
         local f=loadstring('return '..expr) or loadstring(expr)
         if not f then return "算式格式有误！" end
         TABLE.clear(mathEnv)
