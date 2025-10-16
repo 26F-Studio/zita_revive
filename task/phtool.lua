@@ -33,21 +33,26 @@ tools['/inv']={
     end,
 }
 
-local constants={
-    pi=math.pi,
-    e=math.exp(1),
-    phi=(1+5^.5)/2,
-    z=26,
-}
+local mathEnv=setmetatable({},{__index=math})
 tools['/calc']={
     help="计算器\n/calc 1+1 → 2",
     func=function(args)
-        args=table.concat(args):gsub('[^0-9%.+%-%*/%%^()xphiez','')
-        local f=loadstring('return '..args)
-        if not f then return "表达式有误" end
-        setfenv(f,constants)
-        local ok,res=pcall(f)
-        if not ok then return "计算有误" end
+        local expr=table.concat(args)
+        if
+            expr:match("while") or
+            expr:match("for") or
+            expr:match("repeat") or
+            expr:match("function") or
+            expr:match("[\"\']") or
+            expr:match("%[%[") or
+            expr:match("%[=")
+        then return "你是坏人。" end
+        local f=loadstring('return '..expr) or loadstring(expr)
+        if not f then return "算式格式有误！" end
+        TABLE.clear(mathEnv)
+        setfenv(f,mathEnv)
+        local suc,res=pcall(f)
+        if not suc then return "计算过程出错: "..res end
         return '='..res
     end,
 }
