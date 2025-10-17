@@ -10,7 +10,7 @@ for i,str in next,STRING.split('xz xa xq xw xe xd xc za zq wd zw ze zd zc aq aw 
 end
 flagData['xx'],flagData['XX']=' ',' '
 tools['/flag']={
-    help="旗语转换，qweadzxc表示方向\n/flag zxDC → aZ",
+    help="旗语转换，qweadzxc表示方向\n例：/flag zxDC\n→ aZ",
     func=function(args)
         local res=""
         for i=1,#args do
@@ -23,7 +23,7 @@ tools['/flag']={
 }
 
 tools['/inv']={
-    help="字母补集\n/inv aeiou → [辅音字母]",
+    help="字母补集\n例：/inv aeiou\n→ [剩下21个辅音字母]",
     func=function(args)
         local res='aeiou bcdfghjklmnpqrstvwxyz'
         for c in args[1]:gmatch('%a') do
@@ -34,6 +34,7 @@ tools['/inv']={
 }
 
 local syntaxError={
+    "算式没写对喵",
     "格式有问题喵",
     "你的式子写错了喵",
     "没懂喵？检查一下格式",
@@ -51,7 +52,7 @@ local banPattern={
 }
 local mathEnv=setmetatable({},{__index=math})
 tools['/calc']={
-    help="计算器\n/calc 1+1 → 2",
+    help="计算器\n例：/calc 1+1\n→ 2",
     func=function(args)
         local expr=table.concat(args," ")
         local f=loadstring('return '..expr) or loadstring(expr)
@@ -119,7 +120,7 @@ local morseData={
     ['.--.-.']='@',
 }
 tools['/morse']={
-    help="摩斯电码\n/morse .... . .-.. .-.. --- → HELLO",
+    help="摩斯电码\n例：/morse .... . .-.. .-.. ---\n→ HELLO",
     func=function(args)
         local res=""
         for i=1,#args do
@@ -130,7 +131,7 @@ tools['/morse']={
 }
 
 tools['/ranksim']={
-    help="qp2等级模拟（无流失保护）\n/ranksim rank xp [frames=600]",
+    help="qp2等级模拟（无流失保护）\n例：/ranksim rank xp [frames=600]",
     func=function(args)
         local rank,xp=tonumber(args[1]),tonumber(args[2])
         if not (rank and xp) then return "rank和xp需要数字" end

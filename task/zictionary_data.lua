@@ -56,6 +56,14 @@ local meta={
         text=CQ.img(Config.extraData.imgPath.."pay.png"),
     },
     {
+        word="zone20;20zone;ultimatris",
+        text="IRS设置改为typeA然后随便打打就行",
+    },
+    {
+        word="zone21;21zone;kirbtris",
+        text="IRS设置改为typeA然后多刷一刷就行",
+    },
+    {
         word="zone22;22zone;impossibilitris",
         text=CQ.img(Config.extraData.imgPath.."zone22教程.jpg"),
     },

@@ -49,6 +49,7 @@ return {
                 math.randomseed(os.time())
                 daily=true
             end
+            return true
         elseif mes=="#reload" then
             reloadZict()
             S:send("小z的知识库更新了！现在有"..#entryList.."个词条喵")
