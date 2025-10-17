@@ -945,10 +945,10 @@ function Game:renderImage()
                 end
             elseif self.stat.ac>0 then
                 FONT.set(25)
-                GC.strokePrint('full',2,COLOR.O,COLOR.lY,texts.game_acGraphic,5*cSize,-cSize*3,'center')
+                GC.strokePrint('full',2,COLOR.O,COLOR.lY,texts.game_acGraphic,5*cSize,-cSize*3,nil,'center')
                 if self.stat.ac>=2 then
                     FONT.set(20)
-                    GC.strokePrint('full',1,COLOR.O,COLOR.lY,"x "..self.stat.ac,8.6*cSize,-cSize*4.2,'right')
+                    GC.strokePrint('full',1,COLOR.O,COLOR.lY,"x "..self.stat.ac,8.6*cSize,-cSize*4.2,nil,'right')
                 end
             end
 
@@ -1287,7 +1287,7 @@ return {
             love.filesystem.createDirectory('brikduel')
         end
         if not userLib then
-            userLib=FILE.load('brikduel/userdata.luaon','-canskip') or {}
+            userLib=FILE.load('brikduel/userdata.luaon','-luaon -canskip') or {}
             for _,user in next,userLib do
                 setmetatable(user,User)
                 setmetatable(user.set,User.set)
@@ -1548,7 +1548,7 @@ return {
                             modeName='custom',
                             updStat=false,
                             seqType='none',
-                            startSeq=STRING.atomize(exData:upper()),
+                            startSeq=STRING.atomize(exData:upper():reverse()),
                         })
                     else
                         if S:lock('brikduel_failed',26) then
