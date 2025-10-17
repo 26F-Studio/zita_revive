@@ -33,17 +33,32 @@ tools['/inv']={
     end,
 }
 
+local syntaxError={
+    "格式有问题喵",
+    "你的式子写错了喵",
+    "没懂喵？检查一下格式",
+}
+local banPattern={
+    ["function"]={"害怕栈溢出喵…","会写这个就去自己写程序喵！"},
+    ["while"]={"害怕无限循环喵…","计算器为什么要循环喵？"},
+    ["for"]={"算数还要用到for喵？","你不许for喵"},
+    ["repeat"]={"我只听说过while喵","repeat？那是什么喵"},
+    ["goto"]={"珍爱生命，远离goto","意大利面不好吃喵！","goto一时爽…"},
+    ["[\"\']"]={"计算器只能算数字喵！","你只许算数字喵！","字符串是人家的隐私喵"},
+    ["%[%["]={"你是坏人。","盯……是不是多打了一个[呀","盯……是不是多打了一个[呀","盯……是不是多打了一个[呀"},
+    ["%[="]={"你是坏人。","等于号不能这么用喵（装傻","等于号不能这么用喵（装傻","等于号不能这么用喵（装傻"},
+    ["%.%."]={"你是坏人。","你不许点点","你不许点点","你不许点点"},
+}
 local mathEnv=setmetatable({},{__index=math})
 tools['/calc']={
     help="计算器\n/calc 1+1 → 2",
     func=function(args)
         local expr=table.concat(args," ")
-        if expr:match("while") or expr:match("for") then return "不许捣乱哦~" end
-        if expr:match("repeat") or expr:match("function") then return "你想干什么喵？" end
-        if expr:match("[\"\']") or expr:match("%[%[") or expr:match("%[=") or expr:match("%.%.") then return "你是坏人。" end
         local f=loadstring('return '..expr) or loadstring(expr)
-        if not f then return "算式格式有误！" end
+        if not f then return TABLE.getRandom(syntaxError) end
+        for k,v in next,banPattern do if expr:match(k) then return TABLE.getRandom(v) end end
         TABLE.clear(mathEnv)
+        mathEnv.math=mathEnv
         setfenv(f,mathEnv)
         local suc,res=pcall(f)
         if not suc then return "计算过程出错: "..(res:match(".+%d:(.+)") or res) end
