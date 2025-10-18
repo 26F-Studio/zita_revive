@@ -1,24 +1,21 @@
 local min,max=math.min,math.max
 local ins,rem=table.insert,table.remove
-
 local repD,trimIndent=STRING.repD,STRING.trimIndent
 
-local echoCnt=26
-local function longSend(S,M,str)
-    S:send(str,tostring(echoCnt))
-    S:delayDelete(Config.groupManaging[S.id] and 260 or 100,tostring(echoCnt))
-    if M then S:delayDelete(62,M.message_id) end
-    echoCnt=echoCnt%2600+1
-end
-local function shortSend(S,M,str)
-    S:send(str,tostring(echoCnt))
-    S:delayDelete(26,tostring(echoCnt))
-    if M then S:delayDelete(26,M.message_id) end
-    echoCnt=echoCnt%2600+1
+local echoCnt=0
+-- Delete after 260s (100s in non-managed group)
+---@param S Session
+---@param M OneBot.Event.Message|nil
+local function delReply(S,delay,M,str)
+    delay=min(delay,Config.groupManaging[S.id] and 1e99 or 100)
+    S:send(str,'dl'..echoCnt)
+    S:delayDelete(delay,'dl'..echoCnt)
+    if M then S:delayDelete(min(delay,62),M.message_id) end
+    echoCnt=(echoCnt+1)%10000
 end
 
 local bag0=STRING.atomize('ZSJLTOI')
-local minoId={Z=1,S=2,J=3,L=4,T=5,O=6,I=7}
+local minoId=TABLE.inverse(bag0)
 
 local setLimitTime=26
 local maxThinkTime=2*3600
@@ -217,8 +214,8 @@ local texts={
     new_selfInGame="你有一场正在进行的决斗喵，这样不是很礼貌！",
     new_opInGame="对方正在一场决斗中喵，这样不是很礼貌！",
     new_withSelf="不能和自己决斗喵，一个人玩推荐下载Techmino，发送#tech了解详情",
-    new_botRefuse="我不接受喵",
-    new_free="对局创建成功喵($1)\n其他人可以发送“#duel join (房间号)”来加入",
+    new_botRefuse="我自己不玩喵",
+    new_free="对局创建成功喵($1)\n其他人可以发送“#duelljoin (房间号)”来加入",
     new_room="对局创建成功喵($1)\n被邀请人快发送“$2”来正式开始",
     new_failed="对局创建失败了喵，你的运气不太好",
 
@@ -275,7 +272,7 @@ local texts={
     },
 
     notInRoom="你在干什么喵？",
-    wrongCmd="用法详见#duel help",
+    wrongCmd="用法详见#duelhelp",
     syntax_error="❌",
 }
 local ruleLib={
@@ -915,7 +912,7 @@ function Game:renderImage()
         FONT.set(15)
         GC.setColor(.7023,.7023,.7023,.26)
         GC.print("BrikDuel",6,imgStartH+1*cSize,-.26)
-        GC.print(self.uid,6,imgStartH+2*cSize,-.26)
+        GC.print(tostring(self.uid),6,imgStartH+2*cSize,-.26)
 
         GC.translate(0,fieldH)
 
@@ -993,7 +990,7 @@ function Game:renderImage()
         GC.setColor(COLOR.L)
         FONT.set(15,'mono')
         local base=tonumber(self:getUsr().set.key:sub(-1))
-        for x=0,9 do GC.print((x+base)%10,cSize*x+4,0) end
+        for x=0,9 do GC.print(tostring((x+base)%10),cSize*x+4,0) end
 
         -- 预览
         GC.translate(nextBound,colNumH+nextH1-nextBound)
@@ -1100,7 +1097,7 @@ function Duel:start(S,D,rule)
     if self.autoSave then self:save() end
 
     if rule.welcomeText=='duel' then
-        longSend(S,nil,
+        delReply(S,260,nil,
             repD(texts.game_start.duel,
                 self.uid,
                 CQ.at(self.member[1]),
@@ -1110,7 +1107,7 @@ function Duel:start(S,D,rule)
             )
         )
     elseif rule.welcomeText=='solo' then
-        longSend(S,nil,
+        delReply(S,260,nil,
             repD(texts.game_start.solo,
                 self.uid,
                 texts.game_modeName[rule.modeName] or rule.modeName:upper()
@@ -1279,6 +1276,17 @@ function Duel:save()
     FILE.save(self,self:getFile(),'-luaon')
 end
 
+local function cancelCurrent(curDuel,S,M,D)
+    if curDuel then
+        if curDuel.disposable then
+            curDuel:finish(S,D,{noOutput=true})
+        else
+            if S:lock('brikduel_inDuel',26) then delReply(S,26,M,texts.new_selfInGame) end
+            return true
+        end
+    end
+end
+
 ---@type Task_raw
 return {
     init=function(S,D)
@@ -1320,42 +1328,36 @@ return {
 
         ---@type BrikDuel.Duel
         local curDuel=D.matches[M.user_id]
-        local curUser=User.get(M.user_id)
 
         if mes:sub(1,1)=='#' then
-            -- 缩写
-            mes=mes:gsub('^#du?e?l *','#dl',1)
+            if not (mes:sub(1,3)=="#dl" or mes:sub(1,5)=='#duel') then return false end
+            local curUser=User.get(M.user_id)
 
-            if not mes:find('^#dl') then
-                return false
-            elseif mes:find('^#dlhelp')  then
+            -- 缩写
+            if     mes:find('^#dlhelp')  then
                 if S:lock('brikduel_help',62) then
                     S:send(texts.help)
                     S:delayDelete(26,M.message_id)
                 end
-                return true
             elseif mes:find('^#dlrule')  then
                 if S:lock('brikduel_rule',62) then
                     S:send(texts.rule)
                     S:delayDelete(26,M.message_id)
                 end
-                return true
             elseif mes:find('^#dlman')   then
                 if S:lock('brikduel_man',62) then
                     S:send(texts.manual)
                     S:delayDelete(26,M.message_id)
                 end
-                return true
             elseif mes:find('^#dlsee')   then
                 if not curDuel then
-                    if S:lock('brikduel_notInRoom',12) then shortSend(S,M,texts.notInRoom) end
+                    if S:lock('brikduel_notInRoom',12) then delReply(S,26,M,texts.notInRoom) end
                 else
                     local pid=TABLE.find(curDuel.member,M.user_id)
                     local game=curDuel.game[pid]
                     S:send(game:getContent())
                     S:delayDelete(26,M.message_id)
                 end
-                return true
             elseif mes:find('^#dlstat')  then
                 if S:lock('brikduel_stat_'..M.user_id,26) then
                     local info=STRING.newBuf()
@@ -1371,15 +1373,14 @@ return {
                     end
                     S:send(info)
                 else
-                    shortSend(S,M,texts.stat_tooFrequent)
+                    delReply(S,26,M,texts.stat_tooFrequent)
                 end
-                return true
             elseif mes:find('^#dlquery') then
                 if S:lock('brikduel_query',12) then
                     local duel=duelPool[tonumber(mes:match('%d+'))]
                     if not duel then duel=D.matches[M.user_id] end
                     if duel then
-                        longSend(S,M,repD(texts.query,
+                        delReply(S,260,M,repD(texts.query,
                             duel.uid,
                             duel.member[1],
                             duel.member[2],
@@ -1387,26 +1388,25 @@ return {
                         ))
                     else
                         if S:lock('brikduel_noRoom',12) then
-                            shortSend(S,M,texts.query_noRoom)
+                            delReply(S,26,M,texts.query_noRoom)
                         end
                     end
                 else
                     if S:lock('brikduel_queryTooFrequent',12) then
-                        shortSend(S,M,texts.query_tooFrequent)
+                        delReply(S,26,M,texts.query_tooFrequent)
                     end
                 end
-                return true
             elseif mes:find('^#dljoin')  then
                 -- 确保不在对局中
-                if curDuel then if S:lock('brikduel_inDuel',26) then shortSend(S,M,texts.new_selfInGame) end return true end
+                if curDuel then if S:lock('brikduel_inDuel',26) then delReply(S,26,M,texts.new_selfInGame) end return true end
 
                 -- 解析房间号
                 local roomID=tonumber(mes:match('%d+'))
-                if not roomID then if S:lock('brikduel_wrongRoomID',6) then shortSend(S,M,texts.join_wrongFormat) end return true end
-                if not duelPool[roomID] then if S:lock('brikduel_noRoomID',6) then shortSend(S,M,texts.join_noRoom) end return true end
+                if not roomID then if S:lock('brikduel_wrongRoomID',6) then delReply(S,26,M,texts.join_wrongFormat) end return true end
+                if not duelPool[roomID] then if S:lock('brikduel_noRoomID',6) then delReply(S,26,M,texts.join_noRoom) end return true end
 
                 curDuel=duelPool[roomID]
-                if curDuel.state~='wait' then if S:lock('brikduel_notWait',26) then shortSend(S,M,texts.join_notWait) return true end end
+                if curDuel.state~='wait' then if S:lock('brikduel_notWait',26) then delReply(S,26,M,texts.join_notWait) return true end end
 
                 curDuel.member[2]=M.user_id
                 if #curDuel.game==0 then
@@ -1414,25 +1414,21 @@ return {
                 else
                     curDuel.state='play'
                 end
-
-                return true
             elseif mes:find('^#dlend')   then
                 if curDuel then
                     curDuel:finish(S,D,{result='interrupt',uid=M.user_id})
                 else
-                    if S:lock('brikduel_notInRoom',26) then shortSend(S,M,texts.notInRoom) end
+                    if S:lock('brikduel_notInRoom',26) then delReply(S,26,M,texts.notInRoom) end
                 end
-                return true
             elseif mes:find('^#dlleave') then
                 if curDuel then
                     -- TODO
                 else
-                    if S:lock('brikduel_notInRoom',26) then shortSend(S,M,texts.notInRoom) end
+                    if S:lock('brikduel_notInRoom',26) then delReply(S,26,M,texts.notInRoom) end
                 end
-                return true
-            elseif mes:find('^#dl$')     then
+            elseif mes:find('^#dlvs$')   then
                 -- 自由房间
-                if curDuel then if S:lock('brikduel_inDuel',26) then shortSend(S,M,texts.new_selfInGame) end return true end
+                if curDuel then if S:lock('brikduel_inDuel',26) then delReply(S,26,M,texts.new_selfInGame) end return true end
 
                 local newDuel=Duel.new(S.id,M.user_id)
                 if newDuel then
@@ -1440,10 +1436,9 @@ return {
                     S:send(repD(texts.new_free,newDuel.uid))
                 else
                     if S:lock('brikduel_failed',26) then
-                        shortSend(S,M,texts.new_failed)
+                        delReply(S,26,M,texts.new_failed)
                     end
                 end
-                return true
             elseif mes:find('^#dlsetk')  then
                 if mes=='#dlsetk' then
                     if S:lock('brikduel_setk_help',26) then
@@ -1463,26 +1458,26 @@ return {
                     if newSet=='reset' then
                         curUser.set.key=User.set.key
                         User.save()
-                        shortSend(S,M,texts.setk_reset.."，"..texts.setk_current:gsub('@(%d+)',function(n) return curUser.set.key:sub(n,n) end))
+                        delReply(S,26,M,texts.setk_reset.."，"..texts.setk_current:gsub('@(%d+)',function(n) return curUser.set.key:sub(n,n) end))
                         return true
                     end
                     if newSet:find('[^a-zA-Z0-9!@#&_={};:,/<>|`~]') then
-                        shortSend(S,M,texts.setk_wrongChar)
+                        delReply(S,26,M,texts.setk_wrongChar)
                         return true
                     elseif #newSet~=22 then
-                        shortSend(S,M,texts.setk_wrongFormat)
+                        delReply(S,26,M,texts.setk_wrongFormat)
                         return true
                     elseif newSet:sub(1,17):find('(.).*%1') or newSet:sub(18,21):find('(.).*%1') then
-                        shortSend(S,M,texts.setk_conflict)
+                        delReply(S,26,M,texts.setk_conflict)
                         return true
                     elseif not newSet:sub(-1):find('[01]') then
-                        shortSend(S,M,texts.setk_base01)
+                        delReply(S,26,M,texts.setk_base01)
                         return true
                     else
                         -- 终于对了
                         curUser.set.key=newSet
                         User.save()
-                        shortSend(S,M,texts.setk_success.."，"..texts.setk_current:gsub('@(%d+)',function(n) return curUser.set.key:sub(n,n) end))
+                        delReply(S,26,M,texts.setk_success.."，"..texts.setk_current:gsub('@(%d+)',function(n) return curUser.set.key:sub(n,n) end))
                         return true
                     end
                 end
@@ -1490,107 +1485,85 @@ return {
                 local newSkin=mes:sub(8):lower()
                 if skins[newSkin] and not skins[newSkin]._next then
                     if not S:lock('brikduel_sets'..M.user_id,setLimitTime) then
-                        if S:lock('brikduel_set',6) then shortSend(S,M,texts.set_tooFrequent) end
+                        if S:lock('brikduel_set',6) then delReply(S,26,M,texts.set_tooFrequent) end
                         return true
                     end
                     curUser.set.skin=newSkin
                     User.save()
-                    shortSend(S,M,texts.sets_success)
+                    delReply(S,26,M,texts.sets_success)
                 else
-                    longSend(S,M,texts.sets_help)
+                    delReply(S,260,M,texts.sets_help)
                 end
-                return true
             elseif mes:find('^#dlsetx')  then
                 local newNum=mes:sub(8):lower()
                 if marks[newNum] then
                     if not S:lock('brikduel_setx'..M.user_id,setLimitTime) then
-                        if S:lock('brikduel_set',6) then shortSend(S,M,texts.set_tooFrequent) end
+                        if S:lock('brikduel_set',6) then delReply(S,26,M,texts.set_tooFrequent) end
                         return true
                     end
                     curUser.set.mark=newNum
                     User.save()
-                    shortSend(S,M,texts.setx_success)
+                    delReply(S,26,M,texts.setx_success)
                 else
-                    longSend(S,M,texts.setx_help)
+                    delReply(S,260,M,texts.setx_help)
                 end
-                return true
             elseif mes:find('^#dlsetn')  then
                 local newNext=mes:sub(8):lower()
                 if skins[newNext] then
                     if not S:lock('brikduel_setn'..M.user_id,setLimitTime) then
-                        if S:lock('brikduel_set',6) then shortSend(S,M,texts.set_tooFrequent) end
+                        if S:lock('brikduel_set',6) then delReply(S,26,M,texts.set_tooFrequent) end
                         return true
                     end
                     curUser.set.next=newNext
                     User.save()
-                    shortSend(S,M,texts.setn_success)
+                    delReply(S,26,M,texts.setn_success)
                 else
-                    shortSend(S,M,texts.setn_help)
+                    delReply(S,26,M,texts.setn_help)
                 end
-                return true
-            else
+            elseif ruleLib.solo[mes:sub(4)] or mes:sub(4):find('^%s*[zsjltoiZSJLTOI]+$') then
+                -- 单人
                 local exData=mes:sub(4)
-                if ruleLib.solo[exData] or exData:find('^%s*[zsjltoiZSJLTOI]+$') then
-                    -- 单人
-                    if curDuel then
-                        if curDuel.disposable then
-                            curDuel:finish(S,D,{noOutput=true})
-                        else
-                            if S:lock('brikduel_inDuel',26) then shortSend(S,M,texts.new_selfInGame) end
-                            return true
-                        end
-                    end
+                cancelCurrent(curDuel,S,M,D)
 
-                    local newDuel=Duel.new(S.id,M.user_id)
-                    if newDuel then
-                        D.matches[M.user_id]=newDuel
-                        newDuel:start(S,D,ruleLib.solo[exData] or {
-                            modeName='custom',
-                            updStat=false,
-                            seqType='none',
-                            startSeq=STRING.atomize(exData:upper():reverse()),
-                        })
-                    else
-                        if S:lock('brikduel_failed',26) then
-                            shortSend(S,M,texts.new_failed)
-                        end
-                    end
+                local newDuel=Duel.new(S.id,M.user_id)
+                if newDuel then
+                    D.matches[M.user_id]=newDuel
+                    newDuel:start(S,D,ruleLib.solo[exData] or {
+                        modeName='custom',
+                        updStat=false,
+                        seqType='none',
+                        startSeq=STRING.atomize(exData:upper():reverse()),
+                    })
                 else
-                    -- 多人
-                    if curDuel then
-                        if curDuel.disposable then
-                            curDuel:finish(S,D,{noOutput=true})
-                        else
-                            if S:lock('brikduel_inDuel',26) then shortSend(S,M,texts.new_selfInGame) end
-                            return true
-                        end
-                    end
-
-                    local opID=tonumber(M.raw_message:match('CQ:at,qq=(%d+)'))
-                    if opID then
-                        -- 邀请
-                        -- if opID==Config.botID   then if S:lock('brikduel_wrongOp',26)  then shortSend(S,M,texts.new_botRefuse) end return true end
-                        if opID==M.user_id then if S:lock('brikduel_wrongOp',26)  then shortSend(S,M,texts.new_withSelf) end return true end
-                        if D.matches[opID] then if S:lock('brikduel_opInDuel',26) then shortSend(S,M,texts.new_opInGame) end return true end
-
-                        local newDuel=Duel.new(S.id,M.user_id,opID)
-                        if newDuel then
-                            D.matches[M.user_id]=newDuel
-                            D.matches[opID]=newDuel
-                            S:send(repD(texts.new_room,newDuel.uid,TABLE.getRandom(TABLE.getKeys(keyword.accept))))
-                        else
-                            if S:lock('brikduel_failed',26) then
-                                shortSend(S,M,texts.new_failed)
-                            end
-                        end
-                    else
-                        if S:lock('brikduel_wrongCmd',26) then
-                            shortSend(S,M,texts.wrongCmd)
-                        end
+                    if S:lock('brikduel_failed',26) then
+                        delReply(S,26,M,texts.new_failed)
                     end
                 end
-                return true
+            elseif tonumber(M.raw_message:match('CQ:at,qq=(%d+)')) then
+                -- 邀请多人
+                local opID=tonumber(M.raw_message:match('CQ:at,qq=(%d+)'))
+                ---@cast opID number
+                if opID==Config.botID then if S:lock('brikduel_wrongOp',26)  then delReply(S,26,M,texts.new_botRefuse) end return true end
+                if opID==M.user_id    then if S:lock('brikduel_wrongOp',26)  then delReply(S,26,M,texts.new_withSelf) end return true end
+                if D.matches[opID]    then if S:lock('brikduel_opInDuel',26) then delReply(S,26,M,texts.new_opInGame) end return true end
+
+                cancelCurrent(curDuel,S,M,D)
+                local newDuel=Duel.new(S.id,M.user_id,opID)
+                if newDuel then
+                    D.matches[M.user_id]=newDuel
+                    D.matches[opID]=newDuel
+                    S:send(repD(texts.new_room,newDuel.uid,TABLE.getRandom(TABLE.getKeys(keyword.accept))))
+                else
+                    if S:lock('brikduel_failed',26) then
+                        delReply(S,26,M,texts.new_failed)
+                    end
+                end
+            else
+                if S:lock('brikduel_wrongCmd',26) then
+                    delReply(S,26,M,texts.wrongCmd)
+                end
             end
+            return true
         elseif curDuel then
             local pid=TABLE.find(curDuel.member,M.user_id)
             if     curDuel.state=='wait' then
@@ -1616,14 +1589,14 @@ return {
                     return true
                 end
 
-                local ctrlMes=M.raw_message:match('^['..curUser.set.key..'0-9 ]+$')
+                local ctrlMes=M.raw_message:match('^['..User.get(M.user_id).set.key..'0-9 ]+$')
                 if not ctrlMes then return false end
 
                 local game=curDuel.game[pid]
                 local suc,controls=pcall(game.parse,game,ctrlMes)
                 if not suc then
                     game.stat.err=game.stat.err+1
-                    longSend(S,nil,texts.syntax_error..controls:sub((controls:find('%['))))
+                    delReply(S,260,nil,texts.syntax_error..controls:sub((controls:find('%['))))
                     return true
                 end
 
@@ -1646,13 +1619,13 @@ return {
                     buf:put(curDuel.finishedMes)
                     S:send(buf)
                 elseif dropCnt<=1 and lineCnt==0 then
-                    shortSend(S,nil,buf)
+                    delReply(S,26,nil,buf)
                 elseif S:lock('brikduel_speedLim_'..M.user_id,26) then
                     S:send(buf)
                 elseif #ctrlMes<=3 then
-                    shortSend(S,M,buf)
+                    delReply(S,26,M,buf)
                 else
-                    longSend(S,nil,buf)
+                    delReply(S,260,nil,buf)
                 end
 
                 return true
