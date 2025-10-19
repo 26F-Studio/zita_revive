@@ -49,7 +49,6 @@ return {
                 math.randomseed(os.time())
                 daily=true
             end
-            return true
         elseif mes=="#reload" then
             reloadZict()
             S:send("小z的知识库更新了！现在有"..#entryList.."个词条喵")
@@ -88,6 +87,9 @@ return {
         if daily then ins(result,"【今日词条】") end
         if entry.title then
             ins(result,(entry.detail and "##" or "#")..entry.title)
+        end
+        if daily and entry.title then
+            result[1]=result[1]..table.remove(result)
         end
         if entry.text then
             ins(result,type(entry.text)=='function' and entry.text(S) or entry.text)
