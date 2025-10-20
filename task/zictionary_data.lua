@@ -1404,6 +1404,12 @@ local game={
         text="练习工具 网页 主单机 音画廉价 电脑\nTEC的Zone练习用工具游戏，有自定义序列和撤销和出题等功能",
         link="ztrix-game.web.app",
     },
+    {
+        word="god of stackers;gos",
+        title="God of Stackers",
+        text="网页 单机联机都有 音画优秀 电脑\n有角色、技能、抽卡系统，目前还在开发阶段",
+        link="godofstackers.com",
+    },
     -- 跨平台
     {
         word="tech;techmino;铁壳;铁壳米诺",
@@ -1483,7 +1489,7 @@ local game={
         text="简称T99 官块 要下载 主联机有单机 音画优秀 主机 部分改键 不可调控制 正版付费\n主打99人混战的吃鸡模式，也有一些常用单机模式如马拉松等\n游戏基础模式有NS Online会员可以免费玩，其他单机模式需要额外购买",
     },
     {
-        word="ppt;puyo puyo tetris",
+        word="ppt;puyo puyo tetris;ppt2;ppt2s",
         title="Puyo Puyo Tetris",
         text="简称PPT 官块 要下载 主联机有单机 音画优秀 电脑 不可调控制 正版付费\n包含Tetris和PuyoPuyo两个下落消除游戏，二者间可以对战\n注：PPT2的手感据很多人说都不行",
     },
@@ -1578,6 +1584,12 @@ local game={
         word="tetris forever;forever;永恒;永恒篇",
         title="Tetris Forever",
         text="主要部分不是游戏 官块 主单机 音画优秀 不可调控制\n俄罗斯方块40周年作，总体上是一个电子展览馆，按Tetris的历史发展排列了一份纪录片和各种图片资料，还内置了模拟器用来体验一些老游戏",
+    },
+    {
+        word="tetra esports;tes",
+        title="Tetra eSports",
+        text="单机联机都有 音画优秀 电脑\nTetra Online转生，目前还在开发阶段",
+        link="tetraesports.com/",
     },
     -- 题库
     {
