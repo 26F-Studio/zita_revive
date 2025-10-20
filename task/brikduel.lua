@@ -1323,7 +1323,7 @@ return {
             end
         end
     end,
-    func=function(S,M,D)
+    message=function(S,M,D)
         local mes=STRING.trim(M.raw_message)
 
         ---@type BrikDuel.Duel
@@ -1638,7 +1638,16 @@ return {
     end,
 }
 
---[[ Space measuring
+--[[
+
+# 挖挖乐设计稿
+
+- 开局生成6行垃圾行，轮流发每人三块（公共牌堆bag7）
+- 回合开始补至4或摸2，上限7，限一条消息自选块序落块，每行1分，20分获胜
+- 移除高垃圾两行的彩色方块，垃圾行补至6行，开始下回合
+
+# 空格尺寸测量
+
 local data={-- unit is width of 🟥 in MrZ's Linux NTQQ
     a={" ",0.1013},
     b={" ",0.1034},
@@ -1709,6 +1718,8 @@ for i=1,#res do
     output:put(r.res..r.pat.." "..r.len.." \n")
 end
 print(output)
+
+# 各种块符号
 
 ▄▐▌
 ▀▗▖

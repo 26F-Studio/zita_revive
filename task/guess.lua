@@ -657,7 +657,7 @@ return {
         D.repPoint=0
         for i=1,10 do D.quandleLongHis[i]={} end
     end,
-    func=function(S,M,D)
+    message=function(S,M,D)
         ---@cast M OneBot.Event.GroupMessage
         -- Log
         local mes=SimpStr(M.raw_message)

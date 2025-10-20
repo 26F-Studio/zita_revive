@@ -1,7 +1,7 @@
 local wordList=TABLE.getValueSet{"小z在吗","#help","#帮助"}
 ---@type Task_raw
 return {
-    func=function(S,M)
+    message=function(S,M)
         ---@cast M OneBot.Event.PrivateMessage|OneBot.Event.GroupMessage
         local mes=SimpStr(M.raw_message)
         if not wordList[mes] then return false end

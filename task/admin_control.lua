@@ -85,14 +85,6 @@ local commands={
             S.data.log.log=false
             print("Log: off")
             S:send("小z停止日志了喵！")
-        elseif args[1]=='all' then
-            print("Log: all")
-            Bot.adminNotice("小z开始所有日志了喵！")
-            Config.debugLog_receive=true
-        elseif args[1]=='0' then
-            print("Log: 0")
-            Bot.adminNotice("小z停止所有日志了喵！")
-            Config.debugLog_receive=false
         end
     end},
     ['%stat']={level=2,func=function(S)
@@ -150,7 +142,7 @@ end
 
 ---@type Task_raw
 return {
-    func=function(S,M)
+    message=function(S,M)
         ---@cast M OneBot.Event.PrivateMessage
 
         local level=Bot.isAdmin(M.user_id) and 2 or AdminMsg(M) and 1 or 0

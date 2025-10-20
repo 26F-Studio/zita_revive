@@ -1,3 +1,9 @@
+---@class Emoji
+---@field emoji_id string 表情ID
+---@field count number 数量
+
+
+
 ---@class OneBot.Sender CAUTION: May not accurate
 ---@field user_id number QQ号
 ---@field nickname string 昵称
@@ -10,16 +16,6 @@
 ---@field level string 等级
 ---@field role 'owner'|'admin'|'member'
 ---@field title string 专属头衔
-
-
-
----@class OneBot.SimpMes
----@field group? number
----@field user? number
----
----@field message string
-
-
 
 ---@class OneBot.Event.Base
 ---@field post_type 'message'|'notice'|'request'|'meta_event'
@@ -64,6 +60,7 @@
 ---@field sub_type 'normal'|'anonymous'|'notice'
 ---@field group_id number
 ---@field sender OneBot.Sender.Group
+---@field message Segment[]
 
 ---@alias OneBot.Event.Message OneBot.Event.PrivateMessage|OneBot.Event.GroupMessage
 
@@ -82,7 +79,17 @@
 ---@field group_id number 群号
 
 ---@class OneBot.Event.Notice : OneBot.Event.Base
----@field TODO any
+---@field group_id number 群号
+
+---@class OneBot.Event.Notice.Emoji : OneBot.Event.Notice
+---@field notice_type 'group_msg_emoji_like'
+---@field message_id number
+---@field likes Emoji[]
+
+---@class OneBot.Event.Notice.Poke : OneBot.Event.Notice
+---@field sub_type 'poke'
+---@field user_id number
+---@field target_id number
 
 ---@class OneBot.Event.Response
 ---@field retcode number

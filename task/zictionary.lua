@@ -17,7 +17,7 @@ return {
     init=function(_,D)
         D.lastDetailEntry=false
     end,
-    func=function(S,M,D)
+    message=function(S,M,D)
         ---@cast M OneBot.Event.PrivateMessage|OneBot.Event.GroupMessage
 
         local mes=STRING.trim(RawStr(M.raw_message))

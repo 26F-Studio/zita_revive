@@ -162,7 +162,7 @@ tools['/ranksim']={
 
 ---@type Task_raw
 return {
-    func=function(S,M)
+    message=function(S,M)
         -- Log
         local args=STRING.split(STRING.trim(RawStr(M.raw_message)),' ')
         local tool=tools[table.remove(args,1)]

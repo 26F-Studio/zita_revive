@@ -14,7 +14,9 @@ Config={
     receiveDelay=0.26,
     maxCharge=620,
     debugLog_send=false,
-    debugLog_receive=false,
+    debugLog_message=false,
+    debugLog_notice=false,
+    debugLog_request=false,
     debugLog_response=false,
     safeMode=false,
     botID=false,
@@ -65,18 +67,24 @@ local ws=WS.new{
     sleepInterval=0.1,
 }
 --------------------------------------------------------------
-function SimpStr(s) return s:gsub('%s',''):lower() end -- Remove spaces and convert to lower case
+-- Remove spaces and convert to lower case
+function SimpStr(s) return s:gsub('%s',''):lower() end
 local esc={['&amp;']='&',['&#91;']='[',['&#93;']=']',['&#44;']=','}
-function RawStr(s) -- Unescape & Remove username in CQ:at
+
+-- Unescape & Remove username in CQ:at
+function RawStr(s)
     s=s:gsub('%[CQ:at,qq=(%d+),name=.-%]','[CQ:at,qq=%1]')
     for k,v in next,esc do s=s:gsub(k,v) end
     return s
 end
+
+-- Check if a message is sent by group admin
+function AdminMsg(M) return M.sender and (M.sender.role=='owner' or M.sender.role=='admin') end -- Encode cq path
+
 CQ={
     at=function(data) return "[CQ:at,qq="..data.."]" end,
     img=function(data) return "[CQ:image,file="..data.."]" end,
 }
-function AdminMsg(M) return M.sender and (M.sender.role=='owner' or M.sender.role=='admin') end -- Encode cq path
 --------------------------------------------------------------
 Bot={
     state='dead', ---@type 'dead'|'connecting'|'running'
@@ -92,8 +100,9 @@ Bot={
 }
 
 ---@class Task_raw
----@field func fun(S:Session, M: OneBot.Event.Message, D:Session.data):boolean true means message won't be passed to next task
----@field init fun(S:Session, D:Session.data)? if exist, execute when task created, jsut after launching
+---@field message? fun(S:Session, M: OneBot.Event.Message, D:Session.data):boolean true means message won't be passed to next task
+---@field notice? fun(S:Session, N: OneBot.Event.Message, D:Session.data):boolean true means message won't be passed to next task
+---@field init? fun(S:Session, D:Session.data)? if exist, execute when task created, jsut after launching
 
 ---@class Task : Task_raw
 ---@field id string
@@ -101,6 +110,7 @@ Bot={
 
 ---@alias Sendable string|number|boolean|string.buffer
 
+---Check if a user is configured as super admin
 function Bot.isAdmin(id)
     return Config.superAdminID[id]
 end
@@ -159,6 +169,15 @@ function Bot.sendSticker(mes_id)
     --     },
     -- }
 end
+function Bot.sendLike(uid,times)
+    Bot._send{
+        action='send_like',
+        params={
+            uid=uid,
+            times=times or 10,
+        },
+    }
+end
 ---@param group_id number
 ---@param user_id number
 ---@param time? number
@@ -205,6 +224,40 @@ function Bot._update()
             if res.meta_event_type=='lifecycle' then
                 LOG("Lifecycle event: "..res.sub_type)
             end
+        elseif res.post_type=='message' then
+            ---@cast res OneBot.Event.Message
+            local priv=res.message_type=='private'
+            local id=priv and res.user_id or res.group_id
+            local S=SessionMap[(priv and 'p' or 'g')..id]
+            if not S then
+                if TASK.getLock('newSession_'..id) then return true end
+                S=Session.new(id,priv)
+                SessionMap[S.uid]=S
+            end
+            S:receive(res,'message')
+            if Config.debugLog_message then
+                print("message",TABLE.dump(res))
+            end
+        elseif res.post_type=='notice' then
+            ---@cast res OneBot.Event.Notice
+            local id=res.group_id
+            if id then
+                local S=SessionMap['g'..id]
+                if not S then
+                    if TASK.getLock('newSession_'..id) then return true end
+                    S=Session.new(id,false)
+                    SessionMap[S.uid]=S
+                end
+                S:receive(res,'notice')
+            end
+            if Config.debugLog_notice then
+                print("notice",TABLE.dump(res))
+            end
+        elseif res.post_type=='request' then
+            -- TODO
+            if Config.debugLog_request then
+                print("request",TABLE.dump(res))
+            end
         elseif rawget(res,'retcode') then
             ---@cast res OneBot.Event.Response
             if res.echo then
@@ -217,23 +270,6 @@ function Bot._update()
             if Config.debugLog_response then
                 print(TABLE.dump(res))
             end
-        elseif res.post_type=='message' then
-            ---@cast res OneBot.Event.Message
-            local priv=res.message_type=='private'
-            local id=priv and res.user_id or res.group_id
-            local S=SessionMap[(priv and 'p' or 'g')..id]
-            if not S then
-                if TASK.getLock('newSession_'..id) then return true end
-                S=Session.new(id,priv)
-                SessionMap[S.uid]=S
-            end
-            S:receive(res)
-        elseif res.post_type=='notice' then
-            -- TODO
-            -- print("notice",TABLE.dump(res))
-        elseif res.post_type=='request' then
-            -- TODO
-            -- print("request",TABLE.dump(res))
         end
     elseif op~='pong' then
         print("[inside: "..op.."]")
@@ -324,7 +360,8 @@ function Session:newTask(id,prio)
     ins(self.taskList,insPos,{
         prio=prio,
         id=id,
-        func=task.func,
+        message=task.message or NULL,
+        notice=task.notice or NULL,
     })
     self.data[id]={}
     if task.init then task.init(self,self.data[id]) end
@@ -413,9 +450,11 @@ function Session:useCharge(charge)
     self.charge=math.max(self.charge-charge,0)
 end
 
-function Session:receive(M)
+---@param M OneBot.Event.Base
+---@param type 'message' | 'notice'
+function Session:receive(M,type)
     for _,task in next,self.taskList do
-        local suc2,res2=pcall(task.func,self,M,self.data[task.id])
+        local suc2,res2=pcall(task[type],self,M,self.data[task.id])
         if suc2 then
             if res2==true then break end
         else
