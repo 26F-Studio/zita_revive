@@ -142,11 +142,13 @@ end
 
 ---@type Task_raw
 return {
-    message=function(S,M)
+    message=function(S,M,D)
         ---@cast M OneBot.Event.PrivateMessage
+        if D.log then
+            print((S.priv and "Priv-" or "Group-")..S.id..": "..TABLE.dump(M))
+        end
 
         local level=Bot.isAdmin(M.user_id) and 2 or AdminMsg(M) and 1 or 0
-
         if #M.message==1 and M.message[1].type=='text' then
             local mes=STRING.trim(M.message[1].data.text)
             if mes:sub(1,1)=='!' then
