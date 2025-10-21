@@ -141,7 +141,7 @@ local texts={
     -- join/query [房号] 进房/查看房间状态
     help=trimIndent[[
         #duel（可略作#dl） 后接：
-        any/AC/10L/gm/[自定序列] 单人模式
+        any/AC/10L/gm/day/[自定序列] 单人模式
         stat 个人信息   see 查看场地
         rule 规则手册   man 操作手册
         end 取消/结束   leave 离开（保留房间）
@@ -238,6 +238,7 @@ local texts={
         ac="全消",
         ['10l']="十行",
         gm="盲打",
+        day="每日",
     },
     game_renderRrror="喵喵喵！渲染失败了：",
     game_moreLine="⤾$1行隐藏",
@@ -287,9 +288,11 @@ local ruleLib={
         disposable=true,
         welcomeText='solo',
         startSeq=false,
-        tar=false,
-        tarDat=false,
-        timeRec=false,
+        tar=false, -- target type
+        tarDat=false, -- target value
+        timeRec=false, -- record best time
+        noDisp=false, -- no field display
+        reward=false, -- coin reward
     },
     duel={
         modeName='duel',
@@ -301,7 +304,6 @@ local ruleLib={
     solo={
         any={
             modeName='any',
-            fieldH=20,
         },
         ac={
             modeName='ac',
@@ -321,12 +323,17 @@ local ruleLib={
         },
         gm={
             modeName='gm',
-            fieldH=20,
             tar='line',
             tarDat=10,
             timeRec=true,
             reward=4,
             noDisp=true,
+        },
+        day={
+            modeName='day',
+            -- clearSys='std',
+            seqType='none',
+            tarDat=10,
         },
     }
 }
@@ -472,10 +479,7 @@ function Game:supplyNext(count)
     while #self.sequence<count do
         if not self.seqBuffer[1] then
             if self.rule.seqType=='bag' then
-                local bag=TABLE.copy(bag0)
-                while bag[1] do
-                    ins(self.seqBuffer,rem(bag,self:random(#bag)))
-                end
+                self.seqBuffer=TABLE.shuffle(TABLE.copy(bag0))
             end
             if not self.seqBuffer[1] then return end
         end
@@ -1528,6 +1532,10 @@ return {
                 local newDuel=Duel.new(S.id,M.user_id)
                 if newDuel then
                     D.matches[M.user_id]=newDuel
+                    if exData=='day' then
+                        math.randomseed(M.sender.user_id+os.date('%y%m%d'))
+                        ruleLib.solo.day.startSeq=TABLE.append(TABLE.shuffle(TABLE.copy(bag0)),TABLE.shuffle(TABLE.copy(bag0)))
+                    end
                     newDuel:start(S,D,ruleLib.solo[exData] or {
                         modeName='custom',
                         updStat=false,
