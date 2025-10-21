@@ -1021,6 +1021,12 @@ local pattern={
         detail="因其适配tetr.io的qp2模式规则，在进行一些后续开发后被用于打破了不少纪录。此过程中游戏策划多次增加针对性规则以对抗，攻防战持续至今未彻底结束",
         link="tetriswiki.cn/p/Mechanical_Heart",
     },
+    {
+        word="柠檬汽水工厂;柠檬工厂;机械柠檬;机柠",
+        title="柠檬汽水工厂",
+        text="机心的一个变种，只用S/Z拼成的柠檬形状进行消除",
+        link="tetriswiki.cn/p/%E6%9F%A0%E6%AA%AC%E6%B1%BD%E6%B0%B4%E5%B7%A5%E5%8E%82",
+    },
     -- 开局定式·第一包mini
     {
         word="hebomai spin;hbm spin;hebomai炮;fiddlesworth;mtd;mini triple double;joystick;摇杆;nyaspin;xz cannon;xz炮;mdf;mini double fractal",
