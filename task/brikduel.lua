@@ -342,9 +342,9 @@ local ruleLib={
         },
         day={
             modeName='day',
-            clearSys='std',
             tar='atk',
             tarDat=14,
+            nextCount=4,
             seqType='rand',
             userseed=true,
         },
@@ -1272,10 +1272,11 @@ function Duel:finish(S,D,info)
     if info.result=='cancel' then
         self.finishedMes=repD(texts.game_finish.cancel,self.id)
     elseif info.result=='finish' then
+        local user=User.get(self.member[game.round])
         if info.reason=='win' then
             if game.rule.timeRec then
                 local modeName=game.rule.modeName
-                local userRec=User.get(self.member[game.round]).rec
+                local userRec=user.rec
                 local oldTime=userRec[modeName] or 2600
                 local newTime=os.time()-self.startTime
                 if newTime<oldTime then
@@ -1286,7 +1287,20 @@ function Duel:finish(S,D,info)
                     self.finishedMes=repD(texts.game_notRecord,newTime.."秒",oldTime.."秒")
                 end
             else
-                self.finishedMes=repD(texts.game_finish.solo,self.id).."：任务完成"
+                if game.rule.modeName=='day' then
+                    if user.daily.date~=os.date('%Y%m%d') then
+                        user.daily.date=os.date('%Y%m%d')
+                        user.daily.drop=nil
+                    end
+                    if not user.daily.drop or game.stats[1].drop<user.daily.drop then
+                        self.finishedMes=repD(texts.game_newRecord,game.stats[1].drop.."块",user.daily.drop and (user.daily.drop.."块") or "-")
+                        user.daily.drop=game.stats[1].drop
+                    else
+                        self.finishedMes=repD(texts.game_notRecord,game.stats[1].drop.."块",user.daily.drop.."块")
+                    end
+                else
+                    self.finishedMes=repD(texts.game_finish.solo,self.id).."：任务完成"
+                end
             end
         elseif info.reason=='suffocate' then
             self.finishedMes=repD(texts.game_finish.solo,self.id).."：窒息"
@@ -1365,10 +1379,10 @@ return {
 
         ---@type BrikDuel.Duel
         local curDuel=D.matches[M.user_id]
-        local curUser=User.get(M.user_id)
 
         if mes:sub(1,1)=='#' then
             if not (mes:sub(1,3)=="#dl" or mes:sub(1,5)=='#duel') then return false end
+            local user=User.get(M.user_id)
 
             -- 缩写
             if     mes:find('^#dlhelp')  then
@@ -1390,18 +1404,18 @@ return {
                 if not curDuel then
                     if S:lock('brikduel_notInRoom',12) then delReply(S,26,M,texts.notInRoom) end
                 else
-                    S:send(curDuel.game:getContent(curUser)..curDuel.game:getText_extra())
+                    S:send(curDuel.game:getContent(user)..curDuel.game:getText_extra())
                     S:delayDelete(26,M.message_id)
                 end
             elseif mes:find('^#dlstat')  then
                 if S:lock('brikduel_stat_'..M.user_id,26) then
                     local info=STRING.newBuf()
                     info:put(texts.stat:format(
-                        CQ.at(curUser.id), curUser.coin,
-                        curUser.stat.game, curUser.stat.win, curUser.stat.lose, math.ceil(curUser.stat.win/max(curUser.stat.win+curUser.stat.lose,1)*100),
-                        curUser.stat.move, curUser.stat.err, curUser.stat.drop, curUser.stat.spin, curUser.stat.ac,
-                        curUser.stat.line, curUser.stat.atk, curUser.stat.batch, curUser.stat.spike,
-                        curUser:getRec()
+                        CQ.at(user.id), user.coin,
+                        user.stat.game, user.stat.win, user.stat.lose, math.ceil(user.stat.win/max(user.stat.win+user.stat.lose,1)*100),
+                        user.stat.move, user.stat.err, user.stat.drop, user.stat.spin, user.stat.ac,
+                        user.stat.line, user.stat.atk, user.stat.batch, user.stat.spike,
+                        user:getRec()
                     ))
                     if curDuel then
                         info:put("\n有一场对局("..D.matches[M.user_id].id..")进行中")
@@ -1477,7 +1491,7 @@ return {
             elseif mes:find('^#dlsetk')  then
                 if mes=='#dlsetk' then
                     if S:lock('brikduel_setk_help',26) then
-                        local keyMap=curUser.set.key
+                        local keyMap=user.set.key
                         local helpText=texts.setk_help:gsub('@(%d+)',function(n) return keyMap:sub(n,n) end)
                         S:send(repD(helpText,keyMap))
                         S:delayDelete(26,M.message_id)
@@ -1491,9 +1505,9 @@ return {
                     -- User.set.key='qwQWcCfxdDzsjltoi01231'
                     local newSet=mes:sub(8)
                     if newSet=='reset' then
-                        curUser.set.key=User.set.key
+                        user.set.key=User.set.key
                         User.save()
-                        delReply(S,26,M,texts.setk_reset.."，"..texts.setk_current:gsub('@(%d+)',function(n) return curUser.set.key:sub(n,n) end))
+                        delReply(S,26,M,texts.setk_reset.."，"..texts.setk_current:gsub('@(%d+)',function(n) return user.set.key:sub(n,n) end))
                         return true
                     end
                     if newSet:find('[^a-zA-Z0-9!@#&_={};:,/<>|`~]') then
@@ -1510,9 +1524,9 @@ return {
                         return true
                     else
                         -- 终于对了
-                        curUser.set.key=newSet
+                        user.set.key=newSet
                         User.save()
-                        delReply(S,26,M,texts.setk_success.."，"..texts.setk_current:gsub('@(%d+)',function(n) return curUser.set.key:sub(n,n) end))
+                        delReply(S,26,M,texts.setk_success.."，"..texts.setk_current:gsub('@(%d+)',function(n) return user.set.key:sub(n,n) end))
                         return true
                     end
                 end
@@ -1523,7 +1537,7 @@ return {
                         if S:lock('brikduel_set',6) then delReply(S,26,M,texts.set_tooFrequent) end
                         return true
                     end
-                    curUser.set.skin=newSkin
+                    user.set.skin=newSkin
                     User.save()
                     delReply(S,26,M,texts.sets_success)
                 else
@@ -1536,7 +1550,7 @@ return {
                         if S:lock('brikduel_set',6) then delReply(S,26,M,texts.set_tooFrequent) end
                         return true
                     end
-                    curUser.set.mark=newNum
+                    user.set.mark=newNum
                     User.save()
                     delReply(S,26,M,texts.setx_success)
                 else
@@ -1549,7 +1563,7 @@ return {
                         if S:lock('brikduel_set',6) then delReply(S,26,M,texts.set_tooFrequent) end
                         return true
                     end
-                    curUser.set.next=newNext
+                    user.set.next=newNext
                     User.save()
                     delReply(S,26,M,texts.setn_success)
                 else
@@ -1623,12 +1637,13 @@ return {
                     return true
                 end
 
-                local ctrlMes=M.raw_message:match('^['..curUser.set.key..'0-9 ]+$')
+                local user=User.get(M.user_id)
+                local ctrlMes=M.raw_message:match('^['..user.set.key..'0-9 ]+$')
                 if not ctrlMes then return false end
 
                 local game=curDuel.game
                 local stat=game.stats[game.round]
-                local suc,controls=pcall(game.parse,game,curUser,ctrlMes)
+                local suc,controls=pcall(game.parse,game,user,ctrlMes)
                 if not suc then
                     stat.err=stat.err+1
                     delReply(S,260,nil,texts.syntax_error..controls:sub((controls:find('%['))))
@@ -1645,7 +1660,7 @@ return {
                 local buf=STRING.newBuf()
                 -- buf:put(CQ.at(M.user_id).."\n")
 
-                buf:put(game:getContent(curUser,true))
+                buf:put(game:getContent(user,true))
                 buf:put(game:getText_clear())
                 buf:put((game.clears[1] and "\n" or "")..game:getText_extra())
                 if curDuel.finishedMes then
