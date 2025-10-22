@@ -177,7 +177,7 @@ local texts={
         %s  %d币
         %d局 %d胜 %d负 (%.1f%%)
         %d步 %d误 %d块 %d旋 %d清
-        %d行 %d攻 %d堆 %d爆 %d超杀
+        %d行 %d攻 %d堆 %d爆
         挑战成绩：%s
     ]],
     stat_tooFrequent="查询太频繁了喵",
@@ -240,7 +240,7 @@ local texts={
         gm="盲打",
         day="每日",
     },
-    game_renderRrror="喵喵喵！渲染失败了：",
+    game_renderError="喵喵喵！渲染失败了：",
     game_moreLine="⤾$1行隐藏",
     game_spin="旋",
     game_clear={
@@ -261,6 +261,11 @@ local texts={
         "𝕬𝕷𝕷 𝕮𝕷𝕰𝕬𝕽",
         "𝒜𝒯𝒯 𝒟𝒯𝒥𝒜𝒵",
     },
+    game_tar={
+        ac=">全消 $1/$2",
+        line=">消行 $1/$2",
+        atk=">攻击 $1/$2",
+    },
     game_noDisp="##无信号##",
     game_acGraphic="ALL CLEAR",
     game_tarLine="<<",
@@ -276,16 +281,19 @@ local texts={
     wrongCmd="用法详见#duelhelp",
     syntax_error="❌",
 }
+---@type Map<BrikDuel.Rule>
 local ruleLib={
+    ---@class BrikDuel.Rule
     default={
         modeName='none',
         fieldH=20,
         nextCount=7,
         seqType='bag',
+        userseed=false,
         clearSys='nxt',
         updStat=true,
-        autoSave=true,
-        disposable=true,
+        autoSave=true, -- duel setting
+        disposable=true, -- duel setting
         welcomeText='solo',
         startSeq=false,
         tar=false, -- target type
@@ -297,8 +305,11 @@ local ruleLib={
     duel={
         modeName='duel',
         fieldH=40,
+        updStat=false,
         disposable=false,
         welcomeText='duel',
+        tar='line',
+        tarDat=20,
         reward=10,
     },
     solo={
@@ -331,9 +342,11 @@ local ruleLib={
         },
         day={
             modeName='day',
-            -- clearSys='std',
-            seqType='none',
-            tarDat=10,
+            clearSys='std',
+            tar='atk',
+            tarDat=14,
+            seqType='rand',
+            userseed=true,
         },
     }
 }
@@ -359,7 +372,6 @@ local userLib
 ---@field atk integer attack sent
 ---@field batch integer
 ---@field spike integer
----@field overkill integer
 ---@field __index BrikDuel.UserStat
 
 ---@class BrikDuel.UserSetting
@@ -378,16 +390,18 @@ local userLib
 ---@field stat BrikDuel.UserStat
 ---@field set BrikDuel.UserSetting
 ---@field rec BrikDuel.UserRecord
+---@field daily {drop:integer?, date:string?}
 ---@field coin integer
 local User={
     id=-1,
     stat={
         game=0,win=0,lose=0,
         move=0,err=0,drop=0,spin=0,ac=0,
-        line=0,atk=0,batch=0,spike=0,overkill=0,
+        line=0,atk=0,batch=0,spike=0,
         __index=nil,
     },
     rec={},
+    daily={drop=nil,date=nil},
     coin=0,
     set={
         key='qwQWcCfxdDzsjltoi01231',
@@ -439,51 +453,68 @@ end
 ---@field spike integer
 
 ---@class BrikDuel.Game
----@field uid integer
 ---@field rngState string
 ---@field dieReason string|false
 ---@field field Mat<integer>
----@field sequence string[]
+---@field sequences string[][]
+---@field stats BrikDuel.GameStat[]
+---@field round number
 ---@field seqBuffer string[]
 ---@field garbageH integer
 ---@field rule table
----@field stat BrikDuel.GameStat
----@field startTime integer
----@field lastUpdateTime integer
 Game={}
 Game.__index=Game
 
----@param seed number
 ---@return BrikDuel.Game
-function Game.new(uid,seed)
-    rng:setSeed(seed)
-    for _=1,26 do rng:random() end
+function Game.new(cnt,rngState)
     local game=setmetatable({
-        uid=uid,
-        rngState=rng:getState(),
+        rngState=rngState,
+        round=1,
         dieReason=false,
         field={},
-        sequence={},
+        sequences={},
+        stats={},
         seqBuffer={},
         garbageH=0,
         rule={},
-        stat={move=0,err=0,drop=0,spin=0,ac=0,line=0,atk=0,batch=0,spike=0},
-        startTime=os.time(),
-        lastUpdateTime=os.time(),
     },Game)
+    for i=1,cnt do
+        game.sequences[i]={}
+        game.stats[i]={move=0,err=0,drop=0,spin=0,ac=0,line=0,atk=0,batch=0,spike=0}
+    end
     return game
 end
 
+---@param count? number target count
 function Game:supplyNext(count)
+    local seq=self.sequences[self.round]
     if not count then count=self.rule.nextCount end
-    while #self.sequence<count do
-        if not self.seqBuffer[1] then
-            if self.rule.seqType=='bag' then
-                self.seqBuffer=TABLE.shuffle(TABLE.copy(bag0))
+    while #seq<count do
+        if MATH.roll(.01) then break end
+        if self.rule.seqType=='bag' then
+            if not self.seqBuffer[1] then
+                self.seqBuffer=TABLE.copy(bag0)
+                for i=7,2,-1 do
+                    local j=self:random(i)
+                    self.seqBuffer[i],self.seqBuffer[j]=self.seqBuffer[j],self.seqBuffer[i]
+                end
             end
-            if not self.seqBuffer[1] then return end
+            ins(seq,rem(self.seqBuffer))
+        elseif self.rule.seqType=='his4' then
+            local r
+            local roll=0
+            repeat
+                r=bag0[self:random(7)]
+                roll=roll+1
+            until not TABLE.find(self.seqBuffer,r) or roll>=4
+            ins(self.seqBuffer,1,r)
+            self.seqBuffer[5]=nil
+            ins(seq,r)
+        elseif self.rule.seqType=='rand' then
+            ins(seq,bag0[self:random(7)])
+        else
+            error("WTF")
         end
-        ins(self.sequence,rem(self.seqBuffer))
     end
 end
 
@@ -492,16 +523,17 @@ end
 ---@return number
 function Game:random(i,j)
     rng:setState(self.rngState)
+    ---@diagnostic disable-next-line
     local r=rng:random(i,j)
     self.rngState=rng:getState()
     return r
 end
 
-function Game:parse(str)
+function Game:parse(user,str)
     local buf=STRING.newBuf()
     buf:put(str)
-    local keyMap=' '..self:getUsr().set.key
-    local simSeq=TABLE.copy(self.sequence)
+    local keyMap=' '..user.set.key
+    local simSeq=TABLE.copy(self.sequences[self.round])
     local c,ptr='',0
     local controls={}
     local clean=true -- 当前块是否移动过
@@ -597,7 +629,7 @@ function Game:parse(str)
 end
 
 function Game:spawnPiece()
-    local piece=self.sequence[1]
+    local piece=self.sequences[self.round][1]
     if not piece then return 0,0,0,NONE end
     local data=brikData[piece]
     return data.x,self.rule.fieldH+1-#data.mat,0,data.mat
@@ -627,9 +659,10 @@ function Game:lockPiece(field,piece,cx,cy)
 end
 
 function Game:execute(controls)
-    self.lastUpdateTime=os.time()
     local clears={}
+    local stat=self.stats[self.round]
     local field=self.field
+    local seq=self.sequences[self.round]
     local curX,curY,dir,mat=self:spawnPiece()
     if self:ifoverlap(field,mat,curX,curY) then
         curY=#field+1
@@ -639,7 +672,7 @@ function Game:execute(controls)
         local dropped
         if ctrl.act=='pick' then
             if ctrl.pID==2 then
-                self.sequence[1],self.sequence[2]=self.sequence[2],self.sequence[1]
+                seq[1],seq[2]=seq[2],seq[1]
                 curX,curY,dir,mat=self:spawnPiece()
                 if self:ifoverlap(field,mat,curX,curY) then
                     self.dieReason='suffocate'
@@ -665,10 +698,10 @@ function Game:execute(controls)
             end
         elseif ctrl.act=='rotate' then
             local newDir=(dir+ctrl.dir)%4
-            local bias=pieceRotBias[self.sequence[1]][10*dir+newDir]
+            local bias=pieceRotBias[seq[1]][10*dir+newDir]
             local newX,newY=curX+bias[1],curY+bias[2]
             local newMat=TABLE.rotate(mat,ctrl.dir==1 and 'R' or ctrl.dir==3 and 'L' or 'F')
-            local kicks=RS[self.sequence[1]][10*dir+newDir]
+            local kicks=RS[seq[1]][10*dir+newDir]
             for _,kick in next,kicks do
                 local _x,_y=newX+kick[1],newY+kick[2]
                 if not self:ifoverlap(field,newMat,_x,_y) then
@@ -687,7 +720,7 @@ function Game:execute(controls)
                 dropped=true
             end
         elseif ctrl.act=='swap' then
-            self.sequence[1],self.sequence[2]=self.sequence[2],self.sequence[1]
+            seq[1],seq[2]=seq[2],seq[1]
             curX,curY,dir,mat=self:spawnPiece()
             if self:ifoverlap(field,mat,curX,curY) then
                 self.dieReason='suffocate'
@@ -706,19 +739,19 @@ function Game:execute(controls)
             end
             if clear>0 then
                 ins(clears,{
-                    piece=self.sequence[1],
+                    piece=seq[1],
                     spin=tuck,
                     line=clear,
                     ac=#field==0,
                 })
             end
-            self.stat.drop=self.stat.drop+1
-            if tuck then self.stat.spin=self.stat.spin+1 end
-            self.stat.line=self.stat.line+clear
-            if #field==0 then self.stat.ac=self.stat.ac+1 end
+            stat.drop=stat.drop+1
+            if tuck then stat.spin=stat.spin+1 end
+            stat.line=stat.line+clear
+            if #field==0 then stat.ac=stat.ac+1 end
 
-            rem(self.sequence,1)
-            if self.sequence[1] then
+            rem(seq,1)
+            if seq[1] then
                 curX,curY,dir,mat=self:spawnPiece()
                 if self:ifoverlap(field,mat,curX,curY) then
                     self.dieReason='suffocate'
@@ -726,18 +759,18 @@ function Game:execute(controls)
                 end
             end
         end
-        self.stat.move=self.stat.move+1
+        stat.move=stat.move+1
     end
     if self.rule.clearSys=='std' then
         local batch,spike=0,0
         for _,clear in next,clears do
             batch=batch+clear.line
-            clear.atk=clear*(clear.spin and 2 or 1)+(clear.ac and 3 or 0)
+            clear.atk=clear.line*(clear.spin and 2 or 1)+(clear.ac and 3 or 0)
             spike=spike+clear.atk
-            self.stat.atk=self.stat.atk+clear.atk
+            stat.atk=stat.atk+clear.atk
         end
-        self.stat.batch=max(self.stat.batch,batch)
-        self.stat.spike=max(self.stat.spike,spike)
+        stat.batch=max(stat.batch,batch)
+        stat.spike=max(stat.spike,spike)
     elseif self.rule.clearSys=='nxt' then
         if clears[1] then
             local pieces=""
@@ -763,9 +796,9 @@ function Game:execute(controls)
                 ac=ac,
                 atk=atk,
             }}
-            self.stat.atk=self.stat.atk+atk
-            self.stat.batch=max(self.stat.batch,lines)
-            self.stat.spike=max(self.stat.spike,atk)
+            stat.atk=stat.atk+atk
+            stat.batch=max(stat.batch,lines)
+            stat.spike=max(stat.spike,atk)
         end
     end
     self.clears=clears
@@ -775,35 +808,32 @@ function Game:execute(controls)
     end
 end
 
-function Game:getUsr()
-    return User.get(self.uid)
-end
-
-function Game:getText_seq()
-    local skin=skins[self:getUsr().set.next]
+function Game:getText_seq(skin,round)
     local buf=""
-    for i=1,#self.sequence do buf=buf..skin[minoId[self.sequence[i]]] end
+    local seq=self.sequences[round or self.round]
+    for i=1,#seq do buf=buf..skins[skin][minoId[seq[i]]] end
     return buf
 end
 
-function Game:getText_field()
+---@param user BrikDuel.User
+function Game:getText_field(user)
     if self.rule.noDisp then return texts.game_noDisp end
+    local stat=self.stats[self.round]
     local field=self.field
     local h=#field
     if h>0 then
         local buf=STRING.newBuf()
-        local skin=skins[self:getUsr().set.skin]
+        local sk=skins[user.set.skin]
         for y=h,max(h-9,1),-1 do
             if y~=h then buf:put("\n") end
-            for x=1,10 do buf:put(skin[field[y][x]]) end
-            if self.rule.tar=='line' and y==self.rule.tarDat-self.stat.line then buf:put(texts.game_tarLine) end
+            for x=1,10 do buf:put(sk[field[y][x]]) end
+            if self.rule.tar=='line' and y==self.rule.tarDat-stat.line then buf:put(texts.game_tarLine) end
         end
         if h>10 then buf:put(repD(texts.game_moreLine,h-10)) end
-        local set=self:getUsr().set
-        buf:put("\n"..marks[set.mark][set.key:sub(-1)+1])
+        buf:put("\n"..marks[user.set.mark][user.set.key:sub(-1)+1])
         return tostring(buf)
     else
-        return texts.game_acFX[self.stat.ac<=5 and self.stat.ac or 6+self.stat.ac%3] or ""
+        return texts.game_acFX[stat.ac<=5 and stat.ac or 6+stat.ac%3] or ""
     end
 end
 
@@ -890,8 +920,10 @@ local cellColor={
     {COLOR.DR,COLOR.dR},
 }
 local imgCnt=0
-function Game:renderImage()
+function Game:renderImage(colBase)
+    local stat=self.stats[self.round]
     local field=self.field
+    local seq=self.sequences[self.round]
     GC.setCanvas(texture.canvas)
     GC.push('transform')
         GC.clear()
@@ -903,7 +935,7 @@ function Game:renderImage()
 
         -- 相机
         local camStartH=max(#field-9,1) -- 从最多看顶部10行的位置开始
-        local camEndH=#field==0 and (self.stat.ac==0 and 3 or 5) or #field+2 -- 到场地高度+2行结束（全消例外）
+        local camEndH=#field==0 and (stat.ac==0 and 3 or 5) or #field+2 -- 到场地高度+2行结束（全消例外）
         if self.rule.noDisp then
             camStartH,camEndH=1,4
         end
@@ -916,7 +948,7 @@ function Game:renderImage()
         FONT.set(15)
         GC.setColor(.7023,.7023,.7023,.26)
         GC.print("BrikDuel",6,imgStartH+1*cSize,-.26)
-        GC.print(tostring(self.uid),6,imgStartH+2*cSize,-.26)
+        GC.print(tostring(nil),6,imgStartH+2*cSize,-.26) -- TODO
 
         GC.translate(0,fieldH)
 
@@ -944,18 +976,18 @@ function Game:renderImage()
                         end
                     end
                 end
-            elseif self.stat.ac>0 then
+            elseif stat.ac>0 then
                 FONT.set(25)
                 GC.strokePrint('full',2,COLOR.O,COLOR.lY,texts.game_acGraphic,5*cSize,-cSize*3,nil,'center')
-                if self.stat.ac>=2 then
+                if stat.ac>=2 then
                     FONT.set(20)
-                    GC.strokePrint('full',1,COLOR.O,COLOR.lY,"x "..self.stat.ac,8.6*cSize,-cSize*4.2,nil,'right')
+                    GC.strokePrint('full',1,COLOR.O,COLOR.lY,"x "..stat.ac,8.6*cSize,-cSize*4.2,nil,'right')
                 end
             end
 
             -- 目标线
             if self.rule.tar=='line' then
-                local lineH=max(self.rule.tarDat-self.stat.line,0)
+                local lineH=max(self.rule.tarDat-stat.line,0)
                 if lineH>=0 then
                     GC.translate(0,-cSize*lineH)
                     GC.setColor(COLOR.D)
@@ -972,7 +1004,7 @@ function Game:renderImage()
         GC.translate(0,-(camStartH-1)*cSize)
 
         -- 影子
-        local cur=self.sequence[1]
+        local cur=seq[1]
         if cur then
             local width=pieceWidth[cur][0]
             local shadeStartX=math.floor(6-width/2)
@@ -993,13 +1025,12 @@ function Game:renderImage()
         -- 列号
         GC.setColor(COLOR.L)
         FONT.set(15,'mono')
-        local base=tonumber(self:getUsr().set.key:sub(-1))
-        for x=0,9 do GC.print(tostring((x+base)%10),cSize*x+4,0) end
+        for x=0,9 do GC.print(tostring((x+colBase)%10),cSize*x+4,0) end
 
         -- 预览
         GC.translate(nextBound,colNumH+nextH1-nextBound)
-        for i=1,min(#self.sequence,self.rule.nextCount) do
-            local piece=self.sequence[i]
+        for i=1,min(#seq,self.rule.nextCount) do
+            local piece=seq[i]
             local img=texture[piece]
             local k=i<=2 and nextK1 or nextK2
             GC.draw(img,0,0,0,k,k,0,img:getHeight())
@@ -1017,15 +1048,16 @@ function Game:renderImage()
     return CQ.img(Config.extraData.sandboxPath..fileName)
 end
 
+---@param user BrikDuel.User
 ---@param withRtn? boolean
-function Game:getContent(withRtn)
-    if self:getUsr().set.skin~='image' then
-        return self:getText_field().."\n"..self:getText_seq()..(withRtn and "\n" or "")
-    else
-        local suc,res=pcall(self.renderImage,self)
+function Game:getContent(user,withRtn)
+    if user.set.skin=='image' then
+        local suc,res=pcall(self.renderImage,self,tonumber(user.set.key:sub(-1)))
         if suc then return res end
         GC.setCanvas()
-        return texts.game_renderRrror..tostring(res)
+        return texts.game_renderError..tostring(res)
+    else
+        return self:getText_field(user).."\n"..self:getText_seq(user.set.skin)..(withRtn and "\n" or "")
     end
 end
 
@@ -1040,82 +1072,99 @@ function Game:getText_clear()
     return tostring(buf)
 end
 
+function Game:getText_extra()
+    if self.rule.tar=='ac' then
+        return repD(texts.game_tar.ac,self.stats[self.round].ac,self.rule.tarDat)
+    elseif self.rule.tar=='line' then
+        return repD(texts.game_tar.line,self.stats[self.round].line,self.rule.tarDat)
+    elseif self.rule.tar=='atk' then
+        return repD(texts.game_tar.atk,self.stats[self.round].atk,self.rule.tarDat)
+    end
+    return ""
+end
+
 ---@class BrikDuel.Duel
----@field uid integer
+---@field id integer Unique ID
 ---@field sid integer Session ID
----@field member integer[]
----@field game BrikDuel.Game[]
+---@field member integer[] qq IDs
+---@field game BrikDuel.Game
 ---@field autoSave boolean
 ---@field disposable boolean
 ---@field state 'wait'|'ready'|'play'|'finish'
+---@field startTime integer
+---@field lastUpdateTime integer
 ---@field finishedMes? string
 local Duel={}
 Duel.__index=Duel
 
 ---@param sid integer
----@param user1 integer
----@param user2? integer
+---@param user1 integer qq ID
+---@param user2? integer qq ID
 ---@return BrikDuel.Duel|false
 function Duel.new(sid,user1,user2)
     local duel=setmetatable({
-        uid=nil,
+        id=nil,
         sid=sid,
         member={user1,user2},
         game={},
         state=user2 and 'ready' or 'wait',
+        startTime=os.time(),
+        lastUpdateTime=os.time(),
     },Duel)
     for _=1,10 do
-        duel.uid=math.random(1000,9999)
-        if not duelPool[duel.uid] then break end
+        duel.id=math.random(1000,9999)
+        if not duelPool[duel.id] then break end
     end
-    if duelPool[duel.uid] then return false end
-    duelPool[duel.uid]=duel
+    if duelPool[duel.id] then return false end
+    duelPool[duel.id]=duel
     return duel
 end
 
 function Duel:getFile()
-    return 'brikduel/game_'..self.uid
+    return 'brikduel/game_'..self.id
 end
 
 ---@param S Session
 ---@param D table
----@param rule table
+---@param rule BrikDuel.Rule
 function Duel:start(S,D,rule)
     self.state='play'
-    math.randomseed(os.time())
-    for i=1,#self.member do self.game[i]=Game.new(self.member[i],math.random(2^50)) end
-
     TABLE.updateMissing(rule,ruleLib.default)
+
+    rng:setSeed(rule.userseed and
+        self.member[1]+os.date('%y%m%d')^2 or
+        math.random(2^50)
+    )
+    self.game=Game.new(#self.member,rng:getState())
+    local game=self.game
 
     self.autoSave=rule.autoSave
     self.disposable=rule.disposable
 
-    for _,game in next,self.game do
-        game.rule=rule
-        if rule.startSeq then
-            game.seqBuffer=TABLE.copy(rule.startSeq)
-        end
-        game:supplyNext()
+    game.rule=rule
+    if rule.startSeq then
+        game.sequences[game.round]=TABLE.copy(rule.startSeq)
     end
+    game:supplyNext()
 
     if self.autoSave then self:save() end
 
     if rule.welcomeText=='duel' then
         delReply(S,260,nil,
             repD(texts.game_start.duel,
-                self.uid,
+                self.id,
                 CQ.at(self.member[1]),
-                self.game[1]:getText_seq(),
-                self.game[2]:getText_seq(),
+                game:getText_seq('image',1),
+                game:getText_seq('image',2),
                 CQ.at(self.member[2])
             )
         )
     elseif rule.welcomeText=='solo' then
         delReply(S,260,nil,
             repD(texts.game_start.solo,
-                self.uid,
+                self.id,
                 texts.game_modeName[rule.modeName] or rule.modeName:upper()
-            )..self.game[1]:getContent(nil)
+            )..game:getContent(User.get(self.member[game.round]))
         )
     else
         error("WTF")
@@ -1125,32 +1174,39 @@ end
 ---@param S Session
 ---@param D table
 function Duel:afterMove(S,D)
+    local game=self.game
+    self.lastUpdateTime=os.time()
     local finish
-    for i=1,#self.game do
-        local game=self.game[i]
+    repeat
+        local stat=game.stats[game.round]
         if game.rule.tar then
             if game.rule.tar=='ac' then
-                if game.stat.ac>=game.rule.tarDat then
-                    finish={reason='win',id=i}
+                if stat.ac>=game.rule.tarDat then
+                    finish={reason='win',id=game.round}
                     break
                 end
             elseif game.rule.tar=='line' then
-                if game.stat.line>=game.rule.tarDat then
-                    finish={reason='win',id=i}
+                if stat.line>=game.rule.tarDat then
+                    finish={reason='win',id=game.round}
+                    break
+                end
+            elseif game.rule.tar=='atk' then
+                if stat.atk>=game.rule.tarDat then
+                    finish={reason='win',id=game.round}
                     break
                 end
             end
         end
         game:supplyNext()
-        if #game.sequence==0 then
-            finish={reason='starve',id=i}
+        if #self.member==1 and #game.sequences[1]==0 then
+            finish={reason='starve',id=game.round}
             break
         end
         if not finish and game.dieReason then
-            finish={reason=game.dieReason,id=i}
+            finish={reason=game.dieReason,id=game.round}
             break
         end
-    end
+    until true
 
     if finish then
         self:finish(S,D,{
@@ -1159,8 +1215,11 @@ function Duel:afterMove(S,D)
             uid=self.member[finish.id],
             noOutput=true,
         })
-    elseif self.autoSave then
-        self:save()
+    else
+        game.round=game.round%#self.member+1
+        if self.autoSave then
+            self:save()
+        end
     end
 end
 
@@ -1172,7 +1231,7 @@ function Duel:getTimeState()
 
     -- local times={}
     -- for i=1,#self.game do
-    --     times[i]=self.game[i].lastUpdateTime
+    --     times[i]=self.game.lastUpdateTime
     -- end
 
     -- local waitTimeOut=os.time()-TABLE.max(times)>maxWaitTime
@@ -1192,76 +1251,52 @@ function Duel:finish(S,D,info)
         D.matches[self.member[i]]=nil
     end
 
-    local survivor
-    for id,game in next,self.game do
-        if not game.dieReason then
-            if survivor==nil then
-                survivor=id
-            elseif survivor then
-                survivor=false
-            end
-        end
-    end
-
     -- 更新统计
     local needSave
-    for id,game in next,self.game do
-        local user=User.get(self.member[id])
-        if game.rule.updStat then
-            for k,v in next,game.stat do
+    local game=self.game
+    if game.rule.updStat then
+        for i=1,#self.member do
+            local user=User.get(self.member[i])
+            for k,v in next,game.stats[i] do
                 if k=='batch' or k=='spike' then
                     user.stat[k]=max(user.stat[k],v)
                 else
                     user.stat[k]=user.stat[k]+v
                 end
             end
-            needSave=true
         end
-        if id==survivor and not game.dieReason then
-            if game.rule.reward then
-                user.coin=user.coin+game.rule.reward
-                needSave=true
-            end
-            if #self.game>1 then
-                local atkOverflow=max(self.game[survivor%#self.game+1].garbageH-20,0)
-                user.stat.overkill=user.stat.overkill+atkOverflow
-                if game.rule.reward then
-                    user.coin=user.coin+min(math.floor(atkOverflow/5),5)
-                end
-                needSave=true
-            end
-        end
+        needSave=true
     end
 
     -- 结束消息
     if info.result=='cancel' then
-        self.finishedMes=repD(texts.game_finish.cancel,self.uid)
+        self.finishedMes=repD(texts.game_finish.cancel,self.id)
     elseif info.result=='finish' then
         if info.reason=='win' then
-            local game=self.game[TABLE.find(self.member,info.uid)]
-            assert(game,"WTF")
             if game.rule.timeRec then
                 local modeName=game.rule.modeName
-                local userRec=User.get(game.uid).rec
+                local userRec=User.get(self.member[game.round]).rec
                 local oldTime=userRec[modeName] or 2600
-                local newTime=os.time()-game.startTime
-                if newTime<(oldTime) then
+                local newTime=os.time()-self.startTime
+                if newTime<oldTime then
                     self.finishedMes=repD(texts.game_newRecord,newTime.."秒",oldTime.."秒")
                     userRec[modeName]=newTime
                     needSave=true
                 else
                     self.finishedMes=repD(texts.game_notRecord,newTime.."秒",oldTime.."秒")
                 end
+            else
+                self.finishedMes=repD(texts.game_finish.solo,self.id).."：任务完成"
             end
         elseif info.reason=='suffocate' then
-            self.finishedMes=repD(texts.game_finish.solo,self.uid).."：窒息"
-        elseif #self.game==1 then
-            self.finishedMes=repD(texts.game_finish.solo,self.uid)
+            self.finishedMes=repD(texts.game_finish.solo,self.id).."：窒息"
+        elseif #self.member==1 then
+            self.finishedMes=repD(texts.game_finish.solo,self.id)
         else
-            self.finishedMes=repD(texts.game_finish.norm,self.uid)
+            self.finishedMes=repD(texts.game_finish.norm,self.id)
         end
     elseif info.result=='interrupt' then
-        self.finishedMes=repD(texts.game_finish.norm,self.uid)
+        self.finishedMes=repD(texts.game_finish.norm,self.id)
     end
 
     if not info.noOutput and #self.finishedMes>0 then
@@ -1270,7 +1305,7 @@ function Duel:finish(S,D,info)
 
     if needSave then User.save() end
 
-    duelPool[self.uid]=nil
+    duelPool[self.id]=nil
     if FILE.exist(self:getFile()) then
         love.filesystem.remove(self:getFile())
     end
@@ -1312,9 +1347,7 @@ return {
                     ---@type BrikDuel.Duel
                     local duel=FILE.load('brikduel/'..fileName)
                     setmetatable(duel,Duel)
-                    for i=1,#duel.game do
-                        setmetatable(duel.game[i],Game)
-                    end
+                    setmetatable(duel.game,Game)
                     duelPool[tonumber(fileName:match('%d+'))]=duel
                 end
             end
@@ -1332,10 +1365,10 @@ return {
 
         ---@type BrikDuel.Duel
         local curDuel=D.matches[M.user_id]
+        local curUser=User.get(M.user_id)
 
         if mes:sub(1,1)=='#' then
             if not (mes:sub(1,3)=="#dl" or mes:sub(1,5)=='#duel') then return false end
-            local curUser=User.get(M.user_id)
 
             -- 缩写
             if     mes:find('^#dlhelp')  then
@@ -1357,9 +1390,7 @@ return {
                 if not curDuel then
                     if S:lock('brikduel_notInRoom',12) then delReply(S,26,M,texts.notInRoom) end
                 else
-                    local pid=TABLE.find(curDuel.member,M.user_id)
-                    local game=curDuel.game[pid]
-                    S:send(game:getContent())
+                    S:send(curDuel.game:getContent(curUser)..curDuel.game:getText_extra())
                     S:delayDelete(26,M.message_id)
                 end
             elseif mes:find('^#dlstat')  then
@@ -1369,11 +1400,11 @@ return {
                         CQ.at(curUser.id), curUser.coin,
                         curUser.stat.game, curUser.stat.win, curUser.stat.lose, math.ceil(curUser.stat.win/max(curUser.stat.win+curUser.stat.lose,1)*100),
                         curUser.stat.move, curUser.stat.err, curUser.stat.drop, curUser.stat.spin, curUser.stat.ac,
-                        curUser.stat.line, curUser.stat.atk, curUser.stat.batch, curUser.stat.spike, curUser.stat.overkill,
+                        curUser.stat.line, curUser.stat.atk, curUser.stat.batch, curUser.stat.spike,
                         curUser:getRec()
                     ))
                     if curDuel then
-                        info:put("\n有一场对局("..D.matches[M.user_id].uid..")进行中")
+                        info:put("\n有一场对局("..D.matches[M.user_id].id..")进行中")
                     end
                     S:send(info)
                 else
@@ -1385,10 +1416,10 @@ return {
                     if not duel then duel=D.matches[M.user_id] end
                     if duel then
                         delReply(S,260,M,repD(texts.query,
-                            duel.uid,
+                            duel.id,
                             duel.member[1],
                             duel.member[2],
-                            table.concat(duel.game[1].sequence," ")
+                            table.concat(duel.game.sequences[duel.game.round]," ")
                         ))
                     else
                         if S:lock('brikduel_noRoom',12) then
@@ -1437,7 +1468,7 @@ return {
                 local newDuel=Duel.new(S.id,M.user_id)
                 if newDuel then
                     D.matches[M.user_id]=newDuel
-                    S:send(repD(texts.new_free,newDuel.uid))
+                    S:send(repD(texts.new_free,newDuel.id))
                 else
                     if S:lock('brikduel_failed',26) then
                         delReply(S,26,M,texts.new_failed)
@@ -1532,10 +1563,6 @@ return {
                 local newDuel=Duel.new(S.id,M.user_id)
                 if newDuel then
                     D.matches[M.user_id]=newDuel
-                    if exData=='day' then
-                        math.randomseed(M.sender.user_id+os.date('%y%m%d'))
-                        ruleLib.solo.day.startSeq=TABLE.append(TABLE.shuffle(TABLE.copy(bag0)),TABLE.shuffle(TABLE.copy(bag0)))
-                    end
                     newDuel:start(S,D,ruleLib.solo[exData] or {
                         modeName='custom',
                         updStat=false,
@@ -1560,7 +1587,7 @@ return {
                 if newDuel then
                     D.matches[M.user_id]=newDuel
                     D.matches[opID]=newDuel
-                    S:send(repD(texts.new_room,newDuel.uid,TABLE.getRandom(TABLE.getKeys(keyword.accept))))
+                    S:send(repD(texts.new_room,newDuel.id,TABLE.getRandom(TABLE.getKeys(keyword.accept))))
                 else
                     if S:lock('brikduel_failed',26) then
                         delReply(S,26,M,texts.new_failed)
@@ -1573,7 +1600,6 @@ return {
             end
             return true
         elseif curDuel then
-            local pid=TABLE.find(curDuel.member,M.user_id)
             if     curDuel.state=='wait' then
                 if keyword.cancel[mes] then
                     curDuel:finish(S,D,{result='cancel'})
@@ -1597,29 +1623,31 @@ return {
                     return true
                 end
 
-                local ctrlMes=M.raw_message:match('^['..User.get(M.user_id).set.key..'0-9 ]+$')
+                local ctrlMes=M.raw_message:match('^['..curUser.set.key..'0-9 ]+$')
                 if not ctrlMes then return false end
 
-                local game=curDuel.game[pid]
-                local suc,controls=pcall(game.parse,game,ctrlMes)
+                local game=curDuel.game
+                local stat=game.stats[game.round]
+                local suc,controls=pcall(game.parse,game,curUser,ctrlMes)
                 if not suc then
-                    game.stat.err=game.stat.err+1
+                    stat.err=stat.err+1
                     delReply(S,260,nil,texts.syntax_error..controls:sub((controls:find('%['))))
                     return true
                 end
 
                 if #controls==0 then return false end
                 -- print(TABLE.dumpDeflate(controls))
-                local dropCnt,lineCnt=game.stat.drop,game.stat.line
+                local dropCnt,lineCnt=stat.drop,stat.line
                 game:execute(controls)
-                dropCnt,lineCnt=game.stat.drop-dropCnt,game.stat.line-lineCnt
+                dropCnt,lineCnt=stat.drop-dropCnt,stat.line-lineCnt
                 curDuel:afterMove(S,D)
 
                 local buf=STRING.newBuf()
                 -- buf:put(CQ.at(M.user_id).."\n")
 
-                buf:put(game:getContent(true))
+                buf:put(game:getContent(curUser,true))
                 buf:put(game:getText_clear())
+                buf:put((game.clears[1] and "\n" or "")..game:getText_extra())
                 if curDuel.finishedMes then
                     local ptr,len=buf:ref()
                     local lastChar=string.char(ptr[len-1])
