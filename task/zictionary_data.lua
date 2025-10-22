@@ -41,7 +41,7 @@ local meta={
     },
     {
         word="推荐;游戏推荐",
-        text="对战→io js tec ppt\n单机→tech js tetr tec\n偷玩→tetr tech",
+        text="对战→tetrio、jstris、tec、ppt\n单机→tech、jstris、tetrjs、tec\n偷玩→tetrjs、tech",
     },
     {
         word="分类;游戏分类",
@@ -1331,6 +1331,7 @@ local game={
         word="屁块;tetrjs;tetr.js",
         title="Tetr.js",
         text="简称屁块（作者网名Farter） 非官块 网页 主单机 音画廉价 电脑+手机 键盘可改键触屏不行\n有较多创意模式",
+        detail="严格来说屁块是tetr.js的一个衍生版本，点开屁块就可以看到附的原版链接",
         link="farter.cn/t",
     },
     {
