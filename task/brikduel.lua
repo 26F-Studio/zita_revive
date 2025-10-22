@@ -140,13 +140,16 @@ local texts={
     -- (留空) 空房等人   @某人 发起决斗
     -- join/query [房号] 进房/查看房间状态
     help=trimIndent[[
-        #duel（可略作#dl） 后接：
-        any/AC/10L/gm/day/[自定序列] 单人模式
+        方块⚔对决 「帮助」
+        #duel（可略作#dl）后紧接：
+        AC/10L/GM/day 开始单人挑战
+        any/[自定序列] 开始单人实验
         stat 个人信息   see 查看场地
         rule 规则手册   man 操作手册
-        end 取消/结束   leave 离开（保留房间）
+        end 取消/结束   leave 离开房间
         setk/sets 设置键位/皮肤
-        setx/setn 设置非图片模式下的列号/预览样式
+        setx/setn 文本模式列号/预览样式
+        rank[模式名] 排行榜
     ]],
     rule=trimIndent([[
         方块⚔对决 「规则手册」
