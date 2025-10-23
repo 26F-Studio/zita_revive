@@ -143,7 +143,7 @@ local texts={
         方块⚔对决 「帮助」
         #duel（可略作#dl）后紧接：
         AC/10L/GM/day 开始单人挑战
-        any/[自定序列] 开始单人实验
+        any 沙盒模式   @某人 发起决斗
         stat 个人信息   see 查看场地
         rule 规则手册   man 操作手册
         end 取消/结束   leave 离开房间
@@ -288,7 +288,7 @@ local texts={
 local ruleLib={
     ---@class BrikDuel.Rule
     default={
-        modeName='none',
+        modeName='null',
         fieldH=20,
         nextCount=7,
         seqType='bag',
@@ -1573,7 +1573,7 @@ return {
                 else
                     delReply(S,26,M,texts.setn_help)
                 end
-            elseif ruleLib.solo[mes:sub(4)] or mes:sub(4):find('^%s*[zsjltoiZSJLTOI]+$') then
+            elseif ruleLib.solo[mes:sub(4)] then
                 -- 单人
                 local exData=mes:sub(4)
                 cancelCurrent(curDuel,S,M,D)
@@ -1581,12 +1581,7 @@ return {
                 local newDuel=Duel.new(S.id,M.user_id)
                 if newDuel then
                     D.matches[M.user_id]=newDuel
-                    newDuel:start(S,D,ruleLib.solo[exData] or {
-                        modeName='custom',
-                        updStat=false,
-                        seqType='none',
-                        startSeq=STRING.atomize(exData:upper():reverse()),
-                    })
+                    newDuel:start(S,D,ruleLib.solo[exData])
                 else
                     if S:lock('brikduel_failed',26) then
                         delReply(S,26,M,texts.new_failed)
