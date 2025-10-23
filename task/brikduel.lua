@@ -425,6 +425,7 @@ function User.get(id)
             id=id,
             set=setmetatable({},User.set),
             stat=setmetatable({},User.stat),
+            daily={},
             rec={},
         },User)
         User.save()
