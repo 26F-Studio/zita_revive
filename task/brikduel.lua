@@ -347,7 +347,7 @@ local ruleLib={
             modeName='day',
             tar='atk',
             tarDat=14,
-            nextCount=4,
+            nextCount=6,
             seqType='rand',
             userseed=true,
         },
