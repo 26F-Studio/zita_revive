@@ -1,13 +1,11 @@
 local codeEnv={}
 for _,v in next,{
-    'next','print',
-    'tonumber','tostring',
-    'ipairs','pairs',
-    'pcall','xpcall',
-    'math','string','table',
-    'MATH','STRING','TABLE',
-    'Config','SessionMap','Bot','Session','CacheData',
+    'next','print','tonumber','tostring',
+    'ipairs','pairs','pcall','xpcall',
     'Time','CQ',
+    'math','string','table',
+    'MATH','STRING','TABLE','GC',
+    'Config','SessionMap','Bot','Session','CacheData',
 } do codeEnv[v]=_G[v] end
 
 ---@type table<string,string|{level:number,func:fun(S:Session,args:string[])}>
@@ -85,8 +83,8 @@ local commands={
             连接次数:$3
             发消息数:$4
         ]],
-            STRING.time(love.timer.getTime()-Bot.stat.launchTime),
-            STRING.time(love.timer.getTime()-Bot.stat.connectTime),
+            STRING.time(Time()-Bot.stat.launchTime),
+            STRING.time(Time()-Bot.stat.connectTime),
             Bot.stat.connectAttempts,
             Bot.stat.messageSent
         )
