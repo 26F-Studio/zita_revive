@@ -6,7 +6,7 @@ for _,v in next,{
     'pcall','xpcall',
     'math','string','table',
     'MATH','STRING','TABLE',
-    'Config','SessionMap','Bot','Session',
+    'Config','SessionMap','Bot','Session','CacheData',
     'Time','CQ',
 } do codeEnv[v]=_G[v] end
 
@@ -39,18 +39,19 @@ local commands={
                 local groupS=SessionMap['g'..uid]
                 if privS and groupS then
                     print("Twin Session: "..uid)
-                    S:send("有两个会话奇迹般地id一样喵！小z不知道是指哪个喵！")
+                    S:send("无法唯一确定会话喵")
+                    return
                 elseif privS or groupS then
                     uid=privS and privS.uid or groupS.uid
                 end
             end
             if SessionMap[uid] then
-                print("Delete Session: "..uid)
-                S:send("小z忘记那里的事情了喵！")
                 SessionMap[uid]=nil
+                print("Delete Session: "..uid)
+                S:send("会话数据清空了喵")
             else
                 print("No Session: "..uid)
-                S:send("小z不知道那是哪里喵…？")
+                S:send("找不到会话喵")
             end
         else
             S:send("（咚）\n……\n这里是哪里喵？")
@@ -76,32 +77,18 @@ local commands={
         end
         S:send(result)
     end},['%task']="%tasks",
-    ['%log']={level=2,func=function(S,args)
-        if args[1]=='on' then
-            S.data.log.log=true
-            print("Log: on")
-            S:send("小z开始日志了喵！")
-        elseif args[1]=='off' then
-            S.data.log.log=false
-            print("Log: off")
-            S:send("小z停止日志了喵！")
-        end
-    end},
     ['%stat']={level=2,func=function(S)
         local result=STRING.repD(STRING.trimIndent[[
-            我做了这些事情喵：
-            本次运行时间:$1
-            本次发消息数:$2
-
+            本轮工作汇报：
+            总运行时间:$1
+            运行时间:$2
             连接次数:$3
-            总运行时间:$4
-            总发消息数:$5
+            发消息数:$4
         ]],
-            STRING.time(love.timer.getTime()-Bot.stat.connectTime),
-            Bot.stat.messageSent,
-            Bot.stat.connectAttempts,
             STRING.time(love.timer.getTime()-Bot.stat.launchTime),
-            Bot.stat.totalMessageSent
+            STRING.time(love.timer.getTime()-Bot.stat.connectTime),
+            Bot.stat.connectAttempts,
+            Bot.stat.messageSent
         )
         S:send(result)
     end},
@@ -111,7 +98,7 @@ local commands={
             %help 帮助  %task 任务列表
             %stop 急停  %shutdown 关机
             %lock 锁群  %unlock 解锁群
-            %restart 失忆  %log on/off 日志
+            %restart 失忆
             %stat 统计  %del 删除回复的消息
             ![lua代码] pwn
         ]],true)
@@ -143,11 +130,6 @@ end
 ---@type Task_raw
 return {
     message=function(S,M,D)
-        ---@cast M OneBot.Event.PrivateMessage
-        if D.log then
-            print((S.priv and "Priv-" or "Group-")..S.id..": "..TABLE.dump(M))
-        end
-
         local level=Bot.isAdmin(M.user_id) and 2 or AdminMsg(M) and 1 or 0
         if #M.message==1 and M.message[1].type=='text' then
             local mes=STRING.trim(M.message[1].data.text)
@@ -155,24 +137,26 @@ return {
                 if #mes<6.26 then return false end
                 if level<2 then noPermission(S) return true end
                 local func,err=loadstring("local S=...\n"..mes:sub(2))
-                local returnMes
                 if func then
                     setfenv(func,codeEnv)
                     local suc,res=pcall(func,S)
                     if suc then
                         if res then
-                            returnMes=tostring(res)
+                            S:send(tostring(res))
                         else
-                            returnMes="好了喵"
+                            Bot._send{
+                                action='set_msg_emoji_like',
+                                params={
+                                    message_id=M.message_id,
+                                    emoji_id=144,
+                                },
+                            }
                         end
                     else
-                        returnMes="坏了！\n"..tostring(res)
+                        S:send("坏了！\n"..tostring(res))
                     end
                 elseif err then
-                    returnMes="不对！\n"..tostring(err)
-                end
-                if returnMes then
-                    S:send(returnMes)
+                    S:send("不对！\n"..tostring(err))
                 end
                 return true
             elseif mes:sub(1,1)=='%' then

@@ -92,7 +92,6 @@ Bot={
     stat={
         connectAttempts=0,
         launchTime=Time(),
-        totalMessageSent=0,
 
         connectTime=Time(),
         messageSent=0,
@@ -149,7 +148,6 @@ function Bot.sendMsg(message,uid,echo)
     end
     if Bot._send(mes) then
         Bot.stat.messageSent=Bot.stat.messageSent+1
-        Bot.stat.totalMessageSent=Bot.stat.totalMessageSent+1
     end
 end
 ---@param mes_id number
@@ -235,13 +233,10 @@ function Bot._update()
                 SessionMap[S.uid]=S
             end
             S:receive(res,'message')
-            if Config.debugLog_message then
-                print("message",TABLE.dump(res))
-            end
         elseif res.post_type=='notice' then
             ---@cast res OneBot.Event.Notice
-            local id=res.group_id
-            if id then
+            if res.group_id then
+                local id=res.group_id
                 local S=SessionMap['g'..id]
                 if not S then
                     if TASK.getLock('newSession_'..id) then return true end
@@ -250,27 +245,27 @@ function Bot._update()
                 end
                 S:receive(res,'notice')
             end
-            if Config.debugLog_notice then
-                print("notice",TABLE.dump(res))
-            end
         elseif res.post_type=='request' then
-            -- TODO
-            if Config.debugLog_request then
-                print("request",TABLE.dump(res))
-            end
+            -- Request event
         elseif rawget(res,'retcode') then
+            -- API response
             ---@cast res OneBot.Event.Response
             if res.echo then
-                local uid=STRING.before(res.echo,':')
-                local S=SessionMap[uid]
-                if S then
-                    S.echos[STRING.after(res.echo,':')]=res.data
+                if res.echo:find(':') then
+                    local uid=STRING.before(res.echo,':')
+                    local S=SessionMap[uid]
+                    if S then
+                        S.echos[STRING.after(res.echo,':')]=res.data
+                    end
+                elseif res.echo:sub(1,6)=='cache_' then
+                    CacheData[res.echo:sub(7)]=res
                 end
             end
-            if Config.debugLog_response then
-                print(TABLE.dump(res))
-            end
         end
+        if Config.debugLog_message and res.post_type=='message' then print("[DEBUG] message",TABLE.dump(res)) end
+        if Config.debugLog_notice and res.post_type=='notice' then print("[DEBUG] notice",TABLE.dump(res)) end
+        if Config.debugLog_request and res.post_type=='request' then print("[DEBUG] request",TABLE.dump(res)) end
+        if Config.debugLog_response and not res.post_type then print("[DEBUG] response",TABLE.dump(res)) end
     elseif op~='pong' then
         print("[inside: "..op.."]")
         if type(pack)=='string' and #pack>0 then print(pack) end
@@ -536,6 +531,8 @@ end
 
 ---@type table<string, Session>
 SessionMap={}
+--------------------------------------------------------------
+CacheData={}
 --------------------------------------------------------------
 ZENITHA.globalEvent.drawCursor=NULL
 ZENITHA.globalEvent.clickFX=NULL
