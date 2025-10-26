@@ -150,6 +150,19 @@ function Bot.sendMsg(message,uid,echo)
         Bot.stat.messageSent=Bot.stat.messageSent+1
     end
 end
+function Bot.sendForwardMsg(messages,uid)
+    local segments={}
+    for i=1,#messages do
+        segments[i]={type="node",data={content={type="text",data={text=messages[i]}}}}
+    end
+    Bot._send{
+        action='send_forward_msg',
+        params={
+            [uid:sub(1,1)=='g' and 'group_id' or 'user_id']=tonumber(uid:sub(2)),
+            messages=segments,
+        },
+    }
+end
 ---@param mes_id number
 function Bot.deleteMsg(mes_id)
     Bot._send{
@@ -159,20 +172,21 @@ function Bot.deleteMsg(mes_id)
         },
     }
 end
-function Bot.sendSticker(mes_id)
-    -- Bot._send{
-    --     action='msg_emoji_like',
-    --     params={
-    --         message_id=mes_id,
-    --     },
-    -- }
+function Bot.sendSticker(mes_id,emoji_id)
+    Bot._send{
+        action='set_msg_emoji_like',
+        params={
+            message_id=mes_id,
+            emoji_id=emoji_id,
+        },
+    }
 end
-function Bot.sendLike(uid,times)
+function Bot.sendLike(uid,count)
     Bot._send{
         action='send_like',
         params={
             uid=uid,
-            times=times or 10,
+            times=count or 10,
         },
     }
 end

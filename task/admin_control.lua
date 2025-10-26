@@ -144,13 +144,7 @@ return {
                         if res then
                             S:send(tostring(res))
                         else
-                            Bot._send{
-                                action='set_msg_emoji_like',
-                                params={
-                                    message_id=M.message_id,
-                                    emoji_id=144,
-                                },
-                            }
+                            Bot.sendSticker(M.message_id,144)
                         end
                     else
                         S:send("坏了！\n"..tostring(res))
