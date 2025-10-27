@@ -5,7 +5,7 @@ for _,v in next,{
     'Time','CQ',
     'math','string','table',
     'MATH','STRING','TABLE','GC',
-    'Config','SessionMap','Bot','Session','CacheData',
+    'Config','SessionMap','Bot','Session','Emoji','CacheData',
 } do codeEnv[v]=_G[v] end
 
 ---@type table<string,string|{level:number,func:fun(S:Session,args:string[])}>
