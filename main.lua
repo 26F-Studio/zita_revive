@@ -69,8 +69,8 @@ local ws=WS.new{
 --------------------------------------------------------------
 -- Remove spaces and convert to lower case
 function SimpStr(s) return s:gsub('%s',''):lower() end
-local esc={['&amp;']='&',['&#91;']='[',['&#93;']=']',['&#44;']=','}
 
+local esc={['&amp;']='&',['&#91;']='[',['&#93;']=']',['&#44;']=','}
 -- Unescape & Remove username in CQ:at
 function RawStr(s)
     s=s:gsub('%[CQ:at,qq=(%d+),name=.-%]','[CQ:at,qq=%1]')
