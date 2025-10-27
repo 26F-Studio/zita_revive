@@ -161,13 +161,16 @@ tools['/ranksim']={
 }
 
 tools['/react']={
-    help="创建任意emoji回应，点击一次后就可以对其他消息使用\n例：/react 36 💣",
+    help="创建一些无法正常发送的emoji回应，部分可收集表情+1两次就会进入“最近使用”\n例：/react 36,💣\n内置表情只支持单个，否则最多五个",
     func=function(args,M)
-        local count=1
-        for i=1,#args do
-            local sec=args[i]
-            if sec:match('%[CQ:face,id=%d+') then sec=sec:match('id=(%d+)') end
-            if not sec:find("%]") then
+        local cqFace=args[1]:match('id=(%d+)')
+        if cqFace then
+            Bot.sendEmojiReact(M.message_id,tonumber(cqFace))
+        else
+            local list=STRING.split(args[1],',')
+            local count=1
+            for i=1,#list do
+                local sec=list[i]
                 Bot.sendEmojiReact(M.message_id,tonumber(sec) or STRING.u8byte(sec))
                 if count>=5 then break end
                 count=count+1
