@@ -4,7 +4,7 @@ task/response.lua
 task/uuz_reducer.lua
 task/query.lua
 task/cleanup.lua
-data
+data/*.txt
 
 .vscode
 *.ini

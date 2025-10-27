@@ -1,4 +1,4 @@
-local wordList=TABLE.getValueSet{"小z在吗","#help","#帮助"}
+local wordList=TABLE.getValueSet{"#help","#帮助"}
 ---@type Task_raw
 return {
     message=function(S,M)
@@ -14,7 +14,7 @@ return {
                 （试验阶段，随时可能停机）（群管急停：%s）
             ]])
         else
-            S:send(M.raw_message:lower()=="小z在吗" and "不在喵" or "刚刚发过了，不要刷屏谢谢喵")
+            Bot.sendEmojiReact(M.message_id,MATH.coin(Emoji.up_button,Emoji.upwards_button))
         end
         return true
     end,

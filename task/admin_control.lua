@@ -142,7 +142,7 @@ return {
                         if res then
                             S:send(tostring(res))
                         else
-                            Bot.sendSticker(M.message_id,144)
+                            Bot.sendEmojiReact(M.message_id,144)
                         end
                     else
                         S:send("坏了！\n"..tostring(res))

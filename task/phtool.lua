@@ -1,4 +1,4 @@
----@type table<string,{help:string, func:fun(args:string[]):string?|string}>
+---@type table<string,{help:string, func:fun(args:string[], M:OneBot.Event.Message):any}>
 local tools={}
 
 local flagData={}
@@ -160,6 +160,18 @@ tools['/ranksim']={
     end,
 }
 
+tools['/react']={
+    help="创建任意emoji回应，点击一次后就可以对其他消息使用\n例：/react 36 💣",
+    func=function(args,M)
+        local count=1
+        for i=1,#args do
+            Bot.sendEmojiReact(M.message_id,tonumber(args[i]) or STRING.u8byte(args[i]))
+            if count>=5 then break end
+            count=count+1
+        end
+    end,
+}
+
 ---@type Task_raw
 return {
     message=function(S,M)
@@ -170,8 +182,8 @@ return {
             if #args==0 then
                 S:send(tool.help)
             else
-                local res=tool.func(args)
-                S:send(res and tostring(res) or "[无输出结果]")
+                local res=tool.func(args,M)
+                if res then S:send(res) end
             end
         end
         return false
