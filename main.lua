@@ -84,6 +84,7 @@ function AdminMsg(M) return M.sender and (M.sender.role=='owner' or M.sender.rol
 CQ={
     at=function(data) return "[CQ:at,qq="..data.."]" end,
     img=function(data) return "[CQ:image,file="..data.."]" end,
+    face=function(data) return "[CQ:face,id="..data.."]" end,
 }
 --------------------------------------------------------------
 Bot={

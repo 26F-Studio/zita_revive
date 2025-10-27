@@ -165,9 +165,13 @@ tools['/react']={
     func=function(args,M)
         local count=1
         for i=1,#args do
-            Bot.sendEmojiReact(M.message_id,tonumber(args[i]) or STRING.u8byte(args[i]))
-            if count>=5 then break end
-            count=count+1
+            local sec=args[i]
+            if sec:match('%[CQ:face,id=%d+') then sec=sec:match('id=(%d+)') end
+            if not sec:find("%]") then
+                Bot.sendEmojiReact(M.message_id,tonumber(sec) or STRING.u8byte(sec))
+                if count>=5 then break end
+                count=count+1
+            end
         end
     end,
 }
