@@ -478,7 +478,7 @@ end
 ---@param text Sendable
 ---@param echo? string
 function Session:send(text,echo)
-    if not self:isAlive() then return end
+    if not self:isAlive() or not text then return end
     if echo then echo=self.uid..':'..echo end
     Bot.sendMsg(text,self.uid,echo)
 end
@@ -504,7 +504,7 @@ end
 ---@param text string
 ---@param echo? string
 function Session:delaySend(time,text,echo)
-    if time and time>86400 then return end
+    if time and time>86400 or not text then return end
     if time==nil then time=.26+math.random() elseif time<=0 then return self:send(text,echo) end
     if echo then echo=self.uid..':'..echo end
     self:_timeTask(self.send,time,{self,text,echo})

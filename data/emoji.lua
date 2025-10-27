@@ -1,6 +1,4 @@
 return {
-    copyright                               =169, -- ©
-    registered                              =174, -- ®
     double_exclamation_mark                 =8252, -- ‼
     exclamation_question_mark               =8265, -- ⁉
     trade_mark                              =8482, -- ™
