@@ -136,13 +136,13 @@ tools.react={
     func=function(data,M)
         local cqFace=data:match('id=(%d+)')
         if cqFace then
-            Bot.sendEmojiReact(M.message_id,tonumber(cqFace))
+            Bot.reactMessage(M.message_id,tonumber(cqFace))
         else
             local list=STRING.split(data,',')
             local count=1
             for i=1,#list do
                 local sec=list[i]
-                Bot.sendEmojiReact(M.message_id,tonumber(sec) or STRING.u8byte(sec))
+                Bot.reactMessage(M.message_id,tonumber(sec) or STRING.u8byte(sec))
                 if count>=5 then break end
                 count=count+1
             end
@@ -302,14 +302,14 @@ return {
     message=function(S,M)
         local cmd,data=RawStr(M.raw_message):match('^#(%S+)%s*(.*)')
         local tool=tools[cmd]
-        if tool then
-            if not data or #data==0 then
-                S:send(tool.help)
-            elseif tool.func then
-                local res=tool.func(data,M)
-                if res then S:send(res) end
-            end
+        if not tool then return false end
+
+        if not data or #data==0 then
+            S:send(tool.help)
+        elseif tool.func then
+            local res=tool.func(data,M)
+            if res then S:send(res) end
         end
-        return false
+        return true
     end,
 }

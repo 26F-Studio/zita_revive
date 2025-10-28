@@ -174,7 +174,7 @@ function Bot.deleteMsg(mes_id)
         },
     }
 end
-function Bot.sendEmojiReact(mes_id,emoji_id)
+function Bot.reactMessage(mes_id,emoji_id)
     Bot._send{
         action='set_msg_emoji_like',
         params={
@@ -496,7 +496,7 @@ function Session:delete(id)
 end
 ---@param M OneBot.Event.Message
 function Session:sticker(M)
-    Bot.sendEmojiReact(M.message_id)
+    Bot.reactMessage(M.message_id)
 end
 
 ---Notice that time must be less than 86400 (1 day)

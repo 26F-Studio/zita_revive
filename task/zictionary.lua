@@ -87,7 +87,7 @@ return {
             table.remove(words)
         end
         if not entry then
-            Bot.sendEmojiReact(M.message_id,Emoji.white_question_mark)
+            Bot.reactMessage(M.message_id,Emoji.white_question_mark)
             return false
         end
 

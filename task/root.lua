@@ -8,10 +8,29 @@ for _,v in next,{
     'Config','SessionMap','Bot','Session','Emoji','CacheData',
 } do codeEnv[v]=_G[v] end
 
----@type table<string,string|{level:number,func:fun(S:Session,args:string[])}>
+---@type table<string,string|{level:number,func:fun(S:Session, args:string[], M:OneBot.Event.Message, D:Session.data)}>
 local commands={
-    ['%test']={level=1,func=function(S)
+    ['%test']={level=1,func=function(S,args,M,D)
         -- something
+    end},
+    ['%help']={level=0,func=function(S)
+        local result=STRING.trimIndent([[
+            小z可以做这些事情喵：
+            %help 帮助  %task 任务列表
+            %stop 急停  %shutdown 关机
+            %lock 锁群  %unlock 解锁群
+            %restart 失忆  %log 日志
+            %stat 统计  %del 删除回复的消息
+            ![lua代码] pwn
+        ]],true)
+        S:send(result)
+    end},
+    ['%task']={level=2,func=function(S)
+        local result="群里有这些任务喵："
+        for _,task in next,S.taskList do
+            result=result..'\n'..task.id
+        end
+        S:send(result)
     end},
     ['%stop']={level=1,func=function(S,args)
         print("[STOP] "..S.uid)
@@ -24,6 +43,18 @@ local commands={
         print("[SHUTDOWN]")
         S:send("小z紧急停止了喵！")
         Bot.stop(1800)
+    end},
+    ['%lock']={level=2,func=function(S,args)
+        print("[LOCK] "..args[1])
+        TASK.lock('newSession_'..args[1])
+        print('newSession_'..args[1])
+        S:send("群"..args[1].."锁定了喵")
+        SessionMap['g'..args[1]]=nil
+    end},
+    ['%unlock']={level=2,func=function(S,args)
+        print("[UNLOCK] "..args[1])
+        TASK.unlock('newSession_'..args[1])
+        S:send("群"..args[1].."解锁了喵")
     end},
     ['%restart']={level=2,func=function(S,args)
         print("[RESTART]")
@@ -56,50 +87,22 @@ local commands={
             SessionMap[S.id]=nil
         end
     end},
-    ['%lock']={level=2,func=function(S,args)
-        print("[LOCK] "..args[1])
-        TASK.lock('newSession_'..args[1])
-        print('newSession_'..args[1])
-        S:send("群"..args[1].."锁定了喵")
-        SessionMap['g'..args[1]]=nil
+    ['%log']={level=2,func=function(S,args,M,D)
+        D._log=not D._log
+        Bot.reactMessage(M.message_id,D._log and Emoji.check_mark_button or Emoji.cross_mark)
     end},
-    ['%unlock']={level=2,func=function(S,args)
-        print("[UNLOCK] "..args[1])
-        TASK.unlock('newSession_'..args[1])
-        S:send("群"..args[1].."解锁了喵")
-    end},
-    ['%tasks']={level=2,func=function(S)
-        local result="群里有这些任务喵："
-        for _,task in next,S.taskList do
-            result=result..'\n'..task.id
-        end
-        S:send(result)
-    end},['%task']="%tasks",
     ['%stat']={level=2,func=function(S)
         local result=STRING.repD(STRING.trimIndent[[
-            本轮工作汇报：
-            总运行时间:$1
-            运行时间:$2
-            连接次数:$3
-            发消息数:$4
-        ]],
+                本轮工作汇报
+                运行时间:$1($2)
+                连接次数:$3
+                发消息数:$4
+            ]],
             STRING.time(Time()-Bot.stat.launchTime),
             STRING.time(Time()-Bot.stat.connectTime),
             Bot.stat.connectAttempts,
             Bot.stat.messageSent
         )
-        S:send(result)
-    end},
-    ['%help']={level=0,func=function(S)
-        local result=STRING.trimIndent([[
-            小z可以做这些事情喵：
-            %help 帮助  %task 任务列表
-            %stop 急停  %shutdown 关机
-            %lock 锁群  %unlock 解锁群
-            %restart 失忆
-            %stat 统计  %del 删除回复的消息
-            ![lua代码] pwn
-        ]],true)
         S:send(result)
     end},
     ['%!']={level=2,func=function(S)
@@ -128,21 +131,25 @@ end
 ---@type Task_raw
 return {
     message=function(S,M,D)
-        local level=Bot.isAdmin(M.user_id) and 2 or AdminMsg(M) and 1 or 0
+        if D._log then print(TABLE.dump(M)) end
         if #M.message==1 and M.message[1].type=='text' then
+            local level=Bot.isAdmin(M.user_id) and 2 or AdminMsg(M) and 1 or 0
             local mes=STRING.trim(M.message[1].data.text)
-            if mes:sub(1,1)=='!' then
+            if mes:find('!')==1 or mes:find('！')==1 then
                 if #mes<6.26 then return false end
-                if level<2 then noPermission(S) return true end
-                local func,err=loadstring("local S=...\n"..mes:sub(2))
+                if level<2 then
+                    noPermission(S)
+                    return true
+                end
+                local func,err=loadstring("local S=...\n"..(mes:find('!')==1 and mes:sub(2) or mes:sub(4)))
                 if func then
                     setfenv(func,codeEnv)
-                    local suc,res=pcall(func,S)
+                    local suc,res=pcall(func,S,D)
                     if suc then
                         if res then
                             S:send(tostring(res))
                         else
-                            Bot.sendEmojiReact(M.message_id,144)
+                            Bot.reactMessage(M.message_id,144)
                         end
                     else
                         S:send("坏了！\n"..tostring(res))
@@ -164,19 +171,22 @@ return {
                 end
                 return true
             end
-            return false
         elseif M.message[1].type=='reply' and Config.groupManaging[S.id] then
             if M.raw_message:find('%del',nil,true) then
+                local level=Bot.isAdmin(M.user_id) and 2 or AdminMsg(M) and 1 or 0
                 if level>=2 then
                     S:delete(tonumber(M.message[1].data.id))
                     S:delete(M.message_id)
                 else
                     noPermission(S)
                 end
+                return true
             end
-            return false
-        else
-            return false
         end
+        return false
+    end,
+    notice=function(_,N,D)
+        if D._log then print(TABLE.dump(N)) end
+        return false
     end,
 }
