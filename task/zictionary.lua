@@ -86,7 +86,10 @@ return {
             if entry then break end
             table.remove(words)
         end
-        if not entry then return false end
+        if not entry then
+            Bot.sendEmojiReact(M.message_id,Emoji.white_question_mark)
+            return false
+        end
 
         -- Response
         local result={} ---@type string[]
