@@ -8,6 +8,20 @@ for _,v in next,{
     'Config','SessionMap','Bot','Session','Emoji','CacheData',
 } do codeEnv[v]=_G[v] end
 
+local denyTexts={
+    "你没有足够的权限喵",
+    "Permission Denied喵",
+    "你是谁！（后跳）",
+    Config.adminName.."才能这样做喵",
+    "我只听"..Config.adminName.."的喵！",
+}
+---@param S Session
+local function noPermission(S)
+    if S:forceLock('no_permission',62) then
+        S:delaySend(nil,TABLE.getRandom(denyTexts))
+    end
+end
+
 ---@type table<string,string|{level:number,func:fun(S:Session, args:string[], M:OneBot.Event.Message, D:Session.data)}>
 local commands={
     ['%test']={level=1,func=function(S,args,M,D)
@@ -87,7 +101,7 @@ local commands={
             SessionMap[S.id]=nil
         end
     end},
-    ['%log']={level=2,func=function(S,args,M,D)
+    ['%log']={level=2,func=function(_,_,M,D)
         D._log=not D._log
         Bot.reactMessage(M.message_id,D._log and Emoji.check_mark_button or Emoji.cross_mark)
     end},
@@ -110,23 +124,6 @@ local commands={
         S:send("有这些变量喵："..table.concat(TABLE.sort(vars),', '))
     end},
 }
----@cast commands table<string,{level:number,func:fun(S:Session,args:string[])}>
-
-TABLE.reIndex(commands)
-
-local denyTexts={
-    "你没有足够的权限喵",
-    "Permission Denied喵",
-    "你是谁！（后跳）",
-    Config.adminName.."才能这样做喵",
-    "我只听"..Config.adminName.."的喵！",
-}
----@param S Session
-local function noPermission(S)
-    if S:forceLock('no_permission',62) then
-        S:delaySend(nil,TABLE.getRandom(denyTexts))
-    end
-end
 
 ---@type Task_raw
 return {
@@ -164,7 +161,7 @@ return {
                 local C=commands[cmd]
                 if C then
                     if level>=C.level then
-                        C.func(S,args)
+                        C.func(S,args,M,D)
                     else
                         noPermission(S)
                     end
