@@ -30,7 +30,7 @@ local commands={
     ['%help']={level=0,func=function(S)
         local result=STRING.trimIndent([[
             小z可以做这些事情喵：
-            %help 帮助  %task 任务列表
+            %help 帮助  %task 事务列表
             %stop 急停  %shutdown 关机
             %lock 锁群  %unlock 解锁群
             %restart 失忆  %log 日志
@@ -40,7 +40,7 @@ local commands={
         S:send(result)
     end},
     ['%task']={level=2,func=function(S)
-        local result="群里有这些任务喵："
+        local result="本群有这些事务喵："
         for _,task in next,S.taskList do
             result=result..'\n'..task.id
         end
