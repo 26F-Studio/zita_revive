@@ -1,29 +1,16 @@
 ---@class Zict.Entry
----@field word string
----@field title? string
----@field text? string|fun(S:Session):string
----@field detail? string
----@field link? string
----@field func? fun(words:string[]):string
----
----@field cat 'game'|nil
----@field shortname? string
----@field tags? string
-
---[[
-    word是每个词条的查询关键词，多个名称用分号分隔，目前访问词条必须完全匹配其中的一个（不过英文字母大小写和空格会被忽略，例如a b c和ABC视为同一个东西）。
-    title，第一行内容
-    text，正文
-    detail，可选，补充内容（用##来查询）
-    link，可选，如果有的话会在最后一行显示为“相关链接：xxx.com”
-    func，可选，用于实现特殊词条
-]]
+---@field word string 每个词条的查询关键词，多个名称用分号分隔，目前访问词条必须完全匹配其中的一个（不过英文字母大小写和空格会被忽略，例如a b c和ABC视为同一个东西）。
+---@field title? string 第一行标题
+---@field text? string 正文
+---@field detail? string 补充内容（用##查询）
+---@field link? string 如果有的话会在最后一行显示为“相关链接：xxx.com”
 
 ---@type Zict.Entry[]
 local meta={
     {
-        word="词典;小z词典;zict;zictionary",
-        title="本词典收集了方块游戏相关词汇，可以在带新人的时候使用#[词条]一键召唤常用术语的解释",
+        word="help;帮助;词典;小z词典;zict;zictionary",
+        text="【Zita-Revive】 小z带着小z词典回来了喵！\n小z词典精简版收录了方块游戏大量相关词汇和术语\n萌新对方块词汇和术语有疑问时发送#[关键词]一键查询\n标题前双井号表示有详细信息，补发一条“##”查看\n（随时可能停机）（群管急停：%s）",
+        detail="#推荐/分类/表格 看看目前大家玩的都是什么方块游戏\n#新人/学习t旋/wiki 几个其他常用资源\n#tool查看可用的小工具",
     },
     {
         word="提问;提问的智慧",
@@ -80,13 +67,13 @@ local meta={
     {
         word="wiki;维基;中文wiki;中文维基",
         title="俄罗斯方块中文维基",
-        text="俄罗斯方块中文百科全书，由中文玩家建立和维护。\n推荐新人有不懂的知识先查阅百科再提问，也欢迎各位玩家作出编辑贡献\n早期大部分条目译自Hard Drop Wiki和Tetris Wiki",
+        text="俄罗斯方块中文百科全书，由中文玩家建立和维护。\n推荐新人有不懂的知识先查阅百科再提问，也欢迎各位玩家作出编辑贡献\n早期大部分条目译自Hard Drop Wiki和Tetris Wiki\n另见 #其他wiki",
         link="tetriswiki.cn 或 t-wiki.cn 或 tetris.link",
     },
     {
         word="其他wiki;wiki列表;harddrop wiki;tetris wiki;fandom;wiki fandom;tetris wiki fandom",
-        title="一些英文wiki",
-        text="harddrop.com/wiki（Hard Drop社区的百科）\nhttps://tetris.wiki（Myndzi在2015年创办）\ntetris.fandom.com",
+        title="其他英文wiki",
+        text="harddrop.com/wiki（Hard Drop社区的百科）\nhttps://tetris.wiki（Myndzi在2015年创办）\ntetris.fandom.com\n另见 #wiki",
     },
     {
         word="fumen;方块谱;编辑器;铺面",

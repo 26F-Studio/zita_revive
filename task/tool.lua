@@ -273,10 +273,9 @@ local function checkHoldPossibility(base)
     end
 end
 tools.cover={
-    help="序列覆盖率计算\n例：#cover ZTS & (jol|loj) & ...\n→ 可行序列数/5040 (搭建率, 无暂存序列数)",
+    help="序列覆盖率计算\n例：#cover zts & (JOL|LOJ) & ...\n→ 可行序列数/5040 (搭建率, 无暂存序列数)",
     func=function(expr)
-        expr=expr:gsub('%s+','')
-        expr=expr:upper():gsub("[ZSJLTOI]",pieceList)
+        expr=expr:gsub('%s+',''):upper():gsub("[ZSJLTOI]",pieceList)
         local suc,pff=pcall(infixToPostfix,expr)
         if not suc then return pff end
 
