@@ -482,11 +482,11 @@ end
 ---@param type 'message' | 'notice'
 function Session:receive(M,type)
     for _,task in next,self.taskList do
-        local suc2,res2=pcall(task[type],self,M,self.data[task.id])
-        if suc2 then
-            if res2==true then break end
+        local suc,res=pcall(task[type],self,M,self.data[task.id])
+        if suc then
+            if res==true then break end
         else
-            LOG('warn',STRING.repD("Session-$1 Task-$2 ($3) Error:\n$4",self.id,task.id,os.date("%m/%d %H:%M:%S"),res2))
+            LOG('warn',STRING.repD("Session-$1 Task-$2 ($3) Error:\n$4",self.id,task.id,os.date("%m/%d %H:%M:%S"),res))
             break
         end
     end

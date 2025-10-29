@@ -80,6 +80,7 @@
 
 ---@class OneBot.Event.Notice : OneBot.Event.Base
 ---@field group_id number 群号
+---@field notice_type 'friend_add'|'friend_recall'|'group_recall'|'group_increase'|'group_decrease'|'group_admin'|'group_ban'|'group_upload'|'group_card'|'notify'|'notify'|'essence'|'group_msg_emoji_like'|'notify'|'notify'|'notify'|'bot_offline'
 
 ---@class OneBot.Event.Notice.Emoji : OneBot.Event.Notice
 ---@field notice_type 'group_msg_emoji_like'
