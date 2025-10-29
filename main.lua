@@ -90,6 +90,7 @@ CQ={
 Bot={
     state='dead', ---@type 'dead'|'connecting'|'running'
     delayedAction={}, ---@type {time:number, func:function, data:any}[]
+    handlerCache={}, ---@type Map<function>
     stat={
         connectAttempts=0,
         launchTime=Time(),
@@ -118,6 +119,11 @@ end
 
 ---@param data table
 function Bot._send(data)
+    if type(data.echo)=='function' then
+        ---@diagnostic disable-next-line
+        Bot.handlerCache[tostring(data.echo)]=data.echo
+        data.echo=tostring(data.echo)
+    end
     local suc,res=pcall(JSON.encode,data)
     if suc then
         if Config.debugLog_send then
@@ -206,6 +212,14 @@ function Bot.ban(group_id,user_id,time)
     }
     Bot._send(mes)
 end
+---@param handler fun(data:table)
+function Bot.getMemberList(group_id,handler)
+    Bot._send{
+        action='get_group_member_list',
+        params={group_id=group_id},
+        echo=handler,
+    }
+end
 function Bot.adminNotice(text)
     for id in next,Config.superAdminID do
         Bot.sendMsg(text,'p'..id)
@@ -267,14 +281,17 @@ function Bot._update()
             -- API response
             ---@cast res OneBot.Event.Response
             if res.echo then
-                if res.echo:find(':') then
+                if Bot.handlerCache[res.echo] then
+                    local handler=Bot.handlerCache[res.echo]
+                    Bot.handlerCache[res.echo]=nil
+                    local s,r=pcall(handler,res.data)
+                    if not s then LOG('warn',"Handler Error: "..r) end
+                elseif res.echo:find(':') then
                     local uid=STRING.before(res.echo,':')
                     local S=SessionMap[uid]
                     if S then
                         S.echos[STRING.after(res.echo,':')]=res.data
                     end
-                elseif res.echo:sub(1,6)=='cache_' then
-                    CacheData[res.echo:sub(7)]=res
                 end
             end
         end
@@ -547,8 +564,6 @@ end
 
 ---@type table<string, Session>
 SessionMap={}
---------------------------------------------------------------
-CacheData={}
 --------------------------------------------------------------
 ZENITHA.globalEvent.drawCursor=NULL
 ZENITHA.globalEvent.clickFX=NULL

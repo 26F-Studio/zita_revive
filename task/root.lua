@@ -5,7 +5,7 @@ for _,v in next,{
     'Time','CQ',
     'math','string','table',
     'MATH','STRING','TABLE','GC',
-    'Config','SessionMap','Bot','Session','Emoji','CacheData',
+    'Config','SessionMap','Bot','Session','Emoji',
 } do codeEnv[v]=_G[v] end
 
 local denyTexts={
