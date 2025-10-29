@@ -244,9 +244,9 @@ local rules={
                 seq:match('(.).*%1') and (
                 -- IJJ, ILL, IOO
                     find(seq,'I') and (count(seq,'J')>=2 or count(seq,'L')>=2 or count(seq,'O')>=2) or
-                    -- JSJ, LZL
-                    find(seq,'S') and count(seq,'J')>=2 or
-                    find(seq,'Z') and count(seq,'L')>=2 or
+                    -- JZJ, LSL
+                    find(seq,'Z') and count(seq,'J')>=2 or
+                    find(seq,'S') and count(seq,'L')>=2 or
                     -- OJJ, OLL
                     find(seq,'O') and count(seq,'[JL]')>=2 or
                     -- JTT, LTT
