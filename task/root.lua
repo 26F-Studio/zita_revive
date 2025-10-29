@@ -4,7 +4,7 @@ for _,v in next,{
     'ipairs','pairs','pcall','xpcall',
     'Time','CQ',
     'math','string','table',
-    'MATH','STRING','TABLE','GC',
+    'MATH','STRING','TABLE','GC','FILE',
     'Config','SessionMap','Bot','Session','Emoji',
 } do codeEnv[v]=_G[v] end
 
