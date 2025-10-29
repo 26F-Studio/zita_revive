@@ -21,6 +21,7 @@ return {
         ---@cast M OneBot.Event.PrivateMessage|OneBot.Event.GroupMessage
 
         local mes=STRING.trim(RawStr(M.raw_message))
+        if not mes:find('#') or mes:find('/#') then return false end
 
         -- Detail of last entry
         if mes=='##' then
