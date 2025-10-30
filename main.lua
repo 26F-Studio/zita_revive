@@ -11,7 +11,6 @@ ZENITHA.setAppInfo('zita_revive','')
 Config={
     connectInterval=2.6,
     reconnectInterval=600,
-    receiveDelay=0.26,
     maxCharge=620,
     debugLog_send=false,
     debugLog_message=false,
@@ -101,6 +100,8 @@ Bot={
 }
 Emoji=require'data.emoji'
 
+local Bot=Bot
+
 ---@class Task_raw
 ---@field message? fun(S:Session, M: OneBot.Event.Message, D:Session.data):boolean true means message won't be passed to next task
 ---@field notice? fun(S:Session, N: OneBot.Event.Notice, D:Session.data):boolean true means message won't be passed to next task
@@ -136,21 +137,22 @@ function Bot._send(data)
     end
 end
 ---@param message Sendable
----@param uid string 'p123456' or 'g123456'
+---@param id number
+---@param priv? boolean is private message
 ---@param echo? string
-function Bot.sendMsg(message,uid,echo)
-    if tonumber(uid) then uid='g'..uid end
+function Bot.sendMsg(message,id,priv,echo)
+    if priv==nil then priv=not SessionMap['g'..id] end
     local mes={
         action='send_msg',
         params={
-            [uid:sub(1,1)=='g' and 'group_id' or 'user_id']=tonumber(uid:sub(2)),
+            [priv and 'user_id' or 'group_id']=id,
             message=tostring(message),
         },
         echo=echo,
     }
-    if Config.safeMode and not Config.safeSessionID[uid] then
+    if Config.safeMode and not Config.safeSessionID[(priv and 'p' or 'g')..id] then
         if TASK.lock('safeModeBlock',10) then
-            LOG("Message (to"..uid..") blocked in safe mode")
+            LOG("Message (to"..id..") blocked in safe mode")
         end
         return
     end
@@ -158,7 +160,8 @@ function Bot.sendMsg(message,uid,echo)
         Bot.stat.messageSent=Bot.stat.messageSent+1
     end
 end
-function Bot.sendForwardMsg(messages,uid)
+function Bot.sendForwardMsg(messages,id,priv)
+    if priv==nil then priv=not SessionMap['g'..id] end
     local segments={}
     for i=1,#messages do
         segments[i]={type="node",data={content={type="text",data={text=messages[i]}}}}
@@ -166,7 +169,7 @@ function Bot.sendForwardMsg(messages,uid)
     Bot._send{
         action='send_forward_msg',
         params={
-            [uid:sub(1,1)=='g' and 'group_id' or 'user_id']=tonumber(uid:sub(2)),
+            [priv and 'user_id' or 'group_id']=id,
             messages=segments,
         },
     }
@@ -222,7 +225,7 @@ function Bot.getMemberList(group_id,handler)
 end
 function Bot.adminNotice(text)
     for id in next,Config.superAdminID do
-        Bot.sendMsg(text,'p'..id)
+        Bot.sendMsg(text,id,true)
     end
 end
 function Bot.reset()
@@ -497,7 +500,7 @@ end
 function Session:send(text,echo)
     if not self:isAlive() or not text then return end
     if echo then echo=self.uid..':'..echo end
-    Bot.sendMsg(text,self.uid,echo)
+    Bot.sendMsg(text,self.id,nil,echo)
 end
 ---@param id number|string string means search id from Session.echos
 function Session:delete(id)
@@ -643,14 +646,13 @@ function scene.update()
                 Bot.adminNotice(Bot.stat.connectAttempts==1 and "小z启动了喵！" or STRING.repD("小z回来了喵…（第$1次）",Bot.stat.connectAttempts))
             end
         end
-        if TASK.lock('bot_timing',1) then
-            while true do
-                local m=Bot.delayedAction[1]
-                if not m or Time()<m.time then break end
-                m.func(unpack(m.data))
-                rem(Bot.delayedAction,1)
-            end
+        while true do
+            local m=Bot.delayedAction[1]
+            if not m or Time()<m.time then break end
+            m.func(unpack(m.data))
+            rem(Bot.delayedAction,1)
         end
+        if TASK.lock('bot_gc',26) then collectgarbage() end
         repeat until not Bot._update()
     end
 end
