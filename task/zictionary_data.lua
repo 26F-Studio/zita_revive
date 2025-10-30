@@ -15,17 +15,8 @@ local meta={
     },
     {
         word="提问;提问的智慧",
-        text="提问时请尽量清晰地描述问题，不然大家就得反问你补充条件了\n自己写完整多花一分钟，群友四十个人节约四十分钟喵",
-        detail="例：“【问题现象截图】我使用【设备类型】在【游戏名】【版本号】中遇到了【现象】，并且能用【具体操作】反复触发，这是bug吗？”\ngist.github.com/burningtnt/360d2b93452560c0413ac1a6e3515642",
-    },
-    {
-        word="复读",
-        text="？竟然对这个感兴趣吗…\n初始概率0.5%，随消息长度逐渐减小到0%\n每条没复读的消息+0.05%（最多1%），每一条其他人的复读临时+6.2%",
-        detail="每次复读26秒后进入冷静期\n超过62字节和包含坏词的消息视为无效\n包含好词的消息+6.2%\n不会在一轮复读内重复，多次参与的人也不计数",
-    },
-    {
-        word="新人;萌新",
-        text=CQ.img(Config.extraData.imgPath.."新人引导.png"),
+        text="提问时请尽量清晰地描述问题，条件不够很难帮到你喵（发送“##”查看示范）",
+        detail="例：“[问题现象截图]我使用[设备类型]在[游戏名][版本号]中遇到了[现象]，触发方式是[具体操作]，这是bug吗？是的话如何解决？”\ngist.github.com/burningtnt/360d2b93452560c0413ac1a6e3515642",
     },
     {
         word="推荐;游戏推荐",
@@ -44,20 +35,8 @@ local meta={
         text=CQ.img(Config.extraData.imgPath.."pay.png"),
     },
     {
-        word="zone20;20zone;ultimatris",
-        text="IRS设置改为typeA然后随便打打就行",
-    },
-    {
-        word="zone21;21zone;kirbtris",
-        text="IRS设置改为typeA然后多刷一刷就行",
-    },
-    {
-        word="zone22;22zone;impossibilitris",
-        text=CQ.img(Config.extraData.imgPath.."zone22教程.jpg"),
-    },
-    {
-        word="zone23;23zone;infinitris",
-        text=CQ.img(Config.extraData.imgPath.."zone23教程.png"),
+        word="新人;萌新",
+        text=CQ.img(Config.extraData.imgPath.."新人引导.png"),
     },
     {
         word="学习tspin;学习t旋",
@@ -83,7 +62,7 @@ local meta={
         link="fumen.zui.jp  knewjade.github.io/fumen-for-mobile",
     },
     {
-        word="tech仓库;techmino仓库",
+        word="tech仓库;techmino仓库;铁壳仓库;铁壳米诺仓库",
         text="github.com/26F-Studio/Techmino\nTechmino的GitHub仓库地址，欢迎Star！",
     },
     {
@@ -93,6 +72,27 @@ local meta={
     {
         word="铁壳mac",
         text=CQ.img(Config.extraData.imgPath.."techmino_mac.jpg"),
+    },
+    {
+        word="zone20;20zone;ultimatris",
+        text="IRS设置改为typeA然后随便打打就行",
+    },
+    {
+        word="zone21;21zone;kirbtris",
+        text="IRS设置改为typeA然后多刷一刷就行",
+    },
+    {
+        word="zone22;22zone;impossibilitris",
+        text=CQ.img(Config.extraData.imgPath.."zone22教程.jpg"),
+    },
+    {
+        word="zone23;23zone;infinitris",
+        text=CQ.img(Config.extraData.imgPath.."zone23教程.png"),
+    },
+    {
+        word="复读",
+        text="？竟然对这个感兴趣吗…\n初始概率0.5%，随消息长度逐渐减小到0%\n每条没复读的消息+0.05%（最多1%），每一条其他人的复读临时+6.2%",
+        detail="每次复读26秒后进入冷静期\n超过62字节和包含坏词的消息视为无效\n包含好词的消息+6.2%\n不会在一轮复读内重复，多次参与的人也不计数",
     },
     {
         word="宝石;宝石迷阵;bejeweled;bej;bej1;bej2;bej3;bejT;bejeweled1;bejeweled2;bejeweled3;bejeweled twist",
