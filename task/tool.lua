@@ -308,11 +308,14 @@ local drawBanPattern={
     ["%[="]="你是坏人。",
     ["%.%."]="你是坏人。",
 }
+local tempCanvas ---@type love.Canvas
+local tempCoord=love.math.newTransform()
 local drawBaseEnv={
     清=GC.clear,
-    移=GC.translate,
-    倍=GC.scale,
-    转=GC.rotate,
+    归=function() tempCoord:reset() GC.replaceTransform(tempCoord) end,
+    移=function(...) tempCoord:translate(...) GC.replaceTransform(tempCoord) end,
+    倍=function(...) tempCoord:scale(...) GC.replaceTransform(tempCoord) end,
+    转=function(...) tempCoord:rotate(...) GC.replaceTransform(tempCoord) end,
     色=GC.setColor,
     宽=GC.setLineWidth,
     线=GC.line,
@@ -334,9 +337,8 @@ local drawBaseEnv={
 }
 TABLE.update(drawBaseEnv,math)
 local drawEnv=setmetatable({},{__index=drawBaseEnv})
-local tempCanvas
 tools.draw={
-    help="指令绘图，500px画布，可用指令：清 移/倍/转 色/宽 线 方/框 (椭)圆/圈 形/围 (线)饼/弧/弓，可选return截图区域（XYWH或者WH）\n例：#draw 清(0,0,0) 色(1,0,1) 方(0,0,20,20) 方(20,20,20,20) return 0,0,40,40",
+    help="指令绘图，500px画布，可用指令：清 归/移/倍/转 色/宽 线 方/框 (椭)圆/圈 形/围 (线)饼/弧/弓，return指定区域（XYWH或者WH）来输出图片\n例：#draw 清(0,0,0) 色(1,0,1) 方(0,0,20,20) 方(20,20,20,20) return 0,0,40,40",
     func=function(expr,M)
         if TASK.getLock('tool_draw') then return Bot.reactMessage(M.message_id,Emoji.snail) end
         local f=loadstring(expr)
@@ -348,22 +350,23 @@ tools.draw={
         if not tempCanvas then tempCanvas=GC.newCanvas(500,500) end
 
         GC.setCanvas(tempCanvas)
-        GC.origin()
-        GC.setLineWidth(2)
+        GC.replaceTransform(tempCoord)
         local suc,x,y,w,h=pcall(f)
         GC.setCanvas()
 
         if not suc then return "执行过程出错: "..(x:match(".+%d:(.+)") or x) end
-        TASK.lock('tool_draw',26)
-        x=MATH.clamp(tonumber(x) or 0,0,500)
-        y=MATH.clamp(tonumber(y) or 0,0,500)
-        if w then
-            w=MATH.clamp(tonumber(w) or 500,0,500-x)
-            h=MATH.clamp(tonumber(h) or 500,0,500-y)
+        if x then
+            TASK.lock('tool_draw',26)
+            x=MATH.clamp(tonumber(x) or 0,0,499)
+            y=MATH.clamp(tonumber(y) or 0,0,499)
+            if w then
+                return Bot.canvasToImage(tempCanvas,x,y,MATH.clamp(tonumber(w) or 500,0,500-x),MATH.clamp(tonumber(h) or 500,0,500-y))
+            else
+                return Bot.canvasToImage(tempCanvas,0,0,x,y)
+            end
         else
-            x,y,w,h=0,0,x,y
+            return Bot.reactMessage(M.message_id,Emoji.check_mark_button)
         end
-        return Bot.canvasToImage(tempCanvas,x,y,w,h)
     end,
 }
 
