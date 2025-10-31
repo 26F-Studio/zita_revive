@@ -310,6 +310,7 @@ local drawBanPattern={
 }
 local drawBaseEnv={
     清=function(...) GC.clear(...) end,
+    倍=function(...) GC.scale(...) end,
     色=function(...) GC.setColor(...) end,
     宽=function(...) GC.setLineWidth(...) end,
     线=function(...) GC.line(...) end,
@@ -333,7 +334,7 @@ TABLE.update(drawBaseEnv,math)
 local drawEnv=setmetatable({},{__index=drawBaseEnv})
 local tempCanvas
 tools.draw={
-    help="指令绘图，500px画布，可用指令：清 色/宽 线 方/框 (椭)圆/圈 形/围 (线)饼/弧/弓\n例：#draw 清(0,0,0) 色(1,0,1) 方(0,0,20,20) 方(20,20,20,20) return 0,0,40,40",
+    help="指令绘图，500px画布，可用指令：清 倍 色/宽 线 方/框 (椭)圆/圈 形/围 (线)饼/弧/弓，可选return截图区域（XYWH或者WH）\n例：#draw 清(0,0,0) 色(1,0,1) 方(0,0,20,20) 方(20,20,20,20) return 0,0,40,40",
     func=function(expr,M)
         if TASK.getLock('tool_draw') then return Bot.reactMessage(M.message_id,Emoji.snail) end
         local f=loadstring(expr)
@@ -347,14 +348,21 @@ tools.draw={
         GC.origin()
         GC.setLineWidth(2)
         local suc,x,y,w,h=pcall(f)
-        if not suc then return "执行过程出错: "..(x:match(".+%d:(.+)") or x) end
-        TASK.lock('tool_draw',26)
-        x=MATH.clamp(tonumber(x) or 0,0,500)
-        y=MATH.clamp(tonumber(y) or 0,0,500)
-        w=MATH.clamp(tonumber(w) or 500,0,500-x)
-        h=MATH.clamp(tonumber(h) or 500,0,500-y)
-        GC.setCanvas()
-        return Bot.canvasToImage(tempCanvas,x,y,w,h)
+        if suc then
+            TASK.lock('tool_draw',26)
+            x=MATH.clamp(tonumber(x) or 0,0,500)
+            y=MATH.clamp(tonumber(y) or 0,0,500)
+            if w then
+                w=MATH.clamp(tonumber(w) or 500,0,500-x)
+                h=MATH.clamp(tonumber(h) or 500,0,500-y)
+            else
+                x,y,w,h=0,0,x,y
+            end
+            GC.setCanvas()
+            return Bot.canvasToImage(tempCanvas,x,y,w,h)
+        else
+            return "执行过程出错: "..(x:match(".+%d:(.+)") or x)
+        end
     end,
 }
 
