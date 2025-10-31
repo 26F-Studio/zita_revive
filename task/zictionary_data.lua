@@ -1455,7 +1455,7 @@ local game={
     {
         word="mob;master of block",
         title="Master of Block",
-        text="非官块 要下载 主单机 音画一般 电脑 不可调控制\n一个仿街机方块游戏",
+        text="非官块 要下载 主单机 音画一般 电脑 不可调控制\n一个仿街机方块游戏系列",
     },
     {
         word="hebo;heboris",

@@ -100,8 +100,6 @@ Bot={
 }
 Emoji=require'data.emoji'
 
-local Bot=Bot
-
 ---@class Task_raw
 ---@field message? fun(S:Session, M: OneBot.Event.Message, D:Session.data):boolean true means message won't be passed to next task
 ---@field notice? fun(S:Session, N: OneBot.Event.Notice, D:Session.data):boolean true means message won't be passed to next task
@@ -201,6 +199,20 @@ function Bot.sendLike(uid,count)
         },
     }
 end
+local imgCnt=0
+---@param canvas love.Canvas
+---@return string
+---@nodiscard
+function Bot.canvasToImage(canvas,x,y,w,h)
+    local file="temp_"..imgCnt..".png"
+    imgCnt=(imgCnt+1)%10
+    if not x then x,y,w,h=0,0,canvas:getWidth(),canvas:getHeight() end
+    GC.saveCanvas(canvas,file,'png',0,1,x,y,w,h)
+    local full=love.filesystem.getSaveDirectory()..'/'..file
+    os.execute('chmod 644 '..full)
+    os.execute('mv '..full..' '..Config.extraData.sandboxRealPath..file)
+    return CQ.img(Config.extraData.sandboxPath..file)
+end
 ---@param group_id number
 ---@param user_id number
 ---@param time? number
@@ -237,6 +249,8 @@ function Bot.stop(time)
     TASK.forceLock('bot_blockRestart',time or 600)
     ws:close()
 end
+
+local Bot=Bot
 
 ---@return true? #if any message processed
 function Bot._update()

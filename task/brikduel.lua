@@ -923,7 +923,6 @@ local cellColor={
     {COLOR.lD,COLOR.LD},
     {COLOR.DR,COLOR.dR},
 }
-local imgCnt=0
 function Game:renderImage(colBase)
     local stat=self.stats[self.round]
     local field=self.field
@@ -1042,14 +1041,7 @@ function Game:renderImage(colBase)
         end
     GC.pop()
     GC.setCanvas()
-    local fileName='canvas_'..imgCnt..'.png'
-    imgCnt=(imgCnt+1)%6
-    GC.saveCanvas(texture.canvas,fileName,'png',0,1,0,imgStartH,totalW,totalH-imgStartH)
-
-    local file=love.filesystem.getSaveDirectory()..'/'..fileName
-    os.execute('chmod 644 '..file)
-    os.execute('mv '..file..' '..Config.extraData.sandboxRealPath..fileName)
-    return CQ.img(Config.extraData.sandboxPath..fileName)
+    return Bot.canvasToImage(texture.canvas,0,1,0,imgStartH,totalW,totalH-imgStartH)
 end
 
 ---@param user BrikDuel.User

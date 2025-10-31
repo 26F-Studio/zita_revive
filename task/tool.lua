@@ -98,13 +98,13 @@ tools.inv={
     end,
 }
 
-local syntaxError={
+local mathSyntaxError={
     "算式没写对喵",
     "格式有问题喵",
     "你的式子写错了喵",
     "没懂喵？检查一下格式",
 }
-local banPattern={
+local mathBanPattern={
     ["function"]={"害怕栈溢出喵…","会写这个就去自己写程序喵！"},
     ["while"]={"害怕无限循环喵…","计算器为什么要循环喵？"},
     ["for"]={"算数还要用到for喵？","你不许for喵"},
@@ -120,8 +120,8 @@ tools.calc={
     help="计算器\n例：#calc 1+1\n→ 2",
     func=function(expr)
         local f=loadstring('return '..expr) or loadstring(expr)
-        if not f then return TABLE.getRandom(syntaxError) end
-        for k,v in next,banPattern do if expr:match(k) then return TABLE.getRandom(v) end end
+        if not f then return TABLE.getRandom(mathSyntaxError) end
+        for k,v in next,mathBanPattern do if expr:match(k) then return TABLE.getRandom(v) end end
         TABLE.clear(mathEnv)
         mathEnv.math=mathEnv
         setfenv(f,mathEnv)
@@ -284,12 +284,77 @@ tools.cover={
             perm7inv=TABLE.inverse(perm7)
         end
         for i=1,#perm7 do validCache[i]=checkConstrain(perm7[i],pff) end
-        for i=1,#perm7 do
-            holdableCache[i]=validCache[i] or checkHoldPossibility(perm7[i])
-        end
+        for i=1,#perm7 do holdableCache[i]=validCache[i] or checkHoldPossibility(perm7[i]) end
         local noholdCnt=TABLE.count(validCache,true)
         local holdCnt=TABLE.count(holdableCache,true)
         return ("%d/%d (%.4g%%, 📵%d)"):format(holdCnt,#perm7, holdCnt/#perm7*100, noholdCnt)
+    end,
+}
+
+local drawSyntaxError={
+    "指令没写对喵",
+    "格式有问题喵",
+    "你的指令写错了喵",
+    "没懂喵？检查一下格式",
+}
+local drawBanPattern={
+    ["function"]="自定义函数有安全风险喵…",
+    ["while"]="循环有安全风险喵",
+    ["for"]="循环有安全风险喵",
+    ["repeat"]="循环有安全风险喵",
+    ["goto"]="珍爱生命，远离goto",
+    ["[\"\']"]="字符串应该是用不到的喵",
+    ["%[%["]="你是坏人。",
+    ["%[="]="你是坏人。",
+    ["%.%."]="你是坏人。",
+}
+local drawBaseEnv={
+    清=function(...) GC.clear(...) end,
+    色=function(...) GC.setColor(...) end,
+    宽=function(...) GC.setLineWidth(...) end,
+    线=function(...) GC.line(...) end,
+    方=function(...) GC.rectangle('fill',...) end,
+    框=function(...) GC.rectangle('line',...) end,
+    圆=function(...) GC.circle('fill',...) end,
+    圈=function(...) GC.circle('line',...) end,
+    形=function(...) GC.polygon('fill',...) end,
+    围=function(...) GC.polygon('line',...) end,
+    椭圆=function(...) GC.ellipse('fill',...) end,
+    椭圈=function(...) GC.ellipse('line',...) end,
+
+    饼=function(...) GC.arc('fill',...) end,
+    线饼=function(...) GC.arc('line',...) end,
+    弧=function(...) GC.arc('fill','open',...) end,
+    线弧=function(...) GC.arc('line','open',...) end,
+    弓=function(...) GC.arc('fill','closed',...) end,
+    线弓=function(...) GC.arc('line','closed',...) end,
+}
+TABLE.update(drawBaseEnv,math)
+local drawEnv=setmetatable({},{__index=drawBaseEnv})
+local tempCanvas
+tools.draw={
+    help="指令绘图，500px画布，可用指令：清 色/宽 线 方/框 (椭)圆/圈 形/围 (线)饼/弧/弓\n例：#draw 清(0,0,0) 色(1,0,1) 方(0,0,20,20) 方(20,20,20,20) return 0,0,40,40",
+    func=function(expr,M)
+        if TASK.getLock('tool_draw') then return Bot.reactMessage(M.message_id,Emoji.snail) end
+        local f=loadstring(expr)
+        if not f then return TABLE.getRandom(drawSyntaxError) end
+        for k,v in next,drawBanPattern do if expr:match(k) then return v end end
+        for k in next,drawBaseEnv do drawEnv[k]=nil end
+        setfenv(f,drawEnv)
+
+        if not tempCanvas then tempCanvas=GC.newCanvas(500,500) end
+        GC.setCanvas(tempCanvas)
+        GC.origin()
+        GC.setLineWidth(2)
+        local suc,x,y,w,h=pcall(f)
+        if not suc then return "执行过程出错: "..(x:match(".+%d:(.+)") or x) end
+        TASK.lock('tool_draw',26)
+        x=MATH.clamp(tonumber(x) or 0,0,500)
+        y=MATH.clamp(tonumber(y) or 0,0,500)
+        w=MATH.clamp(tonumber(w) or 500,0,500-x)
+        h=MATH.clamp(tonumber(h) or 500,0,500-y)
+        GC.setCanvas()
+        return Bot.canvasToImage(tempCanvas,x,y,w,h)
     end,
 }
 
