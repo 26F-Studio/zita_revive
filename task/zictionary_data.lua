@@ -74,11 +74,11 @@ local meta={
         text=CQ.img(Config.extraData.imgPath.."techmino_mac.jpg"),
     },
     {
-        word="zone20;20zone;ultimatris",
-        text="IRS设置改为typeA然后随便打打就行",
+        word="zone18;18zone;zone19;19zone",
+        text="多练",
     },
     {
-        word="zone21;21zone;kirbtris",
+        word="zone20;20zone;ultimatris;zone21;21zone;kirbtris",
         text="IRS设置改为typeA然后多刷一刷就行",
     },
     {
@@ -286,7 +286,7 @@ local main={
     {
         word="all mini;all-mini",
         title="All-Mini",
-        text="IO专有的All-Spin的一个亚种，相比原来的仅T-Spin，其余方块使用不可移动的spin判定不过都视为mini（基础攻击=行数-1，计b2b）。此规则已默认用于TL和QP",
+        text="IO专有的All-Spin的一个亚种，给所有方块增加了不可移动判定，但除了T块三角判定之外的spin全都视为mini（基础攻击=行数-1，计b2b）。此规则已默认用于TL和QP",
     },
     {
         word="tss;tsd;tst",
