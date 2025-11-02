@@ -1,3 +1,12 @@
+local stepLimit=2e6
+local function hook() error('timeout') end
+local timeoutError={
+    "是不是有个死循环？",
+    "资源耗尽算不动了喵",
+    "运行超过两百万步了喵",
+    "过于昂贵！",
+}
+
 ---@type table<string,{help:string, func:fun(data:string, M:OneBot.Event.Message):any}>
 local tools={}
 
@@ -106,10 +115,10 @@ local mathSyntaxError={
 }
 local mathBanPattern={
     ["function"]={"害怕栈溢出喵…","会写这个就去自己写程序喵！"},
-    ["while"]={"害怕无限循环喵…","计算器为什么要循环喵？"},
-    ["for"]={"算数还要用到for喵？","你不许for喵"},
-    ["repeat"]={"我只听说过while喵","repeat？那是什么喵"},
-    ["goto"]={"珍爱生命，远离goto","意大利面不好吃喵！","goto一时爽…"},
+    -- ["while"]={"害怕无限循环喵…","计算器为什么要循环喵？"},
+    -- ["for"]={"算数还要用到for喵？","你不许for喵"},
+    -- ["repeat"]={"我只听说过while喵","repeat？那是什么喵"},
+    -- ["goto"]={"珍爱生命，远离goto","意大利面不好吃喵！","goto一时爽…"},
     ["[\"\']"]={"计算器只能算数字喵！","你只许算数字喵！","字符串是人家的隐私喵"},
     ["%[%["]={"你是坏人。","盯……是不是多打了一个[呀","盯……是不是多打了一个[呀","盯……是不是多打了一个[呀"},
     ["%[="]={"你是坏人。","等于号不能这么用喵（装傻","等于号不能这么用喵（装傻","等于号不能这么用喵（装傻"},
@@ -125,9 +134,17 @@ tools.calc={
         TABLE.clear(mathEnv)
         mathEnv.math=mathEnv
         setfenv(f,mathEnv)
-        local suc,res=pcall(f)
-        if not suc then return "计算过程出错: "..(res:match(".+%d:(.+)") or res) end
-        return '='..tostring(res)
+        jit.off(f)
+
+        local thread=coroutine.create(f)
+        debug.sethook(thread,hook,'',stepLimit)
+        local suc,res=coroutine.resume(thread)
+        debug.sethook()
+
+        return not suc and (
+            res:find('timeout') and TABLE.getRandom(timeoutError)
+            or "计算过程出错: "..(res:match(".+%d:(.+)") or res)
+        ) or "= "..tostring(res)
     end,
 }
 
@@ -299,10 +316,10 @@ local drawSyntaxError={
 }
 local drawBanPattern={
     ["function"]="自定义函数有安全风险喵…",
-    ["while"]="循环有安全风险喵",
-    ["for"]="循环有安全风险喵",
-    ["repeat"]="循环有安全风险喵",
-    ["goto"]="珍爱生命，远离goto",
+    -- ["while"]="循环有安全风险喵",
+    -- ["for"]="循环有安全风险喵",
+    -- ["repeat"]="循环有安全风险喵",
+    -- ["goto"]="珍爱生命，远离goto",
     ["[\"\']"]="字符串应该是用不到的喵",
     ["%[%["]="你是坏人。",
     ["%[="]="你是坏人。",
@@ -346,15 +363,23 @@ tools.draw={
         for k,v in next,drawBanPattern do if expr:match(k) then return v end end
         for k in next,drawBaseEnv do drawEnv[k]=nil end
         setfenv(f,drawEnv)
+        jit.off(f)
 
         if not tempCanvas then tempCanvas=GC.newCanvas(500,500) end
 
         GC.setCanvas(tempCanvas)
         GC.replaceTransform(tempCoord)
-        local suc,x,y,w,h=pcall(f)
+
+        local thread=coroutine.create(f)
+        debug.sethook(thread,hook,'',stepLimit)
+        local suc,x,y,w,h=coroutine.resume(thread)
+        debug.sethook()
+
         GC.setCanvas()
 
-        if not suc then return "执行过程出错: "..(x:match(".+%d:(.+)") or x) end
+        if not suc then
+            return x:find('timeout') and TABLE.getRandom(timeoutError) or "执行过程出错: "..(x:match(".+%d:(.+)") or x)
+        end
         if x then
             TASK.lock('tool_draw',26)
             x=MATH.clamp(tonumber(x) or 0,0,499)
