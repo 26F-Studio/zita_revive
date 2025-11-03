@@ -288,6 +288,7 @@ local function checkHoldPossibility(base)
         if j/32%2>=1 then b=b:sub(1,5)..b:sub(7,7)..b:sub(6,6) end
         if validCache[perm7inv[b]] then return true end
     end
+    return false
 end
 tools.cover={
     help="序列覆盖率计算\n例：#cover zts & (JOL|LOJ) & ...\n→ 可行序列数/5040 (搭建率, 无暂存序列数)",

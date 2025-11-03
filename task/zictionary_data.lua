@@ -712,7 +712,7 @@ local main={
         text="一个AI的名字\n由MinusKelvin开发，原用于PPT",
     },
     {
-        word="zzz(bot);zzzbot;zzztoj",
+        word="zzz;zzzbot;zzztoj",
         title="ZZZ (Bot)",
         text="一个AI的名字\n由研究群群友zzz（奏之章）开发，运行效率极高",
     },
@@ -1789,7 +1789,7 @@ local contributor={
     },
     {
         word="TTTT;Farter;屁;屁爷",
-        text="TTTT.屁，创研究群的【写乐Tetr.js(屁块)【哦还有写T-ex的【然并无人玩【【",
+        text="TTTT.屁，创研究群的【写Tetr.js(屁块)的【哦还有写T-ex的【然并无人玩【【",
         link="space.bilibili.com/132966",
     },
     {
@@ -1835,7 +1835,7 @@ local contributor={
         text="Minus Kelvin，编写了Cold Clear机器人",
     },
     {
-        word="ZZZ;Zou Zhi Zhang",
+        word="奏之章;Zou Zhi Zhang",
         text="奏之章，编写了ZZZ机器人",
     },
 }
