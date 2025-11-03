@@ -391,7 +391,7 @@ tools.draw={
                 return Bot.canvasToImage(tempCanvas,0,0,x,y)
             end
         else
-            return Bot.reactMessage(M.message_id,Emoji.check_mark_button)
+            return Bot.reactMessage(M.message_id,Emoji.hollow_red_circle)
         end
     end,
 }

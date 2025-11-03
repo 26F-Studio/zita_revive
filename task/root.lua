@@ -103,7 +103,7 @@ local commands={
     end},
     ['%log']={level=2,func=function(_,_,M,D)
         D._log=not D._log
-        Bot.reactMessage(M.message_id,D._log and Emoji.check_mark_button or Emoji.cross_mark)
+        Bot.reactMessage(M.message_id,D._log and Emoji.hollow_red_circle or Emoji.cross_mark)
     end},
     ['%stat']={level=2,func=function(S)
         local result=STRING.repD(STRING.trimIndent[[
