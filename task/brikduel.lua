@@ -1041,7 +1041,7 @@ function Game:renderImage(colBase)
         end
     GC.pop()
     GC.setCanvas()
-    return Bot.canvasToImage(texture.canvas,0,1,0,imgStartH,totalW,totalH-imgStartH)
+    return Bot.canvasToImage(texture.canvas,0,imgStartH,totalW,totalH-imgStartH)
 end
 
 ---@param user BrikDuel.User
@@ -1377,10 +1377,13 @@ return {
         local curDuel=D.matches[M.user_id]
 
         if mes:sub(1,1)=='#' then
-            if not (mes:sub(1,3)=="#dl" or mes:sub(1,5)=='#duel') then return false end
+            if mes:sub(1,5)=='#duel' then
+                mes='#dl'..mes:sub(6)
+            elseif not (mes:sub(1,3)=="#dl") then
+                return false
+            end
             local user=User.get(M.user_id)
 
-            -- 缩写
             if     mes:find('^#dlhelp')  then
                 if S:lock('brikduel_help',62) then
                     S:send(texts.help)
@@ -1565,9 +1568,9 @@ return {
                 else
                     delReply(S,26,M,texts.setn_help)
                 end
-            elseif ruleLib.solo[mes:sub(4)] then
+            elseif ruleLib.solo[mes:sub(4):lower()] then
                 -- 单人
-                local exData=mes:sub(4)
+                local exData=mes:sub(4):lower()
                 cancelCurrent(curDuel,S,M,D)
 
                 local newDuel=Duel.new(S.id,M.user_id)
