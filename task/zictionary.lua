@@ -45,15 +45,10 @@ return {
             if S:lock('dailyEntry',626) then
                 math.randomseed(tonumber(os.date('%Y%m%d')) or 26)
                 for _=1,26 do math.random() end
-                local entry
                 for _=1,26 do
-                    entry=TABLE.getRandom(entryList)
-                    if entry.title then break end
+                    daily=TABLE.getRandom(entryList)
+                    if daily.title then break end
                 end
-                mes='#'..entry.word
-                if mes:find(';') then mes=mes:match('(.-);') end
-                math.randomseed(os.time())
-                daily=true
             end
         elseif mes=="#reload" then
             if Bot.isAdmin(M.user_id) then
@@ -67,34 +62,37 @@ return {
             return true
         end
 
-        -- Get searching phrase
-        local queryPhrase=mes:match('#.+')
-        if not queryPhrase then return false end
-
-        -- Remove '#'
-        local showDetail
-        if queryPhrase:sub(1,2)=='##' then
-            queryPhrase=queryPhrase:sub(3)
-            showDetail=true
-        else
-            queryPhrase=queryPhrase:sub(2)
-        end
-
         -- Get entry from dict data
         ---@type Zict.Entry
-        local entry
-        local words=STRING.split(queryPhrase:lower(),'%s+',true)
-        for i=#words,1,-1 do
-            if #words[i]>26 then table.remove(words,i) end
-        end
-        while words[1] do
-            entry=zict[table.concat(words,'')]
-            if entry then break end
-            table.remove(words)
-        end
+        local entry=daily
+        local showDetail
+
         if not entry then
-            Bot.reactMessage(M.message_id,Emoji.white_question_mark)
-            return false
+            -- Get searching phrase
+            local queryPhrase=mes:match('#.+')
+            if not queryPhrase then return false end
+
+            -- Remove '#'
+            if queryPhrase:sub(1,2)=='##' then
+                queryPhrase=queryPhrase:sub(3)
+                showDetail=true
+            else
+                queryPhrase=queryPhrase:sub(2)
+            end
+
+            local words=STRING.split(queryPhrase:lower(),'%s+',true)
+            for i=#words,1,-1 do
+                if #words[i]>26 then table.remove(words,i) end
+            end
+            while words[1] do
+                entry=zict[table.concat(words,'')]
+                if entry then break end
+                table.remove(words)
+            end
+            if not entry then
+                Bot.reactMessage(M.message_id,Emoji.white_question_mark)
+                return false
+            end
         end
 
         -- Response
