@@ -45,7 +45,12 @@ return {
             if S:lock('dailyEntry',626) then
                 math.randomseed(tonumber(os.date('%Y%m%d')) or 26)
                 for _=1,26 do math.random() end
-                mes='#'..TABLE.getRandom(entryList).word
+                local entry
+                for _=1,26 do
+                    entry=TABLE.getRandom(entryList)
+                    if entry.title then break end
+                end
+                mes='#'..entry.word
                 if mes:find(';') then mes=mes:match('(.-);') end
                 math.randomseed(os.time())
                 daily=true
