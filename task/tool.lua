@@ -168,33 +168,41 @@ tools.react={
 }
 
 tools.ranksim={
-    help="qp2等级模拟（无流失保护）\n例：#ranksim rank xp [frames=600]",
+    help="qp2等级模拟（无流失保护）\n例：#ranksim rank xp [frames=60]",
     func=function(data)
         local params=STRING.split(data,' ')
         local rank,xp=tonumber(params[1]),tonumber(params[2])
         if not (rank and xp) then return "rank和xp需要数字" end
 
-        local steps=math.min(tonumber(params[3]) or 600, 1000)
-        for _=1,steps do
-            local tr=math.floor(rank)
-            xp=xp-3*(tr^2+tr)/3600
+        local maxRank=rank
 
-            local nextRankXP=4*tr
-            local storedXP=4*(tr-1)
+        if rank%1>0 then
+            xp=xp+4*math.floor(rank)*(rank%1)
+            rank=math.floor(rank)
+        end
+
+        local steps=math.min(tonumber(params[3]) or 60, 1000)
+        for _=1,steps do
+            local R=rank -- integer rank
+            xp=xp-3*(R^2+R)/3600
+
+            local nextRankXP=4*R
+            local storedXP=4*(R-1)
             if xp<0 then
-                if tr<=1 then
+                if R<=1 then
                     xp=0
                 else
                     xp=xp+storedXP
-                    tr=tr-1
+                    R=R-1
                 end
             elseif xp>=nextRankXP then
                 xp=xp-nextRankXP
-                tr=tr+1
+                R=R+1
             end
-            rank=tr+xp/(4*tr)
+            rank=math.floor(R+xp/(4*R))
+            maxRank=math.max(maxRank,rank)
         end
-        return ("%d帧后为%.2f级%.1f经验"):format(steps,rank,xp)
+        return ("%d帧后%d级%.1f/%d经验，最高%d级"):format(steps,rank,xp,4*rank,maxRank)
     end,
 }
 
