@@ -215,17 +215,19 @@ function Bot.canvasToImage(canvas,x,y,w,h)
 end
 ---@param group_id number
 ---@param user_id number
----@param time? number
+---@param time? number minutes
 function Bot.ban(group_id,user_id,time)
-    local mes={
-        action='set_group_ban',
-        params={
-            group_id=group_id,
-            user_id=user_id,
-            duration=time or 60,
-        },
-    }
-    Bot._send(mes)
+    if not time then time=1 end
+    if time>=1 then
+        Bot._send{
+            action='set_group_ban',
+            params={
+                group_id=group_id,
+                user_id=user_id,
+                duration=math.min(math.floor(time)*60,30*86400),
+            },
+        }
+    end
 end
 ---@param handler fun(data:table)
 function Bot.getMemberList(group_id,handler)
