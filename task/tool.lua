@@ -168,7 +168,7 @@ tools.react={
 }
 
 tools.ranksim={
-    help="qp2等级模拟（无流失保护）\n例：#ranksim rank xp [frames=60]",
+    help="qp2等级模拟（1F流失保护）\n例：#ranksim rank xp [frames=60]",
     func=function(data)
         local params=STRING.split(data,' ')
         local rank,xp=tonumber(params[1]),tonumber(params[2])
@@ -182,9 +182,14 @@ tools.ranksim={
         end
 
         local steps=math.min(tonumber(params[3]) or 60, 1000)
+        local protect=false
         for _=1,steps do
             local R=rank -- integer rank
-            xp=xp-3*(R^2+R)/3600
+            if protect then
+                protect=false
+            else
+                xp=xp-3*(R^2+R)/3600
+            end
 
             local nextRankXP=4*R
             local storedXP=4*(R-1)
@@ -198,6 +203,7 @@ tools.ranksim={
             elseif xp>=nextRankXP then
                 xp=xp-nextRankXP
                 R=R+1
+                protect=true
             end
             rank=math.floor(R+xp/(4*R))
             maxRank=math.max(maxRank,rank)
