@@ -51,7 +51,7 @@ return {
                 end
             end
         elseif mes=="#reload" then
-            if Bot.isAdmin(M.user_id) then
+            if Config.superAdminID[M.user_id] then
                 reloadZict()
                 S:send("小z的知识库更新了！现在有"..(TABLE.getSize(zict)-1).."个关键词和"..#entryList.."个词条喵")
             else

@@ -111,11 +111,6 @@ Emoji=require'data.emoji'
 
 ---@alias Sendable string|number|boolean|string.buffer
 
----Check if a user is configured as super admin
-function Bot.isAdmin(id)
-    return Config.superAdminID[id]
-end
-
 ---@param data table
 function Bot._send(data)
     if type(data.echo)=='function' then

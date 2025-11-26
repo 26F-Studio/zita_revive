@@ -130,7 +130,7 @@ return {
     message=function(S,M,D)
         if D._log then print(TABLE.dump(M)) end
         if #M.message==1 and M.message[1].type=='text' then
-            local level=Bot.isAdmin(M.user_id) and 2 or AdminMsg(M) and 1 or 0
+            local level=Config.superAdminID[M.user_id] and 2 or AdminMsg(M) and 1 or 0
             local mes=STRING.trim(M.message[1].data.text)
             if mes:find('!')==1 or mes:find('！')==1 then
                 if #mes<6.26 then return false end
@@ -170,7 +170,7 @@ return {
             end
         elseif M.message[1].type=='reply' and Config.groupManaging[S.id] then
             if M.raw_message:find('%del',nil,true) then
-                local level=Bot.isAdmin(M.user_id) and 2 or AdminMsg(M) and 1 or 0
+                local level=Config.superAdminID[M.user_id] and 2 or AdminMsg(M) and 1 or 0
                 if level>=2 then
                     S:delete(tonumber(M.message[1].data.id))
                     S:delete(M.message_id)
@@ -182,8 +182,18 @@ return {
         end
         return false
     end,
-    notice=function(_,N,D)
+    notice=function(S,N,D)
         if D._log then print(TABLE.dump(N)) end
+        -- 2nd way to delete message
+        if N.notice_type=='group_msg_emoji_like' then
+            ---@cast N OneBot.Event.Notice.Emoji
+            if N.is_add and Config.groupManaging[S.id] and Config.superAdminID[N.user_id] then
+                if N.likes[1].emoji_id=="5" then
+                    S:delete(N.message_id)
+                    return true
+                end
+            end
+        end
         return false
     end,
 }

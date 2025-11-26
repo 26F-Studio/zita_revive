@@ -84,8 +84,10 @@
 
 ---@class OneBot.Event.Notice.Emoji : OneBot.Event.Notice
 ---@field notice_type 'group_msg_emoji_like'
+---@field user_id number
 ---@field message_id number
 ---@field likes Emoji[]
+---@field is_add boolean
 
 ---@class OneBot.Event.Notice.Poke : OneBot.Event.Notice
 ---@field sub_type 'poke'
