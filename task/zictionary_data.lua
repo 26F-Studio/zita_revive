@@ -1167,7 +1167,7 @@ local pattern={
         link="tetriswiki.cn/p/Gamushiro_Stacking",
     },
     {
-        word="mountain;mountainous stacking;mountainous stacking 1;mountainous stacking 2;mountainous stacking 3;ms;ms1;ms2;ms3;山岳;山岳堆叠;山岳1;山岳2;山岳3;山岳一;山岳二;山岳三;山岳堆叠一号;山岳堆叠二号;山岳堆叠三号",
+        word="mountain;mountainous stacking;mountainous stacking 1;mountainous stacking 2;mountainous stacking 3;ms1;ms2;ms3;山岳;山岳堆叠;山岳1;山岳2;山岳3;山岳一;山岳二;山岳三;山岳堆叠一号;山岳堆叠二号;山岳堆叠三号",
         title="山岳堆叠",
         text="一系列开局定式，第一包堆叠，然后搭建 #TD攻击 ，高概率8行PC。有123三种，最常见的是2，在无延迟极为流行的TDPC",
         link="tetriswiki.cn/p/Mountainous_Stacking_2",
@@ -1713,7 +1713,7 @@ local extra_tetrio={
         text="混乱度++，易挖度--",
     },
     {
-        word="GV;gravity",
+        word="GV", -- gravity
         title="[QP2模组] GV 高重力 （塔 The Tower）",
         text="0.5G开局，每上一层增加0.3G（格/帧）\n每层的锁定延迟：30 29 28 27 26 24 22 20 18 16 （帧）",
     },
@@ -1728,12 +1728,12 @@ local extra_tetrio={
         text="每行垃圾行50%的概率在随机位置多一个洞",
     },
     {
-        word="IN;invisible",
+        word="IN", -- invisible
         title="[QP2模组] IN 隐形 （隐士 The Hermit）",
         text="自己放置的方块会隐形，整个场地每5秒闪烁一次",
     },
     {
-        word="AS;allspin",
+        word="AS", -- allspin
         title="[QP2模组] AS 全旋 （魔法师 The Magician）",
         text="非T块的Spin不再判为mini，但不能连续进行两次左上角冒出相同的字的动作，只看mini、块名、行数（包括0），违反时罚一行特殊实心行，在合规消除[当前层数+5]次后转为普通垃圾行（单洞，位置随机）",
     },
@@ -1942,7 +1942,7 @@ local function loadData(data)
         for _,word in next,STRING.split(entry.word,";") do
             word=SimpStr(word)
             if zict[word] then
-                print("Repeat Keyword: "..word)
+                LOG('warn',"Repeat Keyword: "..word)
             else
                 zict[word]=entry
             end
