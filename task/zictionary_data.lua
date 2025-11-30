@@ -289,7 +289,7 @@ local main={
         text="IO专有的All-Spin的一个亚种，给所有方块增加了不可移动判定，但除了T块三角判定之外的spin全都视为mini（基础攻击=行数-1，计B2B）。此规则已默认用于TL和QP",
     },
     {
-        word="tss;tsd;tst",
+        word="tss;tsd;tst;t1;t2;t3",
         title="TSS/TSD/TST",
         text="T-Spin Single/Double/Triple，使用T方块Spin并消除1/2/3行，也称T1/T2/T3。其中T3需要旋转系统支持才可能打出",
     },
