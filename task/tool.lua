@@ -410,6 +410,40 @@ tools.draw={
     end,
 }
 
+local qrCanvas
+local pixelColor={
+    [-2]=COLOR.LL,
+    [-1]={.942,.942,1},
+    [1]={0,0,.2},
+    [2]=COLOR.DD,
+}
+tools.qr={
+    help="生成二维码图片\n例：#qr Techmino好玩",
+    func=function(data,M)
+        if TASK.getLock('qr_gen') then return Bot.reactMessage(M.message_id,Emoji.snail) end
+        local qrFunc=require'task.qr'
+        local suc,res=pcall(qrFunc,STRING.trim(data))
+        if not suc then return res end
+        if not qrCanvas then qrCanvas=GC.newCanvas(360,360) end
+        local w=#res
+        GC.setCanvas(qrCanvas)
+        GC.clear(1,1,1)
+        GC.origin()
+        GC.translate(3,3)
+        local k=MATH.clamp(math.floor(2*354/w),2,5)
+        GC.scale(k)
+        for y=1,w do
+            for x=1,w do
+                GC.setColor(pixelColor[res[y][x]] or COLOR.P)
+                GC.rectangle('fill',x-1,y-1,1,1)
+            end
+        end
+        GC.setCanvas()
+        TASK.lock('qr_gen',26)
+        return Bot.canvasToImage(qrCanvas,0,0,w*k+6,w*k+6)
+    end,
+}
+
 tools.tool={
     help="实用小工具：\n"..table.concat(TABLE.getKeys(tools)," "),
 }
