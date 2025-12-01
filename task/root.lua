@@ -52,7 +52,7 @@ local commands={
         S:send(("本群紧急停机%d分钟喵！"):format(time))
         TASK.lock('newSession_'..S.id,time*60)
         SessionMap[S.uid]=nil
-    end},['%s']="%stop",
+    end},
     ['%shutdown']={level=2,func=function(S)
         print("[SHUTDOWN]")
         S:send("小z紧急停止了喵！")
@@ -132,7 +132,7 @@ return {
         if #M.message==1 and M.message[1].type=='text' then
             local level=Config.superAdminID[M.user_id] and 2 or AdminMsg(M) and 1 or 0
             local mes=STRING.trim(M.message[1].data.text)
-            if mes:find('!')==1 or mes:find('！')==1 then
+            if mes:find('!')==1 then
                 if #mes<6.26 then return false end
                 if level<2 then
                     noPermission(S)
