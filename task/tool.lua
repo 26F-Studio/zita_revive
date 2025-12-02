@@ -430,7 +430,7 @@ tools.qr={
         GC.clear(1,1,1)
         GC.origin()
         GC.translate(3,3)
-        local k=MATH.clamp(math.floor(2*354/w),2,5)
+        local k=MATH.clamp(math.floor(354/w),2,5)
         GC.scale(k)
         for y=1,w do
             for x=1,w do

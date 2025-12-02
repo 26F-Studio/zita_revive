@@ -31,7 +31,7 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 local tonumber=tonumber
-local min,floor,abs=math.min,math.floor,math.abs
+local max,min,floor,abs=math.max,math.min,math.floor,math.abs
 local byte,sub,rep=string.byte,string.sub,string.rep
 local gsub,match,format=string.gsub,string.match,string.format
 local concat=table.concat
@@ -45,11 +45,11 @@ local function toBinStr(n,digits)
     if n<=0xF then
         s=hexTable[n]
     elseif n<=0xFF then
-        s=hexTable[floor(n/16)]..hexTable[n%16]
+        s=hexTable[n/16-n/16%1]..hexTable[n%16]
     else
         local hs=format('%X',n)
-        s=hexToBin[byte(hs,1)]
-        for i=2,#hs do
+        s=hexToBin[byte(hs,1)]..hexToBin[byte(hs,2)]
+        for i=3,#hs do
             s=s..hexToBin[byte(hs,i)]
         end
     end
@@ -79,8 +79,7 @@ local ver_mode_bits={
 }
 
 local function get_version_eclevel(len,mode,requested_ec_level)
-    local bits,digits,modebits
-    local minversion=40
+    local minversion=99
     local maxec_level=requested_ec_level or 1
     local minlv,maxlv=1,4
     if requested_ec_level and requested_ec_level>=1 and requested_ec_level<=4 then
@@ -89,26 +88,23 @@ local function get_version_eclevel(len,mode,requested_ec_level)
     end
     for ec_level=minlv,maxlv do
         for version=1,#capacity do
-            bits=capacity[version][ec_level]*8-4 -- "-4" because mode indicator
-            if version<10 then
-                digits=ver_mode_bits[1][mode]
-            elseif version<27 then
-                digits=ver_mode_bits[2][mode]
-            elseif version<=40 then
-                digits=ver_mode_bits[3][mode]
-            end
-            modebits=bits-digits
-            local _
+            local bits=capacity[version][ec_level]*8-4 -- "-4" because mode indicator
+            local digits=
+                version<=9 and ver_mode_bits[1][mode] or
+                version<=26 and ver_mode_bits[2][mode] or
+                ver_mode_bits[3][mode]
+            local modebits=bits-digits
+            local c
             if mode==1 then
-                _=floor(modebits*3/10)
+                c=floor(modebits*3/10)
             elseif mode==2 then
-                _=floor(modebits*2/11)
+                c=floor(modebits*2/11)
             elseif mode==4 then
-                _=floor(modebits*1/8)
+                c=floor(modebits*1/8)
             else
-                _=floor(modebits*1/13)
+                c=floor(modebits*1/13)
             end
-            if _>=len then
+            if c>=len then
                 if version<=minversion then
                     minversion=version
                     maxec_level=ec_level
@@ -117,28 +113,25 @@ local function get_version_eclevel(len,mode,requested_ec_level)
             end
         end
     end
+    assert(minversion<=40,"Data too long to encode in QR code")
     return minversion,maxec_level
 end
 
 -- Return a bit string of 0s and 1s that includes the length of the code string.
 -- The modes are numeric = 1, alphanumeric = 2, binary = 4, and japanese = 8
 local function get_length(str,version,mode)
-    local digits
-    if version<=9 then
-        digits=ver_mode_bits[1][mode]
-    elseif version<=26 then
-        digits=ver_mode_bits[2][mode]
-    else
-        digits=ver_mode_bits[3][mode]
-    end
+    local digits=
+        version<=9 and ver_mode_bits[1][mode] or
+        version<=26 and ver_mode_bits[2][mode] or
+        ver_mode_bits[3][mode]
     return toBinStr(#str,digits)
 end
 
 local function get_version_eclevel_mode_bistringlength(str,requested_ec_level)
     local mode=
-        match(str,'^[0-9]+$') and 1 or              -- numeric
+        match(str,'^[0-9]+$') and 1 or -- numeric
         match(str,'^[0-9A-Z $%%*./:+-]+$') and 2 or -- alphanumeric
-        4                                           -- binary
+        4 -- binary
 
     local version,ec_level=get_version_eclevel(#str,mode,requested_ec_level)
     return
@@ -149,7 +142,7 @@ local function get_version_eclevel_mode_bistringlength(str,requested_ec_level)
 end
 
 local asciitbl={
-    -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,    -- 0x01-0x0F
+    -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, -- 0x01-0x0F
     -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, -- 0x10-0x1F
     36,-1,-1,-1,37,38,-1,-1,-1,-1,39,40,-1,41,42,43, -- 0x20-0x2F
     00,01,02,03,04,05,06,07,08,09,44,-1,-1,-1,-1,-1, -- 0x30-0x3F
@@ -373,29 +366,25 @@ local function arrange_codewords_and_calculate_ec(version,ec_level,data)
         end
     end
 
-    -- data
     local arranged_data={}
-    local len
-    len,pos=0,1
-    while len<#data do
+    local maxBlockLen=0
+    count=1
+    for i=1,#datablocks do maxBlockLen=max(maxBlockLen, #datablocks[i]) end
+    for p=1,maxBlockLen,8 do
         for i=1,#datablocks do
-            if pos<#datablocks[i] then
-                arranged_data[#arranged_data+1]=sub(datablocks[i],pos, pos+7)
-                len=len+8
-            end
+            arranged_data[count]=sub(datablocks[i], p, p+7)
+            count=count+1
         end
-        pos=pos+8
     end
-    -- ec
-    len,pos=0,1
-    while len<cpty_ec_bits do
+
+    -- Same for EC blocks
+    maxBlockLen=0
+    for i=1,#final_ecblocks do maxBlockLen=max(maxBlockLen, #final_ecblocks[i]) end
+    for p=1,maxBlockLen,8 do
         for i=1,#final_ecblocks do
-            if pos<#final_ecblocks[i] then
-                arranged_data[#arranged_data+1]=sub(final_ecblocks[i],pos, pos+7)
-                len=len+8
-            end
+            arranged_data[count]=sub(final_ecblocks[i], p, p+7)
+            count=count+1
         end
-        pos=pos+8
     end
     return concat(arranged_data)
 end
@@ -440,11 +429,11 @@ end
 
 -- For each version, where should we place the alignment patterns? See table E.1 of the spec
 local alignment_pattern_pos={
-    {},{6,18},{6,22},{6,26},{6,30},{6,34},                                                                                                                 -- 1-6
-    {6,22,38},{6,24,42},{6,26,46},{6,28,50},{6,30,54},{6,32,58},{6,34,62},                                                                                 -- 7-13
-    {6,26,46,66},{6,26,48,70},{6,26,50,74},{6,30,54,78},{6,30,56,82},{6,30,58,86},{6,34,62,90},                                                            -- 14-20
-    {6,28,50,72,94},{6,26,50,74,98},{6,30,54,78,102},{6,28,54,80,106},{6,32,58,84,110},{6,30,58,86,114},{6,34,62,90,118},                                  -- 21-27
-    {6,26,50,74,98, 122},{6,30,54,78,102,126},{6,26,52,78,104,130},{6,30,56,82,108,134},{6,34,60,86,112,138},{6,30,58,86,114,142},{6,34,62,90,118,146},    -- 28-34
+    {},{6,18},{6,22},{6,26},{6,30},{6,34}, -- 1-6
+    {6,22,38},{6,24,42},{6,26,46},{6,28,50},{6,30,54},{6,32,58},{6,34,62}, -- 7-13
+    {6,26,46,66},{6,26,48,70},{6,26,50,74},{6,30,54,78},{6,30,56,82},{6,30,58,86},{6,34,62,90}, -- 14-20
+    {6,28,50,72,94},{6,26,50,74,98},{6,30,54,78,102},{6,28,54,80,106},{6,32,58,84,110},{6,30,58,86,114},{6,34,62,90,118}, -- 21-27
+    {6,26,50,74,98, 122},{6,30,54,78,102,126},{6,26,52,78,104,130},{6,30,56,82,108,134},{6,34,60,86,112,138},{6,30,58,86,114,142},{6,34,62,90,118,146}, -- 28-34
     {6,30,54,78,102,126,150},{6,24,50,76,102,128,154},{6,28,54,80,106,132,158},{6,32,58,84,110,136,162},{6,26,54,82,110,138,166},{6,30,58,86,114,142,170}, -- 35-40
 }
 
@@ -507,25 +496,25 @@ local function add_typeinfo(mat,ec_level,mask)
 
     -- vertical from bottom to top
     local L=mat[9]
-    for i=1,7 do L[#mat+1-i]=byte(typeInfo,i)==49 and 2 or -2 end
-    for i=8,9 do L[17-i]=byte(typeInfo,i)==49 and 2 or -2 end
-    for i=10,15 do L[16-i]=byte(typeInfo,i)==49 and 2 or -2 end
+    for i=1,7 do L[#mat+1-i]=byte(typeInfo,i)==48 and -2 or 2 end
+    for i=8,9 do L[17-i]=byte(typeInfo,i)==48 and -2 or 2 end
+    for i=10,15 do L[16-i]=byte(typeInfo,i)==48 and -2 or 2 end
     -- horizontal, left to right
-    for i=1,6 do mat[i][9]=byte(typeInfo,i)==49 and 2 or -2 end
-    mat[8][9]=byte(typeInfo,7)==49 and 2 or -2
-    for i=8,15 do mat[#mat-15+i][9]=byte(typeInfo,i)==49 and 2 or -2 end
+    for i=1,6 do mat[i][9]=byte(typeInfo,i)==48 and -2 or 2 end
+    mat[8][9]=byte(typeInfo,7)==48 and -2 or 2
+    for i=8,15 do mat[#mat-15+i][9]=byte(typeInfo,i)==48 and -2 or 2 end
 end
 
--- Mask functions, replaced x with x-1 because the coordinate is 1-based indexed but original formulas are 0-based.
+-- Mask functions, notice that i & j are 0-based, so input should be (x-1,y-1)
 local maskFunc={
-    [0]=function(j,i) return (i+j)%2==0 end,
-    function(_,i) return i%2==0 end,
-    function(j,_) return j%3==0 end,
-    function(j,i) return (i+j)%3==0 end,
-    function(j,i) return (i%4-1.5)*(j%6-2.5)>0 end,
-    function(j,i) return (i*j)%2+(i*j)%3==0 end,
-    function(j,i) return ((i*j)%3+i*j)%2==0 end,
-    function(j,i) return ((i*j)%3+i+j)%2==0 end,
+    [0]=function(x,y) return (y+x)%2==0 end,
+    function(_,y) return y%2==0 end,
+    function(x,_) return x%3==0 end,
+    function(x,y) return (y+x)%3==0 end,
+    function(x,y) return (y%4-1.5)*(x%6-2.5)>0 end,
+    function(x,y) return (y*x)%2+(y*x)%3==0 end,
+    function(x,y) return ((y*x)%3+y*x)%2==0 end,
+    function(x,y) return ((y*x)%3+y+x)%2==0 end,
 }
 
 local function generate_final_matrix(version,data,ec_level,mask)
@@ -558,9 +547,9 @@ local function generate_final_matrix(version,data,ec_level,mask)
     add_typeinfo(mat,ec_level,mask)
 
     -- Fill data into matrix
-    local ptr=1             -- data pointer
-    local x,y=size,size     -- writing position, starts from bottom right
-    local x_dir,y_dir=-1,-1 -- state of movement, notice that y movement step once each 2 x steps
+    local ptr=1 -- data pointer
+    local x,y=size,size -- writing position, starts from bottom right
+    local x_dir,y_dir=-1,-1 -- state of movement, notice that Y step once each two X steps
     while true do
         -- Write into available cell
         if mat[x][y]==0 then
@@ -575,8 +564,9 @@ local function generate_final_matrix(version,data,ec_level,mask)
             y=y+y_dir
 
             -- turn back at the edge
-            if not mat[y] then       -- check if outside the edge
+            if not mat[y] then -- check if outside the edge
                 x=x-2
+                if x<0 then error("Data overflow when writing to matrix") end
                 if x==7 then x=6 end -- jump over timing pattern
                 y=y_dir==-1 and 1 or size
                 y_dir=-y_dir
@@ -735,7 +725,7 @@ local remainder={0,7,7,7,7,7,0,0,0,0,0,0,0,3,3,3,3,3,3,3,4,4,4,4,4,4,4,3,3,3,3,3
 ---@param str string string data to encode
 ---@param ec? 1|2|3|4 (optional) error correction level (1=L,2=M,3=Q,4=H)
 ---@param mask? 0|1|2|3|4|5|6|7 (optional) mask pattern (0-7), specify to skip mask evaluation for better performance
----@return Mat<-2|-1|1|2> QRmatrix -1|-2 = white, 1|2 = black, need extra white padding around when rendering
+---@return (-2|-1|1|2)[][] QRmatrix -1|-2 = white, 1|2 = black, need extra white padding around when rendering
 local function qrcode(str,ec,mask)
     assert(ec==nil or type(ec)=='number' and ec>=1 and ec<=4 and ec%1==0,"Error Correction level must be 1-4 integer")
     assert(mask==nil or type(mask)=='number' and mask>=0 and mask<=7 and mask%1==0,"Mask must be 0-7 integer")
@@ -753,22 +743,20 @@ local function qrcode(str,ec,mask)
 
     data=arrange_codewords_and_calculate_ec(version,ec_level,data)
 
-    -- Add remainder bits if needed
-    assert(#data%8==0,"Data length after EC is not 8*N")
     data=data..rep('0',remainder[version])
 
+    local res
     if mask then
-        return generate_final_matrix(version,data,ec_level,mask)
+        res=generate_final_matrix(version,data,ec_level,mask)
     else
-        local bestTab
         local minPenalty=1e99
         for _mask=0,7 do
             local mat=generate_final_matrix(version,data,ec_level,_mask)
             local penalty=calculate_penalty(mat)
-            if penalty<minPenalty then bestTab,minPenalty=mat,penalty end
+            if penalty<minPenalty then res,minPenalty=mat,penalty end
         end
-        return bestTab
     end
+    return res
 end
 
 return qrcode
