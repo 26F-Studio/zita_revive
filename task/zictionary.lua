@@ -81,9 +81,10 @@ return {
             end
 
             local words=STRING.split(queryPhrase:lower(),'%s+',true)
-            for i=#words,1,-1 do
-                if #words[i]>26 then table.remove(words,i) end
-            end
+            if not words[1] then return false end
+            while #words[#words]>26 do table.remove(words) end
+            if not words[1] then return false end
+            for i=1,#words do if #words[i]>26 then return false end end
             while words[1] do
                 entry=zict[table.concat(words,'')]
                 if entry then break end

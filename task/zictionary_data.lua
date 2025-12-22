@@ -1239,7 +1239,7 @@ local pattern={
     },
     -- 开局定式·不做T
     {
-        word="pco;pc opener; perfect clear opener;全消开局;全清开局;开局全消;开局全清",
+        word="pco;pc opener;perfect clear opener;全消开局;全清开局;开局全消;开局全清",
         title="全消开局",
         text="一个开局定式，约七成概率4行PC。最早的PC开局定式",
         link="tetriswiki.cn/p/PCO",
