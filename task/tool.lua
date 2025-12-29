@@ -125,7 +125,15 @@ local mathBanPattern={
     ["%.%."]={"你是坏人。","你不许点点","你不许点点","你不许点点"},
 }
 local mathEnv=setmetatable({},{__index=math})
-local function tblEleFmt(v) return type(v)=='number' and 0+string.format("%.5g",v) or "["..tostring(v).."]" end
+local function tblEleFmt(v)
+    if type(v)~='number' then return "["..tostring(v).."]" end
+
+    if math.abs(v)==MATH.inf then return tostring(v) end
+
+    if tostring(v):find("%.") then return 0+string.format("%.6g",v) end
+
+    return v
+end
 tools.calc={
     help="计算器\n例：#calc 1+1\n→ 2",
     func=function(expr)
@@ -149,7 +157,7 @@ tools.calc={
                 local output="= "..TABLE.dumpDeflate(TABLE.applyeachAll(res,tblEleFmt)):gsub(",",", ")
                 return #output<=128 and output or output:sub(1,100).." …\n(共"..#output.."字)"
             else
-                return "= ("..type(res)..") "..tostring(res)
+                return "= "..tostring(res)
             end
         else
             return
