@@ -67,7 +67,7 @@ local meta={
     },
     {
         word="铁壳ios",
-        text="【暂无数据】",
+        text="1.下载并打开Filza文件管理器\n2.点击底部收藏夹图标-App管理器，找到Techmino\n3.点击右侧信息图标，点击主程序\n5.打开Techmino.app文件夹（并确认可以在这里编辑）\n6.从Github下载最新的.love游戏包，重命名为game.love并替换刚刚看到的那个，完成",
     },
     {
         word="铁壳mac",
@@ -1806,6 +1806,11 @@ local extra_tetrio={
         word="rDP;r2P",
         title="[QP2模组] r2P 逆位双人（流血之心 Bleeding Hearts）",
         text="2025年情人节活动玩法，队友优先的Backfire，详细规则见 #QP2 完整文档",
+    },
+    {
+        word="rSB",
+        title="[QP2模组] rSB 逆位雪球（永冻场地 PERMAFROST BOARD）",
+        text="2025年圣诞节活动玩法，在SB基础上强制asd和asp=0.3，详细规则见 #QP2 完整文档",
     },
 }
 ---@type Zict.Entry[]
