@@ -125,6 +125,7 @@ local mathBanPattern={
     ["%.%."]={"你是坏人。","你不许点点","你不许点点","你不许点点"},
 }
 local mathEnv=setmetatable({},{__index=math})
+local function tblEleFmt(v) return type(v)=='number' and 0+string.format("%.5g",v) or "["..tostring(v).."]" end
 tools.calc={
     help="计算器\n例：#calc 1+1\n→ 2",
     func=function(expr)
@@ -141,10 +142,20 @@ tools.calc={
         local suc,res=coroutine.resume(thread)
         debug.sethook()
 
-        return not suc and (
-            res:find('timeout') and TABLE.getRandom(timeoutError)
-            or "计算过程出错: "..(res:match(".+%d:(.+)") or res)
-        ) or "= "..tostring(res)
+        if suc then
+            if type(res)=='number' or type(res)=='boolean' then
+                return "= "..tostring(res)
+            elseif type(res)=='table' then
+                local output="= "..TABLE.dumpDeflate(TABLE.applyeachAll(res,tblEleFmt)):gsub(",",", ")
+                return #output<=128 and output or output:sub(1,100).." …\n(共"..#output.."字)"
+            else
+                return "= ("..type(res)..") "..tostring(res)
+            end
+        else
+            return
+                res:find('timeout') and TABLE.getRandom(timeoutError) or
+                "计算过程出错: "..(res:match(".+%d:(.+)") or res)
+        end
     end,
 }
 
