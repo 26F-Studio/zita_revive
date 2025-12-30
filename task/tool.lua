@@ -126,13 +126,16 @@ local mathBanPattern={
 }
 local mathEnv=setmetatable({},{__index=math})
 local function tblEleFmt(v)
-    if type(v)~='number' then return "["..tostring(v).."]" end
-
+    if type(v)=='number' then
     if math.abs(v)==MATH.inf then return tostring(v) end
-
-    if tostring(v):find("%.") then return 0+string.format("%.6g",v) end
-
-    return v
+        return string.format("%.6g",v)
+    elseif type(v)=='boolean' then
+        return tostring(v)
+    elseif type(v)=='table' then
+        return "{...}"
+    else
+        return "?"..type(v)
+    end
 end
 tools.calc={
     help="计算器\n例：#calc 1+1\n→ 2",
@@ -142,6 +145,8 @@ tools.calc={
         for k,v in next,mathBanPattern do if expr:match(k) then return TABLE.getRandom(v) end end
         TABLE.clear(mathEnv)
         mathEnv.math=mathEnv
+        mathEnv.nan,mathEnv.inf=MATH.nan,MATH.inf
+        mathEnv.e,mathEnv.tau,mathEnv.phi=MATH.e,MATH.tau,MATH.phi
         setfenv(f,mathEnv)
         jit.off(f)
 
@@ -154,8 +159,15 @@ tools.calc={
             if type(res)=='number' or type(res)=='boolean' then
                 return "= "..tostring(res)
             elseif type(res)=='table' then
-                local output="= "..TABLE.dumpDeflate(TABLE.applyeachAll(res,tblEleFmt)):gsub(",",", ")
-                return #output<=128 and output or output:sub(1,100).." …\n(共"..#output.."字)"
+                local buf=STRING.newBuf()
+                buf:put("= { ")
+                for i=1,math.min(#res,26) do
+                    buf:put(tblEleFmt(res[i]))
+                    if i<#res then buf:put(", ") end
+                end
+                if #res>26 then buf:put("…(共"..#res.."项)") end
+                buf:put(" }")
+                return buf:tostring()
             else
                 return "= "..tostring(res)
             end
