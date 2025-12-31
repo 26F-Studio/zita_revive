@@ -1330,13 +1330,13 @@ local game={
     {
         word="tl;tetra legends",
         title="Tetra Legends",
-        text="简称TL 非官块 网页 主单机 音画优秀 电脑\n有两个隐藏的节奏模式，并且将一些其他游戏中不可见的机制进行了可视化，动效也很多。于2020年12月基本确定由于各种原因不再继续开发",
+        text="非官块 网页 主单机 音画优秀 电脑\n有两个隐藏的节奏模式，并且将一些其他游戏中不可见的机制进行了可视化，动效也很多。于2020年12月基本确定由于各种原因不再继续开发",
         link="tetralegends.app",
     },
     {
         word="asc;ascension",
         title="Ascension",
-        text="简称ASC 可玩 非官块 网页 主单机 音画廉价 电脑\n有一些创意模式",
+        text="简称ASC 可玩 非官块 网页 主单机 音画廉价 电脑\n有一些创意模式，ASC旋转系统就来自这里",
         link="asc.winternebs.com",
     },
     {
