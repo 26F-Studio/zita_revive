@@ -129,7 +129,8 @@ local commands={
 return {
     message=function(S,M,D)
         if D._log then print(TABLE.dump(M)) end
-        if #M.message==1 and M.message[1].type=='text' then
+        if not M.message[1] then return false end
+        if M.message[1].type=='text' then
             local level=Config.superAdminID[M.user_id] and 2 or AdminMsg(M) and 1 or 0
             local mes=STRING.trim(M.message[1].data.text)
             if mes:find('!')==1 then
