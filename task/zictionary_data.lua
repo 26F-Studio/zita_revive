@@ -337,13 +337,18 @@ local main={
     {
         word="srs plus;srs+",
         title="SRS+",
-        text="SRS的拓展版，添加了180°转的踢墙表",
+        text="SRS的拓展版，注意不同游戏中的SRS+可能不同，但大体上都是调整I块和增加180°踢墙",
     },
     {
         word="trs;tech rs;techmino rs",
         title="Techmino Rotation System",
         text="Techmino原创旋转系统，基于SRS增加了不少实用踢墙，还修补了SZ卡死等小问题",
         detail="每个五连块也基本按照SRS的Spin逻辑单独设计了踢墙表，更有神奇O-spin等你探索！",
+    },
+    {
+        word="ars",
+        title="Arika Rotation System",
+        text="TGM系列使用的旋转系统，所有3*2的块都以对齐底边的方式旋转，踢墙表很弱只有左右1，三代给T和I增加了一点点上踢",
     },
     {
         word="xrs",
