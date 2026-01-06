@@ -1591,6 +1591,11 @@ local game={
         text="单机联机都有 音画优秀 电脑\nTetra Online转生，目前还在开发阶段",
         link="tetraesports.com/",
     },
+    {
+        word="quadra break;qb",
+        title="Quadra Break",
+        text="非官块 要下载 单机 音画优秀 电脑\n以那些广告里疯狂cascade超宽屏方块为灵感的游戏\n已逝，永远怀念",
+    },
     -- 题库
     {
         word="ttt",
