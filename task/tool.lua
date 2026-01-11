@@ -127,7 +127,7 @@ local mathBanPattern={
 local mathEnv=setmetatable({},{__index=math})
 local function tblEleFmt(v)
     if type(v)=='number' then
-    if math.abs(v)==MATH.inf then return tostring(v) end
+        if math.abs(v)==MATH.inf then return tostring(v) end
         return string.format("%.6g",v)
     elseif type(v)=='boolean' then
         return tostring(v)
