@@ -261,7 +261,7 @@ tools.qp16={
     func=function(username,M)
         if TASK.getLock('tool_qp2score_1') and TASK.getLock('tool_qp2score_2') then return Bot.reactMessage(M.message_id,Emoji.snail) end
         username=username:lower()
-        if not MATH.between(#username,3,16) or username:match('^[^a-z0-9%-_]+$') then return "用户名格式不正确喵" end
+        if not MATH.between(#username,3,16) or username:match('^[^a-z0-9%-_]+$') then return "用户名格式不对" end
         Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
         local _=TASK.lock('tool_qp2score_1',12) or TASK.lock('tool_qp2score_2',12)
         local f=io.popen('curl -s https://ch.tetr.io/api/users/'..username..'/summaries/achievements','r')
@@ -324,14 +324,17 @@ tools.qp16={
 
         local buf=STRING.newBuf()
         buf:putf("QP16-%s\n",username:upper())
+        local len=#buf
 
-        buf:putf("正位总高度 %.1fkm",sum1/1000)
-        if f10cnt1==8 then
-            buf:put(" "..STRING.UTF8(Emoji.trophy))
-        elseif f10cnt1>0 then
-            buf:putf(" (%d/8)",f10cnt1)
+        if sum1>0 then
+            buf:putf("总高度 %.1fkm",sum1/1000)
+            if f10cnt1==8 then
+                buf:put(" "..STRING.UTF8(Emoji.trophy))
+            elseif f10cnt1>0 then
+                buf:putf(" (%d/8)",f10cnt1)
+            end
+            buf:put("\n")
         end
-        buf:put("\n")
         if sum2>0 then
             buf:putf("逆位总高度 %.1fkm",sum2/1000)
             if f10cnt2==8 then
@@ -357,6 +360,8 @@ tools.qp16={
         if pool.zenithspeedrun then table.insert(line,"速通"..STRING.time_simp(-pool.zenithspeedrun/1000)) end
         if pool.zenithb2b then table.insert(line,string.format("B2B×%d",pool.zenithb2b)) end
         if #line>0 then buf:put(table.concat(line,"  ")) end
+
+        if len==#buf then buf:put("这人就没玩过qp2…") end
 
         return buf:tostring()
     end,
