@@ -375,10 +375,10 @@ local tempCanvas ---@type love.Canvas
 local tempCoord=love.math.newTransform()
 local drawBaseEnv={
     清=GC.clear,
-    归=function() tempCoord:reset() GC.replaceTransform(tempCoord) end,
-    移=function(...) tempCoord:translate(...) GC.replaceTransform(tempCoord) end,
-    倍=function(...) tempCoord:scale(...) GC.replaceTransform(tempCoord) end,
-    转=function(...) tempCoord:rotate(...) GC.replaceTransform(tempCoord) end,
+    归=function() return tempCoord:reset(),GC.replaceTransform(tempCoord) end,
+    移=function(...) return tempCoord:translate(...),GC.replaceTransform(tempCoord) end,
+    倍=function(...) return tempCoord:scale(...),GC.replaceTransform(tempCoord) end,
+    转=function(...) return tempCoord:rotate(...),GC.replaceTransform(tempCoord) end,
     色=GC.setColor,
     宽=GC.setLineWidth,
     线=GC.line,
