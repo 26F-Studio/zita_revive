@@ -243,6 +243,125 @@ tools.ranksim={
     end,
 }
 
+local function getFloor(h)
+    return
+        h>=1650 and STRING.UTF8(Emoji.sports_medal) or
+        h>=1350 and "9️⃣" or
+        h>=1100 and "8️⃣" or
+        h>=850 and "7️⃣" or
+        h>=650 and "6️⃣" or
+        h>=450 and "5️⃣" or
+        h>=300 and "4️⃣" or
+        h>=150 and "3️⃣" or
+        h>=50 and "2️⃣" or
+        "1️⃣"
+end
+tools.qp16={
+    help="qp2成绩查询\n例：#qp16 mrz",
+    func=function(username,M)
+        if TASK.getLock('tool_qp2score_1') and TASK.getLock('tool_qp2score_2') then return Bot.reactMessage(M.message_id,Emoji.snail) end
+        username=username:lower()
+        if not MATH.between(#username,3,16) or username:match('^[^a-z0-9%-_]+$') then return "用户名格式不正确喵" end
+        Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
+        local _=TASK.lock('tool_qp2score_1',12) or TASK.lock('tool_qp2score_2',12)
+        local f=io.popen('curl -s https://ch.tetr.io/api/users/'..username..'/summaries/achievements','r')
+        if not f then return "查询失败，发不出网络请求" end
+        local data=f:read('*a')
+        f:close()
+
+        if not data or #data==0 then return "查询失败，没获取到数据" end
+        local suc,res=pcall(JSON.decode,data)
+        if not suc then return "查询失败，json解析出错" end
+        if not res.success then
+            if type(res.error)~='table' or type(res.error.msg)~='string' then
+                return "查询失败，服务器返回错误但没说原因"
+            end
+            if res.error.msg:match("No such user") then
+                return "查询失败，用户不存在"
+            else
+                return "查询失败："..res.error.msg
+            end
+        end
+        if type(res.data)~='table' then return "查询失败，数据格式不正确（data不是表）" end
+        local pool={}
+        for i=1,#res.data do
+            local rec=res.data[i]
+            if type(rec)~='table' then return "查询失败，数据格式不正确（data的成员不是表）" end
+            pool[rec.n]=rec.v
+        end
+
+        local report={
+            {"EX", pool.zenithmod_expert or 0},
+            {"NH", pool.zenithmod_nohold or 0},
+            {"MS", pool.zenithmod_messy or 0},
+            {"GV", pool.zenithmod_gravity or 0},
+            {"VL", pool.zenithmod_volatile or 0},
+            {"DH", pool.zenithmod_doublehole or 0},
+            {"IN", pool.zenithmod_invisible or 0},
+            {"AS", pool.zenithmod_allspin or 0},
+            {"rEX",pool.zenithmod_expert_reversed or 0},
+            {"rNH",pool.zenithmod_nohold_reversed or 0},
+            {"rMS",pool.zenithmod_messy_reversed or 0},
+            {"rGV",pool.zenithmod_gravity_reversed or 0},
+            {"rVL",pool.zenithmod_volatile_reversed or 0},
+            {"rDH",pool.zenithmod_doublehole_reversed or 0},
+            {"rIN",pool.zenithmod_invisible_reversed or 0},
+            {"rAS",pool.zenithmod_allspin_reversed or 0},
+            -- {"2P", pool.zenithmod_duo or 0},
+            -- {"r2P",pool.zenithmod_duo_reversed or 0},
+            -- {"PN", pool.zenithmod_pento},
+            -- {"SB", math.max(pool.zenithmod_snowman,pool.zenithmod_snowman___24)},
+            -- {"rSB",pool.zenithmod_snowman_reversed},
+        }
+        local sum1,sum2=0,0
+        local f10cnt1,f10cnt2=0,0
+        for i=1,8 do
+            sum1=sum1+report[i][2]
+            sum2=sum2+report[i+8][2]
+            if report[i][2]>=1650 then f10cnt1=f10cnt1+1 end
+            if report[i+8][2]>=1650 then f10cnt2=f10cnt2+1 end
+        end
+
+        local buf=STRING.newBuf()
+        buf:putf("QP16-%s\n",username:upper())
+
+        buf:putf("正位总高度 %.1fkm",sum1/1000)
+        if f10cnt1==8 then
+            buf:put(" "..STRING.UTF8(Emoji.trophy))
+        elseif f10cnt1>0 then
+            buf:putf(" (%d/8)",f10cnt1)
+        end
+        buf:put("\n")
+        if sum2>0 then
+            buf:putf("逆位总高度 %.1fkm",sum2/1000)
+            if f10cnt2==8 then
+                buf:put(" "..STRING.UTF8(Emoji.trophy))
+            elseif f10cnt2>0 then
+                buf:putf(" (%d/8)",f10cnt2)
+            end
+            buf:put("\n")
+        end
+
+        for i=#report,1,-1 do if report[i][2]==0 then table.remove(report,i) end end
+        for i=1,#report do
+            buf:putf("%s%s %dm%s",
+                getFloor(report[i][2]),
+                report[i][1],
+                math.floor(report[i][2]),
+                i%2==1 and i<#report and " " or "\n"
+            )
+        end
+
+        local line={}
+        if pool.zenithexplorer then table.insert(line,("%dm"):format(pool.zenithexplorer)) end
+        if pool.zenithspeedrun then table.insert(line,"速通"..STRING.time_simp(-pool.zenithspeedrun/1000)) end
+        if pool.zenithb2b then table.insert(line,string.format("B2B×%d",pool.zenithb2b)) end
+        if #line>0 then buf:put(table.concat(line,"  ")) end
+
+        return buf:tostring()
+    end,
+}
+
 local ins,rem=table.insert,table.remove
 local precedence={['|']=1,['&']=2}
 local pieceList={Z="1",J="2",T="3",I="4",O="5",L="6",S="7"}
