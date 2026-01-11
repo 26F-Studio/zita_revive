@@ -259,11 +259,11 @@ end
 tools.qp16={
     help="qp2成绩查询\n例：#qp16 mrz",
     func=function(username,M)
-        if TASK.getLock('tool_qp2score_1') and TASK.getLock('tool_qp2score_2') then return Bot.reactMessage(M.message_id,Emoji.snail) end
+        if TASK.getLock('tool_qp16_1') and TASK.getLock('tool_qp16_2') then return Bot.reactMessage(M.message_id,Emoji.snail) end
         username=username:lower()
         if not MATH.between(#username,3,16) or username:match('^[^a-z0-9%-_]+$') then return "用户名格式不对" end
         Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
-        local _=TASK.lock('tool_qp2score_1',12) or TASK.lock('tool_qp2score_2',12)
+        local _=TASK.lock('tool_qp16_1',12) or TASK.lock('tool_qp16_2',12)
         local f=io.popen('curl -s https://ch.tetr.io/api/users/'..username..'/summaries/achievements','r')
         if not f then return "查询失败，发不出网络请求" end
         local data=f:read('*a')
@@ -362,6 +362,57 @@ tools.qp16={
         if #line>0 then buf:put(table.concat(line,"  ")) end
 
         if len==#buf then buf:put("这人就没玩过qp2…") end
+
+        return buf:tostring()
+    end,
+}
+
+local resultEmoji={
+    "🎉", -- Victory
+    "💣", -- Defeat
+    "🏅", -- Victory by disqualification
+    "💨", -- Defeat by disqualification
+    "🐖", -- Tie
+    "🤝", -- No contest
+    "❓", -- Match nullified
+}
+tools.tl30={
+    help="tl成绩查询\n例：#tl30 mrz",
+    func=function(username,M)
+        if TASK.getLock('tool_tl30_1') and TASK.getLock('tool_tl30_2') then return Bot.reactMessage(M.message_id,Emoji.snail) end
+        username=username:lower()
+        if not MATH.between(#username,3,16) or username:match('^[^a-z0-9%-_]+$') then return "用户名格式不对" end
+        Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
+        local _=TASK.lock('tool_tl30_1',12) or TASK.lock('tool_tl30_2',12)
+        local f=io.popen('curl -s https://ch.tetr.io/api/labs/leagueflow/'..username,'r')
+        if not f then return "查询失败，发不出网络请求" end
+        local data=f:read('*a')
+        f:close()
+
+        if not data or #data==0 then return "查询失败，没获取到数据" end
+        local suc,res=pcall(JSON.decode,data)
+        if not suc then return "查询失败，json解析出错" end
+        if not res.success then
+            if type(res.error)~='table' or type(res.error.msg)~='string' then
+                return "查询失败，服务器返回错误但没说原因"
+            end
+            if res.error.msg:match("No such user") then
+                return "查询失败，用户不存在"
+            else
+                return "查询失败："..res.error.msg
+            end
+        end
+        if type(res.data)~='table' or type(res.data.points)~='table' then return "查询失败，数据格式不正确" end
+
+        local buf=STRING.newBuf()
+        buf:putf("TL30-%s 最近30场\n",username:upper())
+        local flow=res.data.points
+        for i=1,30 do
+            if not flow[#flow+1-i] then break end
+            buf:put(resultEmoji[flow[#flow+1-i][2]] or "？")
+            if i%10==0 and flow[#flow-i] then buf:put("\n") end
+        end
+        if #flow>30 then buf:put("…") end
 
         return buf:tostring()
     end,
