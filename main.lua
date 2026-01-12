@@ -224,6 +224,19 @@ function Bot.ban(group_id,user_id,time)
         }
     end
 end
+---@param group_id number
+---@param user_id number
+---@param reject_rejoin? boolean
+function Bot.kick(group_id,user_id,reject_rejoin)
+    Bot._send{
+        action='set_group_kick',
+        params={
+            group_id=group_id,
+            user_id=user_id,
+            reject_rejoin=reject_rejoin,
+        },
+    }
+end
 ---@param handler fun(data:table)
 function Bot.getMemberList(group_id,handler)
     Bot._send{
