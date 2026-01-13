@@ -376,46 +376,63 @@ local resultEmoji={
     "🤝", -- No contest
     "❓", -- Match nullified
 }
+local function tl_search(n,username,M)
+    if TASK.getLock('tool_tlN_1') and TASK.getLock('tool_tlN_2') then return Bot.reactMessage(M.message_id,Emoji.snail) end
+    username=username:lower()
+    if not MATH.between(#username,3,16) or username:match('^[^a-z0-9%-_]+$') then return "用户名格式不对" end
+    Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
+    local _=TASK.lock('tool_tlN_1',12) or TASK.lock('tool_tlN_2',12)
+    local f=io.popen('curl -s https://ch.tetr.io/api/labs/leagueflow/'..username,'r')
+    if not f then return "查询失败，发不出网络请求" end
+    local data=f:read('*a')
+    f:close()
+
+    if not data or #data==0 then return "查询失败，没获取到数据" end
+    local suc,res=pcall(JSON.decode,data)
+    if not suc then return "查询失败，json解析出错" end
+    if not res.success then
+        if type(res.error)~='table' or type(res.error.msg)~='string' then
+            return "查询失败，服务器返回错误但没说原因"
+        end
+        if res.error.msg:match("No such user") then
+            return "查询失败，用户不存在"
+        else
+            return "查询失败："..res.error.msg
+        end
+    end
+    if type(res.data)~='table' or type(res.data.points)~='table' then return "查询失败，数据格式不正确" end
+
+    local buf=STRING.newBuf()
+    buf:putf("TL%d-%s 最近%d场\n",n,username:upper(),n)
+    local flow=res.data.points
+    for i=1,n do
+        if not flow[#flow+1-i] then break end
+        buf:put(resultEmoji[flow[#flow+1-i][2]] or "？")
+        if i%10==0 and i~=n and flow[#flow-i] then buf:put("\n") end
+    end
+    if #flow>n then buf:put("…") end
+
+    return buf:tostring()
+end
+tools.tl10={
+    help="tl成绩查询\n例：#tl10 mrz",
+    func=function(username,M) return tl_search(10,username,M) end,
+}
+tools.tl20={
+    help="tl成绩查询\n例：#tl20 mrz",
+    func=function(username,M) return tl_search(20,username,M) end,
+}
 tools.tl30={
     help="tl成绩查询\n例：#tl30 mrz",
-    func=function(username,M)
-        if TASK.getLock('tool_tl30_1') and TASK.getLock('tool_tl30_2') then return Bot.reactMessage(M.message_id,Emoji.snail) end
-        username=username:lower()
-        if not MATH.between(#username,3,16) or username:match('^[^a-z0-9%-_]+$') then return "用户名格式不对" end
-        Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
-        local _=TASK.lock('tool_tl30_1',12) or TASK.lock('tool_tl30_2',12)
-        local f=io.popen('curl -s https://ch.tetr.io/api/labs/leagueflow/'..username,'r')
-        if not f then return "查询失败，发不出网络请求" end
-        local data=f:read('*a')
-        f:close()
-
-        if not data or #data==0 then return "查询失败，没获取到数据" end
-        local suc,res=pcall(JSON.decode,data)
-        if not suc then return "查询失败，json解析出错" end
-        if not res.success then
-            if type(res.error)~='table' or type(res.error.msg)~='string' then
-                return "查询失败，服务器返回错误但没说原因"
-            end
-            if res.error.msg:match("No such user") then
-                return "查询失败，用户不存在"
-            else
-                return "查询失败："..res.error.msg
-            end
-        end
-        if type(res.data)~='table' or type(res.data.points)~='table' then return "查询失败，数据格式不正确" end
-
-        local buf=STRING.newBuf()
-        buf:putf("TL30-%s 最近30场\n",username:upper())
-        local flow=res.data.points
-        for i=1,30 do
-            if not flow[#flow+1-i] then break end
-            buf:put(resultEmoji[flow[#flow+1-i][2]] or "？")
-            if i%10==0 and flow[#flow-i] then buf:put("\n") end
-        end
-        if #flow>30 then buf:put("…") end
-
-        return buf:tostring()
-    end,
+    func=function(username,M) return tl_search(30,username,M) end,
+}
+tools.tl40={
+    help="tl成绩查询\n例：#tl40 mrz",
+    func=function(username,M) return tl_search(40,username,M) end,
+}
+tools.tl50={
+    help="tl成绩查询\n例：#tl50 mrz",
+    func=function(username,M) return tl_search(50,username,M) end,
 }
 
 local ins,rem=table.insert,table.remove
@@ -651,7 +668,7 @@ tools.qr={
 }
 
 tools.tool={
-    help="实用小工具：\n"..table.concat(TABLE.getKeys(tools)," "),
+    help="实用小工具：\n"..table.concat(TABLE.sort(TABLE.subtract(TABLE.getKeys(tools),{'tl10','tl20','tl40','tl50'}))," "),
 }
 
 ---@type Task_raw
