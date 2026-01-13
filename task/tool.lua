@@ -361,7 +361,7 @@ tools.qp16={
         if pool.zenithb2b then table.insert(line,string.format("B2B×%d",pool.zenithb2b)) end
         if #line>0 then buf:put(table.concat(line,"  ")) end
 
-        if len==#buf then buf:put("这人就没玩过qp2…") end
+        if len==#buf then buf:put("这人没玩过qp2喵") end
 
         return buf:tostring()
     end,
@@ -405,12 +405,16 @@ local function tl_search(n,username,M)
     local buf=STRING.newBuf()
     buf:putf("TL%d-%s 最近%d场\n",n,username:upper(),n)
     local flow=res.data.points
-    for i=1,n do
-        if not flow[#flow+1-i] then break end
-        buf:put(resultEmoji[flow[#flow+1-i][2]] or "？")
-        if i%10==0 and i~=n and flow[#flow-i] then buf:put("\n") end
+    if #flow==0 then
+        buf:put("这人没玩过TL喵")
+    else
+        for i=1,n do
+            if not flow[#flow+1-i] then break end
+            buf:put(resultEmoji[flow[#flow+1-i][2]] or "？")
+            if i%10==0 and i~=n and flow[#flow-i] then buf:put("\n") end
+        end
+        if #flow>n then buf:put("…") end
     end
-    if #flow>n then buf:put("…") end
 
     return buf:tostring()
 end
