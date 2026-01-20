@@ -263,7 +263,7 @@ tools.qp16={
         username=username:lower()
         if not MATH.between(#username,3,16) or username:match('^[^a-z0-9%-_]+$') then return "用户名格式不对" end
         Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
-        local _=TASK.lock('tool_qp16_1',12) or TASK.lock('tool_qp16_2',12)
+        NULL(TASK.lock('tool_qp16_1',12) or TASK.lock('tool_qp16_2',12))
         local f=io.popen('curl -s https://ch.tetr.io/api/users/'..username..'/summaries/achievements','r')
         if not f then return "查询失败，发不出网络请求" end
         local data=f:read('*a')
@@ -381,7 +381,7 @@ local function tl_search(n,username,M)
     username=username:lower()
     if not MATH.between(#username,3,16) or username:match('^[^a-z0-9%-_]+$') then return "用户名格式不对" end
     Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
-    local _=TASK.lock('tool_tlN_1',12) or TASK.lock('tool_tlN_2',12)
+    NULL(TASK.lock('tool_tlN_1',12) or TASK.lock('tool_tlN_2',12))
     local f=io.popen('curl -s https://ch.tetr.io/api/labs/leagueflow/'..username,'r')
     if not f then return "查询失败，发不出网络请求" end
     local data=f:read('*a')
