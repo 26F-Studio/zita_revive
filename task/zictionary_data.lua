@@ -1819,7 +1819,7 @@ local extra_tetrio={
     },
     {
         word="rSB",
-        title="[QP2模组] rSB 逆位雪球（永冻场地 PERMAFROST BOARD）",
+        title="[QP2模组] rSB 逆位雪球（永冻场地 Permafrost Board）",
         text="2025年圣诞节活动玩法，在SB基础上强制asd和asp=0.3，详细规则见 #QP2 完整文档",
     },
 }
