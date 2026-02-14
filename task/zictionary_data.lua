@@ -1748,7 +1748,7 @@ local extra_tetrio={
         text="非T块的Spin不再判为mini，但不能连续进行两次左上角冒出相同的字的动作，只看mini、块名、行数（包括0），违反时罚一行特殊实心行，在合规消除[当前层数+5]次后转为普通垃圾行（单洞，位置随机）",
     },
     {
-        word="DP;2P;duo",
+        word="2P;duo;DP",
         title="[QP2模组] 2P 双人 （恋人 The Lovers）",
         text="会员可以邀请其他人一起组队游玩\n收到攻击两个人一起吃，各自发送攻击和获取经验减半\n一个人死了后另一个人可以做任务复活队友，都死了时游戏结束",
     },
@@ -1813,9 +1813,9 @@ local extra_tetrio={
         text="2025年愚人节活动玩法，六连块，详细规则见 #QP2 完整文档",
     },
     {
-        word="rDP;r2P;bleeding hearts;bleeding heart",
+        word="r2P;bleeding hearts;bleeding heart;rDP",
         title="[QP2模组] r2P 逆位双人（流血之心 Bleeding Hearts）",
-        text="2025年情人节活动玩法，队友优先的Backfire，详细规则见 #QP2 完整文档",
+        text="2025/2026年情人节活动玩法，队友优先的Backfire，详细规则见 #QP2 完整文档",
     },
     {
         word="rSB;permafrost board",
