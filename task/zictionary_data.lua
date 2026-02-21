@@ -1442,9 +1442,9 @@ local game={
     -- 街机/类街机
     {
         word="tgm;tetris the grand master;tetris grand master;tgm3;tgm2;铁门",
-        title="Tetris The Grand Master",
+        title="Tetris The Grand Master（1~3代）",
         text="简称TGM 官块 要下载 单人 音画优秀 有电脑移植版 不可调控制\n聚焦于高重力快节奏玩法，S13/GM等称号都出自该作，其中TGM3比较普遍，部分模式说明发送“##”查看",
-        detail="Master：大师模式，有段位评价，拿到更高段位点的要求：非消一的连击和消四，字幕战中消除和通关，每100分的前70分小于【标准时间，上一个0~70秒数+2】中小的一个，每100总用时不能超过限定值（不然取消上一个方法的加点并反扣点）；到500分和1000分时若超过了时间要求会强制结束游戏（社区称之为铁门）；字幕战有两个难度，半隐和全隐，后者必须拿到几乎全部的段位点才能进，消除奖励的段位点也更多\n\nShirase：死亡模式，类似于techmino中的20G-极限，开局就是高速20G，500分和1000分也有时间要求，500~1000会涨垃圾行，1000~1300为骨块，1300后进入大方块字幕战；段位结算：每通100加1段从S1到S13，若通关了字幕战就会有金色的S13",
+        detail="铁门 部分模式中到了特定分数时若超过了时间要求会强制结束游戏\nMaster 有段位评价，拿到更高段位点的要求有：连击(非消一)和消四，字幕战中消除和通关，每100分的前70分小于`min(标准时间, 上一个0~70秒数+2)`，每100总用时不超过限定值（否则扣分）\nShirase 类似于techmino中的20G-极限，高速20G开局，500~1000涨垃圾行，1000~1300为骨块，1300后大方块字幕战；段位结算为分数/100向下取整（1300为S13）若通关字幕战S13会变金色",
         link="teatube.cn/TGMGUIDE",
     },
     {
@@ -1755,7 +1755,7 @@ local extra_tetrio={
     {
         word="逆位mod;逆位",
         title="[QP2机制] 逆位Mod",
-        text="除了2P外的mod均有高难度的逆位版本，需要携带每个mod走三万米分别解锁，不能组合只能单独启用\n另见 #rEX/rNH/...",
+        text="所有mod均有高难度的逆位版本，需要携带每个mod走三万米解锁（r2P无需解锁），不能组合只能单独启用\n另见 #rEX/rNH/...",
     },
     {
         word="rEX;the tyrant;tyrant",
@@ -1815,7 +1815,7 @@ local extra_tetrio={
     {
         word="r2P;bleeding hearts;bleeding heart;rDP",
         title="[QP2模组] r2P 逆位双人（流血之心 Bleeding Hearts）",
-        text="2025/2026年情人节活动玩法，队友优先的Backfire，详细规则见 #QP2 完整文档",
+        text="2025年情人节活动玩法，2026年情人节后永久开放，队友优先的Backfire，详细规则见 #QP2 完整文档",
     },
     {
         word="rSB;permafrost board",
