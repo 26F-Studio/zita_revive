@@ -109,6 +109,11 @@ local meta={
         text="音乐方块，一款相同颜色拼成正方形就消除的游戏（有请其他群友解释）",
     },
     {
+        word="qp文档;qp2文档",
+        text="MrZ编写的TETR.IO QP2非官方规则文档",
+        link="github.com/MrZ626/io_qp2_rule",
+    },
+    {
         word="ZC;Zenith Clicker;点点乐;天穹点点乐;io点点乐",
         text="天穹点点乐，tetr.io中qp2模式的戏仿游戏\nZ酱出品，随时随地爽爬塔！",
         link="github.com/MrZ626/ZenithClicker",
