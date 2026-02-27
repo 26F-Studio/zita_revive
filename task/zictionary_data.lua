@@ -1803,14 +1803,19 @@ local extra_tetrio={
         text="启用 #困难模式\n所有非Spin消除都视为消一，名称改为VOID\n连续相同消除判定更苛刻，两次Spin同行数就算同名，直接罚20行结束游戏\nB2B×4时从4充能开始且B2B加伤提升到+2，消0行的Spin也会触发消行结算加伤加B2B\n开局会收系统10行垃圾，垃圾混乱度增加，启用 #垃圾行保护\n【反机心】到800m但挖掘垃圾行数小于5时禁止获得经验",
     },
     {
-        word="PN;the fooll;fool",
-        title="[QP2模组] PN 五连（愚者 The Fool）",
-        text="2025年愚人节活动玩法，五连块，详细规则见 #QP2 完整文档",
+        word="r2P;bleeding hearts;bleeding heart;rDP",
+        title="[QP2模组] r2P 逆位双人（流血之心 Bleeding Hearts）",
+        text="始于2025情人节的活动玩法，队友优先的Backfire，详细规则见 #QP2 完整文档",
     },
     {
-        word="SB;snowball board",
+        word="SB;snowball;snowball board",
         title="[QP2模组] SB 雪球 （滚雪球 Snowball Board）",
-        text="2024年圣诞节活动玩法，场地尺寸逐渐增加，详细规则见 #QP2 完整文档",
+        text="始于2024圣诞节的活动玩法，场地尺寸逐渐增加，详细规则见 #QP2 完整文档",
+    },
+    {
+        word="PN;the fool;fool",
+        title="[QP2模组] PN 五连（愚者 The Fool）",
+        text="2025年愚人节活动玩法，五连块，详细规则见 #QP2 完整文档",
     },
     {
         word="rPN;a fool's errand;fool's errand;a fools errand;fools errand",
@@ -1818,12 +1823,7 @@ local extra_tetrio={
         text="2025年愚人节活动玩法，六连块，详细规则见 #QP2 完整文档",
     },
     {
-        word="r2P;bleeding hearts;bleeding heart;rDP",
-        title="[QP2模组] r2P 逆位双人（流血之心 Bleeding Hearts）",
-        text="2025年情人节活动玩法，2026年情人节后永久开放，队友优先的Backfire，详细规则见 #QP2 完整文档",
-    },
-    {
-        word="rSB;permafrost board",
+        word="rSB;permafrost;permafrost board",
         title="[QP2模组] rSB 逆位雪球（永冻场地 Permafrost Board）",
         text="2025年圣诞节活动玩法，在SB基础上强制asd和asp=0.3，详细规则见 #QP2 完整文档",
     },
