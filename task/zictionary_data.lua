@@ -109,6 +109,11 @@ local meta={
         text="音乐方块，一款相同颜色拼成正方形就消除的游戏（有请其他群友解释）",
     },
     {
+        word="similariddle;similarriddle;sr",
+        text="Similariddle，一款高难度猜单词游戏，26F Studio参与制作",
+        link="store.steampowered.com/app/3408740?utm_source=zita",
+    },
+    {
         word="qp文档;qp2文档",
         text="MrZ编写的TETR.IO QP2非官方规则文档",
         link="github.com/MrZ626/io_qp2_rule",
