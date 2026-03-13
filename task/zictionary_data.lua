@@ -132,6 +132,36 @@ local meta={
 local main={
     -- 缩写
     {
+        word="tsl;方块研究联赛;研究联赛",
+        title="俄罗斯方块研究联赛 (Tetris Study League)",
+        text="创办于2019年春，是国内历史最久规格最高的现代对战赛事，目前每季度在TETR.IO举办。欢迎加入联赛群762189914报名和了解赛事的更多信息",
+        link="tetriswiki.cn/p/TSL",
+    },
+    {
+        word="pptn;ppt比赛;ppt2比赛",
+        title="PPT2全国锦标赛 (PPT National)",
+        text="创办于2021年，是一年一度的中国PPT2赛事。欢迎加入联赛群762189914或延迟块比赛群102111599报名和了解赛事的更多信息",
+        link="tetriswiki.cn/p/PPTN",
+    },
+    {
+        word="tecn;tec比赛;te:c比赛;效应比赛",
+        title="TE:C全国锦标赛 (TE:C National)",
+        text="创办于2021年，是一年一度的中国TE:C赛事。欢迎加入联赛群762189914或延迟块比赛群102111599报名和了解赛事的更多信息",
+        link="tetriswiki.cn/p/TECN",
+    },
+    {
+        word="tqs;茶服快速瑞士制;茶服瑞士制;快速瑞士制",
+        title="茶服快速瑞士制 (TOS Quick Swiss)",
+        text="创办于2019年，是不定期举办的茶服（TOS）赛事，目前已停办",
+        link="tetriswiki.cn/p/TQS",
+    },
+    {
+        word="tsa;方块研究奖;研究奖;年度颁奖",
+        title="方块研究奖 (Tetris Study Awards)",
+        text="创办于2023年，是中国方块社区的年度颁奖活动，记录和表彰每年的优秀玩家与出色成绩。活动由flore举办，欢迎联系主办方了解更多信息或投稿奖项提名。",
+        link="tetriswiki.cn/p/TSA",
+    },
+    {
         word="marathon;马拉松;马拉松模式",
         title="马拉松模式",
         text="#Guideline 规定官方Tetris的三个必备模式之一，直接来自于经典块的玩法，考察固定等级/行数内的得分。绝大多数游戏中是15级/150行，等级/重力/倍率逐渐增加",
@@ -239,10 +269,10 @@ local main={
     },
     -- 消除名
     {
-        word="quad;techrash;消四",
+        word="消四;quad;quadruple;techrash",
         title="消四",
         text="一次消除四行",
-        detail="Tetris中的消四有特殊的名称Tetris，有的非官方游戏考虑到版权问题，使用Quad替换，也有一些游戏保留了这个传统，会给消四安排一个特殊的名称，例如Techmino里的Techrash",
+        detail="官方游戏中的消四和游戏同名也叫Tetris。有的非官方游戏考虑到版权问题会使用Quad替换，也有些保留了这个传统会安排一个特殊的名称，例如Techmino里的Techrash",
     },
     {
         word="tetris",
@@ -1610,7 +1640,7 @@ local game={
     {
         word="ttt",
         title="Tetris Trainer Très-Bien",
-        text="(原作者こな)简称TTT 可玩 题库游戏 非官块 网页 主单机 音画廉价 电脑 不可调控制 创新：交互式教程\n现代方块特殊操作手把手教程，推荐能纯消四完成40L挑战的人学习，内含极简、SRS、T-Spin、部分对战定式等内容的教程",
+        text="(原作者こな)简称TTT 可玩 题库游戏 非官块 网页 主单机 音画廉价 电脑 不可调控制 创新：交互式教程\n现代方块特殊操作手把手教程，推荐能全部消四完成40L挑战的人学习，内含极简、SRS、T-Spin、部分对战定式等内容的教程",
         link="(翻译后挂在茶服的版本) teatube.cn/ttt",
     },
     {
