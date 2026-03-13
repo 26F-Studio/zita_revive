@@ -63,7 +63,7 @@ local meta={
     },
     {
         word="tech仓库;techmino仓库;铁壳仓库;铁壳米诺仓库",
-        text="github.com/26F-Studio/Techmino\nTechmino的GitHub仓库地址，欢迎Star！",
+        text="github.com/26F-Studio/Techmino\nTechmino的GitHub仓库地址，欢迎Star~",
     },
     {
         word="铁壳ios",
@@ -152,13 +152,13 @@ local main={
     {
         word="tqs;茶服快速瑞士制;茶服瑞士制;快速瑞士制",
         title="茶服快速瑞士制 (TOS Quick Swiss)",
-        text="创办于2019年，是不定期举办的茶服（TOS）赛事，目前已停办",
+        text="创办于2019年，是不定期举办的茶服(TOS)赛事，目前已停办",
         link="tetriswiki.cn/p/TQS",
     },
     {
         word="tsa;方块研究奖;研究奖;年度颁奖",
         title="方块研究奖 (Tetris Study Awards)",
-        text="创办于2023年，是中国方块社区的年度颁奖活动，记录和表彰每年的优秀玩家与出色成绩。活动由flore举办，欢迎联系主办方了解更多信息或投稿奖项提名。",
+        text="创办于2023年，是中国方块社区的年度颁奖活动，记录和表彰每年的优秀玩家与出色成绩。活动由flore举办，欢迎联系主办方了解更多信息或投稿奖项提名",
         link="tetriswiki.cn/p/TSA",
     },
     {
@@ -383,7 +383,7 @@ local main={
         word="trs;tech rs;techmino rs",
         title="Techmino Rotation System",
         text="Techmino原创旋转系统，基于SRS增加了不少实用踢墙，还修补了SZ卡死等小问题",
-        detail="每个五连块也基本按照SRS的Spin逻辑单独设计了踢墙表，更有神奇O-spin等你探索！",
+        detail="每个五连块也基本按照SRS的Spin逻辑单独设计了踢墙表，更有神奇O-spin等你探索~",
     },
     {
         word="ars",
