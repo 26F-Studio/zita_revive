@@ -1,12 +1,17 @@
 local codeEnv={}
 for _,v in next,{
-    'next','print','tonumber','tostring',
+    'next','print','tonumber','tostring','type',
     'ipairs','pairs','pcall','xpcall',
     'Time','CQ',
     'math','string','table',
     'MATH','STRING','TABLE','GC','FILE',
     'Config','SessionMap','Bot','Session','Emoji',
 } do codeEnv[v]=_G[v] end
+codeEnv.os={
+    time=os.time,
+    date=os.date,
+    clock=os.clock,
+}
 
 local denyTexts={
     "你没有足够的权限喵",
