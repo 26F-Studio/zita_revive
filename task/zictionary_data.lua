@@ -1437,19 +1437,19 @@ local game={
     {
         word="tetris.com",
         title="tetris.com",
-        text="Tetris官网上的块 官块 网页 主单机 音画优秀 电脑+手机 不可调控制\n只有马拉松一个模式，但有一个智能鼠标控制的玩法",
+        text="Tetris官网上的块 官块 网页 主单机 音画优秀 电脑+手机\n只有马拉松一个模式，但有一个智能鼠标控制的玩法",
         link="tetris.com/play-tetris",
     },
     {
         word="gems;tetris gems",
         title="Tetris Gems",
-        text="Tetris官网上的块 可玩 官块 网页 主单机 音画优秀 电脑+手机 不可调控制\n限时1分钟挖掘，有Cascade，有三种消除后可以获得不同功能的宝石方块",
+        text="Tetris官网上的块 可玩 官块 网页 主单机 音画优秀 电脑+手机\n限时1分钟挖掘，有Cascade，有三种消除后可以获得不同功能的宝石方块",
         link="tetris.com/play-tetrisgems",
     },
     {
         word="mind bender;tetris mind bender",
         title="Tetris Mind Bender",
-        text="Tetris官网上的块 官块 网页 主单机 音画优秀 电脑+手机 不可调控制\n在马拉松基础上添加了效果，场地上会随机冒出效果方块，消除后会得到各种各样或好或坏的效果",
+        text="Tetris官网上的块 官块 网页 主单机 音画优秀 电脑+手机\n在马拉松基础上添加了效果，场地上会随机冒出效果方块，消除后会得到各种各样或好或坏的效果",
         link="tetris.com/play-tetrismindbender",
     },
     {
