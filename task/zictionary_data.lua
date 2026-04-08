@@ -1,3 +1,5 @@
+local ins=table.insert
+
 ---@class Zict.Entry
 ---@field word string 每个词条的查询关键词，多个名称用分号分隔，目前访问词条必须完全匹配其中的一个（不过英文字母大小写和空格会被忽略，例如a b c和ABC视为同一个东西）。
 ---@field title? string 第一行标题
@@ -54,12 +56,6 @@ local meta={
         word="其他wiki;wiki列表;harddrop wiki;tetris wiki;fandom;wiki fandom;tetris wiki fandom",
         title="其他英文wiki",
         text="harddrop.com/wiki（Hard Drop社区的百科）\nhttps://tetris.wiki（Myndzi在2015年创办）\ntetris.fandom.com\n另见 #wiki",
-    },
-    {
-        word="fumen;方块谱;编辑器;铺面",
-        title="Fumen",
-        text="一个方块版面编辑器，可以用于分享定式，PC解法等，用处很多。设置里可以启用英文版",
-        link="fumen.zui.jp  knewjade.github.io/fumen-for-mobile",
     },
     {
         word="tech仓库;techmino仓库;铁壳仓库;铁壳米诺仓库",
@@ -1365,340 +1361,117 @@ local pattern={
         link="tetriswiki.cn/p/Aoiro_Cannon",
     },
 }
----@type Zict.Entry[]
-local game={
-    -- 网页
-    {
-        word="kos;king of stackers",
-        title="King of Stackers",
-        text="简称KoS 非官块 网页 主联机有单机 音画廉价 电脑+手机理论可玩\n主要玩法类似下棋，每个人以7块为一个回合轮流操作，策略性很强",
-        link="kingofstackers.com/games.php",
-    },
-    {
-        word="屁块;tetrjs;tetr.js",
-        title="Tetr.js",
-        text="简称屁块（作者网名Farter） 非官块 网页 主单机 音画廉价 电脑+手机 键盘可改键触屏不行\n有较多创意模式",
-        detail="严格来说屁块是tetr.js的一个衍生版本，点开屁块就可以看到附的原版链接",
-        link="farter.cn/t",
-    },
-    {
-        word="T-ex",
-        title="T-ex",
-        text="非官块 要下载 主单机 音画一般 电脑 不可调控制\nFarter早年制作的一个基于flash的仿TGM游戏，包含一个创新旋转系统 #XRS",
-    },
-    {
-        word="tl;tetra legends",
-        title="Tetra Legends",
-        text="非官块 网页 主单机 音画优秀 电脑\n有两个隐藏的节奏模式，并且将一些其他游戏中不可见的机制进行了可视化，动效也很多。于2020年12月基本确定由于各种原因不再继续开发",
-        link="tetralegends.app",
-    },
-    {
-        word="asc;ascension",
-        title="Ascension",
-        text="简称ASC 可玩 非官块 网页 主单机 音画廉价 电脑\n有一些创意模式，ASC旋转系统就来自这里",
-        link="asc.winternebs.com",
-    },
-    {
-        word="io;tetrio;tetr.io",
-        title="TETR.IO",
-        text="简称IO 非官块 网页但建议下载 主联机有单机 音画优秀 电脑 会员付费 有自定义\n应该是目前全世界在线人数最多的现代块游戏\n另见#io qp2",
-        link="tetr.io",
-    },
-    {
-        word="js;jstris",
-        title="Jstris",
-        text="简称JS 非官块 网页 单机联机都有 音画廉价 电脑+手机 有自定义 代码可扩展",
-        link="jstris.jezevec10.com",
-    },
-    {
-        word="tetrio.io;tetrioio;ioio",
-        title="TETRIO.IO",
-        text="网页 主多人 音画一般 电脑 创新\n无hold有next的对战块，但两个玩家在同一个场地的两头拔河，说不太清总之很好玩，有简单的分数系统能匹配对战，或者约好友\n注：本游戏和TETR.IO完全无关",
-        link="tetrio.io",
-    },
-    {
-        word="nuke;nuketris",
-        title="Nuketris",
-        text="可玩 非官块 网页 主单机有联机 音画廉价 电脑 不可调控制\n有几个基础单机模式和1V1排位",
-        link="nuketris.com",
-    },
-    {
-        word="wwc;worldwide combos",
-        title="Worldwide Combos",
-        text="简称WWC 可玩 非官块 网页 单机联机都有 音画优秀 电脑\n有几种不同风格的大规则（例如炸弹垃圾行），有录像战（匹配对手不是真人）",
-        link="worldwidecombos.com",
-    },
-    {
-        word="tf;tetris friends;notris;notrisfoes",
-        title="Tetris Friends",
-        text="简称TF 私服 官块 网页 单机联机都有 音画优秀 电脑 部分改键 半可调控制\n以前人比较多，后来官服倒闭了热度没了",
-        link="私服notrisfoes.com",
-    },
-    {
-        word="tetris.com",
-        title="tetris.com",
-        text="Tetris官网上的块 官块 网页 主单机 音画优秀 电脑+手机\n只有马拉松一个模式，但有一个智能鼠标控制的玩法",
-        link="tetris.com/play-tetris",
-    },
-    {
-        word="gems;tetris gems",
-        title="Tetris Gems",
-        text="Tetris官网上的块 可玩 官块 网页 主单机 音画优秀 电脑+手机\n限时1分钟挖掘，有Cascade，有三种消除后可以获得不同功能的宝石方块",
-        link="tetris.com/play-tetrisgems",
-    },
-    {
-        word="mind bender;tetris mind bender",
-        title="Tetris Mind Bender",
-        text="Tetris官网上的块 官块 网页 主单机 音画优秀 电脑+手机\n在马拉松基础上添加了效果，场地上会随机冒出效果方块，消除后会得到各种各样或好或坏的效果",
-        link="tetris.com/play-tetrismindbender",
-    },
-    {
-        word="ztrix",
-        title="Ztrix",
-        text="练习工具 网页 主单机 音画廉价 电脑\nTEC的Zone练习用工具游戏，有自定义序列和撤销和出题等功能",
-        link="ztrix-game.web.app",
-    },
-    {
-        word="god of stackers;gos",
-        title="God of Stackers",
-        text="网页 单机联机都有 音画优秀 电脑\n有角色、技能、抽卡系统，目前还在开发阶段",
-        link="godofstackers.com",
-    },
-    -- 跨平台
-    {
-        word="tech;techmino;铁壳;铁壳米诺",
-        title="Techmino",
-        text="简称Tech 非官块 要下载 主单机有联机 音画优秀 电脑+手机 有自定义\n大规模缝合了常见现代块内容，可练习可挑战\n目前最新版本0.17.21，可以和约好友联机对战\n苹果用户见 #铁壳ios #铁壳mac",
-        link="studio26f.org",
-    },
-    {
-        word="Techmino Galaxy;Techmino: Galaxy;TG;铁盖;盖勒克希;铁壳米诺盖勒克希",
-        title="Techmino: Galaxy",
-        text="一款谜之前端",
-    },
-    {
-        word="aqm;aquamino",
-        title="Aquamino",
-        text="可玩 非官块 要下载 主单机 音画优秀 电脑+手机\n除了基础的单机模式外还有冰风暴、多线程、激光、雷暴等创意模式",
-        link="aqua6623.itch.io/aquamino",
-    },
-    {
-        word="fl;falling lightblocks",
-        title="Falling Lightblocks",
-        text="非官块 网页 单机联机都有 音画廉价 电脑+手机 不可调控制\n主要内容是经典块复刻和半实时对战",
-        link="mrstahlfelge.itch.io/lightblocks  html-classic.itch.zone/html/2917030/index.html",
-    },
-    {
-        word="剑桥;cambridge",
-        title="Cambridge",
-        text="非官块 要下载 主单机 音画优秀 电脑 代码可扩展\n致力于创建一个轻松高度自定义新模式的方块平台。最初由Joe Zeng开发，于2020年10月8日0.1.5版开始Milla接管了开发。 — Tetris Wiki.",
-    },
-    -- 街机/类街机
-    {
-        word="tgm;tetris the grand master;tetris grand master;tgm3;tgm2;铁门",
-        title="Tetris The Grand Master（1~3代）",
-        text="简称TGM 官块 要下载 单人 音画优秀 有电脑移植版 不可调控制\n聚焦于高重力快节奏玩法，S13/GM等称号都出自该作，其中TGM3比较普遍，部分模式说明发送“##”查看",
-        detail="铁门 部分模式中到了特定分数时若超过了时间要求会强制结束游戏\nMaster 有段位评价，拿到更高段位点的要求有：连击(非消一)和消四，字幕战中消除和通关，每100分的前70分小于`min(标准时间, 上一个0~70秒数+2)`，每100总用时不超过限定值（否则扣分）\nShirase 类似于techmino中的20G-极限，高速20G开局，500~1000涨垃圾行，1000~1300为骨块，1300后大方块字幕战；段位结算为分数/100向下取整（1300为S13）若通关字幕战S13会变金色",
-        link="teatube.cn/TGMGUIDE",
-    },
-    {
-        word="dtet",
-        title="DTET",
-        text="非官块 要下载 主单机有联机 音画优秀 电脑 不可调控制\n基于经典规则添加了20G和强大的人体工学方块控制系统",
-    },
-    {
-        word="example block game;ebg",
-        title="Example Block Game",
-        text="非官块 要下载 主单机 音画优秀 电脑 不可调控制 创新\n一个仿TGM的街机方块游戏，有一个不区分szi正反朝向的旋转系统",
-    },
-    {
-        word="mob;master of block",
-        title="Master of Block",
-        text="非官块 要下载 主单机 音画一般 电脑 不可调控制\n一个仿街机方块游戏系列",
-    },
-    {
-        word="hebo;heboris",
-        title="Heboris",
-        text="非官块 要下载 主单机 音画优秀 电脑 不可调控制\n一个仿街机方块游戏，可以模拟多个方块游戏的部分模式",
-    },
-    {
-        word="tex;texmaster",
-        title="Texmaster",
-        text="非官块 要下载 主单机 音画优秀 电脑 不可调控制\nTGM的社区自制游戏，包含TGM的所有模式，可以用来练习TGM，但World规则不完全一样（如软降到底无锁延，踢墙表有细节不同等）",
-    },
-    {
-        word="sega;sega tetris",
-        title="Sega Tetris",
-        text="官块 要下载 主单机 音画优秀 需要模拟器 部分改键 不可调控制\n1999年发行的主机游戏，有1v1道具战，六种不同的消除方式能发送特殊效果",
-    },
-    -- 其他
-    {
-        word="tec;tetris effect;tetris effect connected",
-        title="Tetris Effect: Connected",
-        text="简称TEC 官块 要下载 单机联机都有 音画优秀 电脑 不可调控制 正版付费\n卖点是沉浸音画体验和基于创新的Zone机制的各种模式（包括多人在线不对称竞技）",
-    },
-    {
-        word="t99;tetris 99",
-        title="Tetris 99",
-        text="简称T99 官块 要下载 主联机有单机 音画优秀 主机 部分改键 不可调控制 正版付费\n主打99人混战的吃鸡模式，也有一些常用单机模式如马拉松等\n游戏基础模式有NS Online会员可以免费玩，其他单机模式需要额外购买",
-    },
-    {
-        word="ppt;puyo puyo tetris;ppt2;ppt2s",
-        title="Puyo Puyo Tetris",
-        text="简称PPT 官块 要下载 主联机有单机 音画优秀 电脑 不可调控制 正版付费\n包含Tetris和PuyoPuyo两个下落消除游戏，二者间可以对战\n注：PPT2的手感据很多人说都不行",
-    },
-    {
-        word="to;top;toj;tos;tetris online",
-        title="Tetris Online",
-        text="简称TO 私服 官块 要下载 主联机有单机 音画优秀 电脑 半可调控制\n主要用来6人内对战/单挑/刷每日40L榜/挖掘模式/打机器人",
-        detail="现在还开着的服务器有：TO-P（波兰服，服务器在波兰，可能会卡顿）；TO-S（研究服，研究群群友自己开的服更稳定）",
-    },
-    {
-        word="c2;cultris2;cultris ii",
-        title="Cultris II",
-        text="简称C2 可玩 非官块 要下载 单机联机都有 音画优秀 电脑\n对战的主要玩法是基于时间的连击，考验玩家速度/Wide打法/挖掘，另单人游戏有一大堆创意模式",
-    },
-    {
-        word="ultimate;tetris ultimate",
-        title="Tetris Ultimate",
-        text="离线 官块 要下载 单机联机都有 音画优秀 电脑 不可改键 不可调控制 正版付费\n有周期隐形/山体滑坡/双人同版等有趣模式，目前已下架",
-    },
-    {
-        word="poly;polyform",
-        title="Polyform",
-        text="可玩 非官块 要下载 主单机 音画优秀 电脑\n有三角形和六边形的单元格",
-    },
-    {
-        word="sd;spirit drop",
-        title="Spirit Drop",
-        text="非官块 要下载 主单机有联机 音画优秀 电脑 有自定义\n除了几个主模式外还有一个变革模式包含几十个创意规则可挑战",
-        link="rayblastgames.com/spiritdrop.php",
-    },
-    {
-        word="betrix;chextris",
-        title="Betrix & Chextris",
-        text="非官块 要下载 主单机 音画优秀 电脑 有自定义 创新\n在方块里加入了音游元素，也有40L等基础模式",
-        link="store.steampowered.com/app/2007710\nchemicalex.itch.io/chextris",
-    },
-    {
-        word="C::Reactris;c4r;c::r;Reactris",
-        title="C::Reactris",
-        text="非官块 要下载 主单机 音画优秀 电脑+手机 有自定义 创新\n在方块里加入了丰富的Minecraft元素，有大量创意玩法",
-        link="b23.tv/BV13u411G75m",
-    },
-    {
-        word="np;nullpomino",
-        title="Nullpomino",
-        text="简称NP 非官块 要下载 主单机有联机 音画一般 电脑 有自定义 代码可扩展\n整个游戏自定义程度极高，甚至可以模拟出puyopuyo，但模式资源可能比较难找",
-    },
-    {
-        word="misa;misamino",
-        title="Misamino",
-        text="非官块 要下载 主单机 音画优秀 电脑 回合制机器人对战\n比较工具的游戏，与AI进行回合制对战，可以导入外部AI程序",
-    },
-    {
-        word="four;fourtris;four-tris",
-        title="four-tris",
-        text="非官块 要下载 主单机 音画廉价 电脑 复盘工具\n单机自由沙盘，可以方便地随时自定义序列、绘制和删除地形、撤销和前进步骤，有截图识别地形功能，有多个练习模式，非常适合进行各种练习、复盘、绘制地形",
-    },
-    {
-        word="thm;touhoumino",
-        title="Touhoumino",
-        text="非官块 要下载 主单机 音画优秀 电脑\n一个Nullpomino的mod版，在方块里加入了东方Project元素",
-        detail="马拉松模式结合东方Project里的“符卡”机制，需要在一定时间内达成目标分数才能击破。难度较大，适合有方块基础并且各项能力都较强的玩家游玩（不然都不知道自己怎么死的）",
-    },
-    {
-        word="beat;tetris beat",
-        title="Tetris Beat",
-        text="官块 要下载 主单机 音画优秀 iOS限定 不可改键 不可调控制 正版付费\nN3TWORK代理的一款移动端方块，除了马拉松外有“Beat模式”，根据BGM的节奏落块得到额外分数，但体验一般，特效还比较瞎眼",
-    },
-    {
-        word="royale;tetris royale;tetris n3twork;tetris n3t",
-        title="Tetris (N3TWORK)",
-        text="官块 要下载 单机联机都有 音画优秀 手机限定 不可改键 不可调控制\nN3TWORK开发，现由Play Studio运营",
-    },
-    {
-        word="jj;jj块",
-        title="JJ块",
-        text="非官块 要下载 单机联机都有 音画优秀 手机限定\nJJ棋牌平台下的“JJ比赛”app内的一个休闲游戏（看不到可能是因为限制了新玩家不可见）",
-        detail="是现代方块但：竖屏，可自定义ASD/ASP，能自定义键位，无Hold，无B2B，无攻击缓冲不可抵消，每次攻击上限为4，连击较强",
-    },
-    {
-        word="ea;tetris ea",
-        title="Tetris (EA)",
-        text="离线 官块 要下载 主单机 音画优秀 手机限定 不可改键 不可调控制\nEA代理的一款宇宙主题的移动端方块。有滑动操控和单点触控两种操作模式，已于2020年4月下架",
-        detail="除经典的马拉松外还有一个星系模式（地图挖掘），有重力连锁机制，目标是在限定块数内消除所有地图块",
-    },
-    {
-        word="nes",
-        title="Tetris (NES, Nintendo)",
-        text="nes平台上的块 官块 主单机 音画优秀 需要模拟器 不可调控制\n最普及的经典俄罗斯方块之一，因各种因素硬抗住了方块现代化的进程活到了现在，CTWC比赛用的就是这个游戏",
-    },
-    {
-        word="tetris forever;forever;永恒;永恒篇",
-        title="Tetris Forever",
-        text="主要部分不是游戏 官块 主单机 音画优秀 不可调控制\n俄罗斯方块40周年作，总体上是一个电子展览馆，按Tetris的历史发展排列了一份纪录片和各种图片资料，还内置了模拟器用来体验一些老游戏",
-    },
-    {
-        word="tetra esports;tes",
-        title="Tetra eSports",
-        text="单机联机都有 音画优秀 电脑\nTetra Online转生，目前还在开发阶段",
-        link="tetraesports.com/",
-    },
-    {
-        word="quadra break;qb",
-        title="Quadra Break",
-        text="非官块 要下载 单机 音画优秀 电脑\n以那些广告里疯狂cascade超宽屏方块为灵感的游戏\n已逝，永远怀念",
-    },
-    -- 题库
-    {
-        word="ttt",
-        title="Tetris Trainer Très-Bien",
-        text="(原作者こな)简称TTT 可玩 题库游戏 非官块 网页 主单机 音画廉价 电脑 不可调控制 创新：交互式教程\n现代方块特殊操作手把手教程，推荐能全部消四完成40L挑战的人学习，内含极简、SRS、T-Spin、部分对战定式等内容的教程",
-        link="(翻译后挂在茶服的版本) teatube.cn/ttt",
-    },
-    {
-        word="ttpc",
-        title="TETRIS Perfect Clear Challenge",
-        text="(原作者chokotia)简称TTPC 可玩 题库游戏 非官块 网页 主单机 音画廉价 电脑 不可调控制\nSRS+Bag7方块游戏全消开局定式的教程（只能键盘操作）。推荐完成了TTT的人学习（必须先学会SRS）",
-        link="(翻译后挂在茶服的版本) teatube.cn/ttpc",
-    },
-    {
-        word="tpo",
-        title="Tetris Puzzle O",
-        text="简称TPO 可玩 题库游戏 非官块 网页 主单机 音画廉价 电脑+手机 不可调控制\n由TCV100制作的题库网站，内含部分nazo的题",
-        link="47.92.33.38/tpo",
-    },
-    {
-        word="nazo",
-        title="NAZO",
-        text="可玩 题库游戏 非官块 网页 主单机 音画廉价 电脑 不可调控制\n内含各种T-Spin/All-Spin题目，简单到极难题目都有",
-        link="(翻译后挂在茶服的版本) teatube.cn/nazo",
-    },
-    -- 已逝
-    {
-        word="闪电战;tetris blitz",
-        title="Tetris Blitz",
-        text="离线 官块 要下载 主单机 音画优秀 手机限定 手势控制 不可调控制 内购道具\nEA代理的一款移动端方块，有重力连锁机制，限时2分钟，已于2020年4月下架\n另见 #Blitz模式",
-        detail="持续消行会进入Frenzy模式（场地下方会不断冒出垃圾行，帮助玩家制造大连锁，如果多次落块没有消行会强制结束Frenzy）。有非常多的道具\n当新出现的方块与场地现有方块重叠时，场地最上方的几行会被自动清除，游戏不结束",
-    },
-    {
-        word="tetra online",
-        title="Tetra Online",
-        text="简称TO 离线 非官块 要下载 单机联机都有 音画优秀 电脑 不可调控制\nUI部分模仿了PPT，音乐不错，攻击特效好看，于2020年12月9日收到来自TTC的DMCA警告信于是被迫停止开发，在一段时间后关服并下架Steam",
-        link="离线版本 github.com/Juan-Cartes/Tetra-Offline/releases/tag/1.0",
-    },
-    {
-        word="环游记;俄罗斯方块环游记;journey;tetris journey",
-        title="俄罗斯方块环游记",
-        text="简称环游记 寄了 官块 要下载 主单机 音画优秀 手机限定 不可调控制 内购道具\n国内第一款正版授权手游方块。有闯关模式、对战模式和几个单机模式。闯关模式有各种各样有趣规则大多数有重力连锁，已于2023年2月15日停服",
-    },
-    {
-        word="火拼;火拼俄罗斯",
-        title="火拼俄罗斯",
-        text="非官块 要下载 主联机有单机 音画廉价 电脑 不可调控制\n腾讯游戏大厅的方块，12宽场地的经典块，攻击方式只有消4打3和消3打2，垃圾行为国际象棋棋盘式，几乎不可能挖掘",
-    },
+local gameDatabase={
+    --热帅免 新 多单 键 手网计 参 官 研 （热门 音画质量 免费 创新 多人 单人 可调键位 手机 网页 电脑 参数可调 官方 研究工具）
+    {3,2,2,2,1,2,2,2,0,2,2,0,2,"tech;techmino;铁壳;铁壳米诺","Techmino","studio26f.org","大规模缝合了常见现代块内容，可练习可挑战\n目前最新版本0.17.21，可以和约好友联机对战\n苹果用户见 #铁壳ios #铁壳mac"},
+    {3,2,2,1,2,2,2,0,2,2,2,0,1,"io;tetrio;tetr.io","TETR.IO","tetr.io","应该是目前全世界在线人数最多的现代块游戏\n另见#io qp2"},
+    {3,2,0,2,2,2,2,0,0,2,0,2,0,"tec;tetris effect;tetris effect connected","Tetris Effect: Connected","store.steampowered.com/app/1003590","卖点是沉浸音画体验和基于创新的Zone机制的各种模式（包括多人在线不对称竞技）"},
+    {3,2,0,1,2,2,2,0,0,2,0,2,0,"ppt;puyo puyo tetris;ppt2;ppt2s","Puyo Puyo Tetris","store.steampowered.com/app/546050","包含Tetris和PuyoPuyo两个下落消除游戏，二者间可以对战\n注：PPT2的手感据很多人说都不行"},
+    {3,0,2,1,2,2,2,1,2,2,2,0,1,"js;jstris","Jstris","jezevec10.com",""},
+    {2,2,2,2,2,2,2,0,2,2,2,0,0,"wwc;worldwide combos","Worldwide Combos","worldwidecombos.com","有几种不同风格的大规则（例如炸弹垃圾行），有录像战（匹配对手不是真人）"},
+    {2,2,2,2,2,2,2,0,0,2,2,0,0,"c2;cultris2;cultris ii","Cultris II","gewaltig.net","对战的主要玩法是基于时间的连击，考验玩家速度/Wide打法/挖掘，另单人游戏有一大堆创意模式"},
+    {2,2,2,2,1,2,2,0,0,2,2,0,1,"sd;spirit drop","Spirit Drop","rayblastgames.com/spiritdrop.php","除了几个主模式外还有一个变革模式包含几十个创意规则可挑战"},
+    {2,2,2,2,0,2,2,2,2,2,2,2,0,"gems;tetris gems","Tetris Gems","tetris.com/play-tetrisgems","限时1分钟挖掘，有Cascade，有三种消除后可以获得不同功能的宝石方块"},
+    {2,2,2,2,0,2,2,2,0,2,2,0,1,"C::Reactris;c4r;c::r;Reactris","C::Reactris","b23.tv/BV13u411G75m","在方块里加入了丰富的Minecraft元素，有大量创意玩法"},
+    {2,2,2,2,0,2,2,2,0,2,2,0,0,"aqm;aquamino","Aquamino","aqua6623.itch.io/aquamino","除了基础的单机模式外还有冰风暴、多线程、激光、雷暴等创意模式"},
+    {2,2,2,2,0,2,2,0,0,2,2,0,1,"chextris","Chextris","chemicalex.itch.io/chextris","在方块里加入了音游元素，也有40L等基础模式"},
+    {2,2,2,2,0,2,2,0,0,2,2,0,0,"tetra chroma;chroma","Tetra Chroma","store.steampowered.com/app/2702490",""},
+    {2,2,2,2,0,2,2,0,0,2,2,0,0,"poly;polyform","Polyform","stellartophat.itch.io/polyform","有三角形和六边形的单元格"},
+    {2,2,2,1,0,2,2,0,0,2,0,0,0,"example block game;ebg","Example Block Game","github.com/Oshisaure/example-block-game","一个仿TGM的街机方块游戏，有一个不区分szi正反朝向的旋转系统"},
+    {2,2,2,0,2,2,2,2,0,0,2,0,0,"jj;jj块","JJ tetris","","JJ棋牌平台下的“JJ比赛”app内的一个休闲游戏（看不到可能是因为限制了新玩家不可见）","是现代方块但：竖屏，可自定义ASD/ASP，能自定义键位，无Hold，无B2B，无攻击缓冲不可抵消，每次攻击上限为4，连击较强"},
+    {2,2,2,0,2,2,2,2,0,0,2,0,0,"引力星球;引力","引力星球","","引力星球app内的一个休闲游戏"},
+    {2,2,2,0,0,2,1,1,1,1,0,2,0,"nes","Tetris (NES, Nintendo)","","最普及的经典俄罗斯方块之一，因各种因素硬抗住了方块现代化的进程活到了现在，CTWC比赛用的就是这个游戏"},
+    {2,2,1,1,2,2,2,0,2,2,2,0,1,"god of stackers;gos","God of Stackers","godofstackers.com","有角色、技能、抽卡系统，目前还在开发阶段"},
+    {2,2,1,1,0,2,2,1,0,1,0,2,0,"tgm;tetris the grand master;tetris grand master;tgm3;tgm2;铁门","TGM(1-3代)","","聚焦于高重力快节奏玩法，S13/GM等称号都出自该作，其中TGM3比较普遍，部分模式说明发送“##”查看","铁门 部分模式中到了特定分数时若超过了时间要求会强制结束游戏\nMaster 有段位评价，拿到更高段位点的要求有：连击(非消一)和消四，字幕战中消除和通关，每100分的前70分小于`min(标准时间, 上一个0~70秒数+2)`，每100总用时不超过限定值（否则扣分）\nShirase 类似于techmino中的20G-极限，高速20G开局，500~1000涨垃圾行，1000~1300为骨块，1300后大方块字幕战；段位结算为分数/100向下取整（1300为S13）若通关字幕战S13会变金色"},
+    {2,2,0,2,0,2,2,0,0,2,2,0,1,"betrix","Betrix","store.steampowered.com/app/2007710","在方块里加入了音游元素，也有40L等基础模式"},
+    {2,2,0,1,2,2,2,0,0,2,0,0,0,"tetra esports;tes","Tetra eSports","tetraesports.com/","Tetra Online转生，目前还在开发阶段"},
+    {2,2,0,1,2,1,1,0,0,0,0,2,0,"t99;tetris 99","Tetris 99","","主打99人混战的吃鸡模式，也有一些常用单机模式如马拉松等\n游戏基础模式有NS Online会员可以免费玩，其他单机模式需要额外购买"},
+    {2,1,2,2,2,0,2,0,2,2,2,0,0,"tetrio.io;tetrioio;ioio","TETRIO.IO","tetrio.io","无hold有next的对战块，但两个玩家在同一个场地的两头拔河，说不太清总之很好玩，有简单的分数系统能匹配对战，或者约好友\n注：本游戏和TETR.IO完全无关"},
+    {2,1,2,2,0,2,2,1,2,2,2,0,0,"屁块;tetrjs;tetr.js","Tetr.js","farter.cn/t","tetr.js的一个衍生版本，有较多创意模式，触屏只能选预设布局不能自定义"},
+    {2,1,2,2,0,2,2,0,2,2,2,0,0,"asc;ascension","Ascension","asc.winternebs.com","有一些创意模式，ASC旋转系统就来自这里"},
+    {2,1,2,0,1,2,2,0,2,2,0,0,0,"nuke;nuketris","Nuketris","nuketris.com","有几个基础单机模式和1V1排位"},
+    {2,0,2,2,2,1,2,1,2,2,2,0,0,"kos;king of stackers","King of Stackers","kingofstackers.com/games.php","主要玩法类似下棋，每个人以7块为一个回合轮流操作，策略性很强"},
+    {2,0,2,0,0,2,2,1,2,2,0,0,2,"ttt","TTT","(翻译后挂在茶服的版本) teatube.cn/TTT","现代方块特殊操作手把手教程，推荐能全部消四完成40L挑战的人学习，内含极简、SRS、T-Spin、部分对战定式等内容的教程"},
+    {2,0,2,0,0,2,2,1,2,2,0,0,2,"ttpc","TTPC","(翻译后挂在茶服的版本) teatube.cn/ttpc","SRS+Bag7方块游戏全消开局定式的教程（只能键盘操作）。推荐完成了TTT的人学习（必须先学会SRS）"},
+    {2,0,2,0,0,2,2,1,2,2,0,0,2,"tpo","TPO","47.92.33.38/tpo","由TCV100制作的题库网站，内含部分nazo的题"},
+    {2,0,2,0,0,2,2,1,2,2,0,0,2,"nazo","NAZO","(翻译后挂在茶服的版本) teatube.cn/nazo","内含各种T-Spin/All-Spin题目，简单到极难题目都有"},
+    {1,2,2,2,1,2,2,0,0,2,0,0,0,"dtet","DTET","dtet.zui.jp/dtet/index.html","基于经典规则添加了20G和强大的人体工学方块控制系统"},
+    {1,2,2,2,0,2,2,0,0,2,2,0,0,"thm;touhoumino","Touhoumino","www.touhoumino.com/","一个Nullpomino的mod版，在方块里加入了东方Project元素","马拉松模式结合东方Project里的“符卡”机制，需要在一定时间内达成目标分数才能击破。难度较大，适合有方块基础并且各项能力都较强的玩家游玩（不然都不知道自己怎么死的）"},
+    {1,2,2,1,0,2,2,2,2,2,2,2,0,"mind bender;tetris mind bender","Tetris Mind Bender","play.tetris.com/mindbender","在马拉松基础上添加了效果，场地上会随机冒出效果方块，消除后会得到各种各样或好或坏的效果"},
+    {1,2,2,1,0,2,2,1,1,1,2,0,2,"apotris","Apotris","akouzoukos.com/apotris","GBA上的现代块，设置齐全，模式较丰富"},
+    {1,2,2,1,0,2,2,0,2,2,2,0,0,"tl;tetra legends","Tetra Legends","tetralegends.app","有两个隐藏的节奏模式，并且将一些其他游戏中不可见的机制进行了可视化，动效也很多。于2020年12月基本确定由于各种原因不再继续开发"},
+    {1,2,2,1,0,2,2,0,0,2,2,0,1,"misa;misamino","Misamino","","比较工具的游戏，与AI进行回合制对战，可以导入外部AI程序"},
+    {1,2,2,1,0,2,2,0,0,2,2,0,0,"剑桥;cambridge","Cambridge","github.com/Tetro48/cambridge","致力于创建一个轻松高度自定义新模式的方块平台。最初由Joe Zeng开发，于2020年10月8日0.1.5版开始Milla接管了开发。 — Tetris Wiki."},
+    {1,2,2,1,0,2,2,0,0,2,0,0,0,"hebo;heboris","Heboris","","一个仿街机方块游戏，可以模拟多个方块游戏的部分模式"},
+    {1,2,2,0,2,2,0,2,0,0,0,2,0,"royale;tetris royale;tetris n3twork;tetris n3t","Tetris (N3TWORK)","","N3TWORK开发，现由Play Studio运营"},
+    {1,2,2,0,0,2,2,2,2,2,2,2,0,"tetris.com","tetris.com","play.tetris.com","只有马拉松一个模式，但有一个智能鼠标控制的玩法"},
+    {1,2,2,0,0,2,2,0,0,2,0,0,0,"tex;texmaster","Texmaster","","TGM的社区自制游戏，包含TGM的所有模式，可以用来练习TGM，但World规则不完全一样（如软降到底无锁延，踢墙表有细节不同等）"},
+    {1,2,1,1,0,2,1,0,0,1,0,2,0,"sega;sega tetris","Sega Tetris","","1999年发行的主机游戏，有1v1道具战，六种不同的消除方式能发送特殊效果"},
+    {1,2,0,1,0,2,2,0,0,2,1,2,1,"tetris forever;forever;永恒;永恒篇","Tetris Forever","store.steampowered.com/app/3180240","俄罗斯方块40周年作，总体上是一个电子展览馆而不是游戏，按Tetris的历史发展排列了一份纪录片和各种图片资料，还内置了模拟器用来体验一些老游戏"},
+    {1,2,0,1,0,2,0,2,0,0,0,2,0,"beat;tetris beat","Tetris Beat","","N3TWORK代理的一款移动端方块，除了马拉松外有“Beat模式”，根据BGM的节奏落块得到额外分数，但体验一般，特效还比较瞎眼"},
+    {1,1,2,1,2,2,2,2,1,2,0,0,0,"fl;falling lightblocks","Falling Lightblocks","mrstahlfelge.itch.io/lightblocks","主要内容是经典块复刻和半实时对战"},
+    {1,1,2,1,1,2,2,0,0,2,2,0,1,"np;nullpomino","Nullpomino","github.com/nullpomino/nullpomino","整个游戏自定义程度极高，甚至可以模拟出puyopuyo，但模式资源可能比较难找"},
+    {1,1,2,1,0,2,2,0,0,2,0,0,0,"T-ex","T-ex","farter.cn/index.htm","Farter早年制作的一个基于flash的仿TGM游戏，包含一个创新旋转系统 #XRS"},
+    {1,1,2,0,2,0,2,0,0,2,0,0,0,"火拼;火拼俄罗斯","火拼俄罗斯","qqgame.qq.com/app/gamedetail_11.shtml","腾讯游戏大厅的方块，12宽场地的经典块，攻击方式只有消4打3和消3打2，垃圾行为国际象棋棋盘式，几乎不可能挖掘"},
+    {1,1,2,0,0,2,2,0,0,2,0,0,0,"mob;master of block","Master of Block","","一个仿街机方块游戏系列"},
+    {1,0,2,1,0,2,2,0,0,2,2,0,2,"four;fourtris;four-tris","Four-tris","","单机自由沙盘，可以方便地随时自定义序列、绘制和删除地形、撤销和前进步骤，有截图识别地形功能，有多个练习模式，非常适合进行各种练习、复盘、绘制地形"},
+    {1,0,2,0,0,2,2,2,2,2,2,0,2,"ztrix","Ztrix","ztrix-game.web.app","TEC的Zone练习用工具游戏，有自定义序列和撤销和出题等功能"},
+    {1,0,2,0,0,2,0,2,2,2,0,0,2,"fumen;方块谱;编辑器;铺面","Fumen","fumen.zui.jp  knewjade.github.io/fumen-for-mobile","一个方块版面编辑器，可以用于分享定式，PC解法等。"},
+    {0,2,2,2,0,2,0,2,0,0,0,2,0,"ea;tetris ea","（离线）Tetris (EA)","","EA代理的一款宇宙主题的移动端方块。有滑动操控和单点触控两种操作模式，已于2020年4月下架","除经典的马拉松外还有一个星系模式（地图挖掘），有重力连锁机制，目标是在限定块数内消除所有地图块"},
+    {0,2,2,0,2,2,2,0,0,2,1,2,0,"to;top;toj;tos;tetris online","（私服）Tetris Online","","主要用来6人内对战/单挑/刷每日40L榜/挖掘模式/打机器人","现在还开着的服务器有：TO-P（波兰服，服务器在波兰，可能会卡顿）；TO-S（研究服，研究群群友自己开的服更稳定）"},
+    {0,2,2,0,2,2,2,0,0,2,0,0,0,"tetra online","（离线）Tetra Online","离线版本 github.com/Juan-Cartes/Tetra-Offline/releases/tag/1.0","UI部分模仿了PPT，音乐不错，攻击特效好看，于2020年12月9日收到来自TTC的DMCA警告信于是被迫停止开发，在一段时间后关服并下架Steam"},
+    {0,2,2,0,2,2,1,0,2,2,1,2,0,"tf;tetris friends;notris;notrisfoes","（私服）Tetris Friends","私服：notrisfoes.com","以前人比较多，后来官服倒闭了热度没了"},
+    {0,2,1,2,0,2,0,2,0,0,0,2,0,"闪电战;tetris blitz","（离线）Tetris Blitz","","EA代理的一款移动端方块，有重力连锁机制，限时2分钟，已于2020年4月下架\n另见 #Blitz模式","持续消行会进入Frenzy模式（场地下方会不断冒出垃圾行，帮助玩家制造大连锁，如果多次落块没有消行会强制结束Frenzy）。有非常多的道具\n当新出现的方块与场地现有方块重叠时，场地最上方的几行会被自动清除，游戏不结束"},
+    {0,2,0,2,1,2,0,0,0,2,0,2,0,"ultimate;tetris ultimate","（离线）Tetris Ultimate","store.steampowered.com/app/316750","有周期隐形/山体滑坡/双人同版等有趣模式，目前已下架"},
+    {0,2,0,2,0,2,2,0,0,2,2,0,0,"quadra break;qb","（下线）Quadra Break","","以那些广告里疯狂cascade超宽屏方块为灵感的游戏\n已逝，永远怀念"},
+    {0,2,0,1,0,2,2,2,0,0,0,2,0,"环游记;俄罗斯方块环游记;journey;tetris journey","（下线）Tetris Journey","","国内第一款正版授权手游方块。有闯关模式、对战模式和几个单机模式。闯关模式有各种各样有趣规则大多数有重力连锁，已于2023年2月15日停服"},
 }
+---@type Zict.Entry[]
+local game={}
+for i=1,#gameDatabase do
+    local tags={}
+    local d=gameDatabase[i]
+    if d[1]==3 then ins(tags,"🔥🔥") end
+    if d[1]==2 then ins(tags,"🔥") end
+    if d[1]==1 then ins(tags,"🧊") end
+    if d[1]==0 then ins(tags,"🧊🧊") end
+    if d[2]==2 then ins(tags,"音画炫酷") end
+    if d[3]==2 then ins(tags,"免费") end
+    if d[3]==1 then ins(tags,"内购") end
+    if d[3]==0 then ins(tags,"正版付费") end
+    if d[4]==2 then ins(tags,"创新") end
+    local m=d[5]..d[6]
+    ins(tags,
+        m=="22" and "多人 单人" or
+        m=="20" and "多人" or
+        m=="02" and "单人" or
+        m=="21" and "主多人" or
+        m=="12" and "主单人" or
+        "?"
+    )
+    if d[7]==2 then ins(tags,"可改键") end
+    if d[7]==1 then ins(tags,"半可改键") end
+    if d[7]==0 then ins(tags,"不可改键") end
+    if d[8]+d[9]+d[10]==0 then
+        ins(tags,"其他平台")
+    elseif d[8]<2 and d[9]<2 and d[10]<2 then
+        ins(tags,"需要模拟器")
+    else
+        if d[8]==2 then ins(tags,"📱") end
+        if d[9]==2 then ins(tags,"🌐") end
+        if d[10]==2 then ins(tags,"🖥") end
+    end
+    if d[11]==2 then ins(tags,"参数可调") end
+    if d[12]==2 then ins(tags,"官方") end
+    ins(game,{
+        word=d[14],
+        title=d[15],
+        text=table.concat(tags," ").."\n"..d[17],
+        detail=d[18] or nil,
+        link=d[16]~="" and d[16] or nil,
+    })
+end
+
 ---@type Zict.Entry[]
 local extra_tetrio={
     {
@@ -2016,7 +1789,7 @@ local function loadData(data)
                 zict[word]=entry
             end
         end
-        table.insert(zict.entryList,entry)
+        ins(zict.entryList,entry)
     end
 end
 
