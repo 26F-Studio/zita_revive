@@ -1436,6 +1436,17 @@ for i=1,#gameDatabase do
     if d[1]==2 then ins(tags,"🔥") end
     if d[1]==1 then ins(tags,"🧊") end
     if d[1]==0 then ins(tags,"🧊🧊") end
+
+    if d[8]+d[9]+d[10]==0 then
+        ins(tags,"其他平台")
+    elseif d[8]<2 and d[9]<2 and d[10]<2 then
+        ins(tags,"需要模拟器")
+    else
+        if d[8]==2 then ins(tags,"📱") end
+        if d[9]==2 then ins(tags,"🌐") end
+        if d[10]==2 then ins(tags,"🖥") end
+    end
+
     if d[2]==2 then ins(tags,"音画炫酷") end
     if d[3]==2 then ins(tags,"免费") end
     if d[3]==1 then ins(tags,"内购") end
@@ -1453,15 +1464,6 @@ for i=1,#gameDatabase do
     if d[7]==2 then ins(tags,"可改键") end
     if d[7]==1 then ins(tags,"半可改键") end
     if d[7]==0 then ins(tags,"不可改键") end
-    if d[8]+d[9]+d[10]==0 then
-        ins(tags,"其他平台")
-    elseif d[8]<2 and d[9]<2 and d[10]<2 then
-        ins(tags,"需要模拟器")
-    else
-        if d[8]==2 then ins(tags,"📱") end
-        if d[9]==2 then ins(tags,"🌐") end
-        if d[10]==2 then ins(tags,"🖥") end
-    end
     if d[11]==2 then ins(tags,"参数可调") end
     if d[12]==2 then ins(tags,"官方") end
     ins(game,{
