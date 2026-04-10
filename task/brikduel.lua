@@ -7,7 +7,7 @@ local echoCnt=0
 ---@param S Session
 ---@param M OneBot.Event.Message|nil
 local function delReply(S,delay,M,str)
-    delay=min(delay,Config.groupManaging[S.id] and 1e99 or 100)
+    delay=min(delay,Bot.isManaging(S.id) and 1e99 or 100)
     S:send(str,'dl'..echoCnt)
     S:delayDelete(delay,'dl'..echoCnt)
     if M then S:delayDelete(min(delay,62),M.message_id) end

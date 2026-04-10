@@ -679,7 +679,7 @@ return {
             if S:lock('guess_help',26) then
                 S:send(mes:find('qd') and text.helpQD or text.helpAB)
             end
-            if delays.del_help and Config.groupManaging[S.id] then
+            if delays.del_help and Bot.isManaging(S.id) then
                 S:delayDelete(delays.del_help,M.message_id)
             end
             return true
@@ -718,7 +718,7 @@ return {
             S:unlock('guess_cd')
             S:unlock('guess_duplicate')
             D.lastInterectTime=Time()-cooldownSkip.giveup
-            if delays.del_abandon and Config.groupManaging[S.id] then
+            if delays.del_abandon and Bot.isManaging(S.id) then
                 S:delayDelete(delays.del_abandon,M.message_id)
             end
             return true
@@ -798,7 +798,7 @@ return {
             end
             sendMes(S,M,D,'start')
             D.lastInterectTime=Time()
-            if delays.del_start and Config.groupManaging[S.id] then
+            if delays.del_start and Bot.isManaging(S.id) then
                 S:delayDelete(delays.del_start,M.message_id)
             end
             return true
@@ -831,7 +831,7 @@ return {
                 if S:lock('guess_duplicate',12.6) then
                     S:send(getRnd(text.guessed),mesID)
                     D.lastInterectTime=Time()
-                    if delays.del_duplicate and Config.groupManaging[S.id] then
+                    if delays.del_duplicate and Bot.isManaging(S.id) then
                         S:delayDelete(delays.del_duplicate,mesID)
                         S:delayDelete(delays.del_duplicate,M.message_id)
                     end
@@ -848,7 +848,7 @@ return {
                     S:unlock('guess_cd')
                     S:unlock('guess_duplicate')
                     D.lastInterectTime=Time()-cooldownSkip.win
-                    if delays.del_win and Config.groupManaging[S.id] then
+                    if delays.del_win and Bot.isManaging(S.id) then
                         S:delayDelete(delays.del_win,M.message_id)
                     end
                 elseif D.chances>0 then
@@ -872,7 +872,7 @@ return {
                     end
                     sendMes(S,M,D,'normal')
                     D.lastInterectTime=Time()
-                    if delays.del_normal and Config.groupManaging[S.id] then
+                    if delays.del_normal and Bot.isManaging(S.id) then
                         S:delayDelete(delays.del_normal,M.message_id)
                     end
                 else
@@ -885,7 +885,7 @@ return {
                     S:unlock('guess_cd')
                     S:unlock('guess_duplicate')
                     D.lastInterectTime=Time()-cooldownSkip.lose
-                    if delays.del_lose and Config.groupManaging[S.id] then
+                    if delays.del_lose and Bot.isManaging(S.id) then
                         S:delayDelete(delays.del_lose,M.message_id)
                     end
                 end

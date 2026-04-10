@@ -8,56 +8,19 @@ ZENITHA.setRenderRate(10)
 ZENITHA.setUpdateRate(100)
 ZENITHA.setAppInfo('zita_revive','')
 --------------------------------------------------------------
-Config={
-    connectInterval=2.6,
-    reconnectInterval=600,
-    maxCharge=620,
-    debugLog_send=false,
-    debugLog_message=false,
-    debugLog_notice=false,
-    debugLog_request=false,
-    debugLog_response=false,
-    botID=false,
-    adminName="管理员",
-    superAdminID={},
-    groupManaging={},
-    privTask={},
-    groupTask={},
-    extraData={},
-}
-xpcall(function()
-    local data=FILE.load('botconf.lua','-lua')
-    ---@cast data Data
-    Config.host=data.host
-    Config.port=data.port
-
-    Config.botID=data.botID
-    Config.adminName=data.adminName
-
-    Config.superAdminID=TABLE.getValueSet(data.superAdminID)
-    Config.groupManaging=TABLE.getValueSet(data.groupManaging)
-    Config.privTask=data.privTask or Config.privTask
-    Config.groupTask=data.groupTask or Config.groupTask
-    Config.extraTask=data.extraTask or Config.extraTask
-    Config.extraData=data.extraData or Config.extraData
-
-    LOG('info',"botconf.lua successfully loaded")
-end,function(mes)
-    LOG('error',"Error in loading botconf.lua: "..mes)
-    LOG('error',"Some settings may not be loaded correctly")
-end)
+Config=require'botconf'
 print("--------------------------")
 print("Bot ID: "..Config.botID)
 print("Admin name: "..Config.adminName)
 print("# Super admin ID:")
-for id in next,Config.superAdminID do print(id) end
+for _,id in next,Config.superAdminID do print(id) end
 print("# Group managing:")
-for id in next,Config.groupManaging do print(id) end
+for _,id in next,Config.groupManaging do print(id) end
 
 local ws=WS.new{
-    host='localhost',
-    port='3001',
-    connTimeout=2.6,
+    host=Config.host,
+    port=Config.port,
+    connTimeout=Config.connectInterval,
     sleepInterval=0.1,
 }
 --------------------------------------------------------------
@@ -81,6 +44,8 @@ CQ={
     face=function(data) return "[CQ:face,id="..data.."]" end,
 }
 --------------------------------------------------------------
+Emoji=require'data.emoji'
+
 Bot={
     state='dead', ---@type 'dead'|'connecting'|'running'
     delayedAction={}, ---@type {time:number, func:function, data:any}[]
@@ -93,7 +58,7 @@ Bot={
         messageSent=0,
     },
 }
-Emoji=require'data.emoji'
+local Bot=Bot
 
 ---@class Task_raw
 ---@field message? fun(S:Session, M: OneBot.Event.Message, D:Session.data):boolean true means message won't be passed to next task
@@ -234,8 +199,14 @@ function Bot.getMemberList(group_id,handler)
         echo=handler,
     }
 end
+function Bot.isManaging(gid)
+    return TABLE.find(Config.groupManaging,gid)
+end
+function Bot.isAdmin(pid)
+    return TABLE.find(Config.superAdminID,pid)
+end
 function Bot.adminNotice(text)
-    for id in next,Config.superAdminID do
+    for _,id in next,Config.superAdminID do
         Bot.sendMsg(text,id,true)
     end
 end
@@ -248,8 +219,6 @@ function Bot.stop(time)
     TASK.forceLock('bot_blockRestart',time or 600)
     ws:close()
 end
-
-local Bot=Bot
 
 ---@return true? #if any message processed
 function Bot._update()
@@ -355,7 +324,7 @@ function Session.new(id,priv)
         uid=(priv and 'p' or 'g')..id,
         priv=priv,
         group=not priv,
-        admin=not priv and Config.groupManaging[id],
+        admin=not priv and Bot.isManaging(id),
         taskList={},
         locks=setmetatable({},lockMapMeta),
         checkpoints={},
