@@ -16,6 +16,9 @@ assert(zict,"Dict data not found")
 return {
     init=function(_,D)
         D.lastDetailEntry=false
+        D.ADlist=TABLE.shuffle(TABLE.copy(Config.extraData.ad))
+        D.nextAD=1
+        D.ad_mes_cooldown=6
     end,
     message=function(S,M,D)
         ---@cast M OneBot.Event.PrivateMessage|OneBot.Event.GroupMessage
@@ -42,7 +45,7 @@ return {
         -- Daily
         local daily
         if mes=='#' then
-            if S:lock('dailyEntry',626) then
+            if S:lock('zict_daily',626) then
                 math.randomseed(tonumber(os.date('%Y%m%d')) or 26)
                 for _=1,26 do math.random() end
                 for _=1,26 do
@@ -118,6 +121,17 @@ return {
         end
         if entry.link then
             ins(result,"相关链接: "..entry.link)
+        end
+        -- Advertise
+        D.ad_mes_cooldown=D.ad_mes_cooldown-1
+        if (Config.extraData.main or NONE)[S.id] and D.ad_mes_cooldown<=0 and not S:forceLock('zict_ad_chokeLaunch',260) and S:lock('zict_ad_time_cooldown',2600) then
+            ins(result,D.ADlist[D.nextAD])
+            D.nextAD=D.nextAD+1
+            if not D.ADlist[D.nextAD] then
+                D.nextAD=1
+                TABLE.shuffle(D.ADlist)
+            end
+            D.ad_mes_cooldown=6
         end
         local resultStr=table.concat(result,'\n')
 
