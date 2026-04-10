@@ -17,12 +17,10 @@ Config={
     debugLog_notice=false,
     debugLog_request=false,
     debugLog_response=false,
-    safeMode=false,
     botID=false,
     adminName="管理员",
     superAdminID={},
     groupManaging={},
-    safeSessionID={},
     privTask={},
     groupTask={},
     extraData={},
@@ -38,7 +36,6 @@ xpcall(function()
 
     Config.superAdminID=TABLE.getValueSet(data.superAdminID)
     Config.groupManaging=TABLE.getValueSet(data.groupManaging)
-    Config.safeSessionID=TABLE.getValueSet(data.safeSessionID)
     Config.privTask=data.privTask or Config.privTask
     Config.groupTask=data.groupTask or Config.groupTask
     Config.extraTask=data.extraTask or Config.extraTask
@@ -56,8 +53,6 @@ print("# Super admin ID:")
 for id in next,Config.superAdminID do print(id) end
 print("# Group managing:")
 for id in next,Config.groupManaging do print(id) end
-print("# Safe session ID:")
-for id in next,Config.safeSessionID do print(id) end
 
 local ws=WS.new{
     host='localhost',
@@ -143,12 +138,6 @@ function Bot.sendMsg(message,id,priv,echo)
         },
         echo=echo,
     }
-    if Config.safeMode and not Config.safeSessionID[(priv and 'p' or 'g')..id] then
-        if TASK.lock('safeModeBlock',10) then
-            LOG("Message (to"..id..") blocked in safe mode")
-        end
-        return
-    end
     if Bot._send(mes) then
         Bot.stat.messageSent=Bot.stat.messageSent+1
     end
