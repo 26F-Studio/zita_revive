@@ -86,11 +86,6 @@ local meta={
         text=CQ.img(Config.extraData.imgPath.."zone23教程.png"),
     },
     {
-        word="复读",
-        text="？竟然对这个感兴趣吗…\n初始概率0.5%，随消息长度逐渐减小到0%\n每条没复读的消息+0.01%（最多2.6%），每一条其他人的复读临时+6.2%",
-        detail="每次复读26秒后进入冷静期\n超过62字节和包含坏词的消息视为无效\n包含好词的消息+2.6%\n不会在一轮复读内重复，多次参与的人也不计数",
-    },
-    {
         word="宝石;宝石迷阵;bejeweled;bej;bej1;bej2;bej3;bejT;bejeweled1;bejeweled2;bejeweled3;bejeweled twist",
         title="Bejeweled Series",
         text="三消系列神作，类比现代块之于经典块的进步，Bej系列每一作都是前无古人后无来者的“现代三消”，BejT和Bej3的三消玩法至今未被超越",
