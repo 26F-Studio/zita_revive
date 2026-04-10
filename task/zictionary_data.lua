@@ -1386,7 +1386,7 @@ local gameDatabase={
     {2,2,0,2,0,2,2,0,0,2,2,0,1,"betrix","Betrix","store.steampowered.com/app/2007710","在方块里加入了音游元素，也有40L等基础模式"},
     {2,2,0,1,2,2,2,0,0,2,0,0,0,"tetra esports;tes","Tetra eSports","tetraesports.com/","Tetra Online转生，目前还在开发阶段"},
     {2,2,0,1,2,1,1,0,0,0,0,2,0,"t99;tetris 99","Tetris 99","","主打99人混战的吃鸡模式，也有一些常用单机模式如马拉松等\n游戏基础模式有NS Online会员可以免费玩，其他单机模式需要额外购买"},
-    {2,2,0,1,0,2,2,0,0,2,2,0,1,"techDS;techmino downstacking;techmino downstack;方块研究所 挖掘部;方块研究所挖掘;铁壳米诺;铁壳挖掘","Techmino Downstacking","store.steampowered.com/app/4568800","Techmino的续作系列第一作，专注于挖掘玩法"},
+    {2,2,0,1,0,2,2,0,0,2,2,0,1,"techDS;techmino downstacking;techmino downstack;方块研究所挖掘部;方块研究所挖掘;铁壳米诺挖掘部;铁壳米诺挖掘;铁壳挖掘部;铁壳挖掘","Techmino Downstacking","store.steampowered.com/app/4568800","Techmino的续作系列第一作，专注于挖掘玩法"},
     {2,1,2,2,2,0,2,0,2,2,2,0,0,"tetrio.io;tetrioio;ioio","TETRIO.IO","tetrio.io","无hold有next的对战块，但两个玩家在同一个场地的两头拔河，说不太清总之很好玩，有简单的分数系统能匹配对战，或者约好友\n注：本游戏和TETR.IO完全无关"},
     {2,1,2,2,0,2,2,1,2,2,2,0,0,"屁块;tetrjs;tetr.js","Tetr.js","farter.cn/t","tetr.js的一个衍生版本，有较多创意模式，触屏只能选预设布局不能自定义"},
     {2,1,2,2,0,2,2,0,2,2,2,0,0,"asc;ascension","Ascension","asc.winternebs.com","有一些创意模式，ASC旋转系统就来自这里"},
