@@ -16,8 +16,7 @@ assert(zict,"Dict data not found")
 return {
     init=function(_,D)
         D.lastDetailEntry=false
-        D.ADlist=TABLE.shuffle(TABLE.copy(Config.extraData.ad))
-        D.nextAD=1
+        D.ADlist={}
         D.ad_mes_cooldown=6
     end,
     message=function(S,M,D)
@@ -125,12 +124,8 @@ return {
         -- Advertise
         D.ad_mes_cooldown=D.ad_mes_cooldown-1
         if (Config.extraData.main or NONE)[S.id] and D.ad_mes_cooldown<=0 and not S:forceLock('zict_ad_chokeLaunch',620) and S:lock('zict_ad_time_cooldown',2600) then
-            ins(result,"【广告】"..D.ADlist[D.nextAD])
-            D.nextAD=D.nextAD+1
-            if not D.ADlist[D.nextAD] then
-                D.nextAD=1
-                TABLE.shuffle(D.ADlist)
-            end
+            if not D.ADlist[1] then TABLE.append(D.ADlist,Config.extraData.ad) end
+            ins(result,"【广告】"..TABLE.popRandom(D.ADlist))
             D.ad_mes_cooldown=6
         end
         local resultStr=table.concat(result,'\n')
