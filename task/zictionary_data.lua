@@ -63,7 +63,7 @@ local meta={
     },
     {
         word="铁壳ios",
-        text="1.下载并打开Filza文件管理器\n2.点击底部收藏夹图标-App管理器，找到Techmino\n3.点击右侧信息图标，点击主程序\n5.打开Techmino.app文件夹（并确认可以在这里编辑）\n6.从Github下载最新的.love游戏包，重命名为game.love并替换刚刚看到的那个，完成",
+        text="1.下载并打开Filza文件管理器\n2.点击底部收藏夹图标-App管理器，找到Techmino\n3.点击右侧信息图标，点击主程序\n4.打开Techmino.app文件夹（并确认可以在这里编辑）\n5.从Github下载最新的.love游戏包，重命名为game.love并替换刚刚看到的那个，完成",
     },
     {
         word="铁壳mac",
