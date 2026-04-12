@@ -123,7 +123,7 @@ return {
         end
         -- Advertise
         D.ad_mes_cooldown=D.ad_mes_cooldown-1
-        if (Config.extraData.main or NONE)[S.id] and D.ad_mes_cooldown<=0 and not S:forceLock('zict_ad_chokeLaunch',620) and S:lock('zict_ad_time_cooldown',2600) then
+        if (Config.extraData.main or NONE)[S.uid] and D.ad_mes_cooldown<=0 and not S:forceLock('zict_ad_chokeLaunch',620) and S:lock('zict_ad_time_cooldown',2600) then
             if not D.ADlist[1] then TABLE.append(D.ADlist,Config.extraData.ad) end
             ins(result,"【广告】"..TABLE.popRandom(D.ADlist))
             D.ad_mes_cooldown=6
