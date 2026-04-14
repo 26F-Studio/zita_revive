@@ -1359,9 +1359,8 @@ local pattern={
 local game={}
 for _,d in next,(FILE.load('task/game_db.lua','-luaon')) do
     local tags={}
-    if d[1]==2 then ins(tags,"🔥") end
-    if d[1]==1 then ins(tags,"") end
-    if d[1]==0 then ins(tags,"🧊") end
+    if d[1]==2 then ins(tags,"🔥🔥") end
+    if d[1]==1 then ins(tags,"🔥") end
 
     if d[8]+d[9]+d[10]==0 then
         ins(tags,"其他平台")
