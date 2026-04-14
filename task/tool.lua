@@ -446,7 +446,7 @@ local tagList={
     {"热","帅","免","新","多","单","键","手","网","计","参","官","研"},
     {"热门","音画质量","免费","创新","多人","单人","可调键位","手机","网页","电脑","参数可调","官方","研究工具"},
 }
-local tagHelp="可用标签：\n"
+local tagHelp="标签顺序决定排序依据，游戏在每种标签有0~2的分数\n从首个标签开始，分数不同时确定顺序，否则看下一个\n标签前加\"^\"表示倒序\n默认输出5个 可指定个数\n可用标签：\n"
 for i=1,#tagList[1] do tagHelp=tagHelp..tagList[1][i].."/"..tagList[2][i]..(i%3==0 and i~=#tagList[1] and "\n" or " ") end
 local tagMap={}
 for _,l in next,tagList do TABLE.update(tagMap,TABLE.inverse(l)) end
@@ -469,24 +469,23 @@ tools.game={
         end
         local tags=STRING.split(args,' ')
         local topN=5
+        local hasNum=false
         TABLE.clear(tagTemp)
         for i=1,#tags do
             local tag=tags[i]
-            if tonumber(tag) then
-                local n=tonumber(tag)
-                if n and n>=1 and n<=10 and n%1==0 then
-                    topN=n
-                else
-                    return "别闹"
-                end
+            local n=tonumber(tag)
+            if n then
+                if hasNum then return "到底要几个喵" end
+                if n>=1 and n<=10 and n%1==0 then topN,hasNum=n,true else return "别闹" end
             else
                 local rev=false
                 if tag:sub(1,1)=='^' then tag,rev=tag:sub(2),true end
                 local tagID=tagMap[tag]
-                if not tagID then return "未知标签："..tagID end
+                if not tagID then return "未知标签："..tag end
                 ins(tagTemp,rev and -tagID or tagID)
             end
         end
+        if #tagTemp==0 then return "所以你要什么喵" end
         table.sort(gameDB,game_comparer)
         local res={}
         for i=1,topN do ins(res,gameDB[i][15]) end
