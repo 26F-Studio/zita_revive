@@ -1357,7 +1357,7 @@ local pattern={
 }
 ---@type Zict.Entry[]
 local game={}
-for _,d in next,FILE.load('task/game_db.lua','-luaon') do
+for _,d in next,(FILE.load('task/game_db.lua','-luaon')) do
     local tags={}
     if d[1]==2 then ins(tags,"🔥") end
     if d[1]==1 then ins(tags,"") end
