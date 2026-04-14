@@ -159,8 +159,8 @@ function Bot.canvasToImage(canvas,x,y,w,h)
     GC.saveCanvas(canvas,file,'png',0,1,x,y,w,h)
     local full=love.filesystem.getSaveDirectory()..'/'..file
     os.execute('chmod 644 '..full)
-    os.execute('mv '..full..' '..Config.extraData.sandboxRealPath..file)
-    return CQ.img(Config.extraData.sandboxPath..file)
+    os.execute('mv '..full..' '..Config.sandboxRealPath..file)
+    return CQ.img(Config.sandboxPath..file)
 end
 ---@param group_id number
 ---@param user_id number
