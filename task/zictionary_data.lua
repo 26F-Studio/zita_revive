@@ -8,7 +8,7 @@ local ins=table.insert
 ---@field link? string 如果有的话会在最后一行显示为“相关链接：xxx.com”
 
 ---@type Zict.Entry[]
-local meta={
+local utils={
     {
         word="help;帮助;词典;小z词典;zict;zictionary",
         title="Zita-Revive",
@@ -16,9 +16,63 @@ local meta={
         detail="#推荐/分类/表格  看看目前大家玩的都是哪些游戏\n#新人/学习t旋/wiki  其他常用资源\n#tool  查看可用的小工具",
     },
     {
-        word="提问;提问的智慧",
-        text="提问时请尽量清晰地描述问题，条件不够很难帮到你喵（发送“##”查看示范）",
-        detail="例：“[问题现象截图]我使用[设备类型]在[游戏名][版本号]中遇到了[现象]，触发方式是[具体操作]，这是bug吗？是的话如何解决？”\ngist.github.com/burningtnt/360d2b93452560c0413ac1a6e3515642",
+        word="学习tspin;学习t旋",
+        title="关于T-Spin学习",
+        text="适合开始学T-Spin门槛水平参考：40L达到60s以内（速度够说明堆叠基本功过关）、能够轻松完成全程消四的40L（能稳定平整堆叠）、不使用Hold不降太多速度的前提下比较轻松完成全程消四的40L（有足够的看next的意识和算力）",
+        detail="需要指出，要能熟练做出各种T-Spin并不是只看着T-Spin的那一小部分地形就可以玩好的，对玩家堆叠能力和计算next能力同样也有较高的要求。故如果目的主要是提升打块能力、没什么娱乐随便玩玩的成分时，推荐在基础能力没达到上述要求前不用去详细了解具体的T-Spin构造知识，把重点放在前置基本功的练习上就可以了",
+    },
+    {
+        word="wiki;维基;中文wiki;中文维基",
+        title="俄罗斯方块中文维基",
+        text="俄罗斯方块中文百科全书，由中文玩家建立和维护\n推荐新人有不懂的知识先查阅百科再提问，也欢迎各位玩家作出编辑贡献\n早期大部分条目译自Hard Drop Wiki和Tetris Wiki\n另见 #其他wiki",
+        link="tetriswiki.cn 或 t-wiki.cn 或 tetris.link",
+    },
+    {
+        word="其他wiki;wiki列表;harddrop wiki;tetris wiki;fandom;wiki fandom;tetris wiki fandom",
+        title="其他英文wiki",
+        text="harddrop.com/wiki（Hard Drop社区的百科）\nhttps://tetris.wiki（Myndzi在2015年创办）\ntetris.fandom.com\n另见 #wiki",
+    },
+    -- 其他游戏
+    {
+        word="宝石;宝石迷阵;bejeweled;bej;bej1;bej2;bej3;bejT;bejeweled1;bejeweled2;bejeweled3;bejeweled twist",
+        title="Bejeweled Series",
+        text="三消系列神作，类比现代块之于经典块的进步，Bej系列每一作都是前无古人后无来者的“现代三消”，BejT和Bej3的三消玩法至今未被超越",
+        link="b23.tv/BV1sE421P7dE  b23.tv/BV1TE421A7wG",
+    },
+    {
+        word="气泡;魔法气泡;噗哟;噗哟噗哟;puyo;puyopuyo",
+        text="魔法气泡，一款相同颜色连起来就消除的游戏（有请其他群友解释）",
+    },
+    {
+        word="ZC;Zenith Clicker;点点乐;天穹点点乐;io点点乐",
+        text="天穹点点乐，tetr.io中qp2模式的戏仿游戏\nZ酱出品，随时随地爽爬塔！",
+        link="github.com/MrZ626/ZenithClicker",
+    },
+    {
+        word="similariddle;similarriddle;sr",
+        text="Similariddle，一款高难度猜单词游戏，26F Studio参与制作",
+        link="store.steampowered.com/app/3408740?utm_source=zita",
+    },
+    -- 一些文档
+    {
+        word="社区;导航;块群;社区文档;导航文档;块群文档",
+        text="MrZ编写的中国方块社区导航文档，收集了大多数已知的格式形如“俄罗斯方块·[铁🪏壳]”的群",
+        link="github.com/MrZ626/modern_tetris_cn_community",
+    },
+    {
+        word="qp文档;qp2文档",
+        text="MrZ编写的TETR.IO QP2非官方规则文档",
+        link="github.com/MrZ626/io_qp2_rule",
+    },
+    {
+        word="现代块文档",
+        text="MrZ编写的现代块游戏特征文档",
+        link="github.com/MrZ626/modern_tetris_cn_community/blob/main/modern_stacker.md",
+    },
+    -- 常用语
+    {
+        word="7",
+        text="欢迎新人但是方块有7种"..CQ.img(Config.extraData.imgPath.."7.png"),
     },
     {
         word="推荐;游戏推荐",
@@ -41,21 +95,9 @@ local meta={
         text=CQ.img(Config.extraData.imgPath.."新人引导.png"),
     },
     {
-        word="学习tspin;学习t旋",
-        title="关于T-Spin学习",
-        text="适合开始学T-Spin门槛水平参考：40L达到60s以内（速度够说明堆叠基本功过关）、能够轻松完成全程消四的40L（能稳定平整堆叠）、不使用Hold不降太多速度的前提下比较轻松完成全程消四的40L（有足够的看next的意识和算力）",
-        detail="需要指出，要能熟练做出各种T-Spin并不是只看着T-Spin的那一小部分地形就可以玩好的，对玩家堆叠能力和计算next能力同样也有较高的要求。故如果目的主要是提升打块能力、没什么娱乐随便玩玩的成分时，推荐在基础能力没达到上述要求前不用去详细了解具体的T-Spin构造知识，把重点放在前置基本功的练习上就可以了",
-    },
-    {
-        word="wiki;维基;中文wiki;中文维基",
-        title="俄罗斯方块中文维基",
-        text="俄罗斯方块中文百科全书，由中文玩家建立和维护\n推荐新人有不懂的知识先查阅百科再提问，也欢迎各位玩家作出编辑贡献\n早期大部分条目译自Hard Drop Wiki和Tetris Wiki\n另见 #其他wiki",
-        link="tetriswiki.cn 或 t-wiki.cn 或 tetris.link",
-    },
-    {
-        word="其他wiki;wiki列表;harddrop wiki;tetris wiki;fandom;wiki fandom;tetris wiki fandom",
-        title="其他英文wiki",
-        text="harddrop.com/wiki（Hard Drop社区的百科）\nhttps://tetris.wiki（Myndzi在2015年创办）\ntetris.fandom.com\n另见 #wiki",
+        word="提问;提问的智慧",
+        text="提问时请尽量清晰地描述问题，条件不够很难帮到你喵（发送“##”查看示范）",
+        detail="例：“[问题现象截图]我使用[设备类型]在[游戏名][版本号]中遇到了[现象]，触发方式是[具体操作]，这是bug吗？是的话如何解决？”\ngist.github.com/burningtnt/360d2b93452560c0413ac1a6e3515642",
     },
     {
         word="tech仓库;techmino仓库;铁壳仓库;铁壳米诺仓库",
@@ -84,49 +126,6 @@ local meta={
     {
         word="zone23;23zone;infinitris",
         text=CQ.img(Config.extraData.imgPath.."zone23教程.png"),
-    },
-    {
-        word="宝石;宝石迷阵;bejeweled;bej;bej1;bej2;bej3;bejT;bejeweled1;bejeweled2;bejeweled3;bejeweled twist",
-        title="Bejeweled Series",
-        text="三消系列神作，类比现代块之于经典块的进步，Bej系列每一作都是前无古人后无来者的“现代三消”，BejT和Bej3的三消玩法至今未被超越",
-        link="b23.tv/BV1sE421P7dE  b23.tv/BV1TE421A7wG",
-    },
-    {
-        word="气泡;魔法气泡;噗哟;噗哟噗哟;puyo;puyopuyo",
-        text="魔法气泡，一款相同颜色连起来就消除的游戏（有请其他群友解释）",
-    },
-    {
-        word="音乐方块;lumine;lumines;lumines arise",
-        text="音乐方块，一款相同颜色拼成正方形就消除的游戏（有请其他群友解释）",
-    },
-    {
-        word="similariddle;similarriddle;sr",
-        text="Similariddle，一款高难度猜单词游戏，26F Studio参与制作",
-        link="store.steampowered.com/app/3408740?utm_source=zita",
-    },
-    {
-        word="社区文档;社区导航",
-        text="MrZ编写的中国方块社区导航文档，收集了大多数已知的格式形如“俄罗斯方块·[铁🪏壳]”的群",
-        link="github.com/MrZ626/modern_tetris_cn_community",
-    },
-    {
-        word="qp文档;qp2文档",
-        text="MrZ编写的TETR.IO QP2非官方规则文档",
-        link="github.com/MrZ626/io_qp2_rule",
-    },
-    {
-        word="现代块文档",
-        text="MrZ编写的现代块游戏特征文档",
-        link="github.com/MrZ626/modern_tetris_cn_community/blob/main/modern_stacker.md",
-    },
-    {
-        word="ZC;Zenith Clicker;点点乐;天穹点点乐;io点点乐",
-        text="天穹点点乐，tetr.io中qp2模式的戏仿游戏\nZ酱出品，随时随地爽爬塔！",
-        link="github.com/MrZ626/ZenithClicker",
-    },
-    {
-        word="7",
-        text="欢迎新人但是方块有7种"..CQ.img(Config.extraData.imgPath.."7.png"),
     },
 }
 ---@type Zict.Entry[]
@@ -1791,7 +1790,7 @@ local function loadData(data)
     end
 end
 
-loadData(meta)
+loadData(utils)
 loadData(main)
 loadData(pattern)
 loadData(game)
