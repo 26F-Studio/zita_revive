@@ -1,3 +1,5 @@
+local ins,rem=table.insert,table.remove
+
 local stepLimit=2e6
 local function hook() error('timeout') end
 local timeoutError={
@@ -356,9 +358,9 @@ tools.qp16={
         end
 
         local line={}
-        if pool.zenithexplorer then table.insert(line,("%dm"):format(pool.zenithexplorer)) end
-        if pool.zenithspeedrun then table.insert(line,"速通"..STRING.time_simp(-pool.zenithspeedrun/1000)) end
-        if pool.zenithb2b then table.insert(line,string.format("B2B×%d",pool.zenithb2b)) end
+        if pool.zenithexplorer then ins(line,("%dm"):format(pool.zenithexplorer)) end
+        if pool.zenithspeedrun then ins(line,"速通"..STRING.time_simp(-pool.zenithspeedrun/1000)) end
+        if pool.zenithb2b then ins(line,string.format("B2B×%d",pool.zenithb2b)) end
         if #line>0 then buf:put(table.concat(line,"  ")) end
 
         if len==#buf then buf:put("这人没玩过qp2喵") end
@@ -439,7 +441,64 @@ tools.tl50={
     func=function(username,M) return tl_search(50,username,M) end,
 }
 
-local ins,rem=table.insert,table.remove
+local gameDB=FILE.load('task/game_db.lua','-luaon')
+local tagList={
+    {"热","帅","免","新","多","单","键","手","网","计","参","官","研"},
+    {"热门","音画质量","免费","创新","多人","单人","可调键位","手机","网页","电脑","参数可调","官方","研究工具"},
+}
+local tagHelp="可用标签：\n"
+for i=1,#tagList[1] do tagHelp=tagHelp..tagList[1][i].."/"..tagList[2][i]..(i%3==0 and i~=#tagList[1] and "\n" or " ") end
+local tagMap={}
+for _,l in next,tagList do TABLE.update(tagMap,TABLE.inverse(l)) end
+local tagTemp={} ---@type integer[]
+local function game_comparer(a,b)
+    for i=1,#tagTemp do
+        local key,rev=tagTemp[i],false
+        if key<0 then key,rev=-key,true end
+        if a[key]~=b[key] then return (a[key]>b[key])==not rev end
+    end
+    return false
+end
+tools.game={
+    help="游戏搜索，指定标签查询游戏数据库并输出前几名\n例：#game help  #game 5 热门 ^官方",
+    func=function(args)
+        if args=='help' then return tagHelp end
+        if args=='reload' then
+            gameDB=FILE.load('task/game_db.lua','-luaon')
+            return "已重载游戏数据库"
+        end
+        local tags=STRING.split(args,' ')
+        local topN=5
+        TABLE.clear(tagTemp)
+        for i=1,#tags do
+            local tag=tags[i]
+            if tonumber(tag) then
+                local n=tonumber(tag)
+                if n and n>=1 and n<=10 and n%1==0 then
+                    topN=n
+                else
+                    return "别闹"
+                end
+            else
+                local rev=false
+                if tag:sub(1,1)=='^' then tag,rev=tag:sub(2),true end
+                local tagID=tagMap[tag]
+                if not tagID then return "未知标签："..tagID end
+                ins(tagTemp,rev and -tagID or tagID)
+            end
+        end
+        table.sort(gameDB,game_comparer)
+        local res={}
+        for i=1,topN do ins(res,gameDB[i][15]) end
+        local id=1
+        for i=1,topN do
+            res[i]=id..". "..res[i]
+            if i<topN and game_comparer(gameDB[i],gameDB[i+1]) then id=id+1 end
+        end
+        return table.concat(res,'\n')
+    end,
+}
+
 local precedence={['|']=1,['&']=2}
 local pieceList={Z="1",J="2",T="3",I="4",O="5",L="6",S="7"}
 ---@param expr string contains letters & | ( )
