@@ -463,6 +463,7 @@ tools.game={
     help="游戏搜索，指定标签查询游戏数据库并输出前几名\n例：#game help  #game 5 热门 ^官方",
     func=function(args,M)
         if args=='help' then return tagHelp end
+        if args=='random' then return TABLE.getRandom(gameDB)[15] end
         if args=='reload' then
             if Bot.isAdmin(M.user_id) then
                 gameDB=FILE.load('task/game_db.lua','-luaon')
