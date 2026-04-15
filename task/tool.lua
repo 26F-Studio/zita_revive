@@ -461,11 +461,16 @@ local function game_comparer(a,b)
 end
 tools.game={
     help="游戏搜索，指定标签查询游戏数据库并输出前几名\n例：#game help  #game 5 热门 ^官方",
-    func=function(args)
+    func=function(args,M)
         if args=='help' then return tagHelp end
         if args=='reload' then
-            gameDB=FILE.load('task/game_db.lua','-luaon')
-            return "已重载游戏数据库"
+            if Bot.isAdmin(M.user_id) then
+                gameDB=FILE.load('task/game_db.lua','-luaon')
+                return "已重载游戏数据库"
+            else
+                Bot.reactMessage(M.message_id,Emoji.cross_mark)
+                return false
+            end
         end
         local tags=STRING.split(args,' ')
         local topN=5
