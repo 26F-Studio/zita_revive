@@ -53,6 +53,11 @@ local utils={
         text="Similariddle，一款高难度猜单词游戏，26F Studio参与制作",
         link="store.steampowered.com/app/3408740?utm_source=zita",
     },
+    {
+        word="techmino galaxy;galaxy;tg;铁盖;盖勒克西",
+        text="在背后默默支撑着整个Techmino续作系列，提供了方块游戏引擎的meta项目",
+        detail="并不是做一半才发现项目没有明确规划导致无法继续开发，嗯",
+    },
     -- 一些文档
     {
         word="社区;导航;块群;社区文档;导航文档;块群文档",
