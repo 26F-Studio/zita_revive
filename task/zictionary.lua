@@ -117,7 +117,9 @@ return {
             end
         end
         if entry.link then
-            ins(result,"相关链接: "..entry.link)
+            local link=entry.link
+            if link:find("store.steampowered.com/app/",1,true) then link=link.."?utm_source=zita" end
+            ins(result,"相关链接: "..link)
         end
         -- Advertise
         D.ad_mes_cooldown=D.ad_mes_cooldown-1
