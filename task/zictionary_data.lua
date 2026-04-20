@@ -54,7 +54,7 @@ local utils={
         link="store.steampowered.com/app/3408740?utm_source=zita",
     },
     {
-        word="techmino galaxy;galaxy;tg;铁盖;盖勒克西",
+        word="techmino galaxy;galaxy;tg;铁盖;盖勒克西;盖乐克西;盖勒克希;盖乐克希",
         text="在背后默默支撑着整个Techmino续作系列，提供了方块游戏引擎的meta项目",
         detail="并不是做一半才发现项目没有明确规划导致无法继续开发，嗯",
     },
