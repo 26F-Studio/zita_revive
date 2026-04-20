@@ -1617,10 +1617,10 @@ local contributor={
         text="T7023，块群吉祥物猫猫，制作了Techmino的插图、配音",
         link="space.bilibili.com/846180",
     },
-    {
-        word="T0210;T210;Mono",
-        text="T0210，制作了Techmino的插图、配音",
-    },
+    -- {
+    --     word="T0210;T210;Mono",
+    --     text="T0210，制作了Techmino的插图、配音",
+    -- },
     {
         word="T056;flore;風洛霊;風洛霊flore;妈妈",
         text="T056.flore，目前主办各项中文社区方块赛事，主办年度奖项活动，活跃编辑方块中文维基，制作了Techmino的配音",
@@ -1670,8 +1670,13 @@ local contributor={
         text="T1069.苏云，主办过不少中文社区方块赛事和活动",
     },
     {
+        word="T2910;smgjj;丧命;sanming",
+        text="T2910.smgjj，主办过几次方块赛事",
+        link="space.bilibili.com/82356297",
+    },
+    {
         word="T043;xb;xb2002b",
-        text="T043.xb，曾主办过不少中文社区方块赛事，是中文维基主要的编辑者之一",
+        text="T043.xb，主办过不少中文社区方块赛事，中文维基主要的编辑者之一",
     },
     {
         word="T6623;Aqua6623;Aquamarine6623;海兰",
