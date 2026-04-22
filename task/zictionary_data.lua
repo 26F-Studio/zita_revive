@@ -132,6 +132,14 @@ local utils={
         word="zone23;23zone;infinitris",
         text=CQ.img(Config.extraData.imgPath.."zone23教程.png"),
     },
+    {
+        word="qp2跳级;跳级;rank skip",
+        text=CQ.img(Config.extraData.imgPath.."io_rank_skip.png"),
+    },
+    {
+        word="qp2临界;qp2高度临界;高度临界",
+        text=CQ.img(Config.extraData.imgPath.."io_alt_margin.png"),
+    },
 }
 ---@type Zict.Entry[]
 local main={
