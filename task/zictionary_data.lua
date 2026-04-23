@@ -25,7 +25,7 @@ local utils={
         word="wiki;维基;中文wiki;中文维基",
         title="俄罗斯方块中文维基",
         text="俄罗斯方块中文百科全书，由中文玩家建立和维护\n推荐新人有不懂的知识先查阅百科再提问，也欢迎各位玩家作出编辑贡献\n早期大部分条目译自Hard Drop Wiki和Tetris Wiki\n另见 #其他wiki",
-        link="tetriswiki.cn 或 t-wiki.cn 或 tetris.link",
+        link="tetriswiki.cn 或 t-wiki.cn",
     },
     {
         word="其他wiki;wiki列表;harddrop wiki;tetris wiki;fandom;wiki fandom;tetris wiki fandom",
