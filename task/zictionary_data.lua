@@ -46,7 +46,7 @@ local utils={
     {
         word="ZC;Zenith Clicker;点点乐;天穹点点乐;io点点乐",
         text="天穹点点乐，tetr.io中qp2模式的戏仿游戏\nZ酱出品，随时随地爽爬塔！",
-        link="github.com/MrZ626/ZenithClicker",
+        link="github.com/MrZ626/ZenithClicker discord.gg/thqhzSn72j",
     },
     {
         word="similariddle;similarriddle;sr",
