@@ -51,7 +51,7 @@ local utils={
     {
         word="similariddle;similarriddle;sr",
         text="Similariddle，一款高难度猜单词游戏，26F Studio参与制作",
-        link="store.steampowered.com/app/3408740?utm_source=zita",
+        link="store.steampowered.com/app/3408740",
     },
     {
         word="techmino galaxy;galaxy;tg;铁盖;盖勒克西;盖乐克西;盖勒克希;盖乐克希",

@@ -35,7 +35,7 @@ return {
     {1,2,0,2,0,2,2,0,0,2,2,0,1,"betrix","Betrix","store.steampowered.com/app/2007710","在方块里加入了音游元素，也有40L等基础模式"},
     {1,2,0,1,2,2,2,0,0,2,0,0,0,"tetra esports;tes","Tetra eSports","tetraesports.com/","Tetra Online转生，目前还在开发阶段"},
     {1,2,0,1,2,1,1,0,0,0,0,2,0,"t99;tetris 99","Tetris 99","","主打99人混战的吃鸡模式，也有一些常用单机模式如马拉松等\n游戏基础模式有NS Online会员可以免费玩，其他单机模式需要额外购买"},
-    {1,2,0,1,0,2,2,0,0,2,2,0,1,"techDS;techmino downstacking;techmino downstack;方块研究所挖掘部;方块研究所挖掘;铁壳米诺挖掘部;铁壳米诺挖掘;铁壳挖掘部;铁壳挖掘","Techmino Downstacking","store.steampowered.com/app/4568800","Techmino的续作系列第一作，专注于挖掘玩法"},
+    {1,2,0,1,0,2,2,0,0,2,2,0,1,"techDS;techmino downstacking;techmino downstack;tds;方块研究所挖掘部;方块研究所挖掘;铁壳米诺挖掘部;铁壳米诺挖掘;铁壳挖掘部;铁壳挖掘","Techmino Downstacking","store.steampowered.com/app/4568800","Techmino的续作系列第一作，专注于挖掘玩法"},
     {1,2,0,1,0,2,2,0,0,2,1,2,1,"tetris forever;forever;永恒;永恒篇","Tetris Forever","store.steampowered.com/app/3180240","俄罗斯方块40周年作，总体上是一个电子展览馆而不是游戏，按Tetris的历史发展排列了一份纪录片和各种图片资料，还内置了模拟器用来体验一些老游戏"},
     {1,2,0,1,0,2,0,2,0,0,0,2,0,"beat;tetris beat","Tetris Beat","","N3TWORK代理的一款移动端方块，除了马拉松外有“Beat模式”，根据BGM的节奏落块得到额外分数，但体验一般，特效还比较瞎眼"},
     {1,1,2,2,2,0,2,0,2,2,2,0,0,"tetrio.io;tetrioio;ioio","TETRIO.IO","tetrio.io","无hold有next的对战块，但两个玩家在同一个场地的两头拔河，说不太清总之很好玩，有简单的分数系统能匹配对战，或者约好友\n注：本游戏和TETR.IO完全无关"},
