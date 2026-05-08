@@ -178,6 +178,7 @@ return {
             if M.raw_message:find('%del',nil,true) then
                 local level=Bot.isAdmin(M.user_id) and 2 or AdminMsg(M) and 1 or 0
                 if level>=2 then
+                    ---@diagnostic disable-next-line
                     S:delete(tonumber(M.message[1].data.id))
                     S:delete(M.message_id)
                 else
