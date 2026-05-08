@@ -1,3 +1,5 @@
+---强烈不推荐使用此模块，发送过多图片会导致账号被风控
+
 local min,max=math.min,math.max
 local ins,rem=table.insert,table.remove
 local repD,trimIndent=STRING.repD,STRING.trimIndent
