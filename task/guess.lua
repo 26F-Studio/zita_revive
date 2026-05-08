@@ -1,4 +1,4 @@
-local find=string.find
+local find,sub=string.find,string.sub
 local ins,rem,concat=table.insert,table.remove,table.concat
 local count,repD=STRING.count,STRING.repD
 local copy,getRnd=TABLE.copy,TABLE.getRandom
@@ -524,9 +524,9 @@ local function guess(D,g)---@return 'duplicate'|'win'|nil
             D.answer=resultSets[res]
 
             for i=1,#g do
-                if res:sub(i,i)=='2' then
+                if sub(res,i,i)=='2' then
                     g[i]=circleMap[g[i]]
-                elseif res:sub(i,i)=='1' then
+                elseif sub(res,i,i)=='1' then
                     g[i]=fullwidthMap[g[i]:upper()]
                 else
                     g[i]=fullwidthMap[g[i]:lower()]
