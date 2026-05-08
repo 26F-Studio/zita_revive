@@ -1,6 +1,6 @@
-local banWords=STRING.split(Config.extraData.banWords or ""," ")
-local banWords_weak=Config.extraData.banWords_weak or {}
-print(#banWords.." taboo words loaded")
+local banWords=STRING.split(Config.extraData.banWords or "^废物 弱智","%s+",true)
+local banWords_weak=Config.extraData.banWords_weak or {["比"]="逼"}
+print("Taboo: "..#banWords.."/"..TABLE.count(banWords_weak).." bad/weak words loaded")
 
 local rec=FILE.load('taboo_track.luaon','luaon') or {}
 local function save() FILE.save(rec,'taboo_track.luaon','-luaon') end
