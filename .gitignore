@@ -3,7 +3,6 @@ task/repeater.lua
 task/response.lua
 task/uuz_reducer.lua
 task/query.lua
-task/cleaner.lua
 data/*.txt
 
 .vscode
