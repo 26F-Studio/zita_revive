@@ -58,19 +58,19 @@ local commands={
         S:send(result)
     end},
     ['%stop']={level=1,func=function(S,args)
-        print("[STOP] "..S.uid)
         local time=math.max(tonumber(args[1]) or 30,1)
+        LOG('warn',"[STOP] "..S.uid..", "..time.."m")
         S:send(("本群紧急停机%d分钟喵！"):format(time))
         TASK.lock('newSession_'..S.id,time*60)
         SessionMap[S.uid]=nil
     end},
     ['%shutdown']={level=2,func=function(S)
-        print("[SHUTDOWN]")
+        LOG('warn',"[SHUTDOWN]")
         S:send("小z紧急停止了喵！")
         Bot.stop()
     end},
     ['%restart']={level=2,func=function(S,args)
-        print("[RESTART]")
+        LOG('warn',"[RESTART]")
         if args[1]=='all' then
             S:send("（咚）\n……\n我是谁来着喵？")
             Bot.reset()
