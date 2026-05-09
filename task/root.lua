@@ -4,7 +4,7 @@ for _,v in next,{
     'ipairs','pairs','pcall','xpcall',
     'Time','CQ',
     'math','string','table',
-    'MATH','STRING','TABLE','GC','FILE',
+    'MATH','STRING','TABLE','GC','FILE','TASK',
     'Config','SessionMap','Bot','Session','Emoji',
 } do codeEnv[v]=_G[v] end
 codeEnv.os={
@@ -35,14 +35,20 @@ local commands={
     ['%help']={level=0,func=function(S)
         local result=STRING.trimIndent([[
             小z可以做这些事情喵：
-            %help 帮助  %task 事务列表
-            %stop 急停  %shutdown 关机
-            %lock 锁群  %unlock 解锁群
-            %restart 失忆  %log 日志
-            %stat 统计  %del 删除回复的消息
+            %stat 统计  %log 日志
+            %del (回复)删除回复的消息
+            %task 事务  %stop <分钟> 急停
+            %shutdown 关机  %restart 重启
             ![lua代码] pwn
         ]],true)
         S:send(result)
+    end},
+    ['%stat']={level=2,func=function(S)
+        S:send(STRING.repD("已运行$1，共发$2条消息",STRING.time_simp(Time()-Bot.stat.launchTime),Bot.stat.messageSent))
+    end},
+    ['%log']={level=2,func=function(_,_,M,D)
+        D._log=not D._log
+        Bot.reactMessage(M.message_id,D._log and Emoji.hollow_red_circle or Emoji.cross_mark)
     end},
     ['%task']={level=2,func=function(S)
         local result="本群有这些事务喵："
@@ -61,19 +67,7 @@ local commands={
     ['%shutdown']={level=2,func=function(S)
         print("[SHUTDOWN]")
         S:send("小z紧急停止了喵！")
-        Bot.stop(1800)
-    end},
-    ['%lock']={level=2,func=function(S,args)
-        print("[LOCK] "..args[1])
-        TASK.lock('newSession_'..args[1])
-        print('newSession_'..args[1])
-        S:send("群"..args[1].."锁定了喵")
-        SessionMap['g'..args[1]]=nil
-    end},
-    ['%unlock']={level=2,func=function(S,args)
-        print("[UNLOCK] "..args[1])
-        TASK.unlock('newSession_'..args[1])
-        S:send("群"..args[1].."解锁了喵")
+        Bot.stop()
     end},
     ['%restart']={level=2,func=function(S,args)
         print("[RESTART]")
@@ -105,24 +99,6 @@ local commands={
             S:send("（咚）\n……\n这里是哪里喵？")
             SessionMap[S.id]=nil
         end
-    end},
-    ['%log']={level=2,func=function(_,_,M,D)
-        D._log=not D._log
-        Bot.reactMessage(M.message_id,D._log and Emoji.hollow_red_circle or Emoji.cross_mark)
-    end},
-    ['%stat']={level=2,func=function(S)
-        local result=STRING.repD(STRING.trimIndent[[
-                本轮工作汇报
-                运行时间:$1($2)
-                连接次数:$3
-                发消息数:$4
-            ]],
-            STRING.time(Time()-Bot.stat.launchTime),
-            STRING.time(Time()-Bot.stat.connectTime),
-            Bot.stat.connectAttempts,
-            Bot.stat.messageSent
-        )
-        S:send(result)
     end},
     ['%!']={level=2,func=function(S)
         local vars=TABLE.getKeys(codeEnv)
