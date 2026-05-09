@@ -703,10 +703,14 @@ tools.draw={
 
 local qrCanvas
 local pixelColor={
-    [-2]=COLOR.LL,
-    [-1]={.942,.942,1},
-    [1]={0,0,.2},
-    [2]=COLOR.DD,
+    [-4]={COLOR.HEX"FFF0F0FF"},
+    [-3]={COLOR.HEX"F0F0FFFF"},
+    [-2]={COLOR.HEX"F0FFF0FF"},
+    [-1]={COLOR.HEX"FFFFFFFF"},
+    [1]={COLOR.HEX"000000FF"},
+    [2]={COLOR.HEX"004000FF"},
+    [3]={COLOR.HEX"000040FF"},
+    [4]={COLOR.HEX"400000FF"},
 }
 tools.qr={
     help="生成二维码图片\n例：#qr Techmino好玩",
@@ -723,9 +727,9 @@ tools.qr={
         GC.translate(3,3)
         local k=MATH.clamp(math.floor(354/w),2,5)
         GC.scale(k)
-        for y=1,w do
-            for x=1,w do
-                GC.setColor(pixelColor[res[y][x]] or COLOR.P)
+        for x=1,w do
+            for y=1,w do
+                GC.setColor(pixelColor[res[x][y]] or COLOR.P)
                 GC.rectangle('fill',x-1,y-1,1,1)
             end
         end

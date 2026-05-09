@@ -376,6 +376,7 @@ local function arrange_codewords_and_calculate_ec(version,ec_level,data)
             count=count+1
         end
     end
+    local dataLen=8*(count-1)
 
     -- Same for EC blocks
     maxBlockLen=0
@@ -386,30 +387,30 @@ local function arrange_codewords_and_calculate_ec(version,ec_level,data)
             count=count+1
         end
     end
-    return concat(arranged_data)
+    return concat(arranged_data),dataLen
 end
 
 -- Position Detection Pattern & Alignment Pattern
 local PDpat,Apat
 do
-    local _=-2
+    local _=-1
     PDpat={
         {_,_,_,_,_,_,_,_,_},
-        {_,2,2,2,2,2,2,2,_},
-        {_,2,_,_,_,_,_,2,_},
-        {_,2,_,2,2,2,_,2,_},
-        {_,2,_,2,2,2,_,2,_},
-        {_,2,_,2,2,2,_,2,_},
-        {_,2,_,_,_,_,_,2,_},
-        {_,2,2,2,2,2,2,2,_},
+        {_,1,1,1,1,1,1,1,_},
+        {_,1,_,_,_,_,_,1,_},
+        {_,1,_,1,1,1,_,1,_},
+        {_,1,_,1,1,1,_,1,_},
+        {_,1,_,1,1,1,_,1,_},
+        {_,1,_,_,_,_,_,1,_},
+        {_,1,1,1,1,1,1,1,_},
         {_,_,_,_,_,_,_,_,_},
     }
     Apat={
-        {2,2,2,2,2},
-        {2,_,_,_,2},
-        {2,_,2,_,2},
-        {2,_,_,_,2},
-        {2,2,2,2,2},
+        {1,1,1,1,1},
+        {1,_,_,_,1},
+        {1,_,1,_,1},
+        {1,_,_,_,1},
+        {1,1,1,1,1},
     }
 end
 
@@ -517,7 +518,7 @@ local maskFunc={
     function(x,y) return ((y*x)%3+y+x)%2==0 end,
 }
 
-local function generate_final_matrix(version,data,ec_level,mask)
+local function generate_final_matrix(version,data,ec_level,mask,dataLen)
     local size=version*4+17
 
     -- Initialize empty matrix
@@ -535,7 +536,7 @@ local function generate_final_matrix(version,data,ec_level,mask)
     add_position_detection_pattern(mat,size-8,-1)
     add_alignment_pattern(mat,version)
     -- black pixel above lower left position detection pattern
-    mat[9][size-7]=2
+    mat[9][size-7]=1
     -- timing patterns (dashed lines between two adjacent positioning patterns on row/column 7)
     for i=1+8,#mat-8 do
         local x=i%2==0 and -2 or 2
@@ -550,11 +551,13 @@ local function generate_final_matrix(version,data,ec_level,mask)
     local ptr=1 -- data pointer
     local x,y=size,size -- writing position, starts from bottom right
     local x_dir,y_dir=-1,-1 -- state of movement, notice that Y step once each two X steps
+    local filler=3
     while true do
         -- Write into available cell
         if mat[x][y]==0 then
-            mat[x][y]=(byte(data,ptr)==49)~=maskFunc[mask](x-1,y-1) and 1 or -1
+            mat[x][y]=(byte(data,ptr)==49)~=maskFunc[mask](x-1,y-1) and filler or -filler
             ptr=ptr+1
+            if ptr==dataLen then filler=4 end
             if ptr>#data then return mat end -- all data written
         end
         -- switch left/right
@@ -722,10 +725,20 @@ end
 -- Example: for version 1, no bits need to be added after arranging the data, for version 2 we need to add 7 bits at the end.
 local remainder={0,7,7,7,7,7,0,0,0,0,0,0,0,3,3,3,3,3,3,3,4,4,4,4,4,4,4,3,3,3,3,3,3,3,0,0,0,0,0,0}
 
+---Return a number matrix, index with mat[x][y] starting from top left.
+---
+---**Positive = black, Negative = white**
+---
+---Note: need extra white padding around when rendering
+---
+---- 1 = Position detection pattern
+---- 2 = Meta information
+---- 3 = Main data chunks
+---- 4 = Error correction chunks
 ---@param str string string data to encode
 ---@param ec? 1|2|3|4 (optional) error correction level (1=L,2=M,3=Q,4=H)
 ---@param mask? 0|1|2|3|4|5|6|7 (optional) mask pattern (0-7), specify to skip mask evaluation for better performance
----@return (-2|-1|1|2)[][] QRmatrix -1|-2 = white, 1|2 = black, need extra white padding around when rendering
+---@return number[][] QRmatrix
 local function qrcode(str,ec,mask)
     assert(ec==nil or type(ec)=='number' and ec>=1 and ec<=4 and ec%1==0,"Error Correction level must be 1-4 integer")
     assert(mask==nil or type(mask)=='number' and mask>=0 and mask<=7 and mask%1==0,"Mask must be 0-7 integer")
@@ -741,17 +754,18 @@ local function qrcode(str,ec,mask)
 
     data=add_padding(version,ec_level,mode_len_bitStr..data)
 
-    data=arrange_codewords_and_calculate_ec(version,ec_level,data)
+    local dataLen
+    data,dataLen=arrange_codewords_and_calculate_ec(version,ec_level,data)
 
     data=data..rep('0',remainder[version])
 
     local res
     if mask then
-        res=generate_final_matrix(version,data,ec_level,mask)
+        res=generate_final_matrix(version,data,ec_level,mask,dataLen)
     else
         local minPenalty=1e99
         for _mask=0,7 do
-            local mat=generate_final_matrix(version,data,ec_level,_mask)
+            local mat=generate_final_matrix(version,data,ec_level,_mask,dataLen)
             local penalty=calculate_penalty(mat)
             if penalty<minPenalty then res,minPenalty=mat,penalty end
         end
