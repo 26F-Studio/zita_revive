@@ -216,8 +216,13 @@ function Bot.reset()
     end
 end
 function Bot.stop(time)
-    TASK.forceLock('bot_blockRestart',time or 600)
-    ws:close()
+    if time then
+        TASK.forceLock('bot_blockRestart',time or 600)
+        ws:close()
+    else
+        ws:close()
+        love.event.quit()
+    end
 end
 
 ---@return true? #if any message processed
