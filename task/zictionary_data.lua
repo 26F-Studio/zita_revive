@@ -32,6 +32,11 @@ local utils={
         title="其他英文wiki",
         text="harddrop.com/wiki（Hard Drop社区的百科）\nhttps://tetris.wiki（Myndzi在2015年创办）\ntetris.fandom.com\n另见 #wiki",
     },
+    {
+        word="社区;导航;块群;社区文档;导航文档;块群文档",
+        text="MrZ编写的中国方块社区导航文档，收集了大多数已知的格式形如“俄罗斯方块·[铁🪏壳]”的群",
+        link="github.com/MrZ626/modern_tetris_cn_community",
+    },
     -- 其他游戏
     {
         word="宝石;宝石迷阵;bejeweled;bej;bej1;bej2;bej3;bejT;bejeweled1;bejeweled2;bejeweled3;bejeweled twist",
@@ -57,22 +62,6 @@ local utils={
         word="techmino galaxy;galaxy;tg;铁盖;盖勒克西;盖乐克西;盖勒克希;盖乐克希",
         text="在背后默默支撑着整个Techmino续作系列，提供了方块游戏引擎的meta项目",
         detail="并不是做一半才发现项目没有明确规划导致无法继续开发，嗯",
-    },
-    -- 一些文档
-    {
-        word="社区;导航;块群;社区文档;导航文档;块群文档",
-        text="MrZ编写的中国方块社区导航文档，收集了大多数已知的格式形如“俄罗斯方块·[铁🪏壳]”的群",
-        link="github.com/MrZ626/modern_tetris_cn_community",
-    },
-    {
-        word="qp文档;qp2文档",
-        text="MrZ编写的TETR.IO QP2非官方规则文档",
-        link="github.com/MrZ626/io_qp2_rule",
-    },
-    {
-        word="现代块文档",
-        text="MrZ编写的现代块游戏特征文档",
-        link="github.com/MrZ626/modern_tetris_cn_community/blob/main/modern_stacker.md",
     },
     -- 常用语
     {
@@ -133,11 +122,11 @@ local utils={
         text=CQ.img(Config.extraData.imgPath.."zone23教程.png"),
     },
     {
-        word="qp2跳级;跳级;rank skip",
+        word="qp2跳级",
         text=CQ.img(Config.extraData.imgPath.."io_rank_skip.png"),
     },
     {
-        word="qp2临界;qp2高度临界;高度临界",
+        word="qp2临界",
         text=CQ.img(Config.extraData.imgPath.."io_alt_margin.png"),
     },
 }
@@ -428,7 +417,8 @@ local main={
     {
         word="现代块;现代方块;modern tetris",
         title="现代方块",
-        text="“现代方块”是一个模糊概念，只能说满足一套“现代规则集”中越多条目的游戏越现代，通常和 #经典方块 对立\n另见 #现代块文档",
+        text="“现代方块”是一个模糊概念，只能说满足一套“现代规则集”中越多条目的游戏越现代，通常和 #经典方块 对立",
+        link="github.com/MrZ626/modern_tetris_cn_community/blob/main/modern_stacker.md",
     },
     {
         word="经典块;经典方块;classical tetris;classic tetris",
@@ -1418,7 +1408,8 @@ local extra_tetrio={
     {
         word="qp2;io qp2;io s2;爬塔;zenith;zenith tower",
         title="TETR.IO QP2",
-        text="随开随打的第二代快速游戏，发送攻击升级 #推进器，在 #疲劳时间 前打败对手爬升高度达到天顶之塔的第 #十层 ！\n另见 #Surge #速通 #QP2 Mod #qp16/tl30 [用户名]，非官方规则文档： github.com/MrZ626/io_qp2_rule",
+        text="随开随打的第二代快速游戏，发送攻击升级 #推进器，在 #疲劳时间 前打败对手爬升高度达到天顶之塔的第 #十层 ！\n另见 #Surge #速通 #QP2 Mod #qp16/tl30 [用户名]",
+        link="https://github.com/MrZ626/modern_tetris_cn_community/blob/main/io_qp2_rule/full.md",
     },
     {
         word="十层;楼层;f10;floor;floors",
