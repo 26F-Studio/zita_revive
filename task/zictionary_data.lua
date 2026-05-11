@@ -760,7 +760,7 @@ local main={
     {
         word="现代块;现代方块;modern tetris;经典块;经典方块;classical tetris;classic tetris",
         title="现代/经典块",
-        text="“现代方块”和“经典方块”是一组没有明确定义的对立概念，更多信息见以下链接",
+        text="“现代方块”和“经典方块”是一组没有明确定义的对立概念，更多信息见下面这个文章",
         link="github.com/MrZ626/modern_tetris_cn_community/blob/main/modern_stacker.md",
     },
     {
@@ -772,7 +772,7 @@ local main={
     {
         word="ttc;the tetris company;官方;俄罗斯方块公司",
         title="The Tetris Company",
-        text="俄罗斯方块公司，简称TTC，拥有游戏版权和Tetris商标，更多疑问见以下链接",
+        text="俄罗斯方块公司，简称TTC，拥有游戏版权和Tetris商标，更多疑问见下面这个文章",
         link="github.com/MrZ626/modern_tetris_cn_community/blob/main/legal_issues.md",
     },
 }
