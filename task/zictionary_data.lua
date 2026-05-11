@@ -779,6 +779,7 @@ local main={
         title="俄罗斯方块公司",
         text="The Tetris Company，简称TTC，是拥有游戏版权和Tetris商标的公司",
         detail="如果你想开发以Tetris为大标题的“官方”俄罗斯方块游戏，必须经过他们的同意且支付大额授权费用，这对于个人开发者来说是几乎不可能的",
+        link="github.com/MrZ626/modern_tetris_cn_community/blob/main/legal_issues.md",
     },
 }
 ---@type Zict.Entry[]
@@ -1409,7 +1410,7 @@ local extra_tetrio={
         word="qp2;io qp2;io s2;爬塔;zenith;zenith tower",
         title="TETR.IO QP2",
         text="随开随打的第二代快速游戏，发送攻击升级 #推进器，在 #疲劳时间 前打败对手爬升高度达到天顶之塔的第 #十层 ！\n另见 #Surge #速通 #QP2 Mod #qp16/tl30 [用户名]",
-        link="https://github.com/MrZ626/modern_tetris_cn_community/blob/main/io_qp2_rule/full.md",
+        link="github.com/MrZ626/modern_tetris_cn_community/blob/main/io_qp2_rule/full.md",
     },
     {
         word="十层;楼层;f10;floor;floors",
