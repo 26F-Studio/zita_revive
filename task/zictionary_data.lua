@@ -122,11 +122,11 @@ local utils={
         text=CQ.img(Config.extraData.imgPath.."zone23教程.png"),
     },
     {
-        word="qp2跳级",
+        word="跳级;qp2跳级;io跳级",
         text=CQ.img(Config.extraData.imgPath.."io_rank_skip.png"),
     },
     {
-        word="qp2临界",
+        word="临界;qp2临界;io临界",
         text=CQ.img(Config.extraData.imgPath.."io_alt_margin.png"),
     },
 }
@@ -413,17 +413,6 @@ local main={
         word="fin;neo;iso;特殊t2;可移动t2",
         title="Fin/Neo/Iso",
         text="三类特殊T2的名字，受不同具体规则影响，在不同的游戏内的效果可能不一样，通常没有实战价值",
-    },
-    {
-        word="现代块;现代方块;modern tetris",
-        title="现代方块",
-        text="“现代方块”是一个模糊概念，只能说满足一套“现代规则集”中越多条目的游戏越现代，通常和 #经典方块 对立",
-        link="github.com/MrZ626/modern_tetris_cn_community/blob/main/modern_stacker.md",
-    },
-    {
-        word="经典块;经典方块;classical tetris;classic tetris",
-        title="经典方块",
-        text="“经典方块”是一个模糊概念，指设计比较简单（通常是因为时间早，所以才称经典）的方块游戏，通常和 #现代方块 对立",
     },
     {
         word="tetrimino;tetromino;tetramino;四连块;四联块;四连方块;四联方块;形状;方块形状",
@@ -769,6 +758,12 @@ local main={
         text="一个AI的名字\n由研究群群友zzz（奏之章）开发，运行效率极高",
     },
     {
+        word="现代块;现代方块;modern tetris;经典块;经典方块;classical tetris;classic tetris",
+        title="现代/经典块",
+        text="“现代方块”和“经典方块”是一组没有明确定义的对立概念，更多信息见以下链接",
+        link="github.com/MrZ626/modern_tetris_cn_community/blob/main/modern_stacker.md",
+    },
+    {
         word="guideline;gl;基准;准则;基准规则;官方规则",
         title="Guideline",
         text="#TTC 内部使用的一套Guideline（基准、准则）手册，详细规定了他们所要求的“Tetris”游戏在技术、营销上的各种细则，包括了场地尺寸、按键布局、方块颜色、出块规则、死亡判定等",
@@ -776,9 +771,8 @@ local main={
     },
     {
         word="ttc;the tetris company;官方;俄罗斯方块公司",
-        title="俄罗斯方块公司",
-        text="The Tetris Company，简称TTC，是拥有游戏版权和Tetris商标的公司",
-        detail="如果你想开发以Tetris为大标题的“官方”俄罗斯方块游戏，必须经过他们的同意且支付大额授权费用，这对于个人开发者来说是几乎不可能的",
+        title="The Tetris Company",
+        text="俄罗斯方块公司，简称TTC，拥有游戏版权和Tetris商标，更多疑问见以下链接",
         link="github.com/MrZ626/modern_tetris_cn_community/blob/main/legal_issues.md",
     },
 }
