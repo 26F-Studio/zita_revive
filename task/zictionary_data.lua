@@ -277,12 +277,6 @@ local main={
         detail="官方游戏中的消四和游戏同名也叫Tetris。有的非官方游戏考虑到版权问题会使用Quad替换，也有些保留了这个传统会安排一个特殊的名称，例如Techmino里的Techrash",
     },
     {
-        word="tetris",
-        title="Tetris",
-        text="商标，Tetris游戏名，同时也是“消四行”的名字\n另见 #消四",
-        detail="含义是Tetra（四，古希腊语词根）+Tennis（网球 游戏原作者喜欢的运动）\n现在商标权在TTC (The Tetris Company)手上，任天堂、是获得TTC授权才开发方块游戏的，并不拥有Tetris这一商标",
-    },
-    {
         word="全消;全清;ac;pc;all clear;perfect clear;bravo",
         title="All Clear",
         text="消除场地上所有的方块，也叫Perfect Clear，全消，或全清\n另见 #Half Clear #Color Clear #全消开局",
@@ -762,6 +756,17 @@ local main={
         title="现代/经典块",
         text="“现代方块”和“经典方块”是一组没有明确定义的对立概念，更多信息见下面这个文章",
         link="github.com/MrZ626/modern_tetris_cn_community/blob/main/modern_stacker.md",
+    },
+    {
+        word="俄罗斯方块;俄方",
+        title="俄罗斯方块",
+        text="Tetris类游戏在中文区的普遍叫法，官方中文名其实是 特趣斯，“俄罗斯方块”是早年传入中国时被传开的民间翻译。有时俄罗斯方块也泛指包含“方块+消除”要素的游戏如《1010》，小心歧义",
+    },
+    {
+        word="tetris",
+        title="Tetris™",
+        text="#TTC 的商标，同时也是“消除四行”的名字\n另见 #消四",
+        detail="含义是Tetra（四，古希腊语词根）+Tennis（网球 游戏原作者喜欢的运动）\n现在商标权在TTC (The Tetris Company)手上，任天堂、是获得TTC授权才开发方块游戏的，并不拥有Tetris这一商标",
     },
     {
         word="guideline;gl;基准;准则;基准规则;官方规则",
