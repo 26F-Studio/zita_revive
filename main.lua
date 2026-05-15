@@ -152,7 +152,7 @@ end
 ---@param R OneBot.Event.GroupRequest
 ---@param approve boolean
 ---@param reason? string only useful when approve is false
-function Bot.acceptGroupRequest(R,approve,reason)
+function Bot.resolveJoinRequest(R,approve,reason)
     Bot._send{
         action='set_group_add_request',
         params={
