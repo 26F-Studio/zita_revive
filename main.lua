@@ -46,7 +46,7 @@ CQ={
 --------------------------------------------------------------
 Emoji=require'data.emoji'
 
-Bot={
+local Bot={
     state='dead', ---@type 'dead'|'connecting'|'running'
     delayedAction={}, ---@type {time:number, func:function, data:any}[]
     handlerCache={}, ---@type Map<function>
@@ -58,7 +58,7 @@ Bot={
         messageSent=0,
     },
 }
-local Bot=Bot
+_G.Bot=Bot
 
 ---@class Task_raw
 ---@field message? fun(S:Session, M: OneBot.Event.Message, D:Session.data):boolean if returns true, message won't be passed to next task
@@ -146,6 +146,20 @@ function Bot.sendLike(uid,count)
         params={
             uid=uid,
             times=count or 10,
+        },
+    }
+end
+---@param R OneBot.Event.GroupRequest
+---@param approve boolean
+---@param reason? string only useful when approve is false
+function Bot.acceptGroupRequest(R,approve,reason)
+    Bot._send{
+        action='set_group_add_request',
+        params={
+            flag=R.flag,
+            sub_type=R.sub_type,
+            approve=approve,
+            reason=reason,
         },
     }
 end
