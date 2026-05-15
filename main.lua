@@ -63,6 +63,7 @@ local Bot=Bot
 ---@class Task_raw
 ---@field message? fun(S:Session, M: OneBot.Event.Message, D:Session.data):boolean true means message won't be passed to next task
 ---@field notice? fun(S:Session, N: OneBot.Event.Notice, D:Session.data):boolean true means message won't be passed to next task
+---@field request? fun(S:Session, R: OneBot.Event.GroupRequest, D:Session.data):boolean true means message won't be passed to next task
 ---@field init? fun(S:Session, D:Session.data)? if exist, execute when task created, jsut after launching
 
 ---@class Task : Task_raw
@@ -266,7 +267,20 @@ function Bot._update()
                 S:receive(res,'notice')
             end
         elseif res.post_type=='request' then
-            -- Request event
+            -- OneBot.Event.Request not considered now
+            ---@cast res OneBot.Event.GroupRequest
+            if res.group_id then
+                local id=res.group_id
+                local S=SessionMap['g'..id]
+                if not S then
+                    if TASK.getLock('newSession_'..id) then return true end
+                    S=Session.new(id,false)
+                    SessionMap[S.uid]=S
+                end
+                S:receive(res,'request')
+            else
+                ---@cast res OneBot.Event.Request
+            end
         elseif rawget(res,'retcode') then
             -- API response
             ---@cast res OneBot.Event.Response
@@ -380,6 +394,7 @@ function Session:newTask(id,prio)
         id=id,
         message=task.message or NULL,
         notice=task.notice or NULL,
+        request=task.request or NULL,
     })
     self.data[id]={}
     if task.init then task.init(self,self.data[id]) end
@@ -469,7 +484,7 @@ function Session:useCharge(charge)
 end
 
 ---@param M OneBot.Event.Base
----@param type 'message' | 'notice'
+---@param type 'message' | 'notice' | 'request'
 function Session:receive(M,type)
     for _,task in next,self.taskList do
         local suc,res=pcall(task[type],self,M,self.data[task.id])

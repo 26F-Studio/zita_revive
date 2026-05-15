@@ -65,7 +65,7 @@
 ---@alias OneBot.Event.Message OneBot.Event.PrivateMessage|OneBot.Event.GroupMessage
 
 
----@class OneBot.Event.FriendRequest : OneBot.Event.Base
+---@class OneBot.Event.Request : OneBot.Event.Base
 ---@field post_type 'request'
 ---@field request_type 'friend'
 ---@field self_id number 自己的QQ号
@@ -73,7 +73,7 @@
 ---@field comment string 验证信息
 ---@field flag string 请求flag，处理时传回
 
----@class OneBot.Event.GroupRequest : OneBot.Event.FriendRequest
+---@class OneBot.Event.GroupRequest : OneBot.Event.Request
 ---@field request_type 'group'
 ---@field sub_type 'add'|'invite'
 ---@field group_id number 群号
