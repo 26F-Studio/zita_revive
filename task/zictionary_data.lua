@@ -129,6 +129,10 @@ local utils={
         word="临界;qp2临界;io临界",
         text=CQ.img(Config.extraData.imgPath.."io_alt_margin.png"),
     },
+    {
+        word="ds配色;ds颜色",
+        text="TechDS_Palette:944,484,569,963,859,984,588",
+    },
 }
 ---@type Zict.Entry[]
 local main={
