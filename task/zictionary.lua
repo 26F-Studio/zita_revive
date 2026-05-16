@@ -1,12 +1,9 @@
 local ins=table.insert
 ---@type Map<Zict.Entry>
 local zict
-local entryList
 
 local function reloadZict()
     zict=FILE.load('task/zictionary_data.lua','-lua')
-    entryList=zict.entryList
-    zict.entryList=nil
 end
 reloadZict()
 
@@ -48,14 +45,25 @@ return {
                 math.randomseed(tonumber(os.date('%Y%m%d')) or 26)
                 for _=1,26 do math.random() end
                 for _=1,26 do
-                    daily=TABLE.getRandom(entryList)
+                    daily=TABLE.getRandom(zict.entryList)
                     if daily.title then break end
                 end
             end
         elseif mes=="#reload" then
             if Bot.isAdmin(M.user_id) then
+                local oldSet,newSet={},{}
+                for k in next,zict do oldSet[k]=true end
                 reloadZict()
-                S:send("小z的知识库更新了！现在有"..(TABLE.getSize(zict)-1).."个关键词和"..#entryList.."个词条喵")
+                for k in next,zict do newSet[k]=true end
+
+                local deletion,addition={},{}
+                for k in next,oldSet do if not newSet[k] then ins(deletion,k) end end
+                for k in next,newSet do if not oldSet[k] then ins(addition,k) end end
+                local buf=STRING.newBuf()
+                if #deletion>0 then buf:put("[-] "..table.concat(deletion,";").."\n") end
+                if #addition>0 then buf:put("[+] "..table.concat(addition,";").."\n") end
+                buf:put("小z的知识库更新了！现在有"..(TABLE.getSize(zict)-1).."个关键词和"..#zict.entryList.."个词条喵")
+                S:send(buf)
             elseif S:forceLock('no_permission',26) then
                 S:delaySend(nil,"你不许reload")
             end
