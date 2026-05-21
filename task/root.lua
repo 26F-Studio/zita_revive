@@ -32,7 +32,7 @@ local commands={
     ['%test']={level=1,func=function(S,args,M,D)
         -- something
     end},
-    ['%llm']={level=2,func=function(S,args,M,D)
+    ['%llm']={level=2,func=function(S,args)
         local param={
             model="mistralai/ministral-3-3b",
             input=args[1] or "Hello",
@@ -66,13 +66,21 @@ local commands={
     ['%help']={level=0,func=function(S)
         local result=STRING.trimIndent([[
             小z可以做这些事情喵：
+            %stop <分钟> 急停 （群管可用）
             %stat 统计  %log 日志
             %del (回复)删除回复的消息
-            %task 事务  %stop <分钟> 急停
+            %task 查看事务  %reload 重载配置
             %shutdown 关机  %restart 重启
             ![lua代码] pwn
         ]],true)
         S:send(result)
+    end},
+    ['%stop']={level=1,func=function(S,args)
+        local time=math.max(tonumber(args[1]) or 30,1)
+        LOG('warn',"[STOP] "..S.uid..", "..time.."m")
+        S:send(("本群紧急停机%d分钟喵！"):format(time))
+        TASK.lock('newSession_'..S.id,time*60)
+        SessionMap[S.uid]=nil
     end},
     ['%stat']={level=2,func=function(S)
         S:send(STRING.repD("已运行$1，共发$2条消息",STRING.time_simp(Time()-Bot.stat.launchTime),Bot.stat.messageSent))
@@ -88,12 +96,10 @@ local commands={
         end
         S:send(result)
     end},
-    ['%stop']={level=1,func=function(S,args)
-        local time=math.max(tonumber(args[1]) or 30,1)
-        LOG('warn',"[STOP] "..S.uid..", "..time.."m")
-        S:send(("本群紧急停机%d分钟喵！"):format(time))
-        TASK.lock('newSession_'..S.id,time*60)
-        SessionMap[S.uid]=nil
+    ['%reload']={level=2,func=function(S)
+        Config=FILE.load('botconf.lua','-lua')
+        codeEnv.Config=Config
+        S:send("配置重新加载了喵！")
     end},
     ['%shutdown']={level=2,func=function(S)
         LOG('warn',"[SHUTDOWN]")

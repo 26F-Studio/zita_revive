@@ -8,7 +8,7 @@ ZENITHA.setRenderRate(10)
 ZENITHA.setUpdateRate(100)
 ZENITHA.setAppInfo('zita_revive','')
 --------------------------------------------------------------
-Config=require'botconf'
+Config=FILE.load('botconf.lua','-lua')
 print("--------------------------")
 print("<< CONF >>")
 print("Bot ID: "..Config.botID)
