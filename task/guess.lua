@@ -366,7 +366,7 @@ local function initQuandleLib()
     collectgarbage()
     initQuandleLib=NULL
 end
-if not TABLE.find(arg,'startWithNotice') then
+if false then -- Audo difficulty analysis
     print('Hard quest lib length: '..#hardLib)
     for _,r in next,rules do
         local cnt=0

@@ -658,9 +658,7 @@ function scene.update()
             Bot.state='running'
             Config.connectInterval=Config.reconnectInterval
             LOG('info',"Connected")
-            if TABLE.find(arg,"startWithNotice") then
-                Bot.adminNotice(Bot.stat.connectAttempts==1 and "小z启动了喵！" or STRING.repD("小z回来了喵…（第$1次）",Bot.stat.connectAttempts))
-            end
+            -- Bot.adminNotice(Bot.stat.connectAttempts==1 and "小z启动了喵！" or STRING.repD("小z回来了喵…（第$1次）",Bot.stat.connectAttempts))
         end
         while true do
             local m=Bot.delayedAction[1]
