@@ -42,24 +42,26 @@ local commands={
         buf:put(" -H 'Content-Type: application/json'")
         buf:put(" -d '"..JSON.encode(param).."'")
         ASYNC.runCmd('llm',buf:get())
-        local t,res=0,nil
-        while true do
-            res=ASYNC.get('llm')
-            t=t+1
-            if res or t>=62 then break end
-            love.timer.sleep(.1)
-        end
-        if not res then
-            print("LLM timeout")
-            return
-        end
-        res=JSON.decode(res)
-        for i=1,#res.output do
-            if res.output[i].type=="message" then
-                buf:put(res.output[i].content)
+        TASK.new(function()
+            local t,res=0,nil
+            while true do
+                res=ASYNC.get('llm')
+                t=t+1
+                if res or t>=260 then break end
+                TASK.yieldT(.1)
             end
-        end
-        S:send(buf)
+            if not res then
+                print("LLM timeout")
+                return
+            end
+            res=JSON.decode(res)
+            for i=1,#res.output do
+                if res.output[i].type=="message" then
+                    buf:put(res.output[i].content)
+                end
+            end
+            S:send(buf)
+        end)
     end},
     ['%help']={level=0,func=function(S)
         local result=STRING.trimIndent([[
