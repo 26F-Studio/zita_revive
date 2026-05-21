@@ -51,7 +51,7 @@ local commands={
                 TASK.yieldT(.1)
             end
             if not res then
-                print("LLM timeout")
+                LOG('warn',"LLM timeout")
                 return
             end
             res=JSON.decode(res)
@@ -111,7 +111,7 @@ local commands={
                 local privS=SessionMap['p'..uid]
                 local groupS=SessionMap['g'..uid]
                 if privS and groupS then
-                    print("Twin Session: "..uid)
+                    LOG('info',"Twin Session: "..uid)
                     S:send("无法唯一确定会话喵")
                     return
                 elseif privS or groupS then
@@ -120,10 +120,10 @@ local commands={
             end
             if SessionMap[uid] then
                 SessionMap[uid]=nil
-                print("Delete Session: "..uid)
+                LOG('info',"Delete Session: "..uid)
                 S:send("会话数据清空了喵")
             else
-                print("No Session: "..uid)
+                LOG('info',"No Session: "..uid)
                 S:send("找不到会话喵")
             end
         else

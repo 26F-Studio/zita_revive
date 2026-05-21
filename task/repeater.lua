@@ -1,6 +1,6 @@
 local badWords=STRING.split(Config.extraData.badWords or "cq: 傻 马","%s+",true)
 local goodWords=STRING.split(Config.extraData.goodWords or "大神 机心","%s+",true)
-print("Repeater: "..#badWords.."/"..#goodWords.." bad/good words loaded")
+LOG('info',"Repeater: "..#badWords.."/"..#goodWords.." bad/good words loaded")
 
 local signs=TABLE.getValueSet(STRING.atomize([[`~!@#$%^&*()_+-=[]\{}|;':",./<>?]]))
 ---@type Task_raw

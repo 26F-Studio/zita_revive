@@ -12,16 +12,21 @@ local conf={
     groupManaging={ -- bot是管理员的群号（没做自动检测）
         000000000,
     },
+    preloadTask={ -- 启动时立刻预加载的任务列表，用于提前加载数据自检或输出一些日志信息，例如group_join_welcome输出有几个群配置了欢迎语
+        'group_join_welcome',
+        'zictionary',
+    },
     privTask={ -- 在私聊中默认启用的任务列表，格式为{任务名, 优先级}，按优先级从小到大的顺序触发（可以乱序，会自动排），同一个群里不能出现两个相同优先级任务，否则会报错
         {'root',      -1/0},
         {'tool',      1},
         {'zictionary',2},
     },
     groupTask={ -- 在群聊中默认启用的任务列表
-        {'root',      -1/0},
-        {'tool',      1},
-        {'zictionary',2},
-        {'bilishare', 99},
+        {'root',              -1/0},
+        {'group_join_welcome',1},
+        {'tool',              2},
+        {'zictionary',        3},
+        {'bilishare',         99},
     },
     extraTask={ -- 要启用的额外任务的会话列表
         g000000000={

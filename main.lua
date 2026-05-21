@@ -10,6 +10,7 @@ ZENITHA.setAppInfo('zita_revive','')
 --------------------------------------------------------------
 Config=require'botconf'
 print("--------------------------")
+print("<< CONF >>")
 print("Bot ID: "..Config.botID)
 print("Admin name: "..Config.adminName)
 print("# Super admin ID:")
@@ -650,6 +651,7 @@ function scene.update()
         TASK.lock('bot_blockRestart',Config.connectInterval)
         ws:connect()
         print("--------------------------")
+        print("<< LOG >>")
         LOG('info',STRING.repD("Connecting... ($1)",Bot.stat.connectAttempts))
     elseif ws.state=='connecting' then
         ws:update()
@@ -698,5 +700,5 @@ TASK.new(function()
 end)
 
 print("--------------------------")
-for _,t in next,Config.privTask do require('task.'..t[1]) end
-for _,t in next,Config.groupTask do require('task.'..t[1]) end
+print("<< PRELOAD >>")
+for _,t in next,Config.preloadTask do require('task.'..t) end

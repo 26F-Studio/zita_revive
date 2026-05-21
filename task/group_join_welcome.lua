@@ -3,6 +3,11 @@
         [000000000]="欢迎加入俄罗斯方块XX群~~\n本群话题以讨论XX为主，群规见置顶公告",
     },
 ]]
+if Config.extraData.groupJoinWelcome then
+    LOG('info',"Groups with welcome message: "..TABLE.getSize(Config.extraData.groupJoinWelcome))
+else
+    LOG('warning',"group_join_welcome: No welcome message configured")
+end
 ---@type Task_raw
 return {
     notice=function(S,N)

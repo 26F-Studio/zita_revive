@@ -379,7 +379,7 @@ if false then -- Audo difficulty analysis
         end
         print(r.id,("HD: %.0f%%(%d)"):format(cnt/#hardLib*100,cnt),("EZ: %.0f%%(%d)"):format(cntSimp/840*100,cntSimp))
         if not (MATH.between(cnt/#hardLib,0.26,0.8) and MATH.between(cntSimp/840,0.26,0.8)) then
-            print("^Warning: Extreme Limitation^")
+            LOG('warn',"guess: Extreme Limitation")
         end
     end
 end

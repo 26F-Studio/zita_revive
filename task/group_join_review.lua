@@ -16,6 +16,11 @@
         },
     },
 ]]
+if Config.extraData.groupJoinReview then
+    LOG('info',"Groups with join review: "..TABLE.getSize(Config.extraData.groupJoinReview))
+else
+    LOG('warning',"group_join_review: No join review configured")
+end
 ---@type Task_raw
 return {
     request=function(S,R)

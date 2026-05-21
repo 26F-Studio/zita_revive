@@ -1720,7 +1720,7 @@ local contributor={
 local zict={entryList={}}
 local function checkWords(entry)
     if entry.word:find("；") then
-        print("Fullwidth semicolon found in entry '"..entry.title.."'")
+        LOG('warn',"Fullwidth semicolon found in entry '"..entry.title.."'")
     end
 end
 -- os.execute('chcp 65001')
@@ -1746,6 +1746,6 @@ loadData(game)
 loadData(extra_tetrio)
 loadData(contributor)
 
-print("Zictionary Data Loaded, total "..#zict.entryList.." entries")
+LOG('info',"Zictionary Data Loaded, total "..#zict.entryList.." entries")
 
 return zict
