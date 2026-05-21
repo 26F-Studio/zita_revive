@@ -1,3 +1,5 @@
+-- 【需要预加载】
+
 local ins,rem,concat=table.insert,table.remove,table.concat
 ---@type Map<Zict.Entry>
 local zict

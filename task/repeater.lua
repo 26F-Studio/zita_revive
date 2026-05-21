@@ -1,6 +1,17 @@
-local badWords=STRING.split(Config.extraData.badWords or "cq: 傻 马","%s+",true)
-local goodWords=STRING.split(Config.extraData.goodWords or "大神 机心","%s+",true)
-LOG('info',"Repeater: "..#badWords.."/"..#goodWords.." bad/good words loaded")
+-- 【需要预加载】
+--[[ 需要在配置文件的extraData内增加如下格式的配置项：
+    badWords="cq: 傻 马",
+    goodWords="大神 机心",
+]]
+
+local badWords,goodWords={},{}
+if Config.extraData.badWords or Config.extraData.badWords then
+    badWords=STRING.split(Config.extraData.badWords or "","%s+",true)
+    goodWords=STRING.split(Config.extraData.goodWords or "","%s+",true)
+    LOG('info',"repeater: "..#badWords.."/"..#goodWords.." bad/good words loaded")
+else
+    LOG('warn',"repeater: No bad/good words configured")
+end
 
 local signs=TABLE.getValueSet(STRING.atomize([[`~!@#$%^&*()_+-=[]\{}|;':",./<>?]]))
 ---@type Task_raw

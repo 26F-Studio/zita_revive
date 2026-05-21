@@ -1,3 +1,4 @@
+-- 【需要预加载】
 --[[ 需要在配置文件的extraData内增加如下格式的配置项：
     groupJoinReview={
         [000000000]={
@@ -16,11 +17,13 @@
         },
     },
 ]]
+
 if Config.extraData.groupJoinReview then
     LOG('info',"Groups with join review: "..TABLE.getSize(Config.extraData.groupJoinReview))
 else
-    LOG('warning',"group_join_review: No join review configured")
+    LOG('warn',"group_join_review: No join review configured")
 end
+
 ---@type Task_raw
 return {
     request=function(S,R)

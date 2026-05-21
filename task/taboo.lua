@@ -1,6 +1,19 @@
-local banWords=STRING.split(Config.extraData.banWords or "^废物 弱智","%s+",true)
-local banWords_weak=Config.extraData.banWords_weak or {["比"]="逼"}
-LOG('info',"Taboo: "..#banWords.."/"..TABLE.count(banWords_weak).." bad/weak words loaded")
+-- 【需要预加载】
+--[[ 需要在配置文件的extraData内增加如下格式的配置项：
+    banWords="^废物 弱智",
+    banWords_weak={
+        ["比"]="逼",
+    },
+]]
+
+local banWords,banWords_weak={},{}
+if Config.extraData.banWords then
+    banWords=STRING.split(Config.extraData.banWords or "","%s+",true)
+    banWords_weak=Config.extraData.banWords_weak or {}
+    LOG('info',"Taboo: "..#banWords.."/"..TABLE.count(banWords_weak).." bad/weak words loaded")
+else
+    LOG('warn',"Taboo: No ban words configured")
+end
 
 local rec=FILE.load('taboo_track.luaon','luaon') or {}
 local function save() FILE.save(rec,'taboo_track.luaon','-luaon') end
