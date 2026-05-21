@@ -32,6 +32,35 @@ local commands={
     ['%test']={level=1,func=function(S,args,M,D)
         -- something
     end},
+    ['%llm']={level=2,func=function(S,args,M,D)
+        local param={
+            model="mistralai/ministral-3-3b",
+            input=args[1] or "Hello",
+        }
+        local buf=STRING.newBuf()
+        buf:put("curl -s http://localhost:1234/api/v1/chat")
+        buf:put(" -H 'Content-Type: application/json'")
+        buf:put(" -d '"..JSON.encode(param).."'")
+        ASYNC.runCmd('llm',buf:get())
+        local t,res=0,nil
+        while true do
+            res=ASYNC.get('llm')
+            t=t+1
+            if res or t>=62 then break end
+            love.timer.sleep(.1)
+        end
+        if not res then
+            print("LLM timeout")
+            return
+        end
+        res=JSON.decode(res)
+        for i=1,#res.output do
+            if res.output[i].type=="message" then
+                buf:put(res.output[i].content)
+            end
+        end
+        S:send(buf)
+    end},
     ['%help']={level=0,func=function(S)
         local result=STRING.trimIndent([[
             小z可以做这些事情喵：
