@@ -461,7 +461,7 @@ function Session:getLock(name)
     local v=self.locks[name]-Time()
     return v>0 and v
 end
-function Session:freshLock()
+function Session:purgeLock()
     for k,v in next,self.locks do
         if Time()>v then self.locks[k]=nil end
     end
@@ -691,9 +691,9 @@ TASK.new(function()
     while true do
         TASK.yieldT(10*60)
         if Bot.state=='running' then
-            TASK.freshLock()
+            TASK.purgeLock()
             for _,S in next,SessionMap do
-                S:freshLock()
+                S:purgeLock()
             end
         end
     end

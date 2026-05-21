@@ -1,4 +1,4 @@
-local ins=table.insert
+local ins,rem,concat=table.insert,table.remove,table.concat
 ---@type Map<Zict.Entry>
 local zict
 
@@ -60,9 +60,10 @@ return {
                 for k in next,oldSet do if not newSet[k] then ins(deletion,k) end end
                 for k in next,newSet do if not oldSet[k] then ins(addition,k) end end
                 local buf=STRING.newBuf()
-                if #deletion>0 then buf:put("[-] "..table.concat(deletion,";").."\n") end
-                if #addition>0 then buf:put("[+] "..table.concat(addition,";").."\n") end
-                buf:put("小z的知识库更新了！现在有"..(TABLE.getSize(zict)-1).."个关键词和"..#zict.entryList.."个词条喵")
+                if #deletion>0 then buf:put("[-] "..concat(deletion,";").."\n") end
+                if #addition>0 then buf:put("[+] "..concat(addition,";").."\n") end
+                local wordCnt,entryCnt=TABLE.getSize(zict)-1,#zict.entryList
+                buf:put("小z的知识库更新了！现在有"..wordCnt.."个关键词和"..entryCnt.."个词条喵")
                 S:send(buf)
             elseif S:forceLock('no_permission',26) then
                 S:delaySend(nil,"你不许reload")
@@ -90,13 +91,13 @@ return {
 
             local words=STRING.split(queryPhrase:lower(),'%s+',true)
             if not words[1] then return false end
-            while #words>0 and #words[#words]>26 do table.remove(words) end
+            while #words>0 and #words[#words]>26 do rem(words) end
             if not words[1] then return false end
             for i=1,#words do if #words[i]>26 then return false end end
             while words[1] do
-                entry=zict[table.concat(words,'')]
+                entry=zict[concat(words,'')]
                 if entry then break end
-                table.remove(words)
+                rem(words)
             end
             if not entry then
                 Bot.reactMessage(M.message_id,Emoji.white_question_mark)
@@ -111,7 +112,7 @@ return {
             ins(result,(entry.detail and "##" or "#")..entry.title)
         end
         if daily and entry.title then
-            result[1]=result[1]..table.remove(result)
+            result[1]=result[1]..rem(result)
         end
         if entry.text then
             ins(result,type(entry.text)=='function' and entry.text(S) or entry.text)
@@ -136,7 +137,7 @@ return {
             ins(result,"【广告】"..TABLE.popRandom(D.ADlist))
             D.ad_mes_cooldown=6
         end
-        local resultStr=table.concat(result,'\n')
+        local resultStr=concat(result,'\n')
 
         if S.group and not AdminMsg(M) and not Config.extraData.family[S.uid] then
             S:update()
