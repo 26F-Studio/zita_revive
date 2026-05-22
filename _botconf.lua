@@ -17,12 +17,12 @@ local conf={
         'zictionary',
     },
     privTask={ -- 在私聊中默认启用的任务列表，格式为{任务名, 优先级}，按优先级从小到大的顺序触发（可以乱序，会自动排），同一个群里不能出现两个相同优先级任务，否则会报错
-        {'root',      -1/0},
+        {'root',      0},
         {'tool',      1},
         {'zictionary',2},
     },
     groupTask={ -- 在群聊中默认启用的任务列表
-        {'root',              -1/0},
+        {'root',              0},
         {'group_join_welcome',1},
         {'tool',              2},
         {'zictionary',        3},
@@ -31,6 +31,11 @@ local conf={
     extraTask={ -- 要启用的额外任务的会话列表
         g000000000={
             {'brikduel',2.6},
+        },
+    },
+    spSession={ -- 如有配置，这里的群只会使用spTask列表里的任务，而不是groupTask+extraTask的组合
+        g000000000={
+            {'root',0},
         },
     },
     extraData={ -- 任意额外数据，任务有需要配置的参数时可以从这里存取

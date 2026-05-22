@@ -372,12 +372,18 @@ function Session.new(id,priv)
     }
     setmetatable(s,{__index=Session})
 
-    local template=priv and Config.privTask or Config.groupTask
-    for _,task in next,template do
-        s:newTask(task[1],task[2])
-    end
-    for _,exTask in next,Config.extraTask[s.uid] or {} do
-        s:newTask(unpack(exTask))
+    if Config.spSession[s.uid] then
+        for _,task in next,Config.spSession[s.uid] or {} do
+            s:newTask(unpack(task))
+        end
+    else
+        local template=priv and Config.privTask or Config.groupTask
+        for _,task in next,template do
+            s:newTask(task[1],task[2])
+        end
+        for _,exTask in next,Config.extraTask[s.uid] or {} do
+            s:newTask(unpack(exTask))
+        end
     end
     return s
 end
