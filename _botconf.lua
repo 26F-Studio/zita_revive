@@ -5,6 +5,7 @@ local conf={
     port='3001',
     connectInterval=2.6,
     reconnectInterval=600,
+    imageMode=1, -- 0=禁止发送图片 1=启用发送图片， 2=启用画布转图片并发送（封号风险极大，不推荐）
 
     superAdminID={ -- 超管qq号（最高权限，能利用root任务能执行启停命令和执行任意代码）
         0000000000,

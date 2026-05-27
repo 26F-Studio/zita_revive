@@ -1,4 +1,5 @@
 Time=love.timer.getTime
+Sleep=love.timer.sleep
 if love._openConsole then love._openConsole() end
 --------------------------------------------------------------
 local ins,rem=table.insert,table.remove
@@ -41,7 +42,7 @@ function AdminMsg(M) return M.sender and (M.sender.role=='owner' or M.sender.rol
 
 CQ={
     at=function(data) return "[CQ:at,qq="..data.."]" end,
-    img=function(data) return "[CQ:image,file="..data.."]" end,
+    img=function(data) return Config.imageMode>0 and "[CQ:image,file="..data.."]" or "【图片功能未开启】" end,
     face=function(data) return "[CQ:face,id="..data.."]" end,
 }
 --------------------------------------------------------------
@@ -169,6 +170,7 @@ local imgCnt=0
 ---@return string
 ---@nodiscard
 function Bot.canvasToImage(canvas,x,y,w,h)
+    if Config.imageMode<2 then return "绘图功能未开启" end
     local file="temp_"..imgCnt..".png"
     imgCnt=(imgCnt+1)%10
     if not x then x,y,w,h=0,0,canvas:getWidth(),canvas:getHeight() end
