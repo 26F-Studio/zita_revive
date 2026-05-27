@@ -2,7 +2,7 @@ local codeEnv={}
 for _,v in next,{
     'next','print','tonumber','tostring','type',
     'ipairs','pairs','pcall','xpcall',
-    'Time','CQ',
+    'Time','Sleep','CQ',
     'math','string','table',
     'MATH','STRING','TABLE','GC','FILE','TASK',
     'Config','SessionMap','Bot','Session','Emoji',
