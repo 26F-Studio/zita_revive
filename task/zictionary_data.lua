@@ -1387,7 +1387,7 @@ for _,d in next,(FILE.load('task/game_db.lua','-luaon')) do
     if d[2]==2 then ins(tags,"音画炫酷") end
     if d[3]==2 then ins(tags,"免费") end
     if d[3]==1 then ins(tags,"内购") end
-    if d[3]==0 then ins(tags,"正版付费") end
+    if d[3]==0 then ins(tags,"买断") end
     if d[4]==2 then ins(tags,"创新") end
     local m=d[5]..d[6]
     ins(tags,
