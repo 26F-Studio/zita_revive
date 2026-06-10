@@ -731,7 +731,7 @@ return {
                 end
                 return true
             end
-            if S.group and not AdminMsg(M) and timeSkip<cooldown then
+            if S.group and not Config.extraData.family[S.uid] and not AdminMsg(M) and timeSkip<cooldown then
                 local timeRemain=cooldown-timeSkip+10
                 if timeRemain<60 then
                     if S:lock('guess_cd',26) then
