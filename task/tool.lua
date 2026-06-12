@@ -441,7 +441,12 @@ tools.tl50={
     func=function(username,M) return tl_search(50,username,M) end,
 }
 
-local gameDB=FILE.load('task/game_db.lua','-luaon')
+local gameDB
+local function reloadGameDB()
+    gameDB=FILE.load('task/game_db.lua','-luaon')
+    for i=1,#gameDB do gameDB[i][0]=i end
+end
+reloadGameDB()
 local tagList={
     {"热","帅","免","新","多","单","键","手","网","计","参","官","研"},
     {"热门","音画质量","免费","创新","多人","单人","可调键位","手机","网页","电脑","参数可调","官方","研究工具"},
@@ -457,7 +462,7 @@ local function game_comparer(a,b)
         if key<0 then key,rev=-key,true end
         if a[key]~=b[key] then return (a[key]>b[key])==not rev end
     end
-    return false
+    return a[0]<b[0]
 end
 tools.game={
     help="游戏搜索，指定标签查询游戏数据库并输出前几名\n例：#game help  #game 5 热门 ^官方",
@@ -466,7 +471,7 @@ tools.game={
         if args=='random' then return TABLE.getRandom(gameDB)[15] end
         if args=='reload' then
             if Bot.isAdmin(M.user_id) then
-                gameDB=FILE.load('task/game_db.lua','-luaon')
+                reloadGameDB()
                 return "已重载游戏数据库"
             else
                 Bot.reactMessage(M.message_id,Emoji.cross_mark)
@@ -498,7 +503,8 @@ tools.game={
         local id=1
         for i=1,topN do
             res[i]=id..". "..res[i]
-            if i<topN and game_comparer(gameDB[i],gameDB[i+1]) then id=id+1 end
+            id=id+1
+            -- if i<topN and game_comparer(gameDB[i],gameDB[i+1]) then id=id+1 end
         end
         return table.concat(res,'\n')
     end,
