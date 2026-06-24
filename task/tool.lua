@@ -745,6 +745,55 @@ tools.qr={
     end,
 }
 
+local userPool={}
+tools.skit={
+    help="生成自定义合并转发小剧场\n例：#skit\nMrZ=1046101471\n小z=2920573475\nMrZ:喵？\n小z:Z酱可爱喵",
+    func=function(data,M)
+        local messages={
+            {"系统",10000,"以下内容不是真实聊天记录\n创作者："..M.user_id},
+        }
+        local l=STRING.split(data,'\n')
+        for i=1,#l do
+            local line=l[i]
+            if line:find("=") then
+                local name,id=line:match('^(.-)=(%d+)$')
+                id=tonumber(id)
+                if name and id and MATH.between(id,100000,99999999999) then
+                    userPool[name]=id
+                else
+                    return "第"..i.."行，格式无法识别，角色行格式应为“角色=QQ号(6~11位整数)”"
+                end
+            elseif line:find("%S") then
+                local p1=line:find(":")
+                local p2=line:find("：")
+                local sep=(p1 and p2 and p2<p1 or not p1) and "：" or ":"
+                local name,text=line:match('^([^'..sep..']+)'..sep..'(.+)$')
+                if not (name and text) then
+                    return "第"..i.."行，格式无法识别，对话行格式应为“角色:内容”"
+                elseif not userPool[name] then
+                    return "第"..i.."行，角色"..name.."没有指定过ID，请在最开头添加角色行“角色=QQ号”"
+                else
+                    ins(messages,{name,userPool[name],text})
+                end
+            end
+        end
+        for i=1,#messages do
+            messages[i]={
+                type='node',
+                data={
+                    nickname=messages[i][1],
+                    user_id=messages[i][2],
+                    content={
+                        type='text',
+                        data={text=messages[i][3]},
+                    },
+                },
+            }
+        end
+        return messages
+    end,
+}
+
 tools.tool={
     help="实用小工具：\n"..table.concat(TABLE.sort(TABLE.subtract(TABLE.getKeys(tools),{'tl10','tl20','tl40','tl50'}))," "),
 }
