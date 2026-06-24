@@ -92,37 +92,23 @@ function Bot._send(data)
         LOG('warn',"Error encoding json:\n"..debug.traceback(res))
     end
 end
----@param message Sendable
+---@param message Sendable | table
 ---@param id number
 ---@param priv? boolean is private message
 ---@param echo? string
 function Bot.sendMsg(message,id,priv,echo)
     if priv==nil then priv=not SessionMap['g'..id] end
     local mes={
-        action='send_msg',
+        action=type(message)=='table' and 'send_forward_msg' or 'send_msg',
         params={
             [priv and 'user_id' or 'group_id']=id,
-            message=tostring(message),
+            message=type(message)=='table' and message or tostring(message),
         },
         echo=echo,
     }
     if Bot._send(mes) then
         Bot.stat.messageSent=Bot.stat.messageSent+1
     end
-end
-function Bot.sendForwardMsg(messages,id,priv)
-    if priv==nil then priv=not SessionMap['g'..id] end
-    local segments={}
-    for i=1,#messages do
-        segments[i]={type="node",data={content={type="text",data={text=messages[i]}}}}
-    end
-    Bot._send{
-        action='send_forward_msg',
-        params={
-            [priv and 'user_id' or 'group_id']=id,
-            messages=segments,
-        },
-    }
 end
 ---@param mes_id number
 function Bot.deleteMsg(mes_id)
