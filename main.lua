@@ -98,14 +98,28 @@ end
 ---@param echo? string
 function Bot.sendMsg(message,id,priv,echo)
     if priv==nil then priv=not SessionMap['g'..id] end
-    local mes={
-        action=type(message)=='table' and 'send_forward_msg' or 'send_msg',
-        params={
-            [priv and 'user_id' or 'group_id']=id,
-            message=type(message)=='table' and message or tostring(message),
-        },
-        echo=echo,
-    }
+    local mes
+    if type(message)=='table' then
+        -- Forward message
+        mes={
+            action='send_forward_msg',
+            params={
+                [priv and 'user_id' or 'group_id']=id,
+                messages=message,
+            },
+            echo=echo,
+        }
+    else
+        -- Normal message
+        mes={
+            action='send_msg',
+            params={
+                [priv and 'user_id' or 'group_id']=id,
+                message=tostring(message),
+            },
+            echo=echo,
+        }
+    end
     if Bot._send(mes) then
         Bot.stat.messageSent=Bot.stat.messageSent+1
     end
