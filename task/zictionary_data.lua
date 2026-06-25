@@ -488,6 +488,11 @@ local main={
         text="爆发攻击，指短时间内打出大量的攻击，一些游戏有Spike计数器，可以看到自己短时间内打出了多少攻击",
     },
     {
+        word="1w;2w;3w;wide",
+        title="N-Wide",
+        text="指有N列空格的连击楼，有s1w、c4w等细分策略",
+    },
+    {
         word="s1w;90堆叠;09堆叠",
         title="Side 1 Wide",
         text="旁边空1列，是传统方块游戏里常见的消四打法",
