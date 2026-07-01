@@ -105,8 +105,14 @@ local commands={
         if not args[1] then
             Config=FILE.load('botconf.lua','-lua')
             codeEnv.Config=Config
+            for k in next,package.loaded do
+                if k:sub(1,5)=='task.' then
+                    package.loaded[k]=nil
+                end
+            end
             S:send("配置和会话数据都重置了喵")
             Bot.reset()
+            collectgarbage()
         elseif args[1] then
             local uid=args[1]
             if not SessionMap[uid] then
