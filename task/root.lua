@@ -67,9 +67,9 @@ local commands={
         local result=STRING.trimIndent([[
             小z可以做这些事情喵：
             %stop <分钟> 急停 （群管可用）
+            %restart 重启  %shutdown 关机
             %stat 统计  %log 日志  %task 查看事务
             %del (回复)删除回复的消息
-            %restart 重启  %shutdown 关机
             ![lua代码] pwn
         ]],true)
         S:send(result)
