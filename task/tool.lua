@@ -753,12 +753,14 @@ tools.skit={
             {"系统",10000,"以下内容不是真实聊天记录\n创作者："..M.user_id},
         }
         local l=STRING.split(data,'\n')
+        userPool['我']=M.user_id
         for i=1,#l do
             local line=l[i]
             if line:find("=") then
                 local name,id=line:match('^(.-)=(%d+)$')
+                name=name and STRING.trim(name)
                 id=tonumber(id)
-                if name and id and MATH.between(id,100000,99999999999) then
+                if name and id and #name>0 and MATH.between(id,100000,99999999999) then
                     userPool[name]=id
                 else
                     return "第"..i.."行，格式无法识别，角色行格式应为“角色=QQ号(6~11位整数)”"
