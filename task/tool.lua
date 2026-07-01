@@ -756,27 +756,32 @@ tools.skit={
         userPool['我']=M.user_id
         for i=1,#l do
             local line=l[i]
-            if line:find("=") then
-                local name,id=line:match('^(.-)=(%d+)$')
-                name=name and STRING.trim(name)
-                id=tonumber(id)
-                if name and id and #name>0 and MATH.between(id,100000,99999999999) then
-                    userPool[name]=id
+            local p1=line:find(":")
+            local p2=line:find("：")
+            local p3=line:find("=")
+            local p=math.min(p1 or 1e99, p2 or 1e99, p3 or 1e99)
+            if p<1e99 then
+                local sep=p==p1 and ":" or p==p2 and "：" or "="
+                local name,data=line:match('^(.-)'..sep..'(%d+)$')
+                if sep=="=" then
+                    name=name and STRING.trim(name)
+                    data=tonumber(data)
+                    if name and data and #name>0 and MATH.between(data,100000,99999999999) then
+                        userPool[name]=data
+                    else
+                        return "第"..i.."行，格式无法识别，角色行格式应为“角色=QQ号(6~11位整数)”"
+                    end
                 else
-                    return "第"..i.."行，格式无法识别，角色行格式应为“角色=QQ号(6~11位整数)”"
+                    if not (name and data) then
+                        return "第"..i.."行，格式无法识别，对话行格式应为“角色:内容”"
+                    elseif not userPool[name] then
+                        return "第"..i.."行，角色"..name.."没有指定过ID，请在最开头添加角色行“角色=QQ号”"
+                    else
+                        ins(messages,{name,userPool[name],data})
+                    end
                 end
             elseif line:find("%S") then
-                local p1=line:find(":")
-                local p2=line:find("：")
-                local sep=(p1 and p2 and p2<p1 or not p1) and "：" or ":"
-                local name,text=line:match('^([^'..sep..']+)'..sep..'(.+)$')
-                if not (name and text) then
-                    return "第"..i.."行，格式无法识别，对话行格式应为“角色:内容”"
-                elseif not userPool[name] then
-                    return "第"..i.."行，角色"..name.."没有指定过ID，请在最开头添加角色行“角色=QQ号”"
-                else
-                    ins(messages,{name,userPool[name],text})
-                end
+                return "第"..i.."行，格式无法识别，非空行需要是含=的角色行或含:的对话行"
             end
         end
         for i=1,#messages do
