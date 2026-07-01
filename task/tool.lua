@@ -790,10 +790,11 @@ tools.skit={
                     data={
                         nickname=messages[i][1],
                         user_id=messages[i][2],
-                        content={
-                            type='text',
-                            data={text=messages[i][3]},
-                        },
+                        content=messages[i][3],
+                        -- content={
+                        --     type='text',
+                        --     data={text=messages[i][3]},
+                        -- },
                     },
                 }
             end
