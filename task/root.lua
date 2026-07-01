@@ -187,7 +187,7 @@ return {
                         noPermission(S)
                     end
                 elseif type(C)=='string' then
-                    S:send(C)
+                    ASYNC.runCmd('root_'..C,C)
                 end
                 return true
             end
