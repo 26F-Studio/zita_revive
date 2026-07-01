@@ -67,10 +67,9 @@ local commands={
         local result=STRING.trimIndent([[
             小z可以做这些事情喵：
             %stop <分钟> 急停 （群管可用）
-            %stat 统计  %log 日志
+            %stat 统计  %log 日志  %task 查看事务
             %del (回复)删除回复的消息
-            %task 查看事务  %reload 重载配置
-            %shutdown 关机  %restart 重启
+            %restart 重启  %shutdown 关机
             ![lua代码] pwn
         ]],true)
         S:send(result)
@@ -96,11 +95,6 @@ local commands={
         end
         S:send(result)
     end},
-    ['reload']={level=2,func=function(S)
-        Config=FILE.load('botconf.lua','-lua')
-        codeEnv.Config=Config
-        S:send("配置重新加载了喵！")
-    end},
     ['shutdown']={level=2,func=function(S)
         LOG('warn',"[SHUTDOWN]")
         S:send("小z紧急停止了喵！")
@@ -108,8 +102,10 @@ local commands={
     end},
     ['restart']={level=2,func=function(S,args)
         LOG('warn',"[RESTART]")
-        if args[1]=='all' then
-            S:send("（咚）\n……\n我是谁来着喵？")
+        if not args[1] then
+            Config=FILE.load('botconf.lua','-lua')
+            codeEnv.Config=Config
+            S:send("配置和会话数据都重置了喵")
             Bot.reset()
         elseif args[1] then
             local uid=args[1]
