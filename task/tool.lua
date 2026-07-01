@@ -750,7 +750,7 @@ tools.skit={
     help="生成自定义合并转发小剧场\n例：#skit\nMrZ=1046101471\n小z=2920573475\nMrZ:喵？\n小z:Z酱可爱喵",
     func=function(data,M)
         local messages={
-            {"系统",10000,"以下内容不是真实聊天记录\n创作者："..M.user_id},
+            {"Zita_Revive",Config.botID,"以下内容不是真实聊天记录\n创作者："..M.user_id},
         }
         local l=STRING.split(data,'\n')
         for i=1,#l do
@@ -783,20 +783,22 @@ tools.skit={
                 return "第"..i.."行，格式无法识别，非空行需要是含=的角色行或含:的对话行"
             end
         end
-        for i=1,#messages do
-            messages[i]={
-                type='node',
-                data={
-                    nickname=messages[i][1],
-                    user_id=messages[i][2],
-                    content={
-                        type='text',
-                        data={text=messages[i][3]},
+        if #messages>1 then
+            for i=1,#messages do
+                messages[i]={
+                    type='node',
+                    data={
+                        nickname=messages[i][1],
+                        user_id=messages[i][2],
+                        content={
+                            type='text',
+                            data={text=messages[i][3]},
+                        },
                     },
-                },
-            }
+                }
+            end
+            return messages
         end
-        return messages
     end,
 }
 
