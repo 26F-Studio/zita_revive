@@ -753,7 +753,6 @@ tools.skit={
             {"系统",10000,"以下内容不是真实聊天记录\n创作者："..M.user_id},
         }
         local l=STRING.split(data,'\n')
-        userPool['我']=M.user_id
         for i=1,#l do
             local line=l[i]
             local p1=line:find(":")
@@ -762,22 +761,22 @@ tools.skit={
             local p=math.min(p1 or 1e99, p2 or 1e99, p3 or 1e99)
             if p<1e99 then
                 local sep=p==p1 and ":" or p==p2 and "：" or "="
-                local name,data=line:match('^(.-)'..sep..'(%d+)$')
+                local name,dat=line:match('^(.-)'..sep..'(.+)$')
                 if sep=="=" then
                     name=name and STRING.trim(name)
-                    data=tonumber(data)
-                    if name and data and #name>0 and MATH.between(data,100000,99999999999) then
-                        userPool[name]=data
+                    dat=tonumber(dat)
+                    if name and dat and #name>0 and MATH.between(dat,100000,99999999999) then
+                        userPool[name]=dat
                     else
                         return "第"..i.."行，格式无法识别，角色行格式应为“角色=QQ号(6~11位整数)”"
                     end
                 else
-                    if not (name and data) then
+                    if not (name and dat) then
                         return "第"..i.."行，格式无法识别，对话行格式应为“角色:内容”"
                     elseif not userPool[name] then
                         return "第"..i.."行，角色"..name.."没有指定过ID，请在最开头添加角色行“角色=QQ号”"
                     else
-                        ins(messages,{name,userPool[name],data})
+                        ins(messages,{name,userPool[name],dat})
                     end
                 end
             elseif line:find("%S") then
