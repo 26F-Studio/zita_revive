@@ -201,7 +201,7 @@ tools.react={
 }
 
 tools.ranksim={
-    help="qp2等级模拟（1F流失保护）\n例：#ranksim rank xp [frames=60]",
+    help="qp2等级模拟（1F流失保护）\n例：#ranksim rank xp [frames=1]",
     func=function(data)
         local params=STRING.split(data,' ')
         local rank,xp=tonumber(params[1]),tonumber(params[2])
@@ -214,7 +214,7 @@ tools.ranksim={
             rank=math.floor(rank)
         end
 
-        local steps=math.min(tonumber(params[3]) or 60, 1000)
+        local steps=math.min(tonumber(params[3]) or 1, 1000)
         local protect=false
         for _=1,steps do
             local R=rank -- integer rank
