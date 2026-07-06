@@ -36,7 +36,14 @@ local commands={
         if not args[1] then
             local res=ASYNC.get('llm')
             if res then
-                S:send(res)
+                local buf=STRING.newBuf()
+                res=JSON.decode(res)
+                for i=1,#res.output do
+                    if res.output[i].type=="message" then
+                        buf:put(res.output[i].content)
+                    end
+                end
+                S:send(buf)
             else
                 Bot.reactMessage(M.message_id,Emoji.white_question_mark)
             end
