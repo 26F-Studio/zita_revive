@@ -32,7 +32,7 @@ local commands={
     ['test']={level=1,func=function(S,args,M,D)
         -- something
     end},
-    ['llm']={level=2,func=function(S,args)
+    ['llm']={level=2,func=function(S,args,M)
         local param={
             model="mistralai/ministral-3-3b",
             input=args[1] or "Hello",
@@ -43,6 +43,7 @@ local commands={
         buf:put(" -d '"..JSON.encode(param).."'")
         ASYNC.runCmd('llm',buf:get())
         TASK.new(function()
+            ASYNC.get('llm') -- clear previous result
             local t,res=0,nil
             while true do
                 res=ASYNC.get('llm')
@@ -51,6 +52,7 @@ local commands={
                 TASK.yieldT(.1)
             end
             if not res then
+                Bot.reactMessage(M.message_id,Emoji.timer_clock)
                 LOG('warn',"LLM timeout")
                 return
             end

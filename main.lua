@@ -43,7 +43,11 @@ function AdminMsg(M) return M.sender and (M.sender.role=='owner' or M.sender.rol
 CQ={
     at=function(data) return "[CQ:at,qq="..data.."]" end,
     img=function(data) return Config.imageMode>0 and "[CQ:image,file="..data.."]" or "【图片功能未开启】" end,
+    rec=function(data) return "[CQ:record,file="..data.."]" end,
     face=function(data) return "[CQ:face,id="..data.."]" end,
+    card_user=function(data) return "[CQ:contact,type=qq,id="..data.."]" end,
+    card_group=function(data) return "[CQ:contact,type=group,id="..data.."]" end,
+    music=function(plat,data) return "[CQ:music,type="..plat..",id="..data.."]" end,
 }
 --------------------------------------------------------------
 Emoji=require'data.emoji'
