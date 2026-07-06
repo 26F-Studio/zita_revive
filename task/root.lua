@@ -33,9 +33,18 @@ local commands={
         -- something
     end},
     ['llm']={level=2,func=function(S,args,M)
+        if not args[1] then
+            local res=ASYNC.get('llm')
+            if res then
+                S:send(res)
+            else
+                Bot.reactMessage(M.message_id,Emoji.white_question_mark)
+            end
+            return
+        end
         local param={
             model="mistralai/ministral-3-3b",
-            input=args[1] or "Hello",
+            input=args[1],
         }
         local buf=STRING.newBuf()
         buf:put("curl -s http://localhost:1234/api/v1/chat")
