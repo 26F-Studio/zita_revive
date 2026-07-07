@@ -22,9 +22,20 @@ local denyTexts={
 }
 ---@param S Session
 local function noPermission(S)
-    if S:forceLock('no_permission',62) then
+    if S:forceLock('root_no_permission',62) then
         S:delaySend(nil,TABLE.getRandom(denyTexts))
     end
+end
+local function llmAfterProcess(res)
+    local buf=STRING.newBuf()
+    res=JSON.decode(res)
+    for i=1,#res.output do
+        if res.output[i].type=="message" then
+            buf:put(res.output[i].content)
+        end
+    end
+    res=tostring(buf):gsub("%*%*","")
+    return res
 end
 
 ---@type table<string,string|{level:number,func:fun(S:Session, args:string[], M:OneBot.Event.Message, D:Session.data)}>
@@ -36,30 +47,22 @@ local commands={
         if not args[1] then
             local res=ASYNC.get('llm')
             if res then
-                local buf=STRING.newBuf()
-                res=JSON.decode(res)
-                for i=1,#res.output do
-                    if res.output[i].type=="message" then
-                        buf:put(res.output[i].content)
-                    end
-                end
-                S:send(buf)
+                S:send(llmAfterProcess(res))
             else
                 Bot.reactMessage(M.message_id,Emoji.white_question_mark)
             end
             return
         end
-        local param={
-            model="mistralai/ministral-3-3b",
+        -- clear previous result
+        ASYNC.get('llm')
+        -- run llm command
+        ASYNC.runCmd('llm',STRING.repD(Config.extraData.llmCmd,JSON.encode{
+            model=Config.extraData.llmModel,
             input=args[1],
-        }
-        local buf=STRING.newBuf()
-        buf:put("curl -s http://localhost:1234/api/v1/chat")
-        buf:put(" -H 'Content-Type: application/json'")
-        buf:put(" -d '"..JSON.encode(param).."'")
-        ASYNC.runCmd('llm',buf:get())
+        }))
+        Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
+        -- wait for result
         TASK.new(function()
-            ASYNC.get('llm') -- clear previous result
             local t,res=0,nil
             while true do
                 res=ASYNC.get('llm')
@@ -72,13 +75,7 @@ local commands={
                 LOG('warn',"LLM timeout")
                 return
             end
-            res=JSON.decode(res)
-            for i=1,#res.output do
-                if res.output[i].type=="message" then
-                    buf:put(res.output[i].content)
-                end
-            end
-            S:send(buf)
+            S:send(llmAfterProcess(res))
         end)
     end},
     ['help']={level=0,func=function(S)
