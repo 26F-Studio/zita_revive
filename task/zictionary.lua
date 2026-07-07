@@ -22,7 +22,16 @@ return {
         ---@cast M OneBot.Event.PrivateMessage|OneBot.Event.GroupMessage
 
         local mes=STRING.trim(RawStr(M.raw_message))
-        if #mes<=35 and mes:match("是什么$") then mes="#"..mes:match("^(.+)是什么$") end
+        do
+            local _mes=mes:gsub("%?$",""):gsub("？$","")
+            local noobQuestion=
+                _mes:match("^(.+)是什么$") or
+                _mes:match("^(.+)是啥$") or
+                _mes:match("^啥是(.+)$") or
+                _mes:match("^什么是(.+)$")
+            if noobQuestion and #noobQuestion<=26 then mes="#"..noobQuestion end
+        end
+
         if not mes:find('#') or mes:find('/#') then return false end
 
         -- Detail of last entry
