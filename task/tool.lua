@@ -764,7 +764,7 @@ tools.skit={
                 local name,dat=line:match('^(.-)'..sep..'(.+)$')
                 if sep=="=" then
                     name=name and STRING.trim(name)
-                    dat=tonumber(dat)
+                    dat=tonumber(dat:match('%d+'))
                     if name and dat and #name>0 and MATH.between(dat,100000,99999999999) then
                         userPool[name]=dat
                     else
@@ -783,23 +783,18 @@ tools.skit={
                 return "第"..i.."行，格式无法识别，非空行需要是含=的角色行或含:的对话行"
             end
         end
-        if #messages>1 then
-            for i=1,#messages do
-                messages[i]={
-                    type='node',
-                    data={
-                        nickname=messages[i][1],
-                        user_id=messages[i][2],
-                        content=messages[i][3],
-                        -- content={
-                        --     type='text',
-                        --     data={text=messages[i][3]},
-                        -- },
-                    },
-                }
-            end
-            return messages
+        if #messages<=1 then return end
+        for i=1,#messages do
+            messages[i]={
+                type='node',
+                data={
+                    nickname=messages[i][1],
+                    user_id=messages[i][2],
+                    content=messages[i][3],
+                },
+            }
         end
+        return messages
     end,
 }
 
