@@ -22,20 +22,21 @@ return {
         ---@cast M OneBot.Event.PrivateMessage|OneBot.Event.GroupMessage
 
         local mes=STRING.trim(RawStr(M.raw_message))
+        if #mes<=35 and mes:match("是什么$") then mes="#"..mes:match("^(.+)是什么$") end
         if not mes:find('#') or mes:find('/#') then return false end
 
         -- Detail of last entry
         if mes=='##' then
             if S:getLock('detailedEntry') then
                 if D.lastDetailEntry.title then
-                    S:send('##'..D.lastDetailEntry.title.." (续)\n"..D.lastDetailEntry.detail)
+                    S:send("##"..D.lastDetailEntry.title.." (续)\n"..D.lastDetailEntry.detail)
                 else
                     S:send("(续)"..D.lastDetailEntry.detail)
                 end
                 D.lastDetailEntry=false
                 S:unlock('detailedEntry')
             else
-                if S:forceLock('doubleSharp',26) then S:send("最近没查过含有补充信息的词条喵~") end
+                if S:forceLock('zict_doubleSharp',26) then S:send("最近没查过含有补充信息的词条喵~") end
             end
             return true
         end
@@ -67,7 +68,7 @@ return {
                 local wordCnt,entryCnt=TABLE.getSize(zict)-1,#zict.entryList
                 buf:put("小z的知识库更新了！现在有"..wordCnt.."个关键词和"..entryCnt.."个词条喵")
                 S:send(buf)
-            elseif S:forceLock('no_permission',26) then
+            elseif S:forceLock('zict_no_permission',26) then
                 S:delaySend(nil,"你不许reload")
             end
             return true
@@ -120,7 +121,7 @@ return {
             ins(result,type(entry.text)=='function' and entry.text(S) or entry.text)
         end
         if entry.detail then
-            S:forceLock('detailedEntry',420)
+            S:forceLock('zict_detailedEntry',420)
             if showDetail then
                 ins(result,entry.detail)
             else
@@ -145,7 +146,7 @@ return {
             S:update()
             local chargeNeed=94.2+#resultStr/4.2
             if S.charge<math.min(94.2,chargeNeed) then
-                if S:forceLock('dictCharge',26) then S:send("词典能量耗尽！请稍后再试喵") end
+                if S:forceLock('zict_dictCharge',26) then S:send("词典能量耗尽！请稍后再试喵") end
                 return true
             end
             S:useCharge(chargeNeed)
