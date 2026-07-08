@@ -4,7 +4,7 @@ return {
     {2,2,2,1,2,2,2,0,2,2,2,0,2,"io;tetrio;tetr.io","TETR.IO","tetr.io","应该是目前全世界在线人数最多的现代块游戏\n另见#io qp2"},
     {2,2,0,2,2,2,2,0,0,2,0,2,0,"tec;tetris effect;tetris effect connected","Tetris Effect: Connected","store.steampowered.com/app/1003590","卖点是沉浸音画体验和基于创新的Zone机制的各种模式（包括多人在线不对称竞技）"},
     {2,2,0,1,2,2,2,0,0,2,0,2,0,"ppt;puyo puyo tetris;ppt2;ppt2s","Puyo Puyo Tetris","store.steampowered.com/app/546050","包含Tetris和PuyoPuyo两个下落消除游戏，二者间可以对战\n注：PPT2的手感据很多人说都不行"},
-    {2,0,2,1,2,2,2,1,2,2,2,0,1,"js;jstris","Jstris","jezevec10.com",""},
+    {2,0,2,1,2,2,2,1,2,2,2,0,1,"js;jstris","Jstris","jstris.jezevec10.com",""},
     {1,2,2,2,2,2,2,0,2,2,2,0,0,"wwc;worldwide combos","Worldwide Combos","worldwidecombos.com","有几种不同风格的大规则（例如炸弹垃圾行），有录像战（匹配对手不是真人）"},
     {1,2,2,2,2,2,2,0,0,2,2,0,0,"c2;cultris2;cultris ii","Cultris II","gewaltig.net","对战的主要玩法是基于时间的连击，考验玩家速度/Wide打法/挖掘，另单人游戏有一大堆创意模式"},
     {1,2,2,2,1,2,2,0,0,2,2,0,1,"sd;spirit drop","Spirit Drop","rayblastgames.com/spiritdrop.php","除了几个主模式外还有一个变革模式包含几十个创意规则可挑战"},
