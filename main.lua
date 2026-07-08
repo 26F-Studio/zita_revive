@@ -76,7 +76,7 @@ _G.Bot=Bot
 ---@field id string
 ---@field prio number
 
----@alias Sendable string|number|boolean|string.buffer
+---@alias Sendable string|number|boolean|string.buffer|table
 
 ---@param data table
 function Bot._send(data)
@@ -96,7 +96,7 @@ function Bot._send(data)
         LOG('warn',"Error encoding json:\n"..debug.traceback(res))
     end
 end
----@param message Sendable | table
+---@param message Sendable
 ---@param id number
 ---@param priv? boolean is private message
 ---@param echo? string
@@ -550,7 +550,7 @@ end
 
 ---Notice that time must be less than 86400 (1 day)
 ---@param time number|nil seconds
----@param text string
+---@param text Sendable
 ---@param echo? string
 function Session:delaySend(time,text,echo)
     if time and time>86400 or not text then return end
