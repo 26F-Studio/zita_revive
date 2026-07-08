@@ -22,9 +22,10 @@ return {
         ---@cast M OneBot.Event.PrivateMessage|OneBot.Event.GroupMessage
 
         local mes=STRING.trim(RawStr(M.raw_message))
-        do
+        local noobQuestion
+        if not mes:find('#') then
             local _mes=mes:gsub("%?$",""):gsub("？$","")
-            local noobQuestion=
+            noobQuestion=
                 _mes:match("^(.+)是什么$") or
                 _mes:match("^(.+)是啥$") or
                 _mes:match("^啥是(.+)$") or
@@ -112,7 +113,9 @@ return {
                 rem(words)
             end
             if not entry then
-                Bot.reactMessage(M.message_id,Emoji.white_question_mark)
+                if not noobQuestion then
+                    Bot.reactMessage(M.message_id,Emoji.white_question_mark)
+                end
                 return false
             end
         end
