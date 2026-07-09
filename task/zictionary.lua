@@ -37,14 +37,14 @@ return {
 
         -- Detail of last entry
         if mes=='##' then
-            if S:getLock('detailedEntry') then
+            if S:getLock('zict_detailedEntry') then
                 if D.lastDetailEntry.title then
                     S:send("##"..D.lastDetailEntry.title.." (续)\n"..D.lastDetailEntry.detail)
                 else
                     S:send("(续)"..D.lastDetailEntry.detail)
                 end
                 D.lastDetailEntry=false
-                S:unlock('detailedEntry')
+                S:unlock('zict_detailedEntry')
             else
                 if S:forceLock('zict_doubleSharp',26) then S:send("最近没查过含有补充信息的词条喵~") end
             end
