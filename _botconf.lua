@@ -31,7 +31,7 @@ local conf={
     },
     extraTask={ -- 要启用的额外任务的会话列表
         g000000000={
-            {'brikduel',2.6},
+            {'guess',2.6},
         },
     },
     spSession={ -- 如有配置，这里的群只会使用spTask列表里的任务，而不是groupTask+extraTask的组合
