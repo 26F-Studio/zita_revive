@@ -26,57 +26,11 @@ local function noPermission(S)
         S:delaySend(nil,TABLE.getRandom(denyTexts))
     end
 end
-local function llmAfterProcess(res)
-    local buf=STRING.newBuf()
-    res=JSON.decode(res)
-    for i=1,#res.output do
-        if res.output[i].type=="message" then
-            buf:put(res.output[i].content)
-        end
-    end
-    res=tostring(buf):gsub("%*%*","")
-    return res
-end
 
 ---@type table<string,string|{level:number,func:fun(S:Session, args:string[], M:OneBot.Event.Message, D:Session.data)}>
 local commands={
     ['test']={level=1,func=function(S,args,M,D)
         -- something
-    end},
-    ['llm']={level=2,func=function(S,args,M)
-        if not args[1] then
-            local res=ASYNC.get('llm')
-            if res then
-                S:send(llmAfterProcess(res))
-            else
-                Bot.reactMessage(M.message_id,Emoji.white_question_mark)
-            end
-            return
-        end
-        -- clear previous result
-        ASYNC.get('llm')
-        -- run llm command
-        ASYNC.runCmd('llm',STRING.repD(Config.extraData.llmCmd,JSON.encode{
-            model=Config.extraData.llmModel,
-            input=args[1],
-        }))
-        Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
-        -- wait for result
-        TASK.new(function()
-            local t,res=0,nil
-            while true do
-                res=ASYNC.get('llm')
-                t=t+1
-                if res or t>=260 then break end
-                TASK.yieldT(.1)
-            end
-            if not res then
-                Bot.reactMessage(M.message_id,Emoji.timer_clock)
-                LOG('warn',"LLM timeout")
-                return
-            end
-            S:send(llmAfterProcess(res))
-        end)
     end},
     ['help']={level=0,func=function(S)
         local result=STRING.trimIndent([[
