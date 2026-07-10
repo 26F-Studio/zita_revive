@@ -33,14 +33,15 @@ return {
             return true
         end
 
+        local extraInfo="\n现在是"..os.date("%Y-%m-%d %H:%M:%S")
         local data={
             model=Config.extraData.llmModel,
-            thinking={type="disabled"},
-            reasoning_effort="high",
+            thinking={type='disabled'},
+            reasoning_effort='high',
             stream=false,
             messages={
-                {role="system",content=Config.extraData.llmSystemPrompt},
-                {role="user",  content=msg},
+                {role='system',content=Config.extraData.llmSystemPrompt..extraInfo},
+                {role='user',  content=msg},
             },
         }
         local suc,res=pcall(JSON.encode,data)
