@@ -28,6 +28,7 @@ local tools={
     },
 }
 
+local buf=STRING.newBuf()
 local function executeTool(toolCall)
     local func=toolCall['function']
     local suc,args=pcall(JSON.decode,func.arguments)
@@ -37,22 +38,21 @@ local function executeTool(toolCall)
         if type(args.term)~='string' then return "错误：参数term必须是字符串" end
         local entry=Config.extraData._zict[args.term:gsub('%s',''):lower()]
         if not entry then return "未找到词条："..args.term end
-        local res=""
-        if entry.title then res=res.."# "..entry.title.."\n" end
-        if entry.text then res=res..entry.text.."\n" end
-        if entry.detail then res=res..entry.detail.."\n" end
-        if entry.link then res=res.."相关链接："..entry.link.."\n" end
-        return res=="" and "词条内容为空" or res
+        buf:reset()
+        if entry.title then buf:put("# "..entry.title.."\n") end
+        if entry.text then buf:put("[正文] "..entry.text.."\n") end
+        if entry.detail then buf:put("[额外内容] "..entry.detail.."\n") end
+        if entry.link then buf:put("[相关链接] "..entry.link.."\n") end
+        return #buf>0 and buf:get() or "词条内容为空"
     else
         return "错误：未知工具 "..func.name
     end
 end
 
 local function task_apiCallThread(S,userMsg)
-    local extraInfo="\n现在是"..os.date("%Y-%m-%d %H:%M:%S")
     local messages={
-        {role='system',content=Config.extraData.llmSystemPrompt..extraInfo},
-        {role='user',  content=userMsg},
+        {role='system',content=Config.extraData.llmSystemPrompt..os.date("\n（现在是 %Y-%m-%d %H:%M:%S）")},
+        {role='user',content=userMsg},
     }
     local data={
         model=Config.extraData.llmModel,
