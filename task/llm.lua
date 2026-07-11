@@ -1,5 +1,13 @@
 local available=Config.extraData.llmModel and Config.extraData.llmSystemPrompt and Config.extraData.llmKey
 if not available then LOG('warn',"LLM模块需要配置3个参数") end
+local errMsg="有人能告诉"..Config.adminName.."，我的AI有问题"
+local denyTexts={
+    "你没有足够的权限喵",
+    "Permission Denied喵",
+    "你是谁！（后跳）",
+    Config.adminName.."才能这样做喵",
+    "我只听"..Config.adminName.."的喵！",
+}
 
 local msgID=0
 local curlCmd=[[
@@ -50,7 +58,11 @@ local function executeTool(toolCall)
     end
 end
 
-local function task_apiCallThread(S,userMsg)
+local function task_apiCallThread(S,M,userMsg)
+    msgID=msgID+1
+    local sid="["..msgID.."]"
+    LOG('info',sid.." "..S.uid.."-"..M.user_id.." LLM输入："..userMsg)
+
     local messages={
         {role='system',content=Config.extraData.llmSystemPrompt..os.date("\n（现在是 %Y-%m-%d %H:%M:%S）")},
         {role='user',content=userMsg},
@@ -69,14 +81,15 @@ local function task_apiCallThread(S,userMsg)
         do
             local suc,res=pcall(JSON.encode,data)
             if not suc then
-                if S:forceLock('llm_json_encode_error',26) then S:send("json打包错误："..res) end
+                if S:forceLock('llm_json_encode_error',26) then
+                    LOG('warn',sid.." LLM错误：json打包失败 "..res)
+                    S:send(errMsg)
+                end
                 return
             end
             jsonSend=res
         end
 
-        msgID=msgID+1
-        local sid=msgID
         ASYNC.runCmd('llm_'..sid,STRING.repD(curlCmd,Config.extraData.llmKey,jsonSend))
         repeat
             TASK.yieldT(.26)
@@ -87,18 +100,25 @@ local function task_apiCallThread(S,userMsg)
         do
             local suc,res=pcall(JSON.decode,jsonRecv)
             if not suc then
-                if S:forceLock('llm_json_decode_error',26) then S:send("json解析失败："..res) end
+                if S:forceLock('llm_json_decode_error',26) then
+                    LOG('warn',sid.." LLM错误：json解析失败 "..res)
+                    S:send(errMsg)
+                end
                 return
             end
             suc,res=pcall(TABLE.listIndex,res,{'choices',1,'message'})
             if not (suc and res) then
-                if S:forceLock('llm_json_decode_error',26) then S:send("json格式无法识别") end
+                if S:forceLock('llm_json_decode_error',26) then
+                    LOG('warn',sid.." LLM错误：结果获取失败 "..res)
+                    S:send(errMsg)
+                end
                 return
             end
             msg=res
         end
 
         if msg.tool_calls and #msg.tool_calls>0 then
+            -- Tool call
             table.insert(messages,msg)
             for _,tc in ipairs(msg.tool_calls) do
                 table.insert(messages,{
@@ -108,16 +128,24 @@ local function task_apiCallThread(S,userMsg)
                 })
             end
         else
+            -- Response
             if msg.content then
-                S:send(msg.content:gsub("%*%*",""))
+                if msg.content:find("<skip>") then
+                    LOG('info',"LLM跳过发言")
+                else
+                    S:send(msg.content:gsub("%*%*",""))
+                end
             else
-                if S:forceLock('llm_no_content',26) then S:send("AI没有返回内容") end
+                if S:forceLock('llm_no_content',26) then
+                    LOG('warn',sid.." LLM错误：没有返回内容")
+                    S:send(errMsg)
+                end
             end
             return
         end
     end
 
-    if S:forceLock('llm_tool_loop',26) then S:send("工具调用轮次过多") end
+    if S:forceLock('llm_tool_loop',26) then S:send("❌工具调用轮次过多") end
 end
 
 ---@type Task_raw
@@ -125,13 +153,17 @@ return {
     message=function(S,M)
         if not available then return false end
         local msg=STRING.trim(M.raw_message):match("^%[CQ:at,qq="..Config.botID.."%]%s*(.*)$")
-        if not msg then return false end
-
-        if Bot.isAdmin(M.user_id) then
-            TASK.new(task_apiCallThread,S,msg)
-        else
-            if S:forceLock('llm_permission_denied',26) then S:send(Config.adminName.."才能这样做喵") end
+        if msg then
+            if Bot.isAdmin(M.user_id) then
+                TASK.new(task_apiCallThread,S,M,msg)
+            else
+                if S:forceLock('llm_permission_denied',26) then S:send(TABLE.getRandom(denyTexts)) end
+            end
+            return true
+        elseif (msg:match("%?$") or msg:match("？") or msg:match("什么")) and MATH.between(#msg,12,260) and S:lock('llm_question',62) then
+            TASK.new(task_apiCallThread,S,M,"<疑似游戏提问>"..msg)
+            return true
         end
-        return true
+        return false
     end,
 }
