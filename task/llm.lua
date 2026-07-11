@@ -109,7 +109,7 @@ local function task_apiCallThread(S,userMsg)
             end
         else
             if msg.content then
-                S:send(msg.content)
+                S:send(msg.content:gsub("%*%*",""))
             else
                 if S:forceLock('llm_no_content',26) then S:send("AI没有返回内容") end
             end
