@@ -33,7 +33,7 @@ local utils={
         text="harddrop.com/wiki（Hard Drop社区的百科）\nhttps://tetris.wiki（Myndzi在2015年创办）\ntetris.fandom.com\n另见 #wiki",
     },
     {
-        word="社区;导航;块群;社区文档;导航文档;块群文档",
+        word="社区;导航;块群;社区导航;社区文档;导航文档;块群文档",
         text="MrZ编写的中国方块社区导航文档，收集了大多数已知的格式形如“俄罗斯方块·[铁🪏壳]”的群",
         link="github.com/MrZ626/modern_tetris_cn_community",
     },
