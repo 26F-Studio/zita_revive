@@ -37,6 +37,7 @@ local function executeTool(toolCall)
     if func.name=='tetris_dict' then
         if type(args.term)~='string' then return "错误：参数term必须是字符串" end
         local entry=Config.extraData._zict[args.term:gsub('%s',''):lower()]
+        LOG('info',"LLM查询词典 "..args.term..(entry and "（成功）" or "（未找到）"))
         if not entry then return "未找到词条："..args.term end
         buf:reset()
         if entry.title then buf:put("# "..entry.title.."\n") end
