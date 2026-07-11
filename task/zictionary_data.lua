@@ -458,9 +458,14 @@ local main={
         text="允许方块向下穿越地形进入地下的空洞",
     },
     {
-        word="md;misdrop;mishold",
+        word="md;misdrop;mishold;失误",
         title="Misdrop",
         text="误放，由于各种原因导致不小心把块放错了地方，简称MD",
+    },
+    {
+        word="平衡;平衡法",
+        title="平衡法",
+        text="（可能不准确）普通T2槽需要两侧同高，平衡法指玩家控制空列两侧高度使其一致（平衡），以便构造T旋的方法",
     },
     {
         word="捐赠;donate;donation",
@@ -520,11 +525,6 @@ local main={
         word="c1w",
         title="Center 1 Wide",
         text="中间空1列，一种实战里消4同时辅助打TSD的打法，需要玩家理解“平衡法”，熟练之后可以轻松消四+T2输出",
-    },
-    {
-        word="平衡法",
-        title="平衡法",
-        text="（可能不准确）普通T2槽需要两侧同高，平衡法指玩家控制空列两侧高度使其一致（平衡），以便构造T旋的方法",
     },
     {
         word="c2w;c3w",
@@ -1471,7 +1471,7 @@ local extra_tetrio={
         text="EX或者任意逆位mod启用时开启\n禁用0连击普通消一+1攻击，禁用危险时临时降低受击权重",
     },
     {
-        word="qp2 mod;qp mod;mod;塔罗;塔罗牌",
+        word="qp2 mod;qp mod;QP2模组;mod;塔罗;塔罗牌",
         title="[QP2机制] Mod",
         text="Mod列表：专家(EX)、无暂存(NH)、混乱垃圾行(MS)、高重力(GV)、不稳定垃圾行(VL)、双洞垃圾行(DH)、隐形(IN)、All-Spin(AS)、双人(2P)\n另见 #EX/NH/...",
     },
@@ -1670,7 +1670,7 @@ local contributor={
         link="space.bilibili.com/834903  space.bilibili.com/271332633",
     },
     {
-        word="T042;42;思竣;思竣一号;思竣二号;思竣三号;思竣四号",
+        word="T042;42;思竣",
         text="T042.思竣，找到了Techmino的一万个bug并记住了所在版本号，另外还有一堆铁壳only的世界纪录",
         link="space.bilibili.com/403250559",
     },
@@ -1704,7 +1704,7 @@ local contributor={
         text="Dr.Ocelot，制作了TETR.IO的音频，编写了QP2模式的所有音乐；Tetra Legends的作者",
     },
     {
-        word="garbo",
+        word="garbo;嘎波",
         text="Garbo，设计了TETR.IO的游戏玩法和世界观相关内容",
     },
     {
