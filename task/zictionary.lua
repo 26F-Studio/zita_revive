@@ -1,15 +1,14 @@
 -- 【需要预加载】
 
 local ins,rem,concat=table.insert,table.remove,table.concat
----@type Map<Zict.Entry>
-local zict
 
 local function reloadZict()
-    zict=FILE.load('task/zictionary_data.lua','-lua')
+    ---@type Map<Zict.Entry>
+    Config.extraData._zict=FILE.load('task/zictionary_data.lua','-lua')
 end
 reloadZict()
 
-assert(zict,"Dict data not found")
+assert(Config.extraData._zict,"Dict data not found")
 
 ---@type Task_raw
 return {
@@ -30,6 +29,8 @@ return {
         end
 
         if not mes:find('#') or mes:find('/#') then return false end
+
+        local zict=Config.extraData._zict
 
         -- Detail of last entry
         if mes=='##' then
