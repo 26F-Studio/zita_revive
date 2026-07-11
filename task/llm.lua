@@ -161,7 +161,7 @@ return {
                 if S:forceLock('llm_permission_denied',26) then S:send(TABLE.getRandom(denyTexts)) end
             end
             return true
-        elseif (msg:match("%?$") or msg:match("？") or msg:match("什么") or msg:match("怎么")) and MATH.between(#msg,12,260) and S:lock('llm_question',62) then
+        elseif (msg:match("%?$") or msg:match("？") or msg:match("什么") or msg:match("怎么")) and MATH.between(#msg,12,260) and S:lock('llm_question',26) then
             TASK.new(task_apiCallThread,S,M,"<疑似游戏提问>"..msg)
             return true
         end
