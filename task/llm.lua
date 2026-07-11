@@ -41,9 +41,9 @@ local function executeTool(toolCall)
         if not entry then return "未找到词条："..args.term end
         buf:reset()
         if entry.title then buf:put("# "..entry.title.."\n") end
-        if entry.text then buf:put("[正文] "..entry.text.."\n") end
-        if entry.detail then buf:put("[额外内容] "..entry.detail.."\n") end
-        if entry.link then buf:put("[相关链接] "..entry.link.."\n") end
+        if entry.text then buf:put(entry.text.."\n") end
+        if entry.detail then buf:put("[额外内容]\n"..entry.detail.."\n") end
+        if entry.link then buf:put("[相关链接]\n"..entry.link.."\n") end
         return #buf>0 and buf:get() or "词条内容为空"
     else
         return "错误：未知工具 "..func.name
