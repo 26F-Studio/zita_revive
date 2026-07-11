@@ -1,25 +1,122 @@
 local available=Config.extraData.llmModel and Config.extraData.llmSystemPrompt and Config.extraData.llmKey
-
 if not available then LOG('warn',"LLM模块需要配置3个参数") end
 
+local msgID=0
 local curlCmd=[[
 curl -s https://api.deepseek.com/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $1" \
   -d '$2'
 ]]
+local tools={
+    {
+        ['type']='function',
+        ['function']={
+            name='tetris_dict',
+            description="收录了大量俄罗斯方块相关术语的词典，输入一个术语返回一个词条",
+            parameters={
+                type='object',
+                properties={
+                    term={
+                        type='string',
+                        description="术语名称（尽量短，不区分大小写，）",
+                    },
+                },
+                required={'term'},
+            },
+        },
+    },
+}
 
-local ansPool={}
-local function parseAnswer(json) return JSON.decode(json).choices[1].message.content end
-local function task_pollAnswer(S,sid)
-    local suc,res
-    repeat
-        res=ASYNC.get('llm_'..sid)
-        TASK.yieldT(.26)
-    until res
-    suc,res=pcall(parseAnswer,res)
-    S:send(suc and res or "结果解析失败："..res)
-    ansPool[sid]=nil
+local function executeTool(toolCall)
+    local func=toolCall['function']
+    local suc,args=pcall(JSON.decode,func.arguments)
+    if not suc then return "错误：工具参数解析失败 "..args end
+
+    if func.name=='tetris_dict' then
+        if type(args.term)~='string' then return "错误：参数term必须是字符串" end
+        local entry=Config.extraData._zict[args.term:gsub('%s',''):lower()]
+        if not entry then return "未找到词条："..args.term end
+        local res=""
+        if entry.title then res=res.."# "..entry.title.."\n" end
+        if entry.text then res=res..entry.text.."\n" end
+        if entry.detail then res=res..entry.detail.."\n" end
+        if entry.link then res=res.."相关链接："..entry.link.."\n" end
+        return res=="" and "词条内容为空" or res
+    else
+        return "错误：未知工具 "..func.name
+    end
+end
+
+local function task_apiCallThread(S,userMsg)
+    local extraInfo="\n现在是"..os.date("%Y-%m-%d %H:%M:%S")
+    local messages={
+        {role='system',content=Config.extraData.llmSystemPrompt..extraInfo},
+        {role='user',  content=userMsg},
+    }
+    local data={
+        model=Config.extraData.llmModel,
+        thinking={type='disabled'},
+        reasoning_effort='high',
+        stream=false,
+        messages=messages,
+        tools=tools,
+    }
+
+    for _=1,3 do
+        local jsonSend,jsonRecv
+        do
+            local suc,res=pcall(JSON.encode,data)
+            if not suc then
+                if S:forceLock('llm_json_encode_error',26) then S:send("json打包错误："..res) end
+                return
+            end
+            jsonSend=res
+        end
+
+        msgID=msgID+1
+        local sid=msgID
+        ASYNC.runCmd('llm_'..sid,STRING.repD(curlCmd,Config.extraData.llmKey,jsonSend))
+        repeat
+            TASK.yieldT(.26)
+            jsonRecv=ASYNC.get('llm_'..sid)
+        until jsonRecv
+
+        local msg
+        do
+            local suc,res=pcall(JSON.decode,jsonRecv)
+            if not suc then
+                if S:forceLock('llm_json_decode_error',26) then S:send("json解析失败："..res) end
+                return
+            end
+            suc,res=pcall(TABLE.listIndex,res,{'choices',1,'message'})
+            if not (suc and res) then
+                if S:forceLock('llm_json_decode_error',26) then S:send("json格式无法识别") end
+                return
+            end
+            msg=res
+        end
+
+        if msg.tool_calls and #msg.tool_calls>0 then
+            table.insert(messages,msg)
+            for _,tc in ipairs(msg.tool_calls) do
+                table.insert(messages,{
+                    role='tool',
+                    tool_call_id=tc.id,
+                    content=select(2,pcall(executeTool,tc)),
+                })
+            end
+        else
+            if msg.content then
+                S:send(msg.content)
+            else
+                if S:forceLock('llm_no_content',26) then S:send("AI没有返回内容") end
+            end
+            return
+        end
+    end
+
+    if S:forceLock('llm_tool_loop',26) then S:send("工具调用轮次过多") end
 end
 
 ---@type Task_raw
@@ -28,34 +125,12 @@ return {
         if not available then return false end
         local msg=STRING.trim(M.raw_message):match("^%[CQ:at,qq="..Config.botID.."%]%s*(.*)$")
         if not msg then return false end
-        if not Bot.isAdmin(M.user_id) then
+
+        if Bot.isAdmin(M.user_id) then
+            TASK.new(task_apiCallThread,S,msg)
+        else
             if S:forceLock('llm_permission_denied',26) then S:send(Config.adminName.."才能这样做喵") end
-            return true
         end
-
-        local extraInfo="\n现在是"..os.date("%Y-%m-%d %H:%M:%S")
-        local data={
-            model=Config.extraData.llmModel,
-            thinking={type='disabled'},
-            reasoning_effort='high',
-            stream=false,
-            messages={
-                {role='system',content=Config.extraData.llmSystemPrompt..extraInfo},
-                {role='user',  content=msg},
-            },
-        }
-        local suc,res=pcall(JSON.encode,data)
-        if not suc then
-            if S:forceLock('llm_json_encode_error',26) then S:send("json打包错误："..res) end
-            return true
-        end
-
-        local sid
-        repeat sid=math.random(260) until not ansPool[sid]
-        ansPool[sid]=true
-
-        ASYNC.runCmd('llm_'..sid,STRING.repD(curlCmd,Config.extraData.llmKey,res))
-        TASK.new(task_pollAnswer,S,sid)
         return true
     end,
 }
