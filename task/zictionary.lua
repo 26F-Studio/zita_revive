@@ -24,7 +24,7 @@ return {
         local noobQuestion
         if not mes:find('#') then
             local _mes=mes:gsub("%?$",""):gsub("？$","")
-            noobQuestion=_mes:match("^(.+)是什么$") or _mes:match("^什么是(.+)$")
+            noobQuestion=_mes:match("^(.+)是什么$") or _mes:match("^(.+)是啥$") or _mes:match("^什么是(.+)$")
             if noobQuestion and #noobQuestion<=26 then mes="#"..noobQuestion end
         end
 

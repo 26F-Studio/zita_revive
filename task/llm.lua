@@ -152,15 +152,16 @@ end
 return {
     message=function(S,M)
         if not available then return false end
-        local msg=STRING.trim(M.raw_message):match("^%[CQ:at,qq="..Config.botID.."%]%s*(.*)$")
-        if msg then
+        local msg=STRING.trim(M.raw_message)
+        local atMsg=msg:match("^%[CQ:at,qq="..Config.botID.."%]%s*(.*)$")
+        if atMsg then
             if Bot.isAdmin(M.user_id) then
-                TASK.new(task_apiCallThread,S,M,msg)
+                TASK.new(task_apiCallThread,S,M,atMsg)
             else
                 if S:forceLock('llm_permission_denied',26) then S:send(TABLE.getRandom(denyTexts)) end
             end
             return true
-        elseif (msg:match("%?$") or msg:match("？") or msg:match("什么")) and MATH.between(#msg,12,260) and S:lock('llm_question',62) then
+        elseif (msg:match("%?$") or msg:match("？") or msg:match("什么") or msg:match("怎么")) and MATH.between(#msg,12,260) and S:lock('llm_question',62) then
             TASK.new(task_apiCallThread,S,M,"<疑似游戏提问>"..msg)
             return true
         end
