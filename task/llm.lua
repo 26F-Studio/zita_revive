@@ -39,7 +39,7 @@ local function executeTool(S,func)
     if func.name=='tetris_dict' then
         if type(args.term)~='string' then return "错误：参数term必须是字符串" end
         local entry=Config.extraData._zict[args.term:gsub('%s',''):lower()]
-        LOG('info',"LLM查询词典 "..args.term..(entry and "（成功）" or "（未找到）"))
+        LOG('debug',"LLM查询词典 "..args.term..(entry and "（成功）" or "（未找到）"))
         if not entry then
             table.insert(failBuffer,args.term)
             return "未找到词条："..args.term
@@ -58,7 +58,7 @@ end
 local function task_apiCallThread(S,M,mode,userMsg)
     msgID=msgID+1
     local sid="["..msgID.."]"
-    LOG('info',sid.." "..S.uid.."-"..M.user_id.." LLM输入："..userMsg)
+    LOG('debug',sid.." "..S.uid.."-"..M.user_id.." LLM输入 <"..mode.."> "..userMsg)
 
     local messages={
         {role='system',content=Config.extraData.llmSystemPrompt..os.date("\n（现在是 %Y-%m-%d %H:%M:%S）")},
@@ -143,13 +143,13 @@ local function task_apiCallThread(S,M,mode,userMsg)
             -- Response
             if msg.content then
                 if msg.content:match("<忽略>") then
-                    LOG('info',"LLM跳过发言")
+                    LOG('debug',"LLM跳过发言")
                     if mode~='question' then
                         Bot.reactMessage(M.message_id,Emoji.white_question_mark)
                     end
                 else
                     local final=msg.content:gsub("%*%*","")
-                    LOG('info',"LLM发言："..final)
+                    LOG('debug',"LLM发言："..final)
                     S:send(final)
                 end
             else
