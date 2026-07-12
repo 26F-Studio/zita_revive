@@ -342,6 +342,7 @@ end
 ---@field checkpoints Map<number>
 ---@field echos Map<table>
 ---@field data Map<Session.data>
+---@field history OneBot.Event.Base[]
 ---
 ---@field createTime number
 ---@field charge number
@@ -370,6 +371,7 @@ function Session.new(id,priv)
         checkpoints={},
         echos={},
         data={},
+        history={},
 
         createTime=Time(),
         charge=Config.maxCharge,
@@ -522,6 +524,8 @@ function Session:receive(M,type)
             break
         end
     end
+    self.history[Config.sessionHistoryLen]=nil
+    table.insert(self.history,1,M)
 end
 
 ---@param text Sendable
