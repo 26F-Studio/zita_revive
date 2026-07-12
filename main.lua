@@ -217,12 +217,7 @@ function Bot.kick(group_id,user_id,reject_rejoin)
     }
 end
 
-function Bot.refreshUserInfo()
-    if Config.botID and Config.botID>0 then return end
-    Bot._send{
-        action='get_login_info',
-        params={},
-        handler=function(data)
+local function userInfoHandler(data)
             if data.user_id then
                 Config.botID=data.user_id
             else
@@ -233,7 +228,12 @@ function Bot.refreshUserInfo()
             else
                 LOG('warn',"Failed to get bot nickname")
             end
-        end,
+end
+function Bot.refreshUserInfo()
+    if Config.botID and Config.botID>0 then return end
+    Bot._send{
+        action='get_login_info',
+        handler=userInfoHandler,
     }
 end
 ---@param msg_id number
