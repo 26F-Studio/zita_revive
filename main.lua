@@ -515,13 +515,16 @@ end
 ---@param M OneBot.Event.Base
 ---@param type 'message' | 'notice' | 'request'
 function Session:receive(M,type)
-    for _,task in next,self.taskList do
-        local suc,res=pcall(task[type],self,M,self.data[task.id])
-        if suc then
-            if res==true then break end
-        else
-            LOG('warn',STRING.repD("Session-$1 Task-$2 ($3) Error:\n$4",self.id,task.id,os.date("%m/%d %H:%M:%S"),res))
-            break
+    if not (type=='message' and M.user_id and M.user_id==Config.botID) then
+        -- Filter message from self
+        for _,task in next,self.taskList do
+            local suc,res=pcall(task[type],self,M,self.data[task.id])
+            if suc then
+                if res==true then break end
+            else
+                LOG('warn',STRING.repD("Session-$1 Task-$2 ($3) Error:\n$4",self.id,task.id,os.date("%m/%d %H:%M:%S"),res))
+                break
+            end
         end
     end
     table.insert(self.history,M)
