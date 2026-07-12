@@ -93,11 +93,12 @@ local function task_apiCallThread(S,M,mode,userMsg)
             fh:write(jsonSend)
             fh:close()
         end
-        ASYNC.runCmd('llm_'..sid,STRING.repD(curlCmd,Config.extraData.llmKey,tmpf)..'; rm -f '..tmpf)
+        ASYNC.runCmd('llm_'..sid,STRING.repD(curlCmd,Config.extraData.llmKey,tmpf))
         repeat
             TASK.yieldT(.26)
             jsonRecv=ASYNC.get('llm_'..sid)
         until jsonRecv
+        ASYNC.runCmd('llm_rm_tmp','rm -f '..tmpf)
 
         local msg
         do
