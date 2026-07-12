@@ -168,36 +168,6 @@ local main={
         link="tetriswiki.cn/p/TSA",
     },
     {
-        word="marathon;马拉松;马拉松模式",
-        title="马拉松模式",
-        text="#Guideline 规定官方Tetris的三个必备模式之一，直接来自于经典块的玩法，考察固定等级/行数内的得分。绝大多数游戏中是15级/150行，等级/重力/倍率逐渐增加",
-    },
-    {
-        word="40l;40line;40lines;sprint;time attack;竞速;竞速模式",
-        title="竞速模式/40行模式",
-        text="#Guideline 规定官方Tetris的三个必备模式之一，考察消除固定行数的用时。一般是消40行，没有其他限制",
-    },
-    {
-        word="ultra;time trial;限时打分;限时极限;限时打分模式;限时极限模式",
-        title="限时打分模式",
-        text="#Guideline 规定官方Tetris的三个必备模式之一，考察固定时间内的得分或消行数。一般是2或3分钟，没有其他限制",
-    },
-    {
-        word="blitz;blitz模式",
-        title="Blitz模式",
-        text="TETR.IO结合马拉松与限时打分两大传统模式的新规则限时打分，考察2分钟内的得分，但是等级/重力/得分倍率逐渐增加\n另见 #Tetris Blitz",
-    },
-    {
-        word="zen;禅;禅模式",
-        title="禅模式",
-        text="（无尽）休闲模式，灵感很可能来自宝开早年游戏。方块里的此模式都会被设计成没有速度要求，但是否无尽不一定",
-    },
-    {
-        word="mph",
-        title="Memoryless-Previewless-Holdless",
-        text="一个游戏模式，纯随机块序+无Next+无Hold，目标通常是完成40L，非常考验玩家反应速度",
-    },
-    {
         word="lpm;bpm;ppm;pps;kpm;kps",
         title="速度",
         text="Line per Min，每分钟消行数\nPiece/Block/Drop per Min/Sec，每分钟/每秒落块数\nKey per Min/Sec，每分钟/每秒按键数",
@@ -478,6 +448,11 @@ local main={
         text="指有意识地通过特定的普通消行改善地形，例如消四堆叠时用普通消行整地等待I块、对战时用特定技巧把地形削成T-Spin形状",
     },
     {
+        word="挖掘;dig",
+        title="挖掘",
+        text="指消除由对手或系统送来的灰色垃圾行",
+    },
+    {
         word="攻击;进攻;防守;防御;攻防",
         title="对战攻防",
         text="攻击：通过消除给对手发送垃圾行；\n防御（相杀）：用攻击抵消别人送来但还没上涨的垃圾行；\n反击：故意吃下对手的攻击（不抵消）然后再进行反击",
@@ -744,6 +719,11 @@ local main={
         word="秘密段位;secret grade;大于号;小于号;>;<",
         title="秘密段位",
         text="出自TGM系列的彩蛋玩法。拼图拼出“每行仅有一个洞且排成大于号的图形”。最高目标是完成19行并封口",
+    },
+    {
+        word="zone",
+        title="Zone",
+        text="TE:C中的特色机制，消行充能后可以激活进入无敌模式，期间无重力，填满的行不消除而是移到场地底部，堆满或者倒计时结束时退出，一次性消除所有填满的行",
     },
     {
         word="cc;cold clear",
@@ -1413,17 +1393,83 @@ for _,d in next,(FILE.load('task/game_db.lua','-luaon')) do
 end
 
 ---@type Zict.Entry[]
-local extra_tetrio={
+local extra_mode={
     {
-        word="qp2;io qp2;io s2;爬塔;zenith;zenith tower",
+        word="marathon;马拉松;马拉松模式",
+        title="马拉松模式",
+        text="#Guideline 规定官方Tetris的三个必备模式之一，源自于经典块的玩法，重力和得分倍率逐渐增加，考察生存能力和得分效率。绝大多数游戏中是15级/150行",
+    },
+    {
+        word="40l;40line;40lines;sprint;time attack;竞速;竞速模式",
+        title="竞速模式/40行模式",
+        text="#Guideline 规定官方Tetris的三个必备模式之一，考察消除固定行数的用时。一般是消40行，没有其他限制",
+    },
+    {
+        word="ultra;time trial;限时打分;限时极限;限时打分模式;限时极限模式",
+        title="限时打分模式",
+        text="#Guideline 规定官方Tetris的三个必备模式之一，考察固定时间内的得分或消行数。一般是2或3分钟，没有其他限制",
+    },
+    {
+        word="zen;禅;禅模式",
+        title="禅模式",
+        text="（无尽）休闲模式，灵感很可能来自宝开早年游戏。方块里的此模式都会被设计成没有速度要求，但是否无尽不一定",
+    },
+    {
+        word="mph",
+        title="Memoryless-Previewless-Holdless",
+        text="一个游戏模式，纯随机块序+无Next+无Hold，目标通常是完成40L，非常考验玩家反应速度",
+    },
+    {
+        word="blitz;blitz模式",
+        title="Blitz模式",
+        text="TETR.IO结合马拉松与限时打分两大传统模式的新规则限时打分，考察2分钟内的得分，但是等级/重力/得分倍率逐渐增加\n另见 #Tetris Blitz",
+    },
+    {
+        word="tetra league;TL;排位;天梯;s2",
+        title="Tetra League",
+        text="TETR.IO的全球排名对战模式，系统匹配实力相近的玩家，输赢会影响段位分、段位、排名\n目前是s2赛季，相比s1把堆b2b加伤换成了surge机制\n另见 #段位",
+    },
+    {
+        word="段;段位;TL段位;TL段;D;D+;C-;C;C+;B-;B;B+;A-;A;A+;S-;S;SS;U;X;X+",
+        title="Tetra League段位",
+        text="TETR.IO中TL模式的段位分（TR）范围是0~25000（由内部的glicko分和rd综合计算），每次变动后会按排名在总玩家数中的占比刷新段位\n段位从低到高依次是：D(+) C(±) B(±) A(±) S(-) SS U X(+)",
+        detail="很久没打会随时间增加rd值，超过100后段位会重新变为未定段（问号）\ns2的TR中位数改为了10000，拉开顶端玩家差距\n段位不实时更新，只在游玩后按总排名刷新，所以有个额外规则是打赢后哪怕按实际排名应该掉段也不会掉，打输同理",
+    },
+    {
+        word="countdown;倒计时;倒计时模式",
+        title="Countdown模式",
+        text="TE:C中的一个单人模式，每若干块后天上会自动掉下I块（位置提前提示），玩家要尽可能用这种I块消除行",
+    },
+    {
+        word="purify;净化;净化模式",
+        title="Purify模式",
+        text="TE:C中的一个单人模式，类似于其他游戏的挖掘模式，目标是尽快消除更多垃圾行",
+    },
+    {
+        word="mystery",
+        title="Mystery模式",
+        text="TE:C中的一个单人模式，系统会随机激活特殊机制（多数为负面），目标和马拉松一样",
+    },
+    {
+        word="zone battle;zb",
+        title="Zone Battle模式",
+        text="TE:C中的一个对战模式，和正常对战相比引入Zone，期间垃圾行不会上涨且可以通过一次消除十几行打出巨量攻击",
+    },
+    {
+        word="qp2;io qp2;爬塔",
         title="TETR.IO QP2",
         text="随开随打的第二代快速游戏，发送攻击升级 #推进器，在 #疲劳时间 前打败对手爬升高度达到天顶之塔的第 #十层 ！\n另见 #Surge #速通 #QP2 Mod #qp16/tl30 [用户名]",
         link="github.com/MrZ626/modern_tetris_cn_community/blob/main/io_qp2_rule/full.md",
     },
     {
+        word="天顶之塔;天顶塔;天穹塔;zenith tower;zenith",
+        title="[QP2机制] 天穹塔",
+        text="TETR.IO中QP2模式中的游戏背景，玩家得分爬高对应在塔中爬到更高的高度\n另见 #楼层",
+    },
+    {
         word="十层;楼层;f10;floor;floors",
         title="[QP2机制] 楼层",
-        text="十层分别是：初始大厅、酒店(50m)、赌场(150m)、竞技场(300m)、博物馆(450m)、废弃办公楼(650m)、实验室(850m)、核心(1100m)、污染区(1350m)、神之境(1650m)",
+        text="天穹塔的十层分别是：初始大厅、酒店(50m)、赌场(150m)、竞技场(300m)、博物馆(450m)、废弃办公楼(650m)、实验室(850m)、核心(1100m)、污染区(1350m)、神之境(1650m)",
     },
     {
         word="推进器",
@@ -1743,7 +1789,7 @@ loadData(utils)
 loadData(main)
 loadData(pattern)
 loadData(game)
-loadData(extra_tetrio)
+loadData(extra_mode)
 loadData(contributor)
 
 LOG('info',"Zictionary Data Loaded, total "..#zict.entryList.." entries")
