@@ -1,13 +1,7 @@
 local available=Config.extraData.llmModel and Config.extraData.llmSystemPrompt and Config.extraData.llmKey
 if not available then LOG('warn',"LLM模块需要配置3个参数") end
 local errMsg="有人能告诉"..Config.adminName.."，我的AI有问题"
-local denyTexts={
-    "你没有足够的权限喵",
-    "Permission Denied喵",
-    "你是谁！（后跳）",
-    Config.adminName.."才能这样做喵",
-    "我只听"..Config.adminName.."的喵！",
-}
+local atStr="%[CQ:at,qq="..Config.botID.."%]"
 
 local msgID=0
 local curlCmd=[[
@@ -133,7 +127,9 @@ local function task_apiCallThread(S,M,userMsg)
                 if msg.content:find("<忽略>") then
                     LOG('info',"LLM跳过发言")
                 else
-                    S:send(msg.content:gsub("%*%*",""))
+                    local final=msg.content:gsub("%*%*","")
+                    LOG('info',"LLM发言："..final)
+                    S:send(final)
                 end
             else
                 if S:forceLock('llm_no_content',26) then
@@ -152,18 +148,15 @@ end
 return {
     message=function(S,M)
         if not available then return false end
-        local msg=STRING.trim(M.raw_message)
-        local atMsg=msg:match("^%[CQ:at,qq="..Config.botID.."%]%s*(.*)$")
-        if atMsg then
-            if Bot.isAdmin(M.user_id) then
-                TASK.new(task_apiCallThread,S,M,"<互动消息>"..atMsg)
-            else
-                if S:forceLock('llm_permission_denied',26) then S:send(TABLE.getRandom(denyTexts)) end
+        if Bot.isAdmin(M.user_id) or S:lock('llm_cooldown',26) then
+            local msg=STRING.trim(M.raw_message)
+            if msg:match(atStr) or msg:lower():match("小z") or msg:lower():match("zita") then
+                TASK.new(task_apiCallThread,S,M,"<互动消息>"..msg:gsub(atStr,""))
+                return true
+            elseif (msg:match("%?$") or msg:match("？") or msg:match("什么") or msg:match("怎么")) and MATH.between(#msg,12,260) then
+                TASK.new(task_apiCallThread,S,M,"<潜在提问>"..msg)
+                return true
             end
-            return true
-        elseif (msg:match("%?$") or msg:match("？") or msg:match("什么") or msg:match("怎么")) and MATH.between(#msg,12,260) and S:lock('llm_question',26) then
-            TASK.new(task_apiCallThread,S,M,"<潜在提问>"..msg)
-            return true
         end
         return false
     end,
