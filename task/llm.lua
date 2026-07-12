@@ -30,6 +30,7 @@ local tools={
     },
 }
 
+local failBuffer={}
 local buf=STRING.newBuf()
 local function executeTool(S,func)
     local suc,args=pcall(JSON.decode,func.arguments)
@@ -40,9 +41,7 @@ local function executeTool(S,func)
         local entry=Config.extraData._zict[args.term:gsub('%s',''):lower()]
         LOG('info',"LLM查询词典 "..args.term..(entry and "（成功）" or "（未找到）"))
         if not entry then
-            for _,qq in next,Config.extraData.llmDict404notify or NONE do
-                Bot.sendMsg("词典404："..args.term,qq)
-            end
+            table.insert(failBuffer,args.term)
             return "未找到词条："..args.term
         end
         buf:reset()
@@ -126,6 +125,13 @@ local function task_apiCallThread(S,M,mode,userMsg)
                 })
             end
         else
+            -- 404 Notify
+            if #failBuffer>0 then
+                local terms=table.concat(failBuffer,", ")
+                for _,qq in next,Config.extraData.llmDict404notify or NONE do
+                    Bot.sendMsg("词典404："..terms,qq)
+                end
+            end
             -- Response
             if msg.content then
                 if msg.content:match("<忽略>") then
