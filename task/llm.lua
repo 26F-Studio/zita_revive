@@ -128,6 +128,7 @@ local function task_apiCallThread(S,M,mode,userMsg)
             -- 404 Notify
             if #failBuffer>0 then
                 local terms=table.concat(failBuffer,", ")
+                TABLE.clear(failBuffer)
                 for _,qq in next,Config.extraData.llmDict404notify or NONE do
                     Bot.sendMsg("词典404："..terms,qq)
                 end
