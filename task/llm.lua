@@ -156,13 +156,13 @@ return {
         local atMsg=msg:match("^%[CQ:at,qq="..Config.botID.."%]%s*(.*)$")
         if atMsg then
             if Bot.isAdmin(M.user_id) then
-                TASK.new(task_apiCallThread,S,M,"<点名消息>"..atMsg)
+                TASK.new(task_apiCallThread,S,M,"<普通消息>"..atMsg)
             else
                 if S:forceLock('llm_permission_denied',26) then S:send(TABLE.getRandom(denyTexts)) end
             end
             return true
         elseif (msg:match("%?$") or msg:match("？") or msg:match("什么") or msg:match("怎么")) and MATH.between(#msg,12,260) and S:lock('llm_question',26) then
-            TASK.new(task_apiCallThread,S,M,"<疑似游戏提问>"..msg)
+            TASK.new(task_apiCallThread,S,M,"<疑似提问>"..msg)
             return true
         end
         return false
