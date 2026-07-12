@@ -42,22 +42,22 @@ local conf={
     extraData={ -- 任意额外数据，任务有需要配置的参数时可以从这里存取
     },
 
-    botID=-1, -- bot的qq号，登录后会自动获取并覆盖写入，不过如果有task预加载时就要用到的话需要手动配置
-    nickName=false, -- bot的qq昵称，同上
-    adminName="管理员", -- 对超管的称呼
-    maxCharge=620, -- 默认的群能量点数，部分任务会用到这个数值约束使用频率
-    sessionHistoryLen=62, -- 每个会话缓存的历史消息数量
-
     -- 沙箱路径，末尾需要斜杠，目前只有“把画布保存为可发送图片”的功能需要
     sandboxRealPath="/home/z/App/napcat/sandbox/", -- 可用的图片文件保存路径
     sandboxPath="http://localhost:3002/sandbox/", -- bot框架能访问到图片的网络路径
 
+    botID=-1, -- bot的qq号，登录后会自动获取并覆盖写入，不过如果有task预加载时就要用到的话需要手动配置
+    botName="unknown", -- bot的qq昵称，同上
+    adminName="管理员", -- 对超管的称呼
+    maxCharge=620, -- 默认的群能量点数，部分任务会用到这个数值约束使用频率
+    sessionHistoryLen=62, -- 每个会话缓存的历史消息数量
+
     -- debug开关，推荐只用root任务手动修改，设为true后收到消息会在控制台打日志
-    debugLog_send=false,
-    debugLog_message=false,
-    debugLog_notice=false,
-    debugLog_request=false,
-    debugLog_response=false,
+    log_send=false,
+    log_message=false,
+    log_notice=false,
+    log_request=false,
+    log_response=false,
 }
 
 return conf

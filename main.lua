@@ -90,7 +90,7 @@ function Bot._send(data)
     end
     local suc,res=pcall(JSON.encode,data)
     if suc then
-        if Config.debugLog_send then
+        if Config.log_send then
             print(TABLE.dump(data))
         end
         ws:send(res)
@@ -218,16 +218,8 @@ function Bot.kick(group_id,user_id,reject_rejoin)
 end
 
 local function userInfoHandler(data)
-            if data.user_id then
-                Config.botID=data.user_id
-            else
-                LOG('warn',"Failed to get bot ID")
-            end
-            if data.nickname then
-                Config.nickName=data.nickname
-            else
-                LOG('warn',"Failed to get bot nickname")
-            end
+    Config.botID=data.user_id
+    Config.nickName=data.nickname
 end
 function Bot.refreshUserInfo()
     if Config.botID and Config.botID>0 then return end
@@ -372,10 +364,10 @@ function Bot._update()
                 end)
             end
         end
-        if Config.debugLog_message and res.post_type=='message' then print("[DEBUG] message",TABLE.dump(res)) end
-        if Config.debugLog_notice and res.post_type=='notice' then print("[DEBUG] notice",TABLE.dump(res)) end
-        if Config.debugLog_request and res.post_type=='request' then print("[DEBUG] request",TABLE.dump(res)) end
-        if Config.debugLog_response and not res.post_type then print("[DEBUG] response",TABLE.dump(res)) end
+        if Config.log_message and res.post_type=='message' then print("[DEBUG] message",TABLE.dump(res)) end
+        if Config.log_notice and res.post_type=='notice' then print("[DEBUG] notice",TABLE.dump(res)) end
+        if Config.log_request and res.post_type=='request' then print("[DEBUG] request",TABLE.dump(res)) end
+        if Config.log_response and not res.post_type then print("[DEBUG] response",TABLE.dump(res)) end
     elseif op~='pong' then
         print("[inside: "..op.."]")
         if type(pack)=='string' and #pack>0 then print(pack) end
