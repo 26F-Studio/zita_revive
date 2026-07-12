@@ -55,6 +55,7 @@ Emoji=require'data.emoji'
 local Bot={
     state='dead', ---@type 'dead'|'connecting'|'running'
     delayedAction={}, ---@type {time:number, func:function, data:any}[]
+    handlerID=0,
     handlerCache={}, ---@type Map<function>
     stat={
         connectAttempts=0,
@@ -80,10 +81,12 @@ _G.Bot=Bot
 
 ---@param data table
 function Bot._send(data)
-    if type(data.echo)=='function' then
-        ---@diagnostic disable-next-line
-        Bot.handlerCache[tostring(data.echo)]=data.echo
-        data.echo=tostring(data.echo)
+    if data.handler then
+        if data.echo then LOG('warn',"Bot._send: req.handler overwrites req.echo") end
+        Bot.handlerID=Bot.handlerID+1
+        data.echo='handler_'..Bot.handlerID
+        Bot.handlerCache[data.echo]=data.handler
+        data.handler=nil
     end
     local suc,res=pcall(JSON.encode,data)
     if suc then
@@ -219,7 +222,7 @@ function Bot.refreshUserInfo()
     Bot._send{
         action='get_login_info',
         params={},
-        echo=function(data)
+        handler=function(data)
             if data.user_id then
                 Config.botID=data.user_id
             else
@@ -239,7 +242,7 @@ function Bot.getMsg(msg_id,handler)
     Bot._send{
         action='get_msg',
         params={message_id=msg_id},
-        echo=handler,
+        handler=handler,
     }
 end
 ---@param handler fun(data:table)
@@ -247,7 +250,7 @@ function Bot.getGroupInfo(group_id,handler)
     Bot._send{
         action='get_group_info',
         params={group_id=group_id},
-        echo=handler,
+        handler=handler,
     }
 end
 ---@param handler fun(data:table)
@@ -255,7 +258,7 @@ function Bot.getMemberList(group_id,handler)
     Bot._send{
         action='get_group_member_list',
         params={group_id=group_id},
-        echo=handler,
+        handler=handler,
     }
 end
 
