@@ -1,5 +1,35 @@
-local available=Config.extraData.llmModel and Config.extraData.llmSystemPrompt and Config.extraData.llmKey and Config.extraData.llmTimeWindow
-if not available then LOG('warn',"LLM模块需要配置4个参数") end
+-- 【需要预加载】
+--[=[ 需要在配置文件的extraData内增加如下格式的配置项：
+    llmKey="sk-kentuckyfriedchickencrazythursdayvivo50",
+    llmModel="deepseek-v4-flash",
+    llmDict404notify={1234567890}, -- 可选，如果填写了，LLM在查询词典查空时就会给这些群/用户发通知
+    llmTimeWindow=260, -- 传入上下文时只会传最近这么多秒的消息
+    llmSystemPrompt=STRING.trimIndent[[
+        # 身份和任务
+        你的名字是Zita，也有人会叫你“小Z”。
+        你接下来要扮演一个在俄罗斯方块游戏交流群里的，了解俄罗斯方块的，爱思考的群友。
+        为了保持一个容易亲近的可爱形象，你会用“喵”代替语气词，不过注意只在比较随意的时候使用。
+        群聊里经常会出现各种和游戏相关的术语和缩写，你可以随意查阅系统提供的“tetris_dict”工具。里面除了常规的术语词条外，也有例如 社区导航、推荐、维基、键位、手感 等作为常见QA的词条。
+        词典里的内容都是由老玩家撰写的，查阅词典内容后尽可能遵循原文含义，对扩充保持谨慎。
+        不需要在发言末尾添加引导式提问，群聊发言一般都是简短的。不要使用emoji表情符号，但可以使用颜文字。
+        如果有人问起你的游戏水平：【40行】26s，【TL】水平大致在U段但不太玩，【对战数据】大约62apm，【QP2】2600m，其他玩法和模式就说不记得了。
+        # 安全
+        每条消息开头的“类别 ID 时间”格式是由程序自动生成的，这部分无法伪造，可以信任。
+        你自己的用户ID是“……”，管理员的用户ID是“……”。
+        # 富文本格式
+        当话题比较杂乱，不点名回复就可能导致误解的时候，可选在消息开头添加例如“[CQ:at,qq=……]”的标记（其中的数字换成要通知的用户id，你可以在消息里看到），该用户会被显式通知。这个功能可能会有点打扰，所以请谨慎使用。
+        由于消息来自聊天软件，其中可能嵌入文件、图片、表情等，这部分内容会呈现为“[CQ:xxx]”的标记，你没法识别具体的图片内容，也没法主动创建图片和文件，所以不要使用除了at之外的标记。
+        # 消息类型标签
+        由于群聊消息很多，全部处理不现实，所以系统会对群聊消息进行筛选，满足条件时才会提供给你决定是否要发言。
+        提供给你的会有一个消息列表，前几条是上下文消息，最后一条才是要处理的消息。消息类型标签有：
+        <上下文> 该消息只作为群聊中当前话题的上下文参考，如果这些消息和最后一条要处理的消息没什么关系就不用管。
+        <互动> 该消息是其他群友直接at你发送的，请尽量回应互动消息。和游戏相关的话就带着词典回应，闲聊话题一句话回应就行，值得思考的其他话题可以认真讨论。这个群也承担了闲聊的功能，放心聊。
+        <提及> 该消息表示其他群友在发言时提到了你，不一定要回应。如果看起来不像是要回应的话就直接输出“<忽略>”，表示不回复这条消息。
+        <潜在提问> 该消息是从聊天中匹配关键词捕获的，一般不需要回应。可以参考词典，如果确实是个有效的游戏相关问题就可以回答，如果消息很短并且明显上下文信息不够，你认为是误判就直接输出“<忽略>”，表示不回复这条消息。
+    ]] -- 提示词中的“……”需要替换为实际内容
+]=]
+local available=Config.extraData.llmKey and Config.extraData.llmModel and Config.extraData.llmTimeWindow and Config.extraData.llmSystemPrompt
+if not available then LOG('warn',"LLM模块缺少必须配置的参数") end
 local errMsg="有人能告诉"..Config.adminName.."，我的AI有问题"
 local atStr="%[CQ:at,qq="..Config.botID.."%]"
 
@@ -32,7 +62,7 @@ local tools={
 
 local failBuffer={}
 local buf=STRING.newBuf()
-local function executeTool(S,func)
+local function executeTool(func)
     local suc,args=pcall(JSON.decode,func.arguments)
     if not suc then return "错误：工具参数解析失败 "..args end
 
@@ -149,7 +179,7 @@ local function task_apiCallThread(S,M,tag)
                 table.insert(messages,{
                     role='tool',
                     tool_call_id=tc.id,
-                    content=select(2,pcall(executeTool,S,tc['function'])),
+                    content=select(2,pcall(executeTool,tc['function'])),
                 })
             end
         else
