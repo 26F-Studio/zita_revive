@@ -130,7 +130,7 @@ local function task_apiCallThread(S,M,userMsg)
         else
             -- Response
             if msg.content then
-                if msg.content:find("<skip>") then
+                if msg.content:find("<忽略>") then
                     LOG('info',"LLM跳过发言")
                 else
                     S:send(msg.content:gsub("%*%*",""))
@@ -156,7 +156,7 @@ return {
         local atMsg=msg:match("^%[CQ:at,qq="..Config.botID.."%]%s*(.*)$")
         if atMsg then
             if Bot.isAdmin(M.user_id) then
-                TASK.new(task_apiCallThread,S,M,atMsg)
+                TASK.new(task_apiCallThread,S,"<点名消息>"..M,atMsg)
             else
                 if S:forceLock('llm_permission_denied',26) then S:send(TABLE.getRandom(denyTexts)) end
             end
