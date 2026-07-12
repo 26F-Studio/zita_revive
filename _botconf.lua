@@ -45,7 +45,7 @@ local conf={
     botID=0000000000, -- bot的qq号
     adminName="管理员", -- 对超管的称呼
     maxCharge=620, -- 默认的群能量点数，部分任务会用到这个数值约束使用频率
-    sessionHistoryLen=26, -- 每个会话缓存的历史消息数量
+    sessionHistoryLen=62, -- 每个会话缓存的历史消息数量
 
     -- 沙箱路径，末尾需要斜杠，目前只有“把画布保存为可发送图片”的功能需要
     sandboxRealPath="/home/z/App/napcat/sandbox/", -- 可用的图片文件保存路径
