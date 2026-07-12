@@ -92,7 +92,7 @@ local function convertMsg(M,prefix)
         content=string.format("%s %s %s\n%s",
             prefix,
             "用户"..M.user_id,
-            os.date("%Y-%m-%d %H:%M:%S",M.time),
+            os.date("%Y/%m/%d %H:%M:%S",M.time),
             RawStr(M.raw_message)
         ),
     }
