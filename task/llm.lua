@@ -153,7 +153,7 @@ return {
             if msg:match(atStr) or msg:lower():match("小z") or msg:lower():match("zita") then
                 TASK.new(task_apiCallThread,S,M,"<互动消息>"..msg:gsub(atStr,""))
                 return true
-            elseif (msg:match("%?$") or msg:match("？") or msg:match("什么") or msg:match("怎么")) and MATH.between(#msg,12,260) then
+            elseif (msg:match("%?$") or msg:match("？$") or msg:match("吗$") or msg:match("怎么")) and MATH.between(#msg,12,260) then
                 TASK.new(task_apiCallThread,S,M,"<潜在提问>"..msg)
                 return true
             end
