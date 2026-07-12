@@ -70,7 +70,7 @@ local function task_apiCallThread(S,M,userMsg)
         tools=tools,
     }
 
-    for _=1,3 do
+    for _=1,5 do
         local jsonSend,jsonRecv
         do
             local suc,res=pcall(JSON.encode,data)
