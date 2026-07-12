@@ -1,3 +1,11 @@
+--[[ 可以在配置文件的extraData内增加如下格式的配置项：
+    customCmd={
+        pwn={
+            level=2,
+            func="echo 'remote command executed'",
+        },
+    },
+]]
 local codeEnv={}
 for _,v in next,{
     'next','print','tonumber','tostring','type',
@@ -27,12 +35,12 @@ local function noPermission(S)
     end
 end
 
----@type table<string,string|{level:number,func:fun(S:Session, args:string[], M:OneBot.Event.Message, D:Session.data)}>
+---@type table<string,string|{level:number,func:string|fun(S:Session, args:string[], M:OneBot.Event.Message, D:Session.data)}>
 local commands={
-    ['test']={level=1,func=function(S,args,M,D)
+    test={level=1,func=function(S,args,M,D)
         -- something
     end},
-    ['help']={level=0,func=function(S)
+    help={level=0,func=function(S)
         local result=STRING.trimIndent([[
             小z可以做这些事情喵：
             %stop <分钟> 急停 （群管可用）
@@ -43,33 +51,33 @@ local commands={
         ]],true)
         S:send(result)
     end},
-    ['stop']={level=1,func=function(S,args)
+    stop={level=1,func=function(S,args)
         local time=math.max(tonumber(args[1]) or 30,1)
         LOG('warn',"[STOP] "..S.uid..", "..time.."m")
         S:send(("本群紧急停机%d分钟喵！"):format(time))
         TASK.lock('newSession_'..S.id,time*60)
         SessionMap[S.uid]=nil
     end},
-    ['stat']={level=2,func=function(S)
+    stat={level=2,func=function(S)
         S:send(STRING.repD("已运行$1，共发$2条消息",STRING.time_simp(Time()-Bot.stat.launchTime),Bot.stat.messageSent))
     end},
-    ['log']={level=2,func=function(_,_,M,D)
+    log={level=2,func=function(_,_,M,D)
         D._log=not D._log
         Bot.reactMessage(M.message_id,D._log and Emoji.hollow_red_circle or Emoji.cross_mark)
     end},
-    ['task']={level=2,func=function(S)
+    task={level=2,func=function(S)
         local result="本群有这些事务喵："
         for _,task in next,S.taskList do
             result=result..'\n'..task.id
         end
         S:send(result)
     end},
-    ['shutdown']={level=2,func=function(S)
+    shutdown={level=2,func=function(S)
         LOG('warn',"[SHUTDOWN]")
         S:send("小z紧急停止了喵！")
         Bot.stop()
     end},
-    ['restart']={level=2,func=function(S,args)
+    restart={level=2,func=function(S,args)
         LOG('warn',"[RESTART]")
         if not args[1] then
             Config=FILE.load('botconf.lua','-lua')
@@ -151,14 +159,14 @@ return {
                 local args=STRING.split(mes,' ')
                 local cmd=table.remove(args,1):sub(2)
                 local C=commands[cmd] or Config.extraData.customCmd[cmd]
-                if type(C)=='table' then
-                    if level>=C.level then
+                if level>=C.level then
+                    if type(C.func)=='function' then
                         C.func(S,args,M,D)
-                    else
-                        noPermission(S)
+                    elseif type(C.func)=='string' then
+                        ASYNC.runCmd('root_'..cmd,C.func)
                     end
-                elseif type(C)=='string' then
-                    ASYNC.runCmd('root_'..C,C)
+                else
+                    noPermission(S)
                 end
                 return true
             end
