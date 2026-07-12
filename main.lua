@@ -577,22 +577,15 @@ function Session:delete(id)
         end
     end
 end
----@param M OneBot.Event.Message
-function Session:sticker(M)
-    Bot.reactMessage(M.message_id)
-end
-
----Notice that time must be less than 86400 (1 day)
 ---@param text Sendable
----@param time? number seconds (default to 0.26~1.26s)
+---@param time? number seconds (default to 0.26~1.26s), must <= 86400 (1 day)
 function Session:delaySend(text,time)
     if time and time>86400 or not text then return end
     if time==nil then time=.26+math.random() elseif time<=0 then return self:send(text,echo) end
     self:_timeTask(self.send,time,{self,text})
 end
----Notice that time must be less than 86400 (1 day)
 ---@param id number|string string means search id from Session.echos
----@param time? number seconds (default to 0.26~1.26s)
+---@param time? number seconds (default to 0.26~1.26s), must <= 86400 (1 day)
 function Session:delayDelete(id,time)
     if time and time>86400 then return end
     if time==nil then time=.26+math.random() elseif time<=0 then return self:delete(id) end
