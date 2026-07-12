@@ -109,6 +109,7 @@ local function task_apiCallThread(S,M,tag)
     local messages={}
     table.insert(messages,{role='system',content=Config.extraData.llmSystemPrompt})
     for _,m in next,S.history do
+        ---@cast m OneBot.Event.PrivateMessage | OneBot.Event.GroupMessage
         if M.time-m.time<Config.extraData.llmTimeWindow and m.raw_message then
             table.insert(messages,convertMsg(m,'<上下文>'))
         end
