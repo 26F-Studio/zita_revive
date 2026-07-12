@@ -124,7 +124,8 @@ local function task_apiCallThread(S,M,userMsg)
         else
             -- Response
             if msg.content then
-                if msg.content:find("<忽略>") then
+                if msg.content:match("<忽略>") then
+                    S:forceLock('llm_cooldown',6.26)
                     LOG('info',"LLM跳过发言")
                 else
                     local final=msg.content:gsub("%*%*","")
