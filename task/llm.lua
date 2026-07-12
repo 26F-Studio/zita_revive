@@ -80,7 +80,7 @@ local function task_apiCallThread(S,M,tag)
     local messages={}
     table.insert(messages,{role='system',content=Config.extraData.llmSystemPrompt})
     for _,m in next,S.history do
-        if M.time-m.time>Config.extraData.llmTimeWindow then
+        if M.time-m.time<Config.extraData.llmTimeWindow then
             table.insert(messages,convertMsg(m,'<上下文>'))
         end
     end
