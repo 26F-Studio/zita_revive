@@ -524,8 +524,10 @@ function Session:receive(M,type)
             break
         end
     end
-    self.history[Config.sessionHistoryLen]=nil
-    table.insert(self.history,1,M)
+    table.insert(self.history,M)
+    while #self.history>Config.sessionHistoryLen do
+        table.remove(self.history,1)
+    end
 end
 
 ---@param text Sendable
