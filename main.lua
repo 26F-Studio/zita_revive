@@ -358,6 +358,16 @@ function Bot._update()
                     end
                 end
             end
+            if res.data and res.data.message_id and TABLE.getSize(res.data)==1 then
+                Bot.getMsg(res.data.message_id,function(data)
+                    ---@cast data OneBot.Event.PrivateMessage | OneBot.Event.GroupMessage
+                    if data.message_type=='group' then
+                        SessionMap['g'..data.group_id]:appendHistory(data)
+                    elseif data.message_type=='private' then
+                        SessionMap['p'..data.user_id]:appendHistory(data)
+                    end
+                end)
+            end
         end
         if Config.debugLog_message and res.post_type=='message' then print("[DEBUG] message",TABLE.dump(res)) end
         if Config.debugLog_notice and res.post_type=='notice' then print("[DEBUG] notice",TABLE.dump(res)) end
@@ -552,6 +562,10 @@ function Session:receive(M,type)
             break
         end
     end
+    self:appendHistory(M)
+end
+---@param M OneBot.Event.Base
+function Session:appendHistory(M)
     table.insert(self.history,M)
     while #self.history>Config.sessionHistoryLen do
         table.remove(self.history,1)
