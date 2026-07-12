@@ -52,7 +52,7 @@ local function executeTool(toolCall)
     end
 end
 
-local function task_apiCallThread(S,M,userMsg)
+local function task_apiCallThread(S,M,mode,userMsg)
     msgID=msgID+1
     local sid="["..msgID.."]"
     LOG('info',sid.." "..S.uid.."-"..M.user_id.." LLM输入："..userMsg)
@@ -125,8 +125,10 @@ local function task_apiCallThread(S,M,userMsg)
             -- Response
             if msg.content then
                 if msg.content:match("<忽略>") then
-                    S:forceLock('llm_cooldown',6.26)
                     LOG('info',"LLM跳过发言")
+                    if mode~='question' then
+                        Bot.reactMessage(M.message_id,Emoji.white_question_mark)
+                    end
                 else
                     local final=msg.content:gsub("%*%*","")
                     LOG('info',"LLM发言："..final)
@@ -150,18 +152,29 @@ end
 return {
     message=function(S,M)
         if not available then return false end
-        if Bot.isAdmin(M.user_id) or S:lock('llm_cooldown',26) then
-            local msg=STRING.trim(M.raw_message)
-            if msg:match(atStr) then
-                TASK.new(task_apiCallThread,S,M,"<互动>"..msg:gsub(atStr,""))
-                return true
-            elseif msg:lower():match("小z") or msg:lower():match("zita") then
-                TASK.new(task_apiCallThread,S,M,"<提及>"..msg)
-                return true
-            elseif (msg:match("%?$") or msg:match("？$") or msg:match("吗$")) and MATH.between(#msg,12,260) then
-                TASK.new(task_apiCallThread,S,M,"<潜在提问>"..msg)
-                return true
+        local isAdmin=Bot.isAdmin(M.user_id)
+        local msg=STRING.trim(M.raw_message)
+        if msg:match(atStr) then
+            if isAdmin or S:lock('llm_cd_interact',16) then
+                TASK.new(task_apiCallThread,S,M,'interact',"<互动>"..msg:gsub(atStr,""))
+            else
+                Bot.reactMessage(M.message_id,Emoji.snail)
             end
+            return true
+        elseif msg:lower():match("小z") or msg:lower():match("zita") then
+            if isAdmin or S:lock('llm_cd_mention',26) then
+                TASK.new(task_apiCallThread,S,M,'mention',"<提及>"..msg)
+            else
+                Bot.reactMessage(M.message_id,Emoji.snail)
+            end
+            return true
+        elseif (msg:match("%?$") or msg:match("？$") or msg:match("吗$")) and MATH.between(#msg,12,260) then
+            if isAdmin or S:lock('llm_cd_question',42) then
+                TASK.new(task_apiCallThread,S,M,'question',"<潜在提问>"..msg)
+            else
+                Bot.reactMessage(M.message_id,Emoji.snail)
+            end
+            return true
         end
         return false
     end,
