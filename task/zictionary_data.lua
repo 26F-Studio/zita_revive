@@ -168,6 +168,12 @@ local main={
         link="tetriswiki.cn/p/TSA",
     },
     {
+        word="ctwc",
+        title="Classical Tetris World Championship",
+        text="创办于2010年，比赛使用NES版俄罗斯方块，有很多有趣的历史和故事",
+        link="tetriswiki.cn/p/CTWC",
+    },
+    {
         word="lpm;bpm;ppm;pps;kpm;kps",
         title="速度",
         text="Line per Min，每分钟消行数\nPiece/Block/Drop per Min/Sec，每分钟/每秒落块数\nKey per Min/Sec，每分钟/每秒按键数",
