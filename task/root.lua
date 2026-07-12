@@ -37,11 +37,16 @@ end
 
 ---@type table<string,string|{level:number,func:string|fun(S:Session, args:string[], M:OneBot.Event.Message, D:Session.data)}>
 local commands={
-    test={level=1,func=function(S,args,M,D)
-        -- something
-    end},
-    help={level=0,func=function(S)
-        local result=STRING.trimIndent([[
+    test={
+        level=1,
+        func=function(S,args,M,D)
+            -- something
+        end,
+    },
+    help={
+        level=0,
+        func=function(S)
+            local result=STRING.trimIndent([[
             小z可以做这些事情喵：
             %stop <分钟> 急停 （群管可用）
             %restart 重启  %shutdown 关机
@@ -49,77 +54,99 @@ local commands={
             %del (回复)删除回复的消息
             ![lua代码] pwn
         ]],true)
-        S:send(result)
-    end},
-    stop={level=1,func=function(S,args)
-        local time=math.max(tonumber(args[1]) or 30,1)
-        LOG('warn',"[STOP] "..S.uid..", "..time.."m")
-        S:send(("本群紧急停机%d分钟喵！"):format(time))
-        TASK.lock('newSession_'..S.id,time*60)
-        SessionMap[S.uid]=nil
-    end},
-    stat={level=2,func=function(S)
-        S:send(STRING.repD("已运行$1，共发$2条消息",STRING.time_simp(Time()-Bot.stat.launchTime),Bot.stat.messageSent))
-    end},
-    log={level=2,func=function(_,_,M,D)
-        D._log=not D._log
-        Bot.reactMessage(M.message_id,D._log and Emoji.hollow_red_circle or Emoji.cross_mark)
-    end},
-    task={level=2,func=function(S)
-        local result="本群有这些事务喵："
-        for _,task in next,S.taskList do
-            result=result..'\n'..task.id
-        end
-        S:send(result)
-    end},
-    shutdown={level=2,func=function(S)
-        LOG('warn',"[SHUTDOWN]")
-        S:send("小z紧急停止了喵！")
-        Bot.stop()
-    end},
-    restart={level=2,func=function(S,args)
-        LOG('warn',"[RESTART]")
-        if not args[1] then
-            Config=FILE.load('botconf.lua','-lua')
-            codeEnv.Config=Config
-            for k in next,package.loaded do
-                if k:sub(1,5)=='task.' then
-                    package.loaded[k]=nil
-                end
+            S:send(result)
+        end,
+    },
+    stop={
+        level=1,
+        func=function(S,args)
+            local time=math.max(tonumber(args[1]) or 30,1)
+            LOG('warn',"[STOP] "..S.uid..", "..time.."m")
+            S:send(("本群紧急停机%d分钟喵！"):format(time))
+            TASK.lock('newSession_'..S.id,time*60)
+            SessionMap[S.uid]=nil
+        end,
+    },
+    stat={
+        level=2,
+        func=function(S)
+            S:send(STRING.repD("已运行$1，共发$2条消息",STRING.time_simp(Time()-Bot.stat.launchTime),Bot.stat.messageSent))
+        end,
+    },
+    log={
+        level=2,
+        func=function(_,_,M,D)
+            D._log=not D._log
+            Bot.reactMessage(M.message_id,D._log and Emoji.hollow_red_circle or Emoji.cross_mark)
+        end,
+    },
+    task={
+        level=2,
+        func=function(S)
+            local result="本群有这些事务喵："
+            for _,task in next,S.taskList do
+                result=result..'\n'..task.id
             end
-            S:send("配置和会话数据都重置了喵")
-            Bot.reset()
-            collectgarbage()
-        elseif args[1] then
-            local uid=args[1]
-            if not SessionMap[uid] then
-                local privS=SessionMap['p'..uid]
-                local groupS=SessionMap['g'..uid]
-                if privS and groupS then
-                    LOG('info',"Twin Session: "..uid)
-                    S:send("无法唯一确定会话喵")
-                    return
-                elseif privS or groupS then
-                    uid=privS and privS.uid or groupS.uid
+            S:send(result)
+        end,
+    },
+    shutdown={
+        level=2,
+        func=function(S)
+            LOG('warn',"[SHUTDOWN]")
+            S:send("小z紧急停止了喵！")
+            Bot.stop()
+        end,
+    },
+    restart={
+        level=2,
+        func=function(S,args,M)
+            LOG('warn',"[RESTART]")
+            if not args[1] then
+                Config=FILE.load('botconf.lua','-lua')
+                codeEnv.Config=Config
+                for k in next,package.loaded do
+                    if k:sub(1,5)=='task.' then
+                        package.loaded[k]=nil
+                    end
                 end
-            end
-            if SessionMap[uid] then
-                SessionMap[uid]=nil
-                LOG('info',"Delete Session: "..uid)
-                S:send("会话数据清空了喵")
+                Bot.reactMessage(M.message_id,Emoji.hollow_red_circle)
+                Bot.reset()
+                collectgarbage()
+            elseif args[1] then
+                local uid=args[1]
+                if not SessionMap[uid] then
+                    local privS=SessionMap['p'..uid]
+                    local groupS=SessionMap['g'..uid]
+                    if privS and groupS then
+                        LOG('info',"Twin Session: "..uid)
+                        S:send("无法唯一确定会话喵")
+                        return
+                    elseif privS or groupS then
+                        uid=privS and privS.uid or groupS.uid
+                    end
+                end
+                if SessionMap[uid] then
+                    SessionMap[uid]=nil
+                    LOG('info',"Delete Session: "..uid)
+                    S:send("会话数据清空了喵")
+                else
+                    LOG('info',"No Session: "..uid)
+                    S:send("找不到会话喵")
+                end
             else
-                LOG('info',"No Session: "..uid)
-                S:send("找不到会话喵")
+                S:send("（咚）\n……\n这里是哪里喵？")
+                SessionMap[S.id]=nil
             end
-        else
-            S:send("（咚）\n……\n这里是哪里喵？")
-            SessionMap[S.id]=nil
-        end
-    end},
-    ['!']={level=2,func=function(S)
-        local vars=TABLE.getKeys(codeEnv)
-        S:send("有这些变量喵："..table.concat(TABLE.sort(vars),', '))
-    end},
+        end,
+    },
+    ['!']={
+        level=2,
+        func=function(S)
+            local vars=TABLE.getKeys(codeEnv)
+            S:send("有这些变量喵："..table.concat(TABLE.sort(vars),', '))
+        end,
+    },
 }
 
 ---@type Task_raw
