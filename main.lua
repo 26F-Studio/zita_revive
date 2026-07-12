@@ -213,6 +213,43 @@ function Bot.kick(group_id,user_id,reject_rejoin)
         },
     }
 end
+
+function Bot.refreshUserInfo()
+    if Config.botID and Config.botID>0 then return end
+    Bot._send{
+        action='get_login_info',
+        params={},
+        echo=function(data)
+            if data.user_id then
+                Config.botID=data.user_id
+            else
+                LOG('warn',"Failed to get bot ID")
+            end
+            if data.nickname then
+                Config.nickName=data.nickname
+            else
+                LOG('warn',"Failed to get bot nickname")
+            end
+        end,
+    }
+end
+---@param msg_id number
+---@param handler fun(data:table)
+function Bot.getMsg(msg_id,handler)
+    Bot._send{
+        action='get_msg',
+        params={message_id=msg_id},
+        echo=handler,
+    }
+end
+---@param handler fun(data:table)
+function Bot.getGroupInfo(group_id,handler)
+    Bot._send{
+        action='get_group_info',
+        params={group_id=group_id},
+        echo=handler,
+    }
+end
 ---@param handler fun(data:table)
 function Bot.getMemberList(group_id,handler)
     Bot._send{
@@ -221,6 +258,7 @@ function Bot.getMemberList(group_id,handler)
         echo=handler,
     }
 end
+
 function Bot.isManaging(gid)
     return TABLE.find(Config.groupManaging,gid)
 end
@@ -678,6 +716,7 @@ function scene.update()
             Bot.state='running'
             Config.connectInterval=Config.reconnectInterval
             LOG('info',"Connected")
+            Bot.refreshUserInfo()
             -- Bot.adminNotice(Bot.stat.connectAttempts==1 and "小z启动了喵！" or STRING.repD("小z回来了喵…（第$1次）",Bot.stat.connectAttempts))
         end
         while true do

@@ -31,7 +31,6 @@
 local available=Config.extraData.llmKey and Config.extraData.llmModel and Config.extraData.llmTimeWindow and Config.extraData.llmSystemPrompt
 if not available then LOG('warn',"LLM模块缺少必须配置的参数") end
 local errMsg="有人能告诉"..Config.adminName.."，我的AI有问题"
-local atStr="%[CQ:at,qq="..Config.botID.."%]"
 
 local msgID=0
 local curlCmd=[[
@@ -223,7 +222,7 @@ return {
         if not available then return false end
         local isAdmin=Bot.isAdmin(M.user_id)
         local msg=STRING.trim(M.raw_message)
-        if msg:match(atStr) then
+        if msg:match("%[CQ:at,qq="..Config.botID.."%D") then
             if isAdmin or S:lock('llm_cd_interact',16) then
                 TASK.new(task_apiCallThread,S,M,'<互动>')
             else
