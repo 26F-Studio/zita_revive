@@ -48,7 +48,7 @@ return {
                 local date=os.date("%Y-%m-%d %H:%M:%S")
                 local user=rec[M.user_id]
                 if Bot.isManaging(S.id) then
-                    S:delayDelete(MATH.rand(6,12),M.message_id)
+                    S:delayDelete(M.message_id,MATH.rand(6,12))
                     Bot.ban(S.id,M.user_id,MATH.clampInterpolate(
                         2600,26*(#user.history)^2,
                         2.6*86400,0,

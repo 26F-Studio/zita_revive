@@ -344,16 +344,17 @@ function Bot._update()
             -- API response
             ---@cast res OneBot.Event.Response
             if res.echo then
-                if Bot.handlerCache[res.echo] then
-                    local handler=Bot.handlerCache[res.echo]
-                    Bot.handlerCache[res.echo]=nil
+                local echo=res.echo ---@type string
+                if Bot.handlerCache[echo] then
+                    local handler=Bot.handlerCache[echo]
+                    Bot.handlerCache[echo]=nil
                     local s,r=pcall(handler,res.data)
                     if not s then LOG('warn',"Handler Error: "..r) end
-                elseif res.echo:find(':') then
-                    local uid=STRING.before(res.echo,':')
-                    local S=SessionMap[uid]
+                elseif echo:match(':') then
+                    local sid,echoStr=echo:match('(.+):(.+)')
+                    local S=SessionMap[sid]
                     if S then
-                        S.echos[STRING.after(res.echo,':')]=res.data
+                        S.echos[echoStr]=res.data.message_id
                     end
                 end
             end
@@ -593,19 +594,17 @@ function Session:sticker(M)
 end
 
 ---Notice that time must be less than 86400 (1 day)
----@param time number|nil seconds
 ---@param text Sendable
----@param echo? string
-function Session:delaySend(time,text,echo)
+---@param time? number seconds (default to 0.26~1.26s)
+function Session:delaySend(text,time)
     if time and time>86400 or not text then return end
     if time==nil then time=.26+math.random() elseif time<=0 then return self:send(text,echo) end
-    if echo then echo=self.uid..':'..echo end
-    self:_timeTask(self.send,time,{self,text,echo})
+    self:_timeTask(self.send,time,{self,text})
 end
 ---Notice that time must be less than 86400 (1 day)
----@param time number seconds
 ---@param id number|string string means search id from Session.echos
-function Session:delayDelete(time,id)
+---@param time? number seconds (default to 0.26~1.26s)
+function Session:delayDelete(id,time)
     if time and time>86400 then return end
     if time==nil then time=.26+math.random() elseif time<=0 then return self:delete(id) end
     self:_timeTask(self.delete,time,{self,id})

@@ -76,7 +76,7 @@ return {
                 buf:put("小z的知识库更新了！现在有"..wordCnt.."个关键词和"..entryCnt.."个词条喵")
                 S:send(buf)
             elseif S:forceLock('zict_no_permission',26) then
-                S:delaySend(nil,"你不许reload")
+                S:delaySend("你不许reload")
             end
             return true
         end

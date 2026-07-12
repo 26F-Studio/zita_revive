@@ -575,11 +575,11 @@ local function sendMes(S,M,D,mode)
             }
             if reward<=3 then
                 for i=1,reward do
-                    S:delaySend(i*delays.send_reward,CQ.img(getRnd(Config.extraData.touhouImages)))
+                    S:delaySend(CQ.img(getRnd(Config.extraData.touhouImages)),i*delays.send_reward)
                 end
             else
-                S:delaySend(1*delays.send_reward,CQ.img(getRnd(Config.extraData.touhouImages)))
-                S:delaySend(2*delays.send_reward,CQ.img(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg'))
+                S:delaySend(CQ.img(getRnd(Config.extraData.touhouImages)),1*delays.send_reward)
+                S:delaySend(CQ.img(Config.extraData.imgPath..'z1/'..math.random(26)..'.jpg'),2*delays.send_reward)
             end
             t=t.."\n"..("(%.2f/6 | %d)"):format(point,reward)
         end
@@ -591,7 +591,7 @@ local function sendMes(S,M,D,mode)
             if #D.answer==1 then
                 t=t..repD(text.lose.hardAlmost,concat(D.answer[1]))
                 if Config.extraData.family[S.uid] then
-                    S:delaySend(delays.send_reward,CQ.img(getRnd(Config.extraData.touhouImages)))
+                    S:delaySend(CQ.img(getRnd(Config.extraData.touhouImages)),delays.send_reward)
                 end
             else
                 local ans1,ans2=concat(TABLE.popRandom(D.answer)),concat(TABLE.popRandom(D.answer))
@@ -601,7 +601,7 @@ local function sendMes(S,M,D,mode)
             if #D.answer==1 then
                 t=t..repD(text.lose.quandleAlmost,D.answer[1])
                 if Config.extraData.family[S.uid] then
-                    S:delaySend(delays.send_reward,CQ.img(getRnd(Config.extraData.touhouImages)))
+                    S:delaySend(CQ.img(getRnd(Config.extraData.touhouImages)),delays.send_reward)
                 end
             else
                 local ans1,ans2=TABLE.popRandom(D.answer),TABLE.popRandom(D.answer)
@@ -625,7 +625,7 @@ local function sendMes(S,M,D,mode)
             ins(D.mesIDList,mesID)
             if D.mesIDList[2] then
                 for i=#D.mesIDList-1,1,-1 do
-                    S:delayDelete(delays.del_question,D.mesIDList[i])
+                    S:delayDelete(D.mesIDList[i],delays.del_question)
                     rem(D.mesIDList,i)
                 end
             end
@@ -680,7 +680,7 @@ return {
                 S:send(mes:find('qd') and text.helpQD or text.helpAB)
             end
             if delays.del_help and Bot.isManaging(S.id) then
-                S:delayDelete(delays.del_help,M.message_id)
+                S:delayDelete(M.message_id,delays.del_help)
             end
             return true
         elseif mes=='#abandon' or mes=='#quitom' then
@@ -719,7 +719,7 @@ return {
             S:unlock('guess_duplicate')
             D.lastInterectTime=Time()-cooldownSkip.giveup
             if delays.del_abandon and Bot.isManaging(S.id) then
-                S:delayDelete(delays.del_abandon,M.message_id)
+                S:delayDelete(M.message_id,delays.del_abandon)
             end
             return true
         elseif keyword.start[mes] then
@@ -799,7 +799,7 @@ return {
             sendMes(S,M,D,'start')
             D.lastInterectTime=Time()
             if delays.del_start and Bot.isManaging(S.id) then
-                S:delayDelete(delays.del_start,M.message_id)
+                S:delayDelete(M.message_id,delays.del_start)
             end
             return true
         elseif D.playing then
@@ -832,8 +832,8 @@ return {
                     S:send(getRnd(text.guessed),mesID)
                     D.lastInterectTime=Time()
                     if delays.del_duplicate and Bot.isManaging(S.id) then
-                        S:delayDelete(delays.del_duplicate,mesID)
-                        S:delayDelete(delays.del_duplicate,M.message_id)
+                        S:delayDelete(mesID,delays.del_duplicate)
+                        S:delayDelete(M.message_id,delays.del_duplicate)
                     end
                 end
             else
@@ -849,7 +849,7 @@ return {
                     S:unlock('guess_duplicate')
                     D.lastInterectTime=Time()-cooldownSkip.win
                     if delays.del_win and Bot.isManaging(S.id) then
-                        S:delayDelete(delays.del_win,M.message_id)
+                        S:delayDelete(M.message_id,delays.del_win)
                     end
                 elseif D.chances>0 then
                     -- Guess normally
@@ -873,7 +873,7 @@ return {
                     sendMes(S,M,D,'normal')
                     D.lastInterectTime=Time()
                     if delays.del_normal and Bot.isManaging(S.id) then
-                        S:delayDelete(delays.del_normal,M.message_id)
+                        S:delayDelete(M.message_id,delays.del_normal)
                     end
                 else
                     -- Lose
@@ -886,7 +886,7 @@ return {
                     S:unlock('guess_duplicate')
                     D.lastInterectTime=Time()-cooldownSkip.lose
                     if delays.del_lose and Bot.isManaging(S.id) then
-                        S:delayDelete(delays.del_lose,M.message_id)
+                        S:delayDelete(M.message_id,delays.del_lose)
                     end
                 end
             end

@@ -16,7 +16,7 @@ return {
     notice=function(S,N)
         if N.notice_type=='group_increase' then
             local mes=(Config.extraData.groupJoinWelcome or NULL)[S.id]
-            if mes and S:lock('welcome',62) then S:delaySend(2.6,mes) end
+            if mes and S:lock('welcome',62) then S:delaySend(mes,2.6) end
             return true
         end
         return false

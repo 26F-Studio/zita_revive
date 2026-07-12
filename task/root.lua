@@ -23,7 +23,7 @@ local denyTexts={
 ---@param S Session
 local function noPermission(S)
     if S:forceLock('root_no_permission',62) then
-        S:delaySend(nil,TABLE.getRandom(denyTexts))
+        S:delaySend(TABLE.getRandom(denyTexts))
     end
 end
 

@@ -11,8 +11,8 @@ local echoCnt=0
 local function delReply(S,delay,M,str)
     delay=min(delay,Bot.isManaging(S.id) and 1e99 or 100)
     S:send(str,'dl'..echoCnt)
-    S:delayDelete(delay,'dl'..echoCnt)
-    if M then S:delayDelete(min(delay,62),M.message_id) end
+    S:delayDelete('dl'..echoCnt,delay)
+    if M then S:delayDelete(M.message_id,min(delay,62)) end
     echoCnt=(echoCnt+1)%10000
 end
 
@@ -1389,24 +1389,24 @@ return {
             if     mes:find('^#dlhelp')  then
                 if S:lock('brikduel_help',62) then
                     S:send(texts.help)
-                    S:delayDelete(26,M.message_id)
+                    S:delayDelete(M.message_id,26)
                 end
             elseif mes:find('^#dlrule')  then
                 if S:lock('brikduel_rule',62) then
                     S:send(texts.rule)
-                    S:delayDelete(26,M.message_id)
+                    S:delayDelete(M.message_id,26)
                 end
             elseif mes:find('^#dlman')   then
                 if S:lock('brikduel_man',62) then
                     S:send(texts.manual)
-                    S:delayDelete(26,M.message_id)
+                    S:delayDelete(M.message_id,26)
                 end
             elseif mes:find('^#dlsee')   then
                 if not curDuel then
                     if S:lock('brikduel_notInRoom',12) then delReply(S,26,M,texts.notInRoom) end
                 else
                     S:send(curDuel.game:getContent(user)..curDuel.game:getText_extra())
-                    S:delayDelete(26,M.message_id)
+                    S:delayDelete(M.message_id,26)
                 end
             elseif mes:find('^#dlstat')  then
                 if S:lock('brikduel_stat_'..M.user_id,26) then
@@ -1495,7 +1495,7 @@ return {
                         local keyMap=user.set.key
                         local helpText=texts.setk_help:gsub('@(%d+)',function(n) return keyMap:sub(n,n) end)
                         S:send(repD(helpText,keyMap))
-                        S:delayDelete(26,M.message_id)
+                        S:delayDelete(M.message_id,26)
                     end
                     return true
                 else
