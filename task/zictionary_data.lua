@@ -1407,7 +1407,7 @@ local extra_mode={
         text="#Guideline 规定官方Tetris的三个必备模式之一，源自于经典块的玩法，重力和得分倍率逐渐增加，考察生存能力和得分效率。绝大多数游戏中是15级/150行",
     },
     {
-        word="40l;40line;40lines;sprint;time attack;竞速;竞速模式",
+        word="40l;40line;40lines;40行;sprint;time attack;竞速;竞速模式",
         title="竞速模式/40行模式",
         text="#Guideline 规定官方Tetris的三个必备模式之一，考察消除固定行数的用时。一般是消40行，没有其他限制",
     },
