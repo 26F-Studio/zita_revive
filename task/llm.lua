@@ -1,5 +1,5 @@
-local available=Config.extraData.llmModel and Config.extraData.llmSystemPrompt and Config.extraData.llmKey
-if not available then LOG('warn',"LLM模块需要配置3个参数") end
+local available=Config.extraData.llmModel and Config.extraData.llmSystemPrompt and Config.extraData.llmKey and Config.extraData.llmTimeWindow
+if not available then LOG('warn',"LLM模块需要配置4个参数") end
 local errMsg="有人能告诉"..Config.adminName.."，我的AI有问题"
 local atStr="%[CQ:at,qq="..Config.botID.."%]"
 
@@ -55,15 +55,36 @@ local function executeTool(S,func)
     end
 end
 
-local function task_apiCallThread(S,M,mode,userMsg)
+---@param M OneBot.Event.Base
+local function convertMsg(M,prefix)
+    ---@cast M OneBot.Event.PrivateMessage | OneBot.Event.GroupMessage
+    return {
+        role='user',
+        content=string.format("%s %s %s\n%s",
+            prefix,
+            "用户"..M.user_id,
+            os.date("%Y-%m-%d %H:%M:%S",M.time),
+            M.raw_message
+        ),
+    }
+end
+
+---@param S Session
+---@param M OneBot.Event.PrivateMessage | OneBot.Event.GroupMessage
+---@param tag '<互动>'|'<提及>'|'<潜在提问>'
+local function task_apiCallThread(S,M,tag)
     msgID=msgID+1
     local sid="["..msgID.."]"
-    LOG('debug',sid.." "..S.uid.."-"..M.user_id.." LLM输入 <"..mode.."> "..userMsg)
+    LOG('debug',("%s %s-%s LLM输入 %s\n%s"):format(sid,S.uid,M.user_id,tag,M.raw_message))
 
-    local messages={
-        {role='system',content=Config.extraData.llmSystemPrompt..os.date("\n（现在是 %Y-%m-%d %H:%M:%S）")},
-        {role='user',content=userMsg},
-    }
+    local messages={}
+    table.insert(messages,{role='system',content=Config.extraData.llmSystemPrompt})
+    for _,m in next,S.history do
+        if M.time-m.time>Config.extraData.llmTimeWindow then
+            table.insert(messages,convertMsg(m,'<上下文>'))
+        end
+    end
+    table.insert(messages,convertMsg(M,tag))
     local data={
         model=Config.extraData.llmModel,
         thinking={type='disabled'},
@@ -143,13 +164,13 @@ local function task_apiCallThread(S,M,mode,userMsg)
             -- Response
             if msg.content then
                 if msg.content:match("<忽略>") then
-                    LOG('debug',"LLM跳过发言")
-                    if mode~='question' then
+                    LOG('debug',sid.."LLM跳过发言")
+                    if tag~='<潜在提问>' then
                         Bot.reactMessage(M.message_id,Emoji.white_question_mark)
                     end
                 else
                     local final=msg.content:gsub("%*%*","")
-                    LOG('debug',"LLM发言："..final)
+                    LOG('debug',sid.."LLM发言："..final)
                     S:send(final)
                 end
             else
@@ -174,21 +195,21 @@ return {
         local msg=STRING.trim(M.raw_message)
         if msg:match(atStr) then
             if isAdmin or S:lock('llm_cd_interact',16) then
-                TASK.new(task_apiCallThread,S,M,'interact',"<互动>"..msg:gsub(atStr,""))
+                TASK.new(task_apiCallThread,S,M,'<互动>')
             else
                 Bot.reactMessage(M.message_id,Emoji.snail)
             end
             return true
         elseif msg:lower():match("小z") or msg:lower():match("zita") then
             if isAdmin or S:lock('llm_cd_mention',26) then
-                TASK.new(task_apiCallThread,S,M,'mention',"<提及>"..msg)
+                TASK.new(task_apiCallThread,S,M,'<提及>')
             else
                 Bot.reactMessage(M.message_id,Emoji.snail)
             end
             return true
         elseif (msg:match("%?$") or msg:match("？$") or msg:match("吗$")) and MATH.between(#msg,12,260) then
             if isAdmin or S:lock('llm_cd_question',42) then
-                TASK.new(task_apiCallThread,S,M,'question',"<潜在提问>"..msg)
+                TASK.new(task_apiCallThread,S,M,'<潜在提问>')
             else
                 Bot.reactMessage(M.message_id,Emoji.snail)
             end
