@@ -101,7 +101,7 @@ end
 ---@param priv? boolean is private message
 ---@param echo? string
 function Bot.sendMsg(message,id,priv,echo)
-    if priv==nil then priv=not SessionMap['g'..id] end
+    if priv==nil then priv=not SessionMap['g'..id] end -- Prefer Group
     local mes
     if type(message)=='table' then
         -- Forward message

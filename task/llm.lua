@@ -31,8 +31,7 @@ local tools={
 }
 
 local buf=STRING.newBuf()
-local function executeTool(toolCall)
-    local func=toolCall['function']
+local function executeTool(S,func)
     local suc,args=pcall(JSON.decode,func.arguments)
     if not suc then return "错误：工具参数解析失败 "..args end
 
@@ -40,7 +39,12 @@ local function executeTool(toolCall)
         if type(args.term)~='string' then return "错误：参数term必须是字符串" end
         local entry=Config.extraData._zict[args.term:gsub('%s',''):lower()]
         LOG('info',"LLM查询词典 "..args.term..(entry and "（成功）" or "（未找到）"))
-        if not entry then return "未找到词条："..args.term end
+        if not entry then
+            for _,qq in next,Config.extraData.llmDict404notify or NONE do
+                Bot.sendMsg("词典404："..args.term,qq)
+            end
+            return "未找到词条："..args.term
+        end
         buf:reset()
         if entry.title then buf:put("# "..entry.title.."\n") end
         if entry.text then buf:put(entry.text.."\n") end
@@ -118,7 +122,7 @@ local function task_apiCallThread(S,M,mode,userMsg)
                 table.insert(messages,{
                     role='tool',
                     tool_call_id=tc.id,
-                    content=select(2,pcall(executeTool,tc)),
+                    content=select(2,pcall(executeTool,S,tc['function'])),
                 })
             end
         else
