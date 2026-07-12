@@ -354,7 +354,7 @@ function Bot._update()
                     local sid,echoStr=echo:match('(.+):(.+)')
                     local S=SessionMap[sid]
                     if S then
-                        S.echos[echoStr]=res.data.message_id
+                        S.echoMesMap[echoStr]=res.data.message_id
                     end
                 end
             end
@@ -378,12 +378,10 @@ end
 ---@field group boolean #not priv
 ---@field taskList Task[]
 ---@field locks Map<number>
----@field checkpoints Map<number>
----@field echos Map<table>
+---@field echoMesMap Map<number>
 ---@field data Map<Session.data>
 ---@field history OneBot.Event.Base[]
 ---
----@field createTime number
 ---@field charge number
 ---@field maxCharge number
 ---@field lastUpdateTime number
@@ -407,12 +405,10 @@ function Session.new(id,priv)
         admin=not priv and Bot.isManaging(id),
         taskList={},
         locks=setmetatable({},lockMapMeta),
-        checkpoints={},
-        echos={},
+        echoMesMap={},
         data={},
         history={},
 
-        createTime=Time(),
         charge=Config.maxCharge,
         maxCharge=Config.maxCharge,
         lastUpdateTime=Time(),
@@ -526,13 +522,6 @@ function Session:clearLock()
     end
 end
 
-function Session:setTimeCheckpoint(name)
-    self.checkpoints[name]=Time()
-end
-function Session:getTimeCheckpoint(name)
-    return Time()-(self.checkpoints[name] or self.createTime)
-end
-
 function Session:update()
     self.charge=math.min(self.charge+(Time()-self.lastUpdateTime),self.maxCharge)
     self.lastUpdateTime=Time()
@@ -582,9 +571,9 @@ function Session:delete(id)
     if type(id)=='number' then
         Bot.deleteMsg(id)
     else
-        if self.echos[id] then
-            Bot.deleteMsg(self.echos[id].message_id)
-            self.echos[id]=nil
+        if self.echoMesMap[id] then
+            Bot.deleteMsg(self.echoMesMap[id])
+            self.echoMesMap[id]=nil
         end
     end
 end
