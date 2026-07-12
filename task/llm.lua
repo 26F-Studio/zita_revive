@@ -156,7 +156,7 @@ return {
         local atMsg=msg:match("^%[CQ:at,qq="..Config.botID.."%]%s*(.*)$")
         if atMsg then
             if Bot.isAdmin(M.user_id) then
-                TASK.new(task_apiCallThread,S,"<点名消息>"..M,atMsg)
+                TASK.new(task_apiCallThread,S,M,"<点名消息>"..atMsg)
             else
                 if S:forceLock('llm_permission_denied',26) then S:send(TABLE.getRandom(denyTexts)) end
             end
