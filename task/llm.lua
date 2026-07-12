@@ -141,7 +141,8 @@ local function task_apiCallThread(S,M,userMsg)
         end
     end
 
-    if S:forceLock('llm_tool_loop',26) then S:send("❌工具调用轮次过多") end
+    LOG('warn',sid.." LLM错误：工具调用轮次过多")
+    if S:lock('llm_error') then S:send(errMsg) end
 end
 
 ---@type Task_raw
@@ -150,8 +151,11 @@ return {
         if not available then return false end
         if Bot.isAdmin(M.user_id) or S:lock('llm_cooldown',26) then
             local msg=STRING.trim(M.raw_message)
-            if msg:match(atStr) or msg:lower():match("小z") or msg:lower():match("zita") then
-                TASK.new(task_apiCallThread,S,M,"<互动消息>"..msg:gsub(atStr,""))
+            if msg:match(atStr) then
+                TASK.new(task_apiCallThread,S,M,"<互动>"..msg:gsub(atStr,""))
+                return true
+            elseif msg:lower():match("小z") or msg:lower():match("zita") then
+                TASK.new(task_apiCallThread,S,M,"<提及>"..msg)
                 return true
             elseif (msg:match("%?$") or msg:match("？$") or msg:match("吗$") or msg:match("怎么")) and MATH.between(#msg,12,260) then
                 TASK.new(task_apiCallThread,S,M,"<潜在提问>"..msg)
