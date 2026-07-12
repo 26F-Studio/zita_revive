@@ -94,7 +94,7 @@ local function convertMsg(M,prefix)
             prefix,
             "用户"..M.user_id,
             os.date("%Y-%m-%d %H:%M:%S",M.time),
-            M.raw_message
+            RawStr(M.raw_message)
         ),
     }
 end
@@ -110,7 +110,7 @@ local function task_apiCallThread(S,M,tag)
     local messages={}
     table.insert(messages,{role='system',content=Config.extraData.llmSystemPrompt})
     for _,m in next,S.history do
-        if M.time-m.time<Config.extraData.llmTimeWindow then
+        if M.time-m.time<Config.extraData.llmTimeWindow and m.raw_message then
             table.insert(messages,convertMsg(m,'<上下文>'))
         end
     end
