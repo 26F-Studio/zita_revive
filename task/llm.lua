@@ -8,7 +8,7 @@ local curlCmd=[[
 curl -s https://api.deepseek.com/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $1" \
-  -d '$2'
+  -d @$2
 ]]
 local tools={
     {
@@ -87,7 +87,13 @@ local function task_apiCallThread(S,M,mode,userMsg)
             jsonSend=res
         end
 
-        ASYNC.runCmd('llm_'..sid,STRING.repD(curlCmd,Config.extraData.llmKey,jsonSend))
+        local tmpf=os.tmpname()
+        do
+            local fh=io.open(tmpf,'w')
+            fh:write(jsonSend)
+            fh:close()
+        end
+        ASYNC.runCmd('llm_'..sid,STRING.repD(curlCmd,Config.extraData.llmKey,tmpf)..'; rm -f '..tmpf)
         repeat
             TASK.yieldT(.26)
             jsonRecv=ASYNC.get('llm_'..sid)
