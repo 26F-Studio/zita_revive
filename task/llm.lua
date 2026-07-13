@@ -227,7 +227,7 @@ return {
         local isAdmin=Bot.isAdmin(M.user_id)
         local msg=STRING.trim(M.raw_message)
         local hasAT=msg:match("%[CQ:at,qq="..Config.botID.."%D")
-        local mention=math.min(msg:lower():match("小z") or 1e99,msg:lower():match("zita") or 1e99)
+        local mention=math.min(msg:lower():find("小z") or 1e99,msg:lower():find("zita") or 1e99)
         if hasAT or mention==1 then
             if isAdmin or S:lock('llm_cd_interact',16) then
                 TASK.new(task_apiCallThread,S,M,'<互动>')
