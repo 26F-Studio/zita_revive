@@ -421,7 +421,7 @@ local function toolThread_tl(S,M,username,n)
 end
 local function task_toolThread(func,S,...)
     local suc,res=pcall(func,S,...)
-    if not suc and type(res)=='string' and #res>0 then S:send(res) end
+    if not suc and type(res)=='string' and #res>0 then S:send(res:match(':(.+)')) end
 end
 tools.qp16={
     help="qp2成绩查询\n例：#qp16 mrz",
