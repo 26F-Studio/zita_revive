@@ -397,17 +397,16 @@ tools.tls={
         end
         if type(res.data)~='table' then return "查询失败，数据格式不正确（data不是表）" end
         return string.format(STRING.trimIndent[[
-            TL总览-%s %s段 %d
+            TL总览-%s %d %s
             胜场 %d/%d (%d%%)
             %dapm %.2fpps %dvs
-            前%.1f%%(%s)
-            %d±%d%s
+            前%.1f%%(%s) %d±%d%s
             ]],
             username:upper(),
-            res.data.rank=='z' and "?" or res.data.rank,res.data.tr,
+            res.data.tr,res.data.rank=='z' and "?" or res.data.rank:upper(),
             res.data.gameswon,res.data.gamesplayed,res.data.gameswon/res.data.gamesplayed*100,
             res.data.apm,res.data.pps,res.data.vs,
-            res.data.percentile*100,res.data.percentile_rank,
+            res.data.percentile*100,res.data.percentile_rank:upper(),
             res.data.glicko,res.data.rd,res.data.decaying and "(+)" or ""
         )
     end,
