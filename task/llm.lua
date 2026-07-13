@@ -35,8 +35,6 @@
 local available=Config.extraData.llmKey and Config.extraData.llmModel and Config.extraData.llmTimeWindow and Config.extraData.llmSystemPrompt
 if not available then LOG('warn',"LLM模块缺少必须配置的参数") end
 local errMsg="有人能告诉"..Config.adminName.."，我的AI有问题"
-
-local msgID=0
 local curlCmd=[[
 curl -s https://api.deepseek.com/chat/completions \
   -H "Content-Type: application/json" \
@@ -62,8 +60,9 @@ local tools={
         },
     },
 }
-
+local msgID=0
 local failBuffer={}
+
 local buf=STRING.newBuf()
 local function executeTool(func)
     local suc,args=pcall(JSON.decode,func.arguments)

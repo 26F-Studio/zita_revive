@@ -245,7 +245,6 @@ tools.ranksim={
     end,
 }
 
-local tetrio_callID=0
 local function fetchTetrioAPI(S,M,url,username)
     if S:getLock('tool_io_api_lock1') and S:getLock('tool_io_api_lock2') then
         Bot.reactMessage(M.message_id,Emoji.snail)
@@ -255,13 +254,18 @@ local function fetchTetrioAPI(S,M,url,username)
     assert(MATH.between(#username,3,16) and username:match('^[a-z0-9%-_]+$'),"用户名格式不对")
     Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
     NULL(S:lock('tool_io_api_lock1',12) or S:lock('tool_io_api_lock2',12))
-    tetrio_callID=tetrio_callID+1
-    local rtn='tetrio_api_'..tetrio_callID
-    ASYNC.runCmd(rtn,'curl -s '..STRING.repD(url,username))
+    local callID
+    for i=1,26 do
+        if not ASYNC.isBusy('tetrio_api_'..i) then
+            callID='tetrio_api_'..i
+            break
+        end
+    end
+    ASYNC.runCmd(callID,'curl -s '..STRING.repD(url,username))
     local data
     repeat
         TASK.yieldT(.26)
-        data=ASYNC.get(rtn)
+        data=ASYNC.get(callID)
     until data
 
     assert(#data>0,"查询失败，没获取到数据")
