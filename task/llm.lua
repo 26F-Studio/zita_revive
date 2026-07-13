@@ -226,14 +226,16 @@ return {
         if not available then return false end
         local isAdmin=Bot.isAdmin(M.user_id)
         local msg=STRING.trim(M.raw_message)
-        if msg:match("%[CQ:at,qq="..Config.botID.."%D") then
+        local hasAT=msg:match("%[CQ:at,qq="..Config.botID.."%D")
+        local mention=math.min(msg:lower():match("小z") or 1e99,msg:lower():match("zita") or 1e99)
+        if hasAT or mention==1 then
             if isAdmin or S:lock('llm_cd_interact',16) then
                 TASK.new(task_apiCallThread,S,M,'<互动>')
             else
                 Bot.reactMessage(M.message_id,Emoji.snail)
             end
             return true
-        elseif msg:lower():match("小z") or msg:lower():match("zita") then
+        elseif mention<1e99 then
             if MATH.roll(.26) then
                 if isAdmin or S:lock('llm_cd_mention',26) then
                     TASK.new(task_apiCallThread,S,M,'<提及>')
