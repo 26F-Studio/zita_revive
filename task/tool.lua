@@ -369,6 +369,50 @@ tools.qp16={
     end,
 }
 
+tools.tls={
+    help="tl总览查询\n例：#tls mrz",
+    func=function(username,M)
+        if TASK.getLock('tool_tlsum_1') and TASK.getLock('tool_tlsum_2') then return Bot.reactMessage(M.message_id,Emoji.snail) end
+        username=username:lower()
+        if not MATH.between(#username,3,16) or username:match('^[^a-z0-9%-_]+$') then return "用户名格式不对" end
+        Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
+        NULL(TASK.lock('tool_tlsum_1',12) or TASK.lock('tool_tlsum_2',12))
+        local f=io.popen('curl -s https://ch.tetr.io/api/users/'..username..'/summaries/league','r')
+        if not f then return "查询失败，发不出网络请求" end
+        local data=f:read('*a')
+        f:close()
+
+        if not data or #data==0 then return "查询失败，没获取到数据" end
+        local suc,res=pcall(JSON.decode,data)
+        if not suc then return "查询失败，json解析出错" end
+        if not res.success then
+            if type(res.error)~='table' or type(res.error.msg)~='string' then
+                return "查询失败，服务器返回错误但没说原因"
+            end
+            if res.error.msg:match("No such user") then
+                return "查询失败，用户不存在"
+            else
+                return "查询失败："..res.error.msg
+            end
+        end
+        if type(res.data)~='table' then return "查询失败，数据格式不正确（data不是表）" end
+        return STRING.repD(STRING.trimIndent[[
+            TL总览-%s %s段 %d
+            胜场 %d/%d (%d%%)
+            %dapm %.2fpps %dvs
+            前%.1f%%(%s)
+            %d±%d%s
+            ]],
+            username:upper(),
+            res.data.rank=='z' and "?" or res.data.rank,res.data.tr,
+            res.data.gameswon,res.data.gamesplayed,res.data.gameswon/res.data.gamesplayed*100,
+            res.data.apm,res.data.pps,res.data.vs,
+            res.data.percentile*100,res.data.percentile_rank,
+            res.data.glicko,res.data.rd,res.data.decaying and "(+)" or ""
+        )
+    end,
+}
+
 local resultEmoji={
     "🎉", -- Victory
     "💣", -- Defeat
