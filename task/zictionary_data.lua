@@ -13,10 +13,28 @@ local utils={
         word="help;帮助;词典;小z词典;zict;zictionary",
         title="Zita-Revive",
         text="小z带着小z词典回来了喵！精简版词典收录了大量方块游戏相关词汇和术语\n萌新对方块词汇和术语有疑问时发送#[关键词]一键查询\n标题前双井号表示有详细信息，补发一条“##”查看\n群管急停：%stop",
-        detail="#推荐/分类/表格  看看目前大家玩的都是哪些游戏\n#新人/学习t旋/wiki  其他常用资源\n#tool  查看可用的小工具",
+        detail="#推荐/分类/表格  看看目前大家玩的都是哪些游戏\n#新手入门/T旋学习/wiki  常用学习资源\n#社区导航/tool  其他资源",
     },
     {
-        word="学习tspin;学习t旋",
+        word="推荐;游戏推荐",
+        text="对战→tetrio、jstris、tec、ppt\n单机→tech、jstris、tetrjs、tec\n偷玩→tetrjs、tech",
+    },
+    {
+        word="分类;游戏分类",
+        text=CQ.img(Config.extraData.imgPath.."方块游戏分类.png"),
+    },
+    {
+        word="表格;游戏表格",
+        text=CQ.img(Config.extraData.imgPath.."方块游戏表格.png"),
+    },
+    {
+        word="新人;新手;入门;萌新;教程;新手入门;新手教程;入门教程",
+        title="新手入门",
+        text="俄罗斯方块游戏有两个共通的必备技能：\n堆叠能力：能想象当前块放在各种位置并思考后续几个块的安排\n操作效率：想好放哪再操作，并通过 #双旋 和 #极简 等方法减少所需的操作量\n发送“##”展开详细自测标准（图片）",
+        detail=CQ.img(Config.extraData.imgPath.."新人引导.png").."\n注：T-spin等技巧一般需要先完成上述内容，打好基础才能高效理解运用",
+    },
+    {
+        word="t旋学习;tspin学习",
         title="关于T-Spin学习",
         text="适合开始学T-Spin门槛水平参考：40L达到60s以内（速度够说明堆叠基本功过关）、能够轻松完成全程消四的40L（能稳定平整堆叠）、不使用Hold不降太多速度的前提下比较轻松完成全程消四的40L（有足够的看next的意识和算力）",
         detail="需要指出，要能熟练做出各种T-Spin并不是只看着T-Spin的那一小部分地形就可以玩好的，对玩家堆叠能力和计算next能力同样也有较高的要求。故如果目的主要是提升打块能力、没什么娱乐随便玩玩的成分时，推荐在基础能力没达到上述要求前不用去详细了解具体的T-Spin构造知识，把重点放在前置基本功的练习上就可以了",
@@ -71,30 +89,14 @@ local utils={
         text="在背后默默支撑着整个Techmino续作系列，提供了方块游戏引擎的meta项目",
         detail="并不是做一半才发现项目没有明确规划导致无法继续开发，嗯",
     },
-    -- 常用语
+    -- 其他常用语
     {
         word="7",
         text="欢迎新人但是方块有7种"..CQ.img(Config.extraData.imgPath.."7.png"),
     },
     {
-        word="推荐;游戏推荐",
-        text="对战→tetrio、jstris、tec、ppt\n单机→tech、jstris、tetrjs、tec\n偷玩→tetrjs、tech",
-    },
-    {
-        word="分类;游戏分类",
-        text=CQ.img(Config.extraData.imgPath.."方块游戏分类.png"),
-    },
-    {
-        word="表格;游戏表格",
-        text=CQ.img(Config.extraData.imgPath.."方块游戏表格.png"),
-    },
-    {
         word="赞助;打钱",
         text=CQ.img(Config.extraData.imgPath.."pay.png"),
-    },
-    {
-        word="新人;萌新",
-        text=CQ.img(Config.extraData.imgPath.."新人引导.png"),
     },
     {
         word="提问;提问的智慧",
@@ -783,7 +785,7 @@ local main={
 ---@type Zict.Entry[]
 local pattern={
     {
-        word="定式;开局定式",
+        word="定式;开局定式;opener",
         title="开局定式",
         text="定式一般指开局定式，是可以在开局时使用的套路堆叠方法，快速做出想要的消行\n一些常用技巧、复合构造和固定堆叠方法则有时可能被称为“中局定式”",
         link="tetriswiki.cn/p/T-Spin_Methods",

@@ -46,7 +46,10 @@ local tools={
         ['type']='function',
         ['function']={
             name='tetris_dict',
-            description="收录了大量俄罗斯方块相关术语的词典，输入一个术语返回一个词条\n词典中收录的词汇范围非常广：游戏概念、游戏技巧、游戏名、赛事名、社区俚语缩写、社区贡献者名单、常见QA词条（社区导航 游戏推荐 游戏分类 维基 键位 手感）",
+            description=STRING.trimIndent[[
+                收录了大量俄罗斯方块相关术语的词典，输入一个术语返回一个词条
+                词典中收录的词汇范围非常广：游戏概念、游戏技巧、游戏名、赛事名、社区俚语缩写、社区贡献者名单、常见QA词条（社区导航 游戏推荐 游戏分类 新手入门 维基 键位 手感）
+            ]],
             parameters={
                 type='object',
                 properties={
