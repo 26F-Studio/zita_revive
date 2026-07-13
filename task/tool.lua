@@ -256,11 +256,12 @@ local function fetchTetrioAPI(S,M,url,username)
     Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
     NULL(S:lock('tool_io_api_lock1',12) or S:lock('tool_io_api_lock2',12))
     tetrio_callID=tetrio_callID+1
-    ASYNC.runCmd('tetrio_api_'..tetrio_callID,'curl -s '..STRING.repD(url,username))
+    local rtn='tetrio_api_'..tetrio_callID
+    ASYNC.runCmd(rtn,'curl -s '..STRING.repD(url,username))
     local data
     repeat
         TASK.yieldT(.26)
-        data=ASYNC.get('tetrio_api_'..tetrio_callID)
+        data=ASYNC.get(rtn)
     until data
 
     assert(#data>0,"查询失败，没获取到数据")
