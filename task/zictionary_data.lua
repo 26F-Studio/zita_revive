@@ -1212,7 +1212,7 @@ local pattern={
     {
         word="mountain;mountainous stacking;mountainous stacking 1;mountainous stacking 2;mountainous stacking 3;ms1;ms2;ms3;山岳;山岳堆叠;山岳1;山岳2;山岳3;山岳一;山岳二;山岳三;山岳堆叠一号;山岳堆叠二号;山岳堆叠三号",
         title="山岳堆叠",
-        text="一系列开局定式，第一包堆叠，然后搭建 #TD攻击 ，高概率8行PC。有123三种，最常见的是2，在无延迟极为流行的TDPC",
+        text="一系列开局定式，第一包堆叠，然后搭建 #TD攻击 ，高概率8行PC。有123三种，最常见的是2，在无延迟块极为流行的TDPC",
         link="tetriswiki.cn/p/Mountainous_Stacking_2",
     },
     {
