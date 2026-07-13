@@ -29,7 +29,7 @@
         <上下文> 该消息只作为群聊中当前话题的上下文参考，如果这些消息和最后一条要处理的消息没什么关系就不用管。
         <互动> 该消息是其他群友直接at你发送的，请尽量回应互动消息。和游戏相关的话就带着词典回应，闲聊话题一句话回应就行，值得思考的其他话题可以认真讨论。这个群也承担了闲聊的功能，放心聊。
         <提及> 该消息表示其他群友在发言时提到了你，不一定要回应。如果没什么特别值得说的东西就直接输出“<忽略>”，表示不回复这条消息。
-        <潜在提问> 该消息是从聊天中匹配关键词捕获的，一般不需要回应。可以参考词典，如果确实是游戏相关问题并且有明确值得提及的内容就回答一下；要是消息很短 或像是个反问句 或上下文信息不够，那就是属于误判，直接输出“<忽略>”，表示不回复这条消息。
+        <潜在提问> 该消息是从聊天中匹配到“？”或“吗”直接触发的，一般不需要回应，绝大多数都是误判。如果有像术语的词可以参考词典，如果确实是萌新提问，有明确值得提及的内容就回答一下，否则都是误判，直接输出“<忽略>”，表示不回复这条消息。
     ]] -- 提示词中的“……”需要替换为实际内容
 ]=]
 local available=Config.extraData.llmKey and Config.extraData.llmModel and Config.extraData.llmTimeWindow and Config.extraData.llmSystemPrompt
@@ -235,19 +235,23 @@ return {
             end
             return true
         elseif msg:lower():match("小z") or msg:lower():match("zita") then
-            if isAdmin or S:lock('llm_cd_mention',26) then
-                TASK.new(task_apiCallThread,S,M,'<提及>')
-            else
-                Bot.reactMessage(M.message_id,Emoji.snail)
+            if MATH.roll(.26) then
+                if isAdmin or S:lock('llm_cd_mention',26) then
+                    TASK.new(task_apiCallThread,S,M,'<提及>')
+                else
+                    Bot.reactMessage(M.message_id,Emoji.snail)
+                end
+                return true
             end
-            return true
         elseif (msg:match("%?$") or msg:match("？$") or msg:match("吗$")) and MATH.between(#msg,12,260) then
-            if isAdmin or S:lock('llm_cd_question',42) then
-                TASK.new(task_apiCallThread,S,M,'<潜在提问>')
-            else
-                Bot.reactMessage(M.message_id,Emoji.snail)
+            if MATH.roll(.16) then
+                if isAdmin or S:lock('llm_cd_question',42) then
+                    TASK.new(task_apiCallThread,S,M,'<潜在提问>')
+                else
+                    Bot.reactMessage(M.message_id,Emoji.snail)
+                end
+                return true
             end
-            return true
         end
         return false
     end,
