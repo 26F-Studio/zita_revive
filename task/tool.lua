@@ -245,6 +245,37 @@ tools.ranksim={
     end,
 }
 
+local function fetchTetrioAPI(M,lock1,lock2,url,username)
+    if TASK.getLock(lock1) and TASK.getLock(lock2) then
+        Bot.reactMessage(M.message_id,Emoji.snail)
+        return
+    end
+    username=username:lower()
+    if not MATH.between(#username,3,16) or username:match('^[^a-z0-9%-_]+$') then return nil,"用户名格式不对" end
+    Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
+    NULL(TASK.lock(lock1,12) or TASK.lock(lock2,12))
+    local f=io.popen('curl -s '..STRING.repD(url,username),'r')
+    if not f then return nil,"查询失败，发不出网络请求" end
+    local data=f:read('*a')
+    f:close()
+
+    if not data or #data==0 then return nil,"查询失败，没获取到数据" end
+    local suc,res=pcall(JSON.decode,data)
+    if not suc then return nil,"查询失败，json解析出错" end
+    if not res.success then
+        if type(res.error)~='table' or type(res.error.msg)~='string' then
+            return nil,"查询失败，服务器返回错误但没说原因"
+        end
+        if res.error.msg:match("No such user") then
+            return nil,"查询失败，用户不存在"
+        else
+            return nil,"查询失败："..res.error.msg
+        end
+    end
+    if type(res.data)~='table' then return nil,"查询失败，数据格式不正确（data不是表）" end
+    return res
+end
+
 local function getFloor(h)
     return
         h>=1650 and STRING.UTF8(Emoji.sports_medal) or
@@ -261,30 +292,9 @@ end
 tools.qp16={
     help="qp2成绩查询\n例：#qp16 mrz",
     func=function(username,M)
-        if TASK.getLock('tool_qp16_1') and TASK.getLock('tool_qp16_2') then return Bot.reactMessage(M.message_id,Emoji.snail) end
         username=username:lower()
-        if not MATH.between(#username,3,16) or username:match('^[^a-z0-9%-_]+$') then return "用户名格式不对" end
-        Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
-        NULL(TASK.lock('tool_qp16_1',12) or TASK.lock('tool_qp16_2',12))
-        local f=io.popen('curl -s https://ch.tetr.io/api/users/'..username..'/summaries/achievements','r')
-        if not f then return "查询失败，发不出网络请求" end
-        local data=f:read('*a')
-        f:close()
-
-        if not data or #data==0 then return "查询失败，没获取到数据" end
-        local suc,res=pcall(JSON.decode,data)
-        if not suc then return "查询失败，json解析出错" end
-        if not res.success then
-            if type(res.error)~='table' or type(res.error.msg)~='string' then
-                return "查询失败，服务器返回错误但没说原因"
-            end
-            if res.error.msg:match("No such user") then
-                return "查询失败，用户不存在"
-            else
-                return "查询失败："..res.error.msg
-            end
-        end
-        if type(res.data)~='table' then return "查询失败，数据格式不正确（data不是表）" end
+        local res,err=fetchTetrioAPI(M,'tool_qp16_1','tool_qp16_2','https://ch.tetr.io/api/users/$1/summaries/achievements',username)
+        if not res then return err end
         local pool={}
         for i=1,#res.data do
             local rec=res.data[i]
@@ -372,30 +382,9 @@ tools.qp16={
 tools.tls={
     help="tl总览查询\n例：#tls mrz",
     func=function(username,M)
-        if TASK.getLock('tool_tlsum_1') and TASK.getLock('tool_tlsum_2') then return Bot.reactMessage(M.message_id,Emoji.snail) end
         username=username:lower()
-        if not MATH.between(#username,3,16) or username:match('^[^a-z0-9%-_]+$') then return "用户名格式不对" end
-        Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
-        NULL(TASK.lock('tool_tlsum_1',12) or TASK.lock('tool_tlsum_2',12))
-        local f=io.popen('curl -s https://ch.tetr.io/api/users/'..username..'/summaries/league','r')
-        if not f then return "查询失败，发不出网络请求" end
-        local data=f:read('*a')
-        f:close()
-
-        if not data or #data==0 then return "查询失败，没获取到数据" end
-        local suc,res=pcall(JSON.decode,data)
-        if not suc then return "查询失败，json解析出错" end
-        if not res.success then
-            if type(res.error)~='table' or type(res.error.msg)~='string' then
-                return "查询失败，服务器返回错误但没说原因"
-            end
-            if res.error.msg:match("No such user") then
-                return "查询失败，用户不存在"
-            else
-                return "查询失败："..res.error.msg
-            end
-        end
-        if type(res.data)~='table' then return "查询失败，数据格式不正确（data不是表）" end
+        local res,err=fetchTetrioAPI(M,'tool_tlsum_1','tool_tlsum_2','https://ch.tetr.io/api/users/$1/summaries/league',username)
+        if not res then return err end
         return string.format(STRING.trimIndent[[
             TL总览-%s %d %s
             胜场 %d/%d (%d%%)
@@ -422,34 +411,13 @@ local resultEmoji={
     "❓", -- Match nullified
 }
 local function tl_search(n,username,M)
-    if TASK.getLock('tool_tlN_1') and TASK.getLock('tool_tlN_2') then return Bot.reactMessage(M.message_id,Emoji.snail) end
     username=username:lower()
-    if not MATH.between(#username,3,16) or username:match('^[^a-z0-9%-_]+$') then return "用户名格式不对" end
-    Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
-    NULL(TASK.lock('tool_tlN_1',12) or TASK.lock('tool_tlN_2',12))
-    local f=io.popen('curl -s https://ch.tetr.io/api/labs/leagueflow/'..username,'r')
-    if not f then return "查询失败，发不出网络请求" end
-    local data=f:read('*a')
-    f:close()
-
-    if not data or #data==0 then return "查询失败，没获取到数据" end
-    local suc,res=pcall(JSON.decode,data)
-    if not suc then return "查询失败，json解析出错" end
-    if not res.success then
-        if type(res.error)~='table' or type(res.error.msg)~='string' then
-            return "查询失败，服务器返回错误但没说原因"
-        end
-        if res.error.msg:match("No such user") then
-            return "查询失败，用户不存在"
-        else
-            return "查询失败："..res.error.msg
-        end
-    end
-    if type(res.data)~='table' or type(res.data.points)~='table' then return "查询失败，数据格式不正确" end
+    local res,err=fetchTetrioAPI(M,'tool_tlN_1','tool_tlN_2','https://ch.tetr.io/api/labs/leagueflow/$1',username)
+    if not res then return err end
+    local flow=res.data.points
 
     local buf=STRING.newBuf()
     buf:putf("TL%d-%s 最近%d场\n",n,username:upper(),n)
-    local flow=res.data.points
     if #flow==0 then
         buf:put("这人没玩过TL喵")
     else
