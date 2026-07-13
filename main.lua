@@ -276,6 +276,15 @@ function Bot.stop(time)
     end
 end
 
+local function handler_appendHis(data)
+    ---@cast data OneBot.Event.PrivateMessage | OneBot.Event.GroupMessage
+    if data.message_type=='group' then
+        SessionMap['g'..data.group_id]:appendHistory(data)
+    elseif data.message_type=='private' then
+        SessionMap['p'..data.user_id]:appendHistory(data)
+    end
+end
+
 ---@return true? #if any message processed
 function Bot._update()
     local pack,op=ws:receive()
@@ -350,14 +359,7 @@ function Bot._update()
                 end
             end
             if res.data and res.data.message_id and TABLE.getSize(res.data)==1 then
-                Bot.getMsg(res.data.message_id,function(data)
-                    ---@cast data OneBot.Event.PrivateMessage | OneBot.Event.GroupMessage
-                    if data.message_type=='group' then
-                        SessionMap['g'..data.group_id]:appendHistory(data)
-                    elseif data.message_type=='private' then
-                        SessionMap['p'..data.user_id]:appendHistory(data)
-                    end
-                end)
+                Bot.getMsg(res.data.message_id,handler_appendHis)
             end
         end
         if Config.log_message and res.post_type=='message' then print("[DEBUG] message",TABLE.dump(res)) end
