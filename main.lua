@@ -149,13 +149,14 @@ function Bot.reactMessage(mes_id,emoji_id)
         },
     }
 end
-function Bot.sendLike(uid,count)
+function Bot.sendLike(uid,count,handler)
     Bot._send{
         action='send_like',
         params={
-            uid=uid,
+            user_id=uid,
             times=count or 10,
         },
+        handler=handler,
     }
 end
 ---@param R OneBot.Event.GroupRequest
