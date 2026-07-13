@@ -218,15 +218,17 @@ function Bot.kick(group_id,user_id,reject_rejoin)
     }
 end
 
-local function userInfoHandler(data)
-    Config.botID=data.user_id
-    Config.nickName=data.nickname
+local function handler_userInfo(res)
+    if type(res.data)=='table' then
+        Config.botID=res.data.user_id
+        Config.nickName=res.data.nickname
+    end
 end
 function Bot.refreshUserInfo()
     if Config.botID and Config.botID>0 then return end
     Bot._send{
         action='get_login_info',
-        handler=userInfoHandler,
+        handler=handler_userInfo,
     }
 end
 ---@param msg_id number
