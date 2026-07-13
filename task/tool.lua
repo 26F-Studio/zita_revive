@@ -9,7 +9,7 @@ local timeoutError={
     "过于昂贵！",
 }
 
----@type table<string,{help:string, func:fun(data:string, M:OneBot.Event.Message):any}>
+---@type table<string,{help:string, func:fun(data:string, S:Session, M:OneBot.Event.Message):any}>
 local tools={}
 
 local flagData={}
@@ -183,7 +183,7 @@ tools.calc={
 
 tools.react={
     help="创建一些无法正常发送的表情回应，部分点击+1即可进入“最近使用”\n例：#react 36,💣\n内置表情只支持单个，否则最多五个",
-    func=function(data,M)
+    func=function(data,_,M)
         local cqFace=data:match('id=(%d+)')
         if cqFace then
             Bot.reactMessage(M.message_id,tonumber(cqFace))
@@ -245,37 +245,39 @@ tools.ranksim={
     end,
 }
 
-local function fetchTetrioAPI(M,lock1,lock2,url,username)
-    if TASK.getLock(lock1) and TASK.getLock(lock2) then
+local tetrio_callID=0
+local function fetchTetrioAPI(S,M,url,username)
+    if S:getLock('tool_io_api_lock1') and S:getLock('tool_io_api_lock2') then
         Bot.reactMessage(M.message_id,Emoji.snail)
-        return
+        error("")
     end
     username=username:lower()
-    if not MATH.between(#username,3,16) or username:match('^[^a-z0-9%-_]+$') then return nil,"用户名格式不对" end
+    assert(MATH.between(#username,3,16) and username:match('^[a-z0-9%-_]+$'),"用户名格式不对")
     Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
-    NULL(TASK.lock(lock1,12) or TASK.lock(lock2,12))
-    local f=io.popen('curl -s '..STRING.repD(url,username),'r')
-    if not f then return nil,"查询失败，发不出网络请求" end
-    local data=f:read('*a')
-    f:close()
+    NULL(S:lock('tool_io_api_lock1',12) or S:lock('tool_io_api_lock2',12))
+    tetrio_callID=tetrio_callID+1
+    ASYNC.runCmd('tetrio_api_'..tetrio_callID,'curl -s '..STRING.repD(url,username))
+    local data
+    repeat
+        TASK.yieldT(.26)
+        data=ASYNC.get('tetrio_api_'..tetrio_callID)
+    until data
 
-    if not data or #data==0 then return nil,"查询失败，没获取到数据" end
-    local suc,res=pcall(JSON.decode,data)
-    if not suc then return nil,"查询失败，json解析出错" end
+    assert(#data>0,"查询失败，没获取到数据")
+    local res=JSON.decode(data)
     if not res.success then
         if type(res.error)~='table' or type(res.error.msg)~='string' then
-            return nil,"查询失败，服务器返回错误但没说原因"
+            error("查询失败，服务器返回错误但没说原因")
         end
         if res.error.msg:match("No such user") then
-            return nil,"查询失败，用户不存在"
+            error("查询失败，用户不存在")
         else
-            return nil,"查询失败："..res.error.msg
+            error("查询失败："..res.error.msg)
         end
     end
-    if type(res.data)~='table' then return nil,"查询失败，数据格式不正确（data不是表）" end
+    assert(type(res.data)=='table',"查询失败，数据格式不正确（data不是表）")
     return res
 end
-
 local function getFloor(h)
     return
         h>=1650 and STRING.UTF8(Emoji.sports_medal) or
@@ -289,118 +291,106 @@ local function getFloor(h)
         h>=50 and "2️⃣" or
         "1️⃣"
 end
-tools.qp16={
-    help="qp2成绩查询\n例：#qp16 mrz",
-    func=function(username,M)
-        username=username:lower()
-        local res,err=fetchTetrioAPI(M,'tool_qp16_1','tool_qp16_2','https://ch.tetr.io/api/users/$1/summaries/achievements',username)
-        if not res then return err end
-        local pool={}
-        for i=1,#res.data do
-            local rec=res.data[i]
-            if type(rec)~='table' then return "查询失败，数据格式不正确（data的成员不是表）" end
-            pool[rec.n]=rec.v
+local function toolThread_qp16(S,M,username)
+    local res=fetchTetrioAPI(S,M,'https://ch.tetr.io/api/users/$1/summaries/achievements',username)
+    local pool={}
+    for i=1,#res.data do
+        local rec=res.data[i]
+        if type(rec)~='table' then return "查询失败，数据格式不正确（data的成员不是表）" end
+        pool[rec.n]=rec.v
+    end
+
+    local report={
+        {"EX", pool.zenithmod_expert or 0},
+        {"NH", pool.zenithmod_nohold or 0},
+        {"MS", pool.zenithmod_messy or 0},
+        {"GV", pool.zenithmod_gravity or 0},
+        {"VL", pool.zenithmod_volatile or 0},
+        {"DH", pool.zenithmod_doublehole or 0},
+        {"IN", pool.zenithmod_invisible or 0},
+        {"AS", pool.zenithmod_allspin or 0},
+        {"rEX",pool.zenithmod_expert_reversed or 0},
+        {"rNH",pool.zenithmod_nohold_reversed or 0},
+        {"rMS",pool.zenithmod_messy_reversed or 0},
+        {"rGV",pool.zenithmod_gravity_reversed or 0},
+        {"rVL",pool.zenithmod_volatile_reversed or 0},
+        {"rDH",pool.zenithmod_doublehole_reversed or 0},
+        {"rIN",pool.zenithmod_invisible_reversed or 0},
+        {"rAS",pool.zenithmod_allspin_reversed or 0},
+        -- {"2P", pool.zenithmod_duo or 0},
+        -- {"r2P",pool.zenithmod_duo_reversed or 0},
+        -- {"PN", pool.zenithmod_pento},
+        -- {"SB", math.max(pool.zenithmod_snowman,pool.zenithmod_snowman___24)},
+        -- {"rSB",pool.zenithmod_snowman_reversed},
+    }
+    local sum1,sum2=0,0
+    local f10cnt1,f10cnt2=0,0
+    for i=1,8 do
+        sum1=sum1+report[i][2]
+        sum2=sum2+report[i+8][2]
+        if report[i][2]>=1650 then f10cnt1=f10cnt1+1 end
+        if report[i+8][2]>=1650 then f10cnt2=f10cnt2+1 end
+    end
+
+    local buf=STRING.newBuf()
+    buf:putf("QP16-%s\n",username:upper())
+    local len=#buf
+
+    if sum1>0 then
+        buf:putf("总高度 %.1fkm",sum1/1000)
+        if f10cnt1==8 then
+            buf:put(" "..STRING.UTF8(Emoji.trophy))
+        elseif f10cnt1>0 then
+            buf:putf(" (%d/8)",f10cnt1)
         end
-
-        local report={
-            {"EX", pool.zenithmod_expert or 0},
-            {"NH", pool.zenithmod_nohold or 0},
-            {"MS", pool.zenithmod_messy or 0},
-            {"GV", pool.zenithmod_gravity or 0},
-            {"VL", pool.zenithmod_volatile or 0},
-            {"DH", pool.zenithmod_doublehole or 0},
-            {"IN", pool.zenithmod_invisible or 0},
-            {"AS", pool.zenithmod_allspin or 0},
-            {"rEX",pool.zenithmod_expert_reversed or 0},
-            {"rNH",pool.zenithmod_nohold_reversed or 0},
-            {"rMS",pool.zenithmod_messy_reversed or 0},
-            {"rGV",pool.zenithmod_gravity_reversed or 0},
-            {"rVL",pool.zenithmod_volatile_reversed or 0},
-            {"rDH",pool.zenithmod_doublehole_reversed or 0},
-            {"rIN",pool.zenithmod_invisible_reversed or 0},
-            {"rAS",pool.zenithmod_allspin_reversed or 0},
-            -- {"2P", pool.zenithmod_duo or 0},
-            -- {"r2P",pool.zenithmod_duo_reversed or 0},
-            -- {"PN", pool.zenithmod_pento},
-            -- {"SB", math.max(pool.zenithmod_snowman,pool.zenithmod_snowman___24)},
-            -- {"rSB",pool.zenithmod_snowman_reversed},
-        }
-        local sum1,sum2=0,0
-        local f10cnt1,f10cnt2=0,0
-        for i=1,8 do
-            sum1=sum1+report[i][2]
-            sum2=sum2+report[i+8][2]
-            if report[i][2]>=1650 then f10cnt1=f10cnt1+1 end
-            if report[i+8][2]>=1650 then f10cnt2=f10cnt2+1 end
+        buf:put("\n")
+    end
+    if sum2>0 then
+        buf:putf("逆位总高度 %.1fkm",sum2/1000)
+        if f10cnt2==8 then
+            buf:put(" "..STRING.UTF8(Emoji.trophy))
+        elseif f10cnt2>0 then
+            buf:putf(" (%d/8)",f10cnt2)
         end
+        buf:put("\n")
+    end
 
-        local buf=STRING.newBuf()
-        buf:putf("QP16-%s\n",username:upper())
-        local len=#buf
+    for i=#report,1,-1 do if report[i][2]==0 then table.remove(report,i) end end
+    for i=1,#report do
+        buf:putf("%s%s %dm%s",
+            getFloor(report[i][2]),
+            report[i][1],
+            math.floor(report[i][2]),
+            i%2==1 and i<#report and " " or "\n"
+        )
+    end
 
-        if sum1>0 then
-            buf:putf("总高度 %.1fkm",sum1/1000)
-            if f10cnt1==8 then
-                buf:put(" "..STRING.UTF8(Emoji.trophy))
-            elseif f10cnt1>0 then
-                buf:putf(" (%d/8)",f10cnt1)
-            end
-            buf:put("\n")
-        end
-        if sum2>0 then
-            buf:putf("逆位总高度 %.1fkm",sum2/1000)
-            if f10cnt2==8 then
-                buf:put(" "..STRING.UTF8(Emoji.trophy))
-            elseif f10cnt2>0 then
-                buf:putf(" (%d/8)",f10cnt2)
-            end
-            buf:put("\n")
-        end
+    local line={}
+    if pool.zenithexplorer then ins(line,("%dm"):format(pool.zenithexplorer)) end
+    if pool.zenithspeedrun then ins(line,"速通"..STRING.time_simp(-pool.zenithspeedrun/1000)) end
+    if pool.zenithb2b then ins(line,string.format("B2B×%d",pool.zenithb2b)) end
+    if #line>0 then buf:put(table.concat(line,"  ")) end
 
-        for i=#report,1,-1 do if report[i][2]==0 then table.remove(report,i) end end
-        for i=1,#report do
-            buf:putf("%s%s %dm%s",
-                getFloor(report[i][2]),
-                report[i][1],
-                math.floor(report[i][2]),
-                i%2==1 and i<#report and " " or "\n"
-            )
-        end
+    if len==#buf then buf:put("这人没玩过qp2喵") end
 
-        local line={}
-        if pool.zenithexplorer then ins(line,("%dm"):format(pool.zenithexplorer)) end
-        if pool.zenithspeedrun then ins(line,"速通"..STRING.time_simp(-pool.zenithspeedrun/1000)) end
-        if pool.zenithb2b then ins(line,string.format("B2B×%d",pool.zenithb2b)) end
-        if #line>0 then buf:put(table.concat(line,"  ")) end
-
-        if len==#buf then buf:put("这人没玩过qp2喵") end
-
-        return buf:tostring()
-    end,
-}
-
-tools.tls={
-    help="tl总览查询\n例：#tls mrz",
-    func=function(username,M)
-        username=username:lower()
-        local res,err=fetchTetrioAPI(M,'tool_tlsum_1','tool_tlsum_2','https://ch.tetr.io/api/users/$1/summaries/league',username)
-        if not res then return err end
-        return string.format(STRING.trimIndent[[
+    S:send(buf)
+end
+local function toolThread_tls(S,M,username)
+    local res=fetchTetrioAPI(S,M,'https://ch.tetr.io/api/users/$1/summaries/league',username)
+    S:send(string.format(STRING.trimIndent[[
             TL总览-%s %d %s
             胜场 %d/%d (%d%%)
             %dapm %.2fpps %dvs
             前%.1f%%(%s) %d±%d%s
             ]],
-            username:upper(),
-            res.data.tr,res.data.rank=='z' and "?" or res.data.rank:upper(),
-            res.data.gameswon,res.data.gamesplayed,res.data.gameswon/res.data.gamesplayed*100,
-            res.data.apm,res.data.pps,res.data.vs,
-            res.data.percentile*100,res.data.percentile_rank:upper(),
-            res.data.glicko,res.data.rd,res.data.decaying and "(+)" or ""
-        )
-    end,
-}
-
+        username:upper(),
+        res.data.tr,res.data.rank=='z' and "?" or res.data.rank:upper(),
+        res.data.gameswon,res.data.gamesplayed,res.data.gameswon/res.data.gamesplayed*100,
+        res.data.apm,res.data.pps,res.data.vs,
+        res.data.percentile*100,res.data.percentile_rank:upper(),
+        res.data.glicko,res.data.rd,res.data.decaying and "(+)" or ""
+    ))
+end
 local resultEmoji={
     "🎉", -- Victory
     "💣", -- Defeat
@@ -410,10 +400,8 @@ local resultEmoji={
     "🤝", -- No contest
     "❓", -- Match nullified
 }
-local function tl_search(n,username,M)
-    username=username:lower()
-    local res,err=fetchTetrioAPI(M,'tool_tlN_1','tool_tlN_2','https://ch.tetr.io/api/labs/leagueflow/$1',username)
-    if not res then return err end
+local function toolThread_tl(S,M,username,n)
+    local res=fetchTetrioAPI(S,M,'https://ch.tetr.io/api/labs/leagueflow/$1',username)
     local flow=res.data.points
 
     local buf=STRING.newBuf()
@@ -429,27 +417,39 @@ local function tl_search(n,username,M)
         if #flow>n then buf:put("…") end
     end
 
-    return buf:tostring()
+    S:send(buf)
 end
+local function task_toolThread(func,S,...)
+    local suc,res=pcall(func,S,...)
+    if not suc and type(res)=='string' and #res>0 then S:send(res) end
+end
+tools.qp16={
+    help="qp2成绩查询\n例：#qp16 mrz",
+    func=function(username,S,M) TASK.new(task_toolThread,toolThread_qp16,S,M,username) end,
+}
+tools.tls={
+    help="tl总览查询\n例：#tls mrz",
+    func=function(username,S,M) TASK.new(task_toolThread,toolThread_tls,S,M,username) end,
+}
 tools.tl10={
     help="tl成绩查询\n例：#tl10 mrz",
-    func=function(username,M) return tl_search(10,username,M) end,
+    func=function(username,S,M) TASK.new(task_toolThread,toolThread_tl,S,M,username,10) end,
 }
 tools.tl20={
     help="tl成绩查询\n例：#tl20 mrz",
-    func=function(username,M) return tl_search(20,username,M) end,
+    func=function(username,S,M) TASK.new(task_toolThread,toolThread_tl,S,M,username,20) end,
 }
 tools.tl30={
     help="tl成绩查询\n例：#tl30 mrz",
-    func=function(username,M) return tl_search(30,username,M) end,
+    func=function(username,S,M) TASK.new(task_toolThread,toolThread_tl,S,M,username,30) end,
 }
 tools.tl40={
     help="tl成绩查询\n例：#tl40 mrz",
-    func=function(username,M) return tl_search(40,username,M) end,
+    func=function(username,S,M) TASK.new(task_toolThread,toolThread_tl,S,M,username,40) end,
 }
 tools.tl50={
     help="tl成绩查询\n例：#tl50 mrz",
-    func=function(username,M) return tl_search(50,username,M) end,
+    func=function(username,S,M) TASK.new(task_toolThread,toolThread_tl,S,M,username,50) end,
 }
 
 local gameDB
@@ -477,7 +477,7 @@ local function game_comparer(a,b)
 end
 tools.game={
     help="游戏搜索，指定标签查询游戏数据库并输出前几名\n例：#game help  #game 5 热门 ^官方",
-    func=function(args,M)
+    func=function(args,_,M)
         if args=='help' then return tagHelp end
         if args=='random' then return TABLE.getRandom(gameDB)[15] end
         if args=='reload' then
@@ -679,7 +679,7 @@ TABLE.update(drawBaseEnv,math)
 local drawEnv=setmetatable({},{__index=drawBaseEnv})
 tools.draw={
     help="指令绘图，500px画布，可用指令：清 归/移/倍/转 色/宽 线 方/框 (椭)圆/圈 形/围 (线)饼/弧/弓，return指定区域（XYWH或者WH）来输出图片\n例：#draw 清(0,0,0) 色(1,0,1) 方(0,0,20,20) 方(20,20,20,20) return 0,0,40,40",
-    func=function(expr,M)
+    func=function(expr,_,M)
         if TASK.getLock('tool_draw') then return Bot.reactMessage(M.message_id,Emoji.snail) end
         local f=loadstring(expr)
         if not f then return TABLE.getRandom(drawSyntaxError) end
@@ -731,7 +731,7 @@ local pixelColor={
 }
 tools.qr={
     help="生成二维码图片\n例：#qr Techmino好玩",
-    func=function(data,M)
+    func=function(data,_,M)
         if TASK.getLock('qr_gen') then return Bot.reactMessage(M.message_id,Emoji.snail) end
         local qrFunc=require'task.qr'
         local suc,res=pcall(qrFunc,STRING.trim(data))
@@ -759,7 +759,7 @@ tools.qr={
 local userPool={}
 tools.skit={
     help="生成自定义合并转发小剧场\n例：#skit\nMrZ=1046101471\n小z=2920573475\nMrZ:喵？\n小z:Z酱可爱喵",
-    func=function(data,M)
+    func=function(data,_,M)
         local messages={
             {"Zita_Revive",Config.botID,"以下内容不是真实聊天记录\n创作者："..M.user_id},
         }
@@ -823,7 +823,7 @@ return {
         if not data or #data==0 then
             S:send(tool.help)
         elseif tool.func then
-            local res=tool.func(data,M)
+            local res=tool.func(data,S,M)
             if res then S:send(res) end
         end
         return true
