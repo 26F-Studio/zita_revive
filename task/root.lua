@@ -102,20 +102,8 @@ local commands={
         level=2,
         func=function(S,args,M)
             LOG('warn',"[RESTART]")
-            if not args[1] then
-                local botID,botName=Config.botID,Config.botName
-                Config=FILE.load('botconf.lua','-lua')
-                Config.botID,Config.botName=botID,botName
-                codeEnv.Config=Config
-                for k in next,package.loaded do
-                    if k:sub(1,5)=='task.' then
-                        package.loaded[k]=nil
-                    end
-                end
-                Bot.reactMessage(M.message_id,Emoji.hollow_red_circle)
-                Bot.reset()
-                collectgarbage()
-            elseif args[1] then
+            if args[1] then
+                -- Delete specific session
                 local uid=args[1]
                 if not SessionMap[uid] then
                     local privS=SessionMap['p'..uid]
@@ -137,8 +125,18 @@ local commands={
                     S:send("找不到会话喵")
                 end
             else
-                S:send("（咚）\n……\n这里是哪里喵？")
-                SessionMap[S.id]=nil
+                -- Restart
+                for k in next,package.loaded do
+                    if k:sub(1,5)=='task.' then
+                        package.loaded[k]=nil
+                    end
+                end
+                Config=FILE.load('botconf.lua','-lua')
+                codeEnv.Config=Config
+                Bot.refreshUserInfo()
+                Bot.reactMessage(M.message_id,Emoji.hollow_red_circle)
+                TABLE.clear(SessionMap)
+                collectgarbage()
             end
         end,
     },

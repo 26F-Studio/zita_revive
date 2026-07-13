@@ -265,11 +265,6 @@ function Bot.adminNotice(text)
         Bot.sendMsg(text,id,true)
     end
 end
-function Bot.reset()
-    for id in next,SessionMap do
-        SessionMap[id]=nil
-    end
-end
 function Bot.stop(time)
     if time then
         TASK.forceLock('bot_blockRestart',time or 600)
@@ -590,7 +585,7 @@ end
 ---@param time? number seconds (default to 0.26~1.26s), must <= 86400 (1 day)
 function Session:delaySend(text,time)
     if time and time>86400 or not text then return end
-    if time==nil then time=.26+math.random() elseif time<=0 then return self:send(text,echo) end
+    if time==nil then time=.26+math.random() elseif time<=0 then return self:send(text) end
     self:_timeTask(self.send,time,{self,text})
 end
 ---@param id number|string string means search id from Session.echos
@@ -678,7 +673,7 @@ function scene.update()
     if ws.state=='dead' then
         if Bot.state=='running' then
             -- Disconnected from running state
-            Bot.reset()
+            TABLE.clear(SessionMap)
             LOG('error',"Disconnected")
             LOG('info',"Retry after "..Config.connectInterval.."s...")
             Bot.state='dead'
