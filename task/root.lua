@@ -103,7 +103,9 @@ local commands={
         func=function(S,args,M)
             LOG('warn',"[RESTART]")
             if not args[1] then
+                local botID,botName=Config.botID,Config.botName
                 Config=FILE.load('botconf.lua','-lua')
+                Config.botID,Config.botName=botID,botName
                 codeEnv.Config=Config
                 for k in next,package.loaded do
                     if k:sub(1,5)=='task.' then
