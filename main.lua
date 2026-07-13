@@ -276,12 +276,13 @@ function Bot.stop(time)
     end
 end
 
-local function handler_appendHis(data)
-    ---@cast data OneBot.Event.PrivateMessage | OneBot.Event.GroupMessage
-    if data.message_type=='group' then
-        SessionMap['g'..data.group_id]:appendHistory(data)
-    elseif data.message_type=='private' then
-        SessionMap['p'..data.user_id]:appendHistory(data)
+local function handler_appendHis(res)
+    local d=res.data
+    ---@cast d OneBot.Event.PrivateMessage | OneBot.Event.GroupMessage
+    if d.message_type=='group' then
+        SessionMap['g'..d.group_id]:appendHistory(d)
+    elseif d.message_type=='private' then
+        SessionMap['p'..d.user_id]:appendHistory(d)
     end
 end
 
@@ -348,8 +349,8 @@ function Bot._update()
                 if Bot.handlerCache[echo] then
                     local handler=Bot.handlerCache[echo]
                     Bot.handlerCache[echo]=nil
-                    local s,r=pcall(handler,res.data)
-                    if not s then LOG('warn',"Handler Error: "..r) end
+                    local s,err=pcall(handler,res)
+                    if not s then LOG('warn',"Handler Error: "..err) end
                 elseif echo:match(':') then
                     local sid,echoStr=echo:match('(.+):(.+)')
                     local S=SessionMap[sid]
