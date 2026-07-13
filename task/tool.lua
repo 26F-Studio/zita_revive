@@ -396,7 +396,7 @@ tools.tls={
             end
         end
         if type(res.data)~='table' then return "查询失败，数据格式不正确（data不是表）" end
-        return STRING.repD(STRING.trimIndent[[
+        return string.format(STRING.trimIndent[[
             TL总览-%s %s段 %d
             胜场 %d/%d (%d%%)
             %dapm %.2fpps %dvs
