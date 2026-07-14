@@ -140,6 +140,10 @@ local utils={
         text=CQ.img(Config.extraData.imgPath.."io_alt_margin.png"),
     },
     {
+        word="tgm1~4",
+        text="咋想的，是tgm1到tgm4",
+    },
+    {
         word="ds配色;ds颜色",
         text="TechDS_Palette:944,484,569,963,859,984,588",
     },
@@ -420,8 +424,8 @@ local main={
     {
         word="预输入;buffered input;提前旋转;提前暂存;提前移动;irs;ihs;ims",
         title="预输入",
-        text="Buffered Input（也叫Initial ** System 提前[动作名称]系统），比如在方块还没有出现的时候提前按下(或按住)旋转键，方块就会在出现后立刻旋转",
-        detail="优秀的操作密集型游戏通常会有预输入系统，能降低对玩家操作精度的要求，扩大完美操作的输入窗口，显著提升游戏手感，还可能衍生出更多有深度的机制。",
+        text="Buffered Input（也叫Initial ** System，提前【XX】系统），比如在方块还没有出现的时候提前按下(或按住)旋转键，方块就会在出现后立刻旋转",
+        detail="优秀的操作密集型游戏通常会有预输入系统，能降低对玩家操作精度的要求，扩大完美操作的输入窗口，显著提升游戏手感，还可能衍生出更多有深度的机制和技巧。",
     },
     {
         word="预览;下一个;next",
@@ -1360,7 +1364,13 @@ local pattern={
     },
 }
 ---@type Zict.Entry[]
-local game={}
+local game={
+    {
+        word="tgm;tgm系列;tetris the grand master;tetris grand master",
+        title="TGM系列",
+        text="聚焦于高重力快节奏玩法的街机方块游戏系列，是20G、段位、大于号、铁门等概念的源头，甚至有相对独立的社区\n另见 #tgm1~4",
+    },
+}
 for _,d in next,(FILE.load('task/game_db.lua','-luaon')) do
     local tags={}
     if d[1]==2 then ins(tags,"🔥🔥") end
