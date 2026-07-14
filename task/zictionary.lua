@@ -64,6 +64,7 @@ return {
                 local oldSet,newSet={},{}
                 for k in next,zict do oldSet[k]=true end
                 reloadZict()
+                zict=Config.extraData._zict
                 for k in next,zict do newSet[k]=true end
 
                 local deletion,addition={},{}
