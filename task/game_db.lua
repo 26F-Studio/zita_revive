@@ -3,7 +3,7 @@ return {
     {2,2,2,2,1,2,2,2,1,2,2,0,2,"tech;techmino;铁壳;铁壳米诺;方块研究所","Techmino","studio26f.org","大规模缝合了常见现代块内容，可练习可挑战\n目前最新版本0.17.21，另见续作 #Techmino Downstacking\n苹果用户见 #铁壳ios #铁壳mac"},
     {2,2,2,1,2,2,2,0,2,2,2,0,2,"io;tetrio;tetr.io","TETR.IO","tetr.io","应该是目前全世界在线人数最多的现代块游戏\n另见#io qp2"},
     {2,2,0,2,2,2,2,0,0,2,0,2,0,"tec;tetris effect;tetris effect connected","Tetris Effect: Connected","store.steampowered.com/app/1003590","卖点是沉浸音画体验和基于创新的Zone机制的各种模式（包括多人在线不对称竞技）"},
-    {2,2,0,2,0,2,2,0,0,2,0,2,0,"tgm4;ae","TGM4 （Absolute Eye）","store.steampowered.com/app/3328480","TGM4从街机游戏转为了PC游戏（Steam有售），包含了大量内容丰富的新模式和前作模式重现，详见tetriswiki.cn/p/TGM4\n另见 #tgm #tgm1~4"},
+    {2,2,0,2,0,2,2,0,0,2,0,2,0,"tgm4;ae","TGM4 （Absolute Eye）","store.steampowered.com/app/3328480","TGM4从街机游戏转为了PC游戏，包含了大量内容丰富的新模式和前作模式重现，详见tetriswiki.cn/p/TGM4\n另见 #tgm #tgm1~4"},
     {2,2,0,1,2,2,2,0,0,2,0,2,0,"ppt;puyo puyo tetris;ppt2;ppt2s","Puyo Puyo Tetris","store.steampowered.com/app/546050","包含Tetris和PuyoPuyo两个下落消除游戏，二者间可以对战\n注：PPT2的手感据很多人说都不行"},
     {2,0,2,1,2,2,2,1,2,2,2,0,1,"js;jstris","Jstris","jstris.jezevec10.com","比较老牌的在线多人网页块游，画面简陋但模式数量不少"},
     {1,2,2,2,2,2,2,0,2,2,2,0,0,"wwc;worldwide combos","Worldwide Combos","worldwidecombos.com","有几种不同风格的大规则（例如炸弹垃圾行），有录像战（匹配对手不是真人）"},
