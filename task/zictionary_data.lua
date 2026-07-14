@@ -732,9 +732,24 @@ local main={
         text="玩家按下键盘到游戏接收到信号其实一定会有几毫秒到几十毫秒不等的延迟，若过大就会很影响游戏手感\n这个延迟会受各种因素影响，若出现临时的增大，可以尝试重启设备/关闭后台程序/接通电源等操作缓解",
     },
     {
+        word="tgm;tgm系列;tetris the grand master;tetris grand master",
+        title="TGM系列",
+        text="聚焦于高重力快节奏玩法的街机方块游戏系列，是20G、段位、大于号、铁门等概念的源头，甚至有相对独立的社区\n另见 #tgm1~4",
+    },
+    {
         word="秘密段位;secret grade;大于号;小于号;>;<",
         title="秘密段位",
         text="出自TGM系列的彩蛋玩法。拼图拼出“每行仅有一个洞且排成大于号的图形”。最高目标是完成19行并封口",
+    },
+    {
+        word="gm",
+        title="Grand Master",
+        text="出自TGM系列的段位名称，全系列都有模式可以考段得到GM\n另见 #tgm段位",
+    },
+    {
+        word="tgm段位",
+        title="TGM段位",
+        text="一代段位：S1~S9 GM\n二代段位：S1~S9 M GM\n三代段位：9~1 S1~S9 M1~M9 M MK MV MO MM GM\n四代段位：每个模式都有独立段位系统，详见 tetris.wiki/AE",
     },
     {
         word="zone",
@@ -1365,11 +1380,6 @@ local pattern={
 }
 ---@type Zict.Entry[]
 local game={
-    {
-        word="tgm;tgm系列;tetris the grand master;tetris grand master",
-        title="TGM系列",
-        text="聚焦于高重力快节奏玩法的街机方块游戏系列，是20G、段位、大于号、铁门等概念的源头，甚至有相对独立的社区\n另见 #tgm1~4",
-    },
 }
 for _,d in next,(FILE.load('task/game_db.lua','-luaon')) do
     local tags={}
