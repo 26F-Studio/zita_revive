@@ -63,7 +63,7 @@ local utils={
         word="复读",
         text="？竟然对这个感兴趣吗…\n初始概率0.5%，随消息长度逐渐减小到0%\n每条没复读的消息+0.01%（最多2.6%），每一条其他人的复读临时+6.2%\n每次复读26秒后进入冷静期\n超过62字节和包含坏词的消息视为无效\n包含好词的消息+2.6%\n不会在一轮复读内重复，多次参与的人也不计数",
     },
-    -- 其他游戏
+    -- 其他游戏和软件
     {
         word="宝石;宝石迷阵;bejeweled;bej;bej1;bej2;bej3;bejT;bejeweled1;bejeweled2;bejeweled3;bejeweled twist",
         title="Bejeweled Series",
@@ -88,6 +88,10 @@ local utils={
         word="techmino galaxy;galaxy;tg;铁盖;盖勒克西;盖乐克西;盖勒克希;盖乐克希",
         text="在背后默默支撑着整个Techmino续作系列，提供了方块游戏引擎的meta项目",
         detail="并不是做一半才发现项目没有明确规划导致无法继续开发，嗯",
+    },
+    {
+        word="tetrio plus;io plus",
+        text="一个tetr.io的插件，提供了自定义皮肤音效等功能，手动替换客户端app.asar安装，或者火狐浏览器插件商店直装",
     },
     -- 其他常用语
     {
@@ -263,12 +267,43 @@ local main={
         word="eggs",
         title="ggs的整活版本",
     },
-    -- 消除名
+    -- 消除
     {
         word="消四;quad;quadruple;techrash",
         title="消四",
         text="一次消除四行",
         detail="官方游戏中的消四和游戏同名也叫Tetris。有的非官方游戏考虑到版权问题会使用Quad替换，也有些保留了这个传统会安排一个特殊的名称，例如Techmino里的Techrash",
+    },
+    {
+        word="mini",
+        title="Mini Spin",
+        text="一些游戏会使用Mini标签来对部分Spin进行弱化，不同游戏的判定差异很大且通常很复杂，建议只记住常见形状即可",
+    },
+    {
+        word="tss;tsd;tst;t1;t2;t3",
+        title="TSS/TSD/TST",
+        text="T-Spin Single/Double/Triple，使用T方块Spin并消除1/2/3行，也称T1/T2/T3。其中T3需要旋转系统支持才可能打出",
+    },
+    {
+        word="b2b;back to back",
+        title="Back to Back",
+        text="简称B2B，连续的消行都是特殊消行（Spin或消四），中间不夹杂普通消行",
+    },
+    {
+        word="all spin;all-spin;全旋;全旋转",
+        title="All-Spin",
+        text="规则名，指用所有方块进行Spin消除都能获得奖励，而不是通常仅T-Spin才能打出攻击(T-Spin Only)\n另见 #All-Mini",
+    },
+    {
+        word="all mini;all-mini",
+        title="All-Mini",
+        text="IO专有的All-Spin的一个亚种，给所有方块增加了不可移动判定，但除了T块三角判定之外的spin全都视为mini（基础攻击=行数-1，计B2B）。此规则已默认用于TL和QP",
+    },
+    {
+        word="ospin;o-spin",
+        title="O-Spin",
+        text="由于O块旋转不变只能左右移所以经常被卡住，于是就有了O-Spin这个梗，有人做视频有人做游戏，慢慢地也形成了一种文化",
+        link="dunspixel.github.io/ospin-guide",
     },
     {
         word="全消;全清;ac;pc;all clear;perfect clear;bravo",
@@ -285,7 +320,17 @@ local main={
         title="Color Clear",
         text="TETR.IO限定，All Clear的外延，消除场地上所有彩色的方块（垃圾行通常是灰色的）\n另见 #Half Clear",
     },
-    -- 旋转相关
+    {
+        word="攻击计算;攻击表;计算攻击;伤害计算;伤害表;计算伤害",
+        title="攻击计算",
+        text="每个游戏的攻击计算方式各有不同，此处提供一个现代块较通用的攻击计算方法：\n普通消除：消1/2/3行打0/1/2\n特殊消除：消四打4，T-spin消1/2/3行打2/4/6（两倍行数），如果上一次消除也是特殊消除则为b2b，多打1\n连击：差异较大，激进些01234，保守些001122334+\n全消：差异较大，打4~10都有\n另见 #io攻击计算",
+    },
+    {
+        word="io攻击;io攻击计算;io攻击表;io伤害计算;tetr.io攻击;tetrio攻击",
+        title="tetr.io攻击计算",
+        text="QP和TL略有不同，大致如下：\n普通消1/2/3行打0/1/2，消四打4，旋消1/2/3打2/4/6（mini同普通消除），B2B+1\nB2Bx4开始充能（QP从1开始，TL从4开始），特殊消除计数+1，普通消除打出充能数伤害\n每一连击让下次攻击额外加0.25倍基础伤害，如二连消一接消四=0+0+4*1.5=6\n全消在QP打3计两次特消，TL打5计一次特消（不和spin叠加）",
+    },
+    -- 旋转方法和旋转系统
     {
         word="spin;tspin;t-spin",
         title="Spin",
@@ -304,35 +349,14 @@ local main={
         detail="除T外的其他方块并不存在像T块那样的四个“角”，但在一些官方游戏的技术细节中可以扒出它们的“角”的位置，应该也是有内部规范的。例如S/Z的四个“角”是S/Z平放时和方块左右侧直接接触的四个点位",
     },
     {
+        word="fin;neo;iso;特殊t2;可移动t2",
+        title="Fin/Neo/Iso",
+        text="三类特殊T2的名字，受不同具体规则影响，在不同的游戏内的效果可能不一样，通常没有实战价值",
+    },
+    {
         word="immobile;不可移动;不可移动判定;卡块;卡块判定",
         title="不可移动判定",
         text="Spin的判定方法之一，只要方块锁定时处于不可再平移的位置，那么就是Spin",
-    },
-    {
-        word="mini",
-        title="Mini Spin",
-        text="一些游戏会使用Mini标签来对部分Spin进行弱化，不同游戏的判定差异很大且通常很复杂，建议只记住常见形状即可",
-    },
-    {
-        word="all spin;all-spin",
-        title="All-Spin",
-        text="规则名，指用所有方块进行Spin消除都能获得奖励，而不是通常仅T-Spin才能打出攻击(T-Spin Only)\n另见 #All-Mini",
-    },
-    {
-        word="all mini;all-mini",
-        title="All-Mini",
-        text="IO专有的All-Spin的一个亚种，给所有方块增加了不可移动判定，但除了T块三角判定之外的spin全都视为mini（基础攻击=行数-1，计B2B）。此规则已默认用于TL和QP",
-    },
-    {
-        word="tss;tsd;tst;t1;t2;t3",
-        title="TSS/TSD/TST",
-        text="T-Spin Single/Double/Triple，使用T方块Spin并消除1/2/3行，也称T1/T2/T3。其中T3需要旋转系统支持才可能打出",
-    },
-    {
-        word="ospin;o-spin",
-        title="O-Spin",
-        text="由于O块旋转不变只能左右移所以经常被卡住，于是就有了O-Spin这个梗，有人做视频有人做游戏，慢慢地也形成了一种文化",
-        link="dunspixel.github.io/ospin-guide",
     },
     {
         word="踢墙;踢墙表;旋转系统;rs;rotation system",
@@ -391,67 +415,7 @@ local main={
         text="T-ex原创旋转系统，引入了“按住方向键换一套踢墙表”的设定（在对应的方向需要顶住墙），让“想去哪”能被游戏捕获从而转到玩家希望到达的位置",
         detail="其他旋转系统无论踢墙表怎么设计，块处在某个位置时旋转后最终只能按固定顺序测试，这导致不同的踢墙是竞争的，若存在两个可能想去的位置就只能二选一，XRS解决了这个问题",
     },
-    -- 其他
-    {
-        word="b2b;back to back",
-        title="Back to Back",
-        text="简称B2B，连续的消行都是特殊消行（Spin或消四），中间不夹杂普通消行",
-    },
-    {
-        word="fin;neo;iso;特殊t2;可移动t2",
-        title="Fin/Neo/Iso",
-        text="三类特殊T2的名字，受不同具体规则影响，在不同的游戏内的效果可能不一样，通常没有实战价值",
-    },
-    {
-        word="tetrimino;tetromino;tetramino;四连块;四联块;四连方块;四联方块;形状;方块形状",
-        title="四连块",
-        text="四个正方形共用边连接成的形状，在不允许翻转的情况下共有七种，根据形状命名为Z S J L T O I"..CQ.img(Config.extraData.imgPath.."七块.jpg"),
-    },
-    {
-        word="pentamino;pentomino;五连块;五联块;五连方块;五联方块",
-        title="五连块",
-        text="类似四连块但增加到五个正方形，在不允许翻转的情况下共有18种，命名方案不统一，其中一套是S5 Z5 P Q F E T5 U V W X J5 L5 R Y N H I5",
-    },
-    {
-        word="一连块;二连块;三连块;六连块;七连块;八连块;九连块;二十六连块",
-        text="别闹",
-    },
-    {
-        word="配色;颜色;方块颜色;标准配色;方块配色",
-        title="方块配色",
-        text="七种块的颜色通常使用同一套彩虹配色：Z-红 L-橙 O-黄 S-绿 I-青 J-蓝 T-紫\n#Guideline 规则的一部分",
-    },
-    {
-        word="预输入;buffered input;提前旋转;提前暂存;提前移动;irs;ihs;ims",
-        title="预输入",
-        text="Buffered Input（也叫Initial ** System，提前【XX】系统），比如在方块还没有出现的时候提前按下(或按住)旋转键，方块就会在出现后立刻旋转",
-        detail="优秀的操作密集型游戏通常会有预输入系统，能降低对玩家操作精度的要求，扩大完美操作的输入窗口，显著提升游戏手感，还可能衍生出更多有深度的机制和技巧。",
-    },
-    {
-        word="预览;下一个;next",
-        title="预览",
-        text="场地旁边的一个区域，显示了后边几个即将出现的块",
-    },
-    {
-        word="暂存;交换;hold",
-        title="暂存",
-        text="将手上的方块丢入Hold槽中，否则和已有的方块交换。用来调整块序，更容易摆出你想要的形状",
-    },
-    {
-        word="硬降;软降;瞬降",
-        title="软降 & 硬降",
-        text="方块下移的操作有几种：\n硬降：将方块立刻下移到底并锁定\n软降：将方块下移但不锁定\n瞬降：软降的变种，将方块瞬间下移到底但不锁定",
-    },
-    {
-        word="深降;deepdrop",
-        title="深降",
-        text="允许方块向下穿越地形进入地下的空洞",
-    },
-    {
-        word="md;misdrop;mishold;失误",
-        title="Misdrop",
-        text="误放，由于各种原因导致不小心把块放错了地方，简称MD",
-    },
+    -- 堆叠
     {
         word="平衡;平衡法",
         title="平衡法",
@@ -466,26 +430,6 @@ local main={
         word="削减;skim;skimming",
         title="削减",
         text="指有意识地通过特定的普通消行改善地形，例如消四堆叠时用普通消行整地等待I块、对战时用特定技巧把地形削成T-Spin形状",
-    },
-    {
-        word="挖掘;dig",
-        title="挖掘",
-        text="指消除由对手或系统送来的灰色垃圾行",
-    },
-    {
-        word="攻击;进攻;防守;防御;攻防",
-        title="对战攻防",
-        text="攻击：通过消除给对手发送垃圾行；\n防御（相杀）：用攻击抵消别人送来但还没上涨的垃圾行；\n反击：故意吃下对手的攻击（不抵消）然后再进行反击\n另见 #攻击计算",
-    },
-    {
-        word="连击;combo;ren",
-        title="连击",
-        text="连续落块并完成消除。从第二次起称为 1 Combo，攻击数取决于具体游戏\n“REN”的说法来源于日语的“連”(れん)",
-    },
-    {
-        word="spike",
-        title="Spike",
-        text="爆发攻击，指短时间内打出大量的攻击，一些游戏有Spike计数器，可以看到自己短时间内打出了多少攻击",
     },
     {
         word="1w;2w;3w;wide",
@@ -557,6 +501,77 @@ local main={
         word="54;54堆;54堆叠;45;45堆;45堆叠",
         title="5-4堆叠",
         text="左边五列右边四列的堆叠方式，#c1w 的一种",
+    },
+    -- 其他
+    {
+        word="tetrimino;tetromino;tetramino;四连块;四联块;四连方块;四联方块;形状;方块形状",
+        title="四连块",
+        text="四个正方形共用边连接成的形状，在不允许翻转的情况下共有七种，根据形状命名为Z S J L T O I"..CQ.img(Config.extraData.imgPath.."七块.jpg"),
+    },
+    {
+        word="pentamino;pentomino;五连块;五联块;五连方块;五联方块",
+        title="五连块",
+        text="类似四连块但增加到五个正方形，在不允许翻转的情况下共有18种，命名方案不统一，其中一套是S5 Z5 P Q F E T5 U V W X J5 L5 R Y N H I5",
+    },
+    {
+        word="一连块;二连块;三连块;六连块;七连块;八连块;九连块;二十六连块",
+        text="别闹",
+    },
+    {
+        word="配色;颜色;方块颜色;标准配色;方块配色",
+        title="方块配色",
+        text="七种块的颜色通常使用同一套彩虹配色：Z-红 L-橙 O-黄 S-绿 I-青 J-蓝 T-紫\n#Guideline 规则的一部分",
+    },
+    {
+        word="预输入;buffered input;提前旋转;提前暂存;提前移动;irs;ihs;ims",
+        title="预输入",
+        text="Buffered Input（也叫Initial ** System，提前【XX】系统），比如在方块还没有出现的时候提前按下(或按住)旋转键，方块就会在出现后立刻旋转",
+        detail="优秀的操作密集型游戏通常会有预输入系统，能降低对玩家操作精度的要求，扩大完美操作的输入窗口，显著提升游戏手感，还可能衍生出更多有深度的机制和技巧。",
+    },
+    {
+        word="预览;下一个;next",
+        title="预览",
+        text="场地旁边的一个区域，显示了后边几个即将出现的块",
+    },
+    {
+        word="暂存;交换;hold",
+        title="暂存",
+        text="将手上的方块丢入Hold槽中，否则和已有的方块交换。用来调整块序，更容易摆出你想要的形状",
+    },
+    {
+        word="硬降;软降;瞬降",
+        title="软降 & 硬降",
+        text="方块下移的操作有几种：\n硬降：将方块立刻下移到底并锁定\n软降：将方块下移但不锁定\n瞬降：软降的变种，将方块瞬间下移到底但不锁定",
+    },
+    {
+        word="深降;deepdrop",
+        title="深降",
+        text="允许方块向下穿越地形进入地下的空洞",
+    },
+    {
+        word="md;misdrop;mishold;失误",
+        title="Misdrop",
+        text="误放，由于各种原因导致不小心把块放错了地方，简称MD",
+    },
+    {
+        word="挖掘;dig",
+        title="挖掘",
+        text="指消除由对手或系统送来的灰色垃圾行",
+    },
+    {
+        word="攻击;进攻;防守;防御;攻防",
+        title="对战攻防",
+        text="攻击：通过消除给对手发送垃圾行；\n防御（相杀）：用攻击抵消别人送来但还没上涨的垃圾行；\n反击：故意吃下对手的攻击（不抵消）然后再进行反击\n另见 #攻击计算",
+    },
+    {
+        word="连击;combo;ren",
+        title="连击",
+        text="连续落块并完成消除。从第二次起称为 1 Combo，攻击数取决于具体游戏\n“REN”的说法来源于日语的“連”(れん)",
+    },
+    {
+        word="spike",
+        title="Spike",
+        text="爆发攻击，指短时间内打出大量的攻击，一些游戏有Spike计数器，可以看到自己短时间内打出了多少攻击",
     },
     {
         word="block out;lock out;top out;死亡;死亡判定",
@@ -778,19 +793,9 @@ local main={
         link="github.com/MrZ626/modern_tetris_cn_community/blob/main/modern_stacker.md",
     },
     {
-        word="攻击计算;攻击表;计算攻击;伤害计算;伤害表;计算伤害",
-        title="攻击计算",
-        text="每个游戏的攻击计算方式各有不同，此处提供一个现代块较通用的攻击计算方法：\n普通消除：消1、2、3行打0、1、2\n特殊消除：消四打4，T-spin消1~3行打2、4、6（两倍行数），如果上一次消除也是特殊消除则为b2b，多打1\n连击：差异较大，激进些01234，保守些001122334+\n全消：差异较大，打4~10都有\n另见 #io攻击计算",
-    },
-    {
-        word="tetr.io攻击;io攻击;io攻击计算;io攻击表;io伤害计算",
-        title="tetr.io攻击计算",
-        text="QP和TL略有不同，大致如下：\n普通消1~3行打0~2，消四打4，旋消N打2N（mini同普通消除），B2B+1\nB2Bx4开始充能（QP从1开始，TL从4开始），特殊消除计数+1，普通消除打出充能数伤害\n每一连击让下次攻击额外加0.25倍基础伤害，如二连消一接消四=0+0+4*1.5=6\n全消在QP打3计两次特消，TL打5计一次特消（不和spin叠加）",
-    },
-    {
         word="俄罗斯方块;俄方;特趣思",
         title="俄罗斯方块",
-        text="Tetris类游戏在中文区的普遍叫法，官方中文名其实是特趣思（然而没人用）。“俄罗斯方块”是早年传入中国时被传开的民间翻译，有时也会泛指包含“方格+消除”要素的游戏如《1010》，小心歧义",
+        text="Tetris类游戏在中文区的普遍叫法，官方中文名其实是特趣思（然而没人用）\n“俄罗斯方块”是早年传入中国时被传开的民间翻译，网络上有时也会泛指包含“方格+消除”要素的游戏如《1010》，小心歧义",
     },
     {
         word="tetris",
@@ -799,13 +804,18 @@ local main={
         detail="含义是Tetra（四，古希腊语词根）+Tennis（网球 游戏原作者喜欢的运动）\n现在商标权在TTC (The Tetris Company)手上，任天堂、是获得TTC授权才开发方块游戏的，并不拥有Tetris这一商标",
     },
     {
+        word="官块",
+        title="“官方游戏”",
+        text="官方游戏指由Tetris商标持有者TTC授权的游戏\n另见 #TTC",
+    },
+    {
         word="guideline;gl;基准;准则;基准规则;官方规则",
         title="Guideline",
         text="#TTC 内部使用的一套Guideline（基准、准则）手册，详细规定了他们所要求的“Tetris”游戏在技术、营销上的各种细则，包括了场地尺寸、按键布局、方块颜色、出块规则、死亡判定等",
         detail="这套规定保证了21世纪后新出的官方方块游戏都拥有不错的基础游玩体验，再也不是曾经的一款游戏一个规则，跨游戏的经验和手感完全无法通用了。不过代价是所有的官方方块游戏也都被强制要求按照这套手册设计，新的设计不一定会被TTC官方人员认可\n目前所有的专业方块游戏也都依然保留了这套规则中与游戏规则相关的大多数设计",
     },
     {
-        word="ttc;the tetris company;官方;俄罗斯方块公司",
+        word="ttc;the tetris company;官方;俄罗斯方块公司;授权",
         title="The Tetris Company",
         text="俄罗斯方块公司，简称TTC，拥有游戏版权和Tetris商标，更多疑问见下面这个文章",
         link="github.com/MrZ626/modern_tetris_cn_community/blob/main/legal_issues.md",
@@ -1467,7 +1477,7 @@ local extra_mode={
         text="TETR.IO结合马拉松与限时打分两大传统模式的新规则限时打分，考察2分钟内的得分，但是等级/重力/得分倍率逐渐增加\n另见 #Tetris Blitz",
     },
     {
-        word="tetra league;TL;排位;天梯;s2",
+        word="tetra league;TL;排位;天梯;s2;tl s2",
         title="Tetra League",
         text="TETR.IO的全球排名对战模式，系统匹配实力相近的玩家，输赢会影响段位分、段位、排名\n目前是s2赛季，相比s1把堆b2b加伤换成了surge机制\n另见 #段位",
     },
@@ -1498,7 +1508,7 @@ local extra_mode={
         text="TE:C中的一个对战模式，和正常对战相比引入Zone，期间垃圾行不会上涨且可以通过一次消除十几行打出巨量攻击",
     },
     {
-        word="qp2;io qp2;爬塔",
+        word="qp2;io qp2;qp;爬塔",
         title="TETR.IO QP2",
         text="随开随打的第二代快速游戏，发送攻击升级 #推进器，在 #疲劳时间 前打败对手爬升高度达到天顶之塔的第 #十层 ！\n另见 #Surge #速通 #QP2 Mod #qp16/tl30 [用户名]",
         link="github.com/MrZ626/modern_tetris_cn_community/blob/main/io_qp2_rule/full.md",
@@ -1529,7 +1539,7 @@ local extra_mode={
         text="为了防止一局游戏过长，8分钟开始每分钟会多一个共五个负面效果：(8分钟)+2行实心垃圾，(9分钟)+25%受击倍率，(10分钟)+3行实心垃圾，(11分钟)+25%受击倍率，(12分钟)+5行实心垃圾\b效果原文见 #QP2 完整文档",
     },
     {
-        word="蓄力攻击;surge",
+        word="蓄力攻击;surge;浪涌;浪涌充能;浪涌攻击",
         title="[QP2/TL机制] 蓄力攻击",
         text="达到B2B×4后会开始充能，非特殊消除时打出和充能数一样的攻击\nTLs2和QP2中都有此系统不过参数不同，TL中到B2B×4时直接从4充能开始，QP2中到达B2B×4时从1充能开始",
     },
