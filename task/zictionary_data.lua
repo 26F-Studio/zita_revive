@@ -90,8 +90,8 @@ local utils={
         detail="并不是做一半才发现项目没有明确规划导致无法继续开发，嗯",
     },
     {
-        word="tetrio plus;io plus",
-        text="一个tetr.io的插件，提供了自定义皮肤音效等功能，手动替换客户端app.asar安装，或者火狐浏览器插件商店直装",
+        word="tetrio plus;io plus;tetrio+;io+",
+        text="一个tetr.io的插件，提供了自定义皮肤音效等功能，需要手动替换客户端app.asar安装，或火狐浏览器插件商店直装",
     },
     -- 其他常用语
     {
@@ -145,10 +145,10 @@ local utils={
     },
     {
         word="tgm1~4",
-        text="咋想的，是tgm1到tgm4",
+        text="咋想的，意思是tgm1到tgm4",
     },
     {
-        word="ds配色;ds颜色",
+        word="ds配色;ds颜色;ds palette;ds调色板",
         text="TechDS_Palette:944,484,569,963,859,984,588",
     },
 }
