@@ -761,6 +761,29 @@ tools.qr={
     end,
 }
 
+tools.vote={
+    help="发起投票（自动回应所有选项一次）\n例：#vote\n标题和说明等\n表情1：选项1\n表情2：选项2\n……",
+    func=function(data,_,M)
+        local l=STRING.split(data,'\n')
+        local reactCnt=0
+        for i=1,#l do
+            local line=l[i]
+            local p1,p2=line:find(":"),line:find("：")
+            local p=math.min(p1 or 1e99, p2 or 1e99)
+            if p<=20 then
+                local emoji=line:sub(1,p-1)
+                local cqFace=emoji:match('id=(%d+)')
+                if not cqFace then
+                    cqFace=tonumber(emoji) or STRING.u8byte(emoji)
+                end
+                Bot.reactMessage(M.message_id,cqFace)
+                reactCnt=reactCnt+1
+                if reactCnt>=10 then return end
+            end
+        end
+    end,
+}
+
 local userPool={}
 tools.skit={
     help="生成自定义合并转发小剧场\n例：#skit\nMrZ=1046101471\n小z=2920573475\nMrZ:喵？\n小z:Z酱可爱喵",
