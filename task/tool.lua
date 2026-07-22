@@ -768,14 +768,16 @@ tools.vote={
         local reactCnt=0
         for i=1,#l do
             local line=l[i]
-            local p1,p2=line:find(":"),line:find("：")
-            local p=math.min(p1 or 1e99, p2 or 1e99)
-            if p<=20 then
-                local emoji=line:sub(1,p-1)
-                local cqFace=emoji:match('id=(%d+)')
-                if not cqFace then
+            local cqFace=line:match("^%[CQ:face,id=(%d+)")
+            if not cqFace then
+                local p1,p2=line:find(":"),line:find("：")
+                local p=math.min(p1 or 1e99, p2 or 1e99)
+                if p<=6 then
+                    local emoji=line:sub(1,p-1)
                     cqFace=tonumber(emoji) or STRING.u8byte(emoji)
                 end
+            end
+            if cqFace then
                 Bot.reactMessage(M.message_id,cqFace)
                 reactCnt=reactCnt+1
                 if reactCnt>=10 then return end
