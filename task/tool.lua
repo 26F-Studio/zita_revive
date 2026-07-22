@@ -762,7 +762,7 @@ tools.qr={
 }
 
 tools.vote={
-    help="发起投票（自动回应所有选项一次）\n例：#vote\n标题和说明等\n表情1：选项1\n表情2：选项2\n……",
+    help="发起投票（自动回应所有选项一次）\n例：#vote 标题和说明等\n表情1：选项1\n……",
     func=function(data,_,M)
         local l=STRING.split(data,'\n')
         local reactCnt=0
@@ -772,7 +772,7 @@ tools.vote={
             if not cqFace then
                 local p1,p2=line:find(":"),line:find("：")
                 local p=math.min(p1 or 1e99, p2 or 1e99)
-                if p<=6 then
+                if MATH.between(p,2,6) then
                     local emoji=line:sub(1,p-1)
                     cqFace=tonumber(emoji) or STRING.u8byte(emoji)
                 end
