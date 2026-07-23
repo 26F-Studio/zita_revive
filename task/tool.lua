@@ -761,6 +761,10 @@ tools.qr={
     end,
 }
 
+local function task_voteDelay(face,delay)
+    TASK.yieldT(.26*delay)
+    Bot.reactMessage(Bot.lastMessageID,face)
+end
 tools.vote={
     help="发起投票（自动回应所有选项一次）\n例：#vote 标题和说明等\n表情1：选项1\n……",
     func=function(data,_,M)
@@ -778,7 +782,7 @@ tools.vote={
                 end
             end
             if cqFace then
-                Bot.reactMessage(M.message_id,cqFace)
+                TASK.new(task_voteDelay,cqFace,reactCnt)
                 reactCnt=reactCnt+1
                 if reactCnt>=10 then return end
             end
