@@ -3,13 +3,7 @@ local ins,rem,concat=table.insert,table.remove,table.concat
 local count,repD=STRING.count,STRING.repD
 local copy,getRnd=TABLE.copy,TABLE.getRandom
 
-local cooldown=2600
-local cooldownSkip={}
-for k,v in next,{
-    win=2600,
-    lose=1200,
-    giveup=1620,
-} do cooldownSkip[k]=cooldown-v end
+local cooldown,cooldownFamily=2600,260
 local delays={
     del_help=false,
     del_abandon=false,
@@ -717,7 +711,7 @@ return {
             S:unlock('guess_playing')
             S:unlock('guess_cd')
             S:unlock('guess_duplicate')
-            D.lastInterectTime=Time()-cooldownSkip.giveup
+            D.lastInterectTime=Time()
             if delays.del_abandon and Bot.isManaging(S.id) then
                 S:delayDelete(M.message_id,delays.del_abandon)
             end
@@ -731,8 +725,9 @@ return {
                 end
                 return true
             end
-            if S.group and not Config.extraData.family[S.uid] and not AdminMsg(M) and timeSkip<cooldown then
-                local timeRemain=cooldown-timeSkip+10
+            local cdLimit=Config.extraData.family[S.uid] and cooldownFamily or cooldown
+            if S.group and not AdminMsg(M) and timeSkip<cdLimit then
+                local timeRemain=cdLimit-timeSkip+10
                 if timeRemain<60 then
                     if S:lock('guess_cd',26) then
                         S:send(repD("再等$1秒就能开局了喵",math.ceil(timeRemain)))
@@ -847,7 +842,7 @@ return {
                     S:unlock('guess_playing')
                     S:unlock('guess_cd')
                     S:unlock('guess_duplicate')
-                    D.lastInterectTime=Time()-cooldownSkip.win
+                    D.lastInterectTime=Time()
                     if delays.del_win and Bot.isManaging(S.id) then
                         S:delayDelete(M.message_id,delays.del_win)
                     end
@@ -884,7 +879,7 @@ return {
                     S:unlock('guess_playing')
                     S:unlock('guess_cd')
                     S:unlock('guess_duplicate')
-                    D.lastInterectTime=Time()-cooldownSkip.lose
+                    D.lastInterectTime=Time()
                     if delays.del_lose and Bot.isManaging(S.id) then
                         S:delayDelete(M.message_id,delays.del_lose)
                     end
