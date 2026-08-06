@@ -157,7 +157,7 @@ return {
         if M.message[1].type=='text' then
             local level=Bot.isAdmin(M.user_id) and 2 or AdminMsg(M) and 1 or 0
             local mes=STRING.trim(M.message[1].data.text)
-            if mes:find('!')==1 then
+            if mes:match('^!') then
                 -- Arbitrary Lua code execution (sandboxed)
                 if #mes<6.26 then return false end
                 if level<2 then
@@ -181,19 +181,21 @@ return {
                     S:send("不对！\n"..tostring(err))
                 end
                 return true
-            elseif mes:sub(1,1)=='%' then
+            elseif mes:match('^%%') then
                 -- Built-in string commands
                 local args=STRING.split(mes,' ')
                 local cmd=table.remove(args,1):sub(2)
                 local C=commands[cmd] or Config.extraData.customCmd[cmd]
-                if level>=C.level then
+                if type(C)~='table' then
+                    -- Unknown command
+                elseif level<C.level then
+                    noPermission(S)
+                else
                     if type(C.func)=='function' then
                         C.func(S,args,M,D)
                     elseif type(C.func)=='string' then
                         ASYNC.runCmd('root_'..cmd,C.func)
                     end
-                else
-                    noPermission(S)
                 end
                 return true
             end
