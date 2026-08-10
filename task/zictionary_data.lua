@@ -56,6 +56,12 @@ local utils={
         link="github.com/MrZ626/modern_tetris_cn_community",
     },
     {
+        word="编号;群编号",
+        text="早年QQ还不支持回复和at功能时群内使用的喊人方式（比敲id或者现编外号方便得多），现在在群内比赛等场合也可以作为方便输入的唯一标识符，形成了一种社群文化",
+        detail="为了保证不同群的群友自选号时一定不会重复，可以用at功能搜索编号是否已被占用。由于有多个群可以领编号，不同群限定首字母范围（领取后可通用）：研究群是T，Cultris群（已过气）是C，探索群则是其余字母",
+        link="github.com/MrZ626/modern_tetris_cn_community/blob/main/qq_group_history.md",
+    },
+    {
         word="探索组;研究组",
         text="探索组和研究组是 #TSL 比赛的两个组别，性质类似于新人组和专业组\n游戏数据达标或者拿过探索组前几名后就不再能参加探索组了",
     },
