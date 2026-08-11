@@ -122,7 +122,11 @@ local utils={
     },
     {
         word="赞助;打钱",
-        text=CQ.img(Config.extraData.imgPath.."pay.png"),
+        text=CQ.img(Config.extraData.imgPath.."pay_z.png"),
+    },
+    {
+        word="奖金池;奖金;flore收款码",
+        text=CQ.img(Config.extraData.imgPath.."pay_flore.png"),
     },
     {
         word="提问;提问的智慧",
@@ -1780,6 +1784,7 @@ local contributor={
     {
         word="T056;flore;風洛霊;風洛霊flore;妈妈",
         text="T056.flore，目前主办各项中文社区方块赛事，主办年度奖项活动，活跃编辑方块中文维基，制作了Techmino的配音",
+        detail=CQ.img(Config.extraData.imgPath.."pay_flore.png"),
         link="space.bilibili.com/1223403016",
     },
     {
