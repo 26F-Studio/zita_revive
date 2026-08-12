@@ -200,6 +200,11 @@ local main={
         link="tetriswiki.cn/p/TECN",
     },
     {
+        word="猪猪杯",
+        title="猪猪杯",
+        text="Kirask创办的新人赛性质的群内比赛",
+    },
+    {
         word="tqs;茶服快速瑞士制;茶服瑞士制;快速瑞士制",
         title="茶服快速瑞士制 (TOS Quick Swiss)",
         text="创办于2019年，是不定期举办的茶服(TOS)赛事，目前已停办",
