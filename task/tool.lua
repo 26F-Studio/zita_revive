@@ -458,23 +458,28 @@ tools.tl50={
 }
 
 local deck={'EX','NH','MS','GV','VL','DH','IN','AS','DP'}
+local prio_card={EX=0,NH=1,MS=2,GV=3,VL=4,DH=5,IN=6,AS=7,DP=8,rEX=0,rNH=1,rMS=2,rGV=3,rVL=4,rDH=5,rIN=6,rAS=7,rDP=8}
+local function modCardSorter(a,b) return prio_card[a]<prio_card[b] end
+
 local curDate
-local dateText={}
-local ZCIDcache={}
-local ZCLBcache={}
+local ZC_cache_date={}
+local ZC_cache_id={}
+local ZC_cache_name={}
+local ZC_cache_lb={}
 local function toolThread_zclb(S,M,day)
     -- Refresh daily
     if os.date("!%Y%m%d")~=curDate then
         curDate=os.date("!%Y%m%d")
-        TABLE.clear(dateText)
-        TABLE.clear(ZCIDcache)
-        TABLE.clear(ZCLBcache)
+        TABLE.clear(ZC_cache_date)
+        TABLE.clear(ZC_cache_id)
+        TABLE.clear(ZC_cache_lb)
 
         local now=os.time()
         for x=0,4 do
+            TASK.unlock('tool_zc_cache_'..x)
             local time=now-x*86400
-            dateText[x]=os.date("!%Y%m%d", time)
-            math.randomseed(dateText[x]+0)
+            ZC_cache_date[x]=os.date("!%Y%m%d", time)
+            math.randomseed(ZC_cache_date[x]+0)
             for _=1,26 do math.random() end
 
             local modCount=math.ceil(9-math.log(math.random(11, 42), 1.62)) -- 5 444 3333 2222
@@ -496,49 +501,55 @@ local function toolThread_zclb(S,M,day)
                 end
             end
 
-            ZCIDcache[x]=table.concat(TABLE.sort(cmb))
+            ZC_cache_id[x]=table.concat(TABLE.sort(cmb))
+            ZC_cache_name[x]=table.concat(TABLE.sort(cmb,modCardSorter))
         end
     end
 
-    if S:getLock('tool_zc_api_lock1') and S:getLock('tool_zc_api_lock2') then
-        Bot.reactMessage(M.message_id,Emoji.snail)
-        error("")
-    end
-    NULL(S:lock('tool_zc_api_lock1',12) or S:lock('tool_zc_api_lock2',12))
-    Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
-    local callID
-    for i=1,26 do
-        if not ASYNC.isBusy('zc_api_'..i) then
-            callID='zc_api_'..i
-            break
-        end
-    end
-    local payload=JSON.encode{
-        act='fetch',
-        combo=ZCIDcache[day],
-    }
-    local cmd=STRING.repD([[curl -s -X POST https://vercel-leaderboard-one.vercel.app/api -H 'Content-Type: application/json' -d '$1']],payload)
-    ASYNC.runCmd(callID,cmd)
-    local data
-    repeat
-        TASK.yieldT(.26)
-        data=ASYNC.get(callID)
-    until data
-
-    assert(#data>0,"查询失败，没获取到数据")
-    local res=JSON.decode(data)
-    if res.error then
-        MSG('warn', "排行榜数据获取失败："..res.error)
-        return
+    local res
+    if TASK.lock('tool_zc_cache_'..day,62) and ZC_cache_lb[day] then
+        res=ZC_cache_lb[day]
     else
-        ZCLBcache[res.combo]=res
+        if S:getLock('tool_zc_api_lock1') and S:getLock('tool_zc_api_lock2') then
+            Bot.reactMessage(M.message_id,Emoji.snail)
+            error("")
+        end
+        NULL(S:lock('tool_zc_api_lock1',12) or S:lock('tool_zc_api_lock2',12))
+        Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
+        local callID
+        for i=1,26 do
+            if not ASYNC.isBusy('zc_api_'..i) then
+                callID='zc_api_'..i
+                break
+            end
+        end
+        local payload=JSON.encode{
+            act='fetch',
+            combo=ZC_cache_id[day],
+        }
+        local cmd=STRING.repD([[curl -s -X POST https://vercel-leaderboard-one.vercel.app/api -H 'Content-Type: application/json' -d '$1']],payload)
+        ASYNC.runCmd(callID,cmd)
+        local data
+        repeat
+            TASK.yieldT(.26)
+            data=ASYNC.get(callID)
+        until data
+
+        assert(#data>0,"查询失败，没获取到数据")
+        res=JSON.decode(data)
+
+        if not res or res.error then
+            error("排行榜数据获取失败："..(res and res.error or "未知错误"))
+            return
+        end
+        ZC_cache_lb[day]=res
         res.alt=res.alt or {}
         res.time=res.time or {}
     end
 
     local out={}
-    ins(out,"Zenith Clicker每日挑战<"..dateText[day]:sub(3).."> ")
-    ins(out,"模组: "..res.combo)
+    ins(out,"Zenith Clicker每日挑战<"..ZC_cache_date[day]:sub(3).."> ")
+    ins(out,"模组: "..ZC_cache_name[day])
     if #res.alt==0 then
         ins(out,"【还无人提交成绩】")
     else
