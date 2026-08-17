@@ -559,12 +559,12 @@ local function toolThread_zclb(S,M,day)
         ins(out,"【还无人提交成绩】")
     else
         for i=1,math.min(#res.alt,3) do
-            ins(out,medals[i]..math.floor(res.alt[i].alt).."m  "..res.alt[i].uid)
+            ins(out,STRING.UTF8(medals[i])..math.floor(res.alt[i].alt).."m  "..res.alt[i].uid)
         end
         if #res.time>0 then
             ins(out,"———速通榜———")
             for i=1,math.min(#res.time,3) do
-                ins(out,medals[i]..STRING.time(res.time[i].time,2).."  "..res.time[i].uid)
+                ins(out,STRING.UTF8(medals[i])..STRING.time(res.time[i].time,2).."  "..res.time[i].uid)
             end
         end
     end
