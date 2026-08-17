@@ -252,8 +252,8 @@ local function fetchTetrioAPI(S,M,url,username)
     end
     username=username:lower()
     assert(MATH.between(#username,3,16) and username:match('^[a-z0-9%-_]+$'),"用户名格式不对")
-    Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
     NULL(S:lock('tool_io_api_lock1',12) or S:lock('tool_io_api_lock2',12))
+    Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
     local callID
     for i=1,26 do
         if not ASYNC.isBusy('tetrio_api_'..i) then
@@ -426,7 +426,7 @@ local function toolThread_tl(S,M,username,n)
 end
 local function task_toolThread(func,S,...)
     local suc,res=pcall(func,S,...)
-    if not suc and type(res)=='string' and #res>0 then S:send(res:match(':(.-)')) end
+    if not suc and type(res)=='string' and #res>0 then S:send(res:match(':(.+)')) end
 end
 tools.qp16={
     help="qp2成绩查询\n例：#qp16 mrz",
@@ -455,6 +455,115 @@ tools.tl40={
 tools.tl50={
     help="tl成绩查询\n例：#tl50 mrz",
     func=function(username,S,M) TASK.new(task_toolThread,toolThread_tl,S,M,username,50) end,
+}
+
+local deck={'EX','NH','MS','GV','VL','DH','IN','AS','DP'}
+local curDate
+local dateText={}
+local ZCIDcache={}
+local ZCLBcache={}
+local function toolThread_zclb(S,M,day)
+    -- Refresh daily
+    if os.date("!%Y%m%d")~=curDate then
+        curDate=os.date("!%Y%m%d")
+        TABLE.clear(dateText)
+        TABLE.clear(ZCIDcache)
+        TABLE.clear(ZCLBcache)
+
+        local now=os.time()
+        for x=0,4 do
+            local time=now-x*86400
+            dateText[x]=os.date("!%Y%m%d", time)
+            math.randomseed(dateText[x]+0)
+            for _=1,26 do math.random() end
+
+            local modCount=math.ceil(9-math.log(math.random(11, 42), 1.62)) -- 5 444 3333 2222
+            local cmb={}
+
+            local freq={3,3,2,5,3,5,4,4,2}
+            while #cmb<modCount do
+                local m=deck[MATH.randFreq(freq)]
+                if not TABLE.find(cmb, m) then table.insert(cmb, m) end
+            end
+            if MATH.roll(.26+#cmb*.1) then
+                if #cmb>=3 and MATH.roll(.62) then TABLE.popRandom(cmb) end
+                local r=math.random(#cmb)
+                cmb[r]='r'..cmb[r]
+                if MATH.roll(.26) then
+                    local r2=math.random(#cmb-1)
+                    if r2>=r then r2=r2+1 end
+                    cmb[r2]='r'..cmb[r2]
+                end
+            end
+
+            ZCIDcache[x]=table.concat(TABLE.sort(cmb))
+        end
+    end
+
+    if S:getLock('tool_zc_api_lock1') and S:getLock('tool_zc_api_lock2') then
+        Bot.reactMessage(M.message_id,Emoji.snail)
+        error("")
+    end
+    NULL(S:lock('tool_zc_api_lock1',12) or S:lock('tool_zc_api_lock2',12))
+    Bot.reactMessage(M.message_id,Emoji.hourglass_not_done)
+    local callID
+    for i=1,26 do
+        if not ASYNC.isBusy('zc_api_'..i) then
+            callID='zc_api_'..i
+            break
+        end
+    end
+    local payload=JSON.encode{
+        act='fetch',
+        combo=ZCIDcache[day],
+    }
+    local cmd=STRING.repD([[curl -s -X POST https://vercel-leaderboard-one.vercel.app/api -H 'Content-Type: application/json' -d '$1']],payload)
+    ASYNC.runCmd(callID,cmd)
+    local data
+    repeat
+        TASK.yieldT(.26)
+        data=ASYNC.get(callID)
+    until data
+
+    assert(false,"测试报错")
+    assert(#data>0,"查询失败，没获取到数据")
+    local res=JSON.decode(data)
+    if res.error then
+        MSG('warn', "排行榜数据获取失败："..res.error)
+        return
+    else
+        ZCLBcache[res.combo]=res
+        res.alt=res.alt or {}
+        res.time=res.time or {}
+    end
+
+    local out={}
+    ins(out,"点点乐每日挑战<"..dateText[day].."> ")
+    ins(out,"模组: "..res.combo)
+    if #res.alt==0 then
+        ins(out,"【还无人提交成绩】")
+    else
+        for i=1,math.min(#res.alt,3) do
+            ins(out,math.floor(res.alt[i].alt).."m  "..res.alt[i].uid)
+        end
+        if #res.time>0 then
+            ins(out,"———速通榜———")
+            for i=1,math.min(#res.time,3) do
+                ins(out,STRING.time(res.time[i].time,2).."  "..res.time[i].uid)
+            end
+        end
+    end
+    S:send(table.concat(out,'\n'))
+end
+tools.zclb={
+    help="点点乐每日排行榜查询（最多四天前）\n例：#zclb 0",
+    func=function(day,S,M)
+        day=tonumber(day)
+        if not (day and day%1==0) then return "好好填一个天数喵" end
+        if not MATH.between(day,0,4) then return "只能查今天到四天前的数据" end
+
+        TASK.new(task_toolThread,toolThread_zclb,S,M,day)
+    end,
 }
 
 local gameDB
