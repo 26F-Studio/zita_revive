@@ -501,7 +501,7 @@ local function toolThread_zclb(S,M,day)
             end
 
             ZC_cache_id[x]=table.concat(TABLE.sort(cmb))
-            ZC_cache_name[x]=table.concat(TABLE.sort(cmb,modCardSorter))
+            ZC_cache_name[x]=table.concat(TABLE.sort(cmb,modCardSorter)," ")
         end
     end
 
