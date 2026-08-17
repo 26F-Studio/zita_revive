@@ -525,7 +525,6 @@ local function toolThread_zclb(S,M,day)
         data=ASYNC.get(callID)
     until data
 
-    assert(false,"测试报错")
     assert(#data>0,"查询失败，没获取到数据")
     local res=JSON.decode(data)
     if res.error then
@@ -538,7 +537,7 @@ local function toolThread_zclb(S,M,day)
     end
 
     local out={}
-    ins(out,"点点乐每日挑战<"..dateText[day].."> ")
+    ins(out,"Zenith Clicker每日挑战<"..dateText[day]:sub(3).."> ")
     ins(out,"模组: "..res.combo)
     if #res.alt==0 then
         ins(out,"【还无人提交成绩】")
@@ -556,7 +555,7 @@ local function toolThread_zclb(S,M,day)
     S:send(table.concat(out,'\n'))
 end
 tools.zclb={
-    help="点点乐每日排行榜查询（最多四天前）\n例：#zclb 0",
+    help="点点乐每日挑战排行榜查询（最多四天前）\n例：#zclb 0",
     func=function(day,S,M)
         day=tonumber(day)
         if not (day and day%1==0) then return "好好填一个天数喵" end
