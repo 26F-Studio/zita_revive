@@ -457,6 +457,11 @@ tools.tl50={
     func=function(username,S,M) TASK.new(task_toolThread,toolThread_tl,S,M,username,50) end,
 }
 
+local medals={
+    Emoji._1st_place_medal,
+    Emoji._2nd_place_medal,
+    Emoji._3rd_place_medal,
+}
 local deck={'EX','NH','MS','GV','VL','DH','IN','AS','DP'}
 local prio_card={EX=0,NH=1,MS=2,GV=3,VL=4,DH=5,IN=6,AS=7,DP=8,rEX=0,rNH=1,rMS=2,rGV=3,rVL=4,rDH=5,rIN=6,rAS=7,rDP=8}
 local function modCardSorter(a,b) return prio_card[a]<prio_card[b] end
@@ -554,12 +559,12 @@ local function toolThread_zclb(S,M,day)
         ins(out,"【还无人提交成绩】")
     else
         for i=1,math.min(#res.alt,3) do
-            ins(out,math.floor(res.alt[i].alt).."m  "..res.alt[i].uid)
+            ins(out,medals[i]..math.floor(res.alt[i].alt).."m  "..res.alt[i].uid)
         end
         if #res.time>0 then
             ins(out,"———速通榜———")
             for i=1,math.min(#res.time,3) do
-                ins(out,STRING.time(res.time[i].time,2).."  "..res.time[i].uid)
+                ins(out,medals[i]..STRING.time(res.time[i].time,2).."  "..res.time[i].uid)
             end
         end
     end
