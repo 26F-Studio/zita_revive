@@ -476,9 +476,8 @@ local function toolThread_zclb(S,M,day)
 
         local now=os.time()
         for x=0,4 do
-            TASK.unlock('tool_zc_cache_'..x)
-            local time=now-x*86400
-            ZC_cache_date[x]=os.date("!%Y%m%d", time)
+            TASK.unlock('tool_zc_cache_hit_'..x)
+            ZC_cache_date[x]=os.date("!%Y%m%d", now-x*86400)
             math.randomseed(ZC_cache_date[x]+0)
             for _=1,26 do math.random() end
 
@@ -507,8 +506,9 @@ local function toolThread_zclb(S,M,day)
     end
 
     local res
-    if TASK.lock('tool_zc_cache_'..day,62) and ZC_cache_lb[day] then
+    if not TASK.lock('tool_zc_cache_'..day,62) and ZC_cache_lb[day] then
         res=ZC_cache_lb[day]
+        Bot.reactMessage(M.message_id,Emoji.hollow_red_circle)
     else
         if S:getLock('tool_zc_api_lock1') and S:getLock('tool_zc_api_lock2') then
             Bot.reactMessage(M.message_id,Emoji.snail)
