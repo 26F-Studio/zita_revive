@@ -512,7 +512,7 @@ local function toolThread_zclb(S,M,day)
     end
 
     local res
-    if ZC_cache_lb[day] and (day>0 or TASK.lock('tool_zc_cache_day0',62)) then
+    if ZC_cache_lb[day] and (day>0 or not TASK.lock('tool_zc_cache_day0',62)) then
         res=ZC_cache_lb[day]
         Bot.reactMessage(M.message_id,Emoji.hollow_red_circle)
     else
