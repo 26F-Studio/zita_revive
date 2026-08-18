@@ -476,12 +476,13 @@ local function toolThread_zclb(S,M,day)
     if os.date("!%Y%m%d")~=curDate then
         curDate=os.date("!%Y%m%d")
         TABLE.clear(ZC_cache_date)
+        TABLE.clear(ZC_cache_name)
         TABLE.clear(ZC_cache_id)
         TABLE.clear(ZC_cache_lb)
+        TASK.unlock('tool_zc_cache_day0')
 
         local now=os.time()
         for x=0,4 do
-            TASK.unlock('tool_zc_cache_hit_'..x)
             ZC_cache_date[x]=os.date("!%Y%m%d", now-x*86400)
             math.randomseed(ZC_cache_date[x]+0)
             for _=1,26 do math.random() end
@@ -511,7 +512,7 @@ local function toolThread_zclb(S,M,day)
     end
 
     local res
-    if not TASK.lock('tool_zc_cache_'..day,62) and ZC_cache_lb[day] then
+    if ZC_cache_lb[day] and (day>0 or TASK.lock('tool_zc_cache_day0',62)) then
         res=ZC_cache_lb[day]
         Bot.reactMessage(M.message_id,Emoji.hollow_red_circle)
     else
