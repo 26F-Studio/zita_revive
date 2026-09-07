@@ -168,7 +168,7 @@ local function task_apiCallThread(S,M,tag)
             if not suc then
                 if S:forceLock('llm_json_encode_error',26) then
                     LOG('warn',sid.." LLM错误：json打包失败 "..res)
-                    if S:lock('llm_error') then S:send(errMsg) end
+                    if S:lock('llm_error',62) then S:send(errMsg) end
                 end
                 return
             end
@@ -194,7 +194,7 @@ local function task_apiCallThread(S,M,tag)
             if not suc then
                 if S:forceLock('llm_json_decode_error',26) then
                     LOG('warn',sid.." LLM错误：json解析失败 "..res)
-                    if S:lock('llm_error') then S:send(errMsg) end
+                    if S:lock('llm_error',62) then S:send(errMsg) end
                 end
                 return
             end
@@ -202,7 +202,7 @@ local function task_apiCallThread(S,M,tag)
             if not (suc and res) then
                 if S:forceLock('llm_json_decode_error',26) then
                     LOG('warn',sid.." LLM错误：结果获取失败 "..res)
-                    if S:lock('llm_error') then S:send(errMsg) end
+                    if S:lock('llm_error',62) then S:send(errMsg) end
                 end
                 return
             end
@@ -243,7 +243,7 @@ local function task_apiCallThread(S,M,tag)
             else
                 if S:forceLock('llm_no_content',26) then
                     LOG('warn',sid.." LLM错误：没有返回内容")
-                    if S:lock('llm_error') then S:send(errMsg) end
+                    if S:lock('llm_error',62) then S:send(errMsg) end
                 end
             end
             return
@@ -251,7 +251,7 @@ local function task_apiCallThread(S,M,tag)
     end
 
     LOG('warn',sid.." LLM错误：工具调用轮次过多")
-    if S:lock('llm_error') then S:send(errMsg) end
+    if S:lock('llm_error',62) then S:send(errMsg) end
 end
 
 ---@type Task_raw
