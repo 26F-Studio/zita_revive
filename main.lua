@@ -159,6 +159,17 @@ function Bot.sendLike(uid,count,handler)
         handler=handler,
     }
 end
+function Bot.changeCard(group_id,user_id,card,handler)
+    Bot._send{
+        action='set_group_card',
+        params={
+            group_id=group_id,
+            user_id=user_id,
+            card=card,
+        },
+        handler=handler,
+    }
+end
 ---@param R OneBot.Event.GroupRequest
 ---@param approve boolean
 ---@param reason? string only useful when approve is false
