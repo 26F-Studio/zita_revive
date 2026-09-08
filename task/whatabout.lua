@@ -85,9 +85,7 @@ local function executeTool(func)
         if type(args.term)~='string' then return "错误：参数term必须是字符串" end
         local entry=Config.extraData._zict[args.term:gsub('%s',''):lower()]
         LOG('debug',"whatabout查询词典 "..args.term..(entry and "（成功）" or "（未找到）"))
-        if not entry then
-            return "未找到词条："..args.term
-        end
+        if not entry then return "未找到词条："..args.term end
         buf:reset()
         if entry.title then buf:put("# "..entry.title.."\n") end
         if entry.text then buf:put(entry.text.."\n") end
@@ -197,6 +195,8 @@ local function task_guessThread(S,M)
                 local terms={}
                 local zict=Config.extraData._zict
                 for _,v in next,args.terms do
+                    v=v:gsub('%s',''):lower()
+                    LOG('debug',sid.." whatabout 提交词条 "..v..(zict[v] and " （有效）" or " （无效）"))
                     if zict[v] then table.insert(terms,v) end
                 end
                 if #terms==0 then
