@@ -10,6 +10,10 @@
 ]=]
 local available=Config.extraData.llmKey and Config.extraData.llmModel
 if not available then LOG('warn',"whatabout模块缺少必须配置的参数") end
+local msgSec={
+    {"猜你","你可能","你也许"},
+    {"想找","想了解","需要"},
+}
 local errMsg="有人能告诉"..Config.adminName.."，我的AI有问题"
 local timeWindow=Config.extraData.llmTimeWindow or 260
 local systemPrompt=STRING.trimIndent[[
@@ -21,7 +25,7 @@ local systemPrompt=STRING.trimIndent[[
     <任务>
     - 系统会检测句子里的“？”或“吗”等疑问词，如果是疑问句的话就会把这条消息和一些上文打包提供给你。
     - 如果你判断这和俄罗斯方块话题有关，词典里可能包含相关信息，就用 tetris_dict 工具主动检索相关词条。
-    - 如果找到了有用的词条，就把关键词汇总成一个列表，用 submit 工具提交。
+    - 如果找到了存在且有帮助的词条，就在最后把关键词汇总成一个列表并调用 submit 工具提交。
     </任务>
 
     <注意>
@@ -75,6 +79,7 @@ local tools={
     },
 }
 local msgID=0
+local failBuffer={}
 
 local buf=STRING.newBuf()
 local function executeTool(func)
@@ -85,7 +90,10 @@ local function executeTool(func)
         if type(args.term)~='string' then return "错误：参数term必须是字符串" end
         local entry=Config.extraData._zict[args.term:gsub('%s',''):lower()]
         LOG('debug',"whatabout查询词典 "..args.term..(entry and "（成功）" or "（未找到）"))
-        if not entry then return "未找到词条："..args.term end
+        if not entry then
+            table.insert(failBuffer,args.term)
+            return "未找到词条："..args.term
+        end
         buf:reset()
         if entry.title then buf:put("# "..entry.title.."\n") end
         if entry.text then buf:put(entry.text.."\n") end
@@ -186,6 +194,16 @@ local function task_guessThread(S,M)
         table.insert(messages,msg)
         for _,tc in ipairs(msg.tool_calls) do
             if tc['function'].name=='submit' then
+                -- 404 Notify
+                if #failBuffer>0 then
+                    local terms=table.concat(failBuffer,", ")
+                    TABLE.clear(failBuffer)
+                    for _,qq in next,Config.extraData.llmDict404notify or NONE do
+                        Bot.sendMsg("词典404："..terms,qq)
+                    end
+                end
+
+                -- Response
                 local ok,args=pcall(JSON.decode,tc['function'].arguments)
                 if not ok or type(args)~='table' or type(args.terms)~='table' then
                     LOG('warn',sid.." whatabout错误：submit工具参数解析失败")
@@ -196,17 +214,15 @@ local function task_guessThread(S,M)
                 local zict=Config.extraData._zict
                 for _,v in next,args.terms do
                     v=v:gsub('%s',''):lower()
-                    LOG('debug',sid.." whatabout 提交词条 "..v..(zict[v] and " （有效）" or " （无效）"))
                     if zict[v] then table.insert(terms,v) end
                 end
                 if #terms==0 then
-                    LOG('warn',sid.." whatabout错误：submit参数中没有有效词条")
-                    if S:lock('whatabout_error',260) then S:send(errMsg) end
+                    LOG('warn',sid.." whatabout错误：submit参数中没有有效词条（"..table.concat(args.terms,",").."）")
                     return
                 end
                 local text="#"..table.concat(terms," #")
                 LOG('debug',sid.."输出提示："..text)
-                S:send("猜你想找 "..text)
+                S:send(TABLE.getRandom(msgSec[1])..TABLE.getRandom(msgSec[2]).." "..text)
                 return
             end
 
