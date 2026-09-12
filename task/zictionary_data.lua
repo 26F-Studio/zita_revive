@@ -837,6 +837,11 @@ local main={
         detail="含义是Tetra（四，古希腊语词根）+Tennis（网球 游戏原作者喜欢的运动）\n现在商标权在TTC (The Tetris Company)手上，任天堂、是获得TTC授权才开发方块游戏的，并不拥有Tetris这一商标",
     },
     {
+        word="tetris plus;tetris+",
+        title="消5+",
+        text="部分 #官块 中有机制允许一次消除五行或更多，这种超过四行的消除名统一是Tetris+",
+    },
+    {
         word="官块",
         title="“官方游戏”",
         text="官方游戏指由Tetris商标持有者TTC授权的游戏\n另见 #TTC",
