@@ -26,6 +26,7 @@ local systemPrompt=STRING.trimIndent[[
     - 系统会检测句子里的“？”或“吗”等疑问词，如果是疑问句的话就会把这条消息和一些上文打包提供给你。
     - 如果你判断这和俄罗斯方块话题有关，词典里可能包含相关信息，就用 tetris_dict 工具主动检索相关词条。
     - 如果找到了存在且有帮助的词条，就在最后把关键词汇总成一个列表并调用 submit 工具提交。
+    - 如果没找到合适的词条，就提交空列表。
     </任务>
 
     <注意>
@@ -116,7 +117,8 @@ end
 
 ---@param S Session
 ---@param M OneBot.Event.PrivateMessage | OneBot.Event.GroupMessage
-local function task_guessThread(S,M)
+---@param mode 'explicit' | 'implicit'
+local function task_guessThread(S,M,mode)
     msgID=msgID+1
     local sid="["..msgID.."]"
     LOG('debug',("%s %s-%s whatabout输入\n%s"):format(sid,S.uid,M.user_id,M.raw_message))
@@ -218,6 +220,9 @@ local function task_guessThread(S,M)
                 end
                 if #terms==0 then
                     LOG('warn',sid.." whatabout错误：submit参数中没有有效词条（"..table.concat(args.terms,",").."）")
+                    if mode=='explicit' then
+                        if S:lock('whatabout_empty',26) then Bot.reactMessage(M.message_id,Emoji.white_question_mark) end
+                    end
                     return
                 end
                 local text="#"..table.concat(terms," #")
@@ -245,7 +250,7 @@ return {
         local lower=msg:lower()
         if msg:match("%[CQ:at,qq="..Config.botID.."%D") or lower:find("小z") or lower:find("zita") then
             if Bot.isAdmin(M.user_id) or S:lock('whatabout_cd',16) then
-                TASK.new(task_guessThread,S,M)
+                TASK.new(task_guessThread,S,M,'explicit')
             else
                 Bot.reactMessage(M.message_id,Emoji.snail)
             end
@@ -255,9 +260,9 @@ return {
                 msg:match("%?$") or
                 msg:match("？$") or
                 msg:match("吗$")
-            ) and MATH.between(#msg,12,260) and S:lock('whatabout_cd',26) and MATH.roll(.62)
+            ) and MATH.between(#msg,12,160) and S:lock('whatabout_cd',42)
         then
-            TASK.new(task_guessThread,S,M)
+            TASK.new(task_guessThread,S,M,'implicit')
             return true
         end
         return false
