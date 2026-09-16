@@ -219,8 +219,8 @@ local function task_guessThread(S,M,mode)
                     if zict[v] then table.insert(terms,v) end
                 end
                 if #terms==0 then
-                    LOG('warn',sid.." whatabout错误：submit参数中没有有效词条（"..table.concat(args.terms,",").."）")
                     if mode=='explicit' then
+                        LOG('warn',sid.." whatabout错误：submit参数中没有有效词条（"..table.concat(args.terms,",").."）")
                         if S:lock('whatabout_empty',26) then Bot.reactMessage(M.message_id,Emoji.white_question_mark) end
                     end
                     return
