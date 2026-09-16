@@ -124,6 +124,10 @@ local utils={
         text="欢迎新人但是方块有7种"..CQ.img(Config.extraData.imgPath.."7.png"),
     },
     {
+        word="块;方块;版本",
+        text="“俄罗斯方块”并不是一款具体的游戏，而是一个游戏类型，询问游戏的时候最好指定平台、设备、主要想玩的模式等信息\n自助查询请发送 #表格",
+    },
+    {
         word="赞助;打钱",
         text=CQ.img(Config.extraData.imgPath.."pay_z.png"),
     },
