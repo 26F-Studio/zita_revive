@@ -14,6 +14,7 @@
                 "交友",
             },
             refuse_reply="（自动拒绝）请直接回答问题，谢谢",
+            groupLog=true, -- 拒绝申请后要不要在群里发消息提示
         },
     },
 ]]
@@ -39,9 +40,11 @@ return {
                 end
             end
             for _,pattern in next,dat.refuse do
-                if string.find(mes,pattern) then
+                local m=mes:match(pattern)
+                if m then
                     Bot.resolveJoinRequest(R,false,dat.refuse_reply or "你的加群申请被自动拒绝了喵")
                     LOG('info',"[拒绝申请] 群"..S.id..", 用户"..R.user_id)
+                    if dat.groupLog~=false then S:send("【群通知】自动拒绝了一个加群申请：\n"..mes.."\n".."（匹配到关键词："..pattern.."）") end
                     return false
                 end
             end
