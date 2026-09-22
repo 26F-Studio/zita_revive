@@ -44,7 +44,7 @@ return {
                 if m then
                     Bot.resolveJoinRequest(R,false,dat.refuse_reply or "你的加群申请被自动拒绝了喵")
                     LOG('info',"[拒绝申请] 群"..S.id..", 用户"..R.user_id)
-                    if dat.groupLog~=false then S:send("【群通知】自动拒绝了一个加群申请：\n"..mes.."\n".."（匹配到关键词："..pattern.."）") end
+                    if dat.groupLog then S:send("【群通知】自动拒绝了一个加群申请\n“"..R.comment.."”\n".."（匹配关键词："..pattern.."）") end
                     return false
                 end
             end
