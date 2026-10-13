@@ -881,9 +881,48 @@ local main={
         link="github.com/MrZ626/modern_tetris_cn_community/blob/main/legal_issues.md",
     },
     {
+        word="Z块",
+        title="Z块（不是克利夫兰Z）",
+        text="#Guideline 规范中的基础 #四连块，颜色为红色，和 #S块 互为镜像\n（是我的幸运形状哦）",
+    },
+    {
+        word="S块",
+        title="S块（不是罗德岛Z）",
+        text="#Guideline 规范中的基础 #四连块，颜色为绿色，和 #Z块 互为镜像",
+    },
+    {
+        word="J块",
+        title="J块（不是蓝色瑞克）",
+        text="#Guideline 规范中的基础 #四连块，颜色为蓝色，和 #L块 互为镜像",
+    },
+    {
+        word="L块",
+        title="L块（不是橘色瑞克）",
+        text="#Guideline 规范中的基础 #四连块，颜色为橙色，和 #J块 互为镜像",
+    },
+    {
+        word="T块",
+        title="T块（不是小T）",
+        text="#Guideline 规范中的基础 #四连块，颜色为紫色\n是唯一能打出 #tspin 消除的块",
+    },
+    {
+        word="O块",
+        title="O块（不是粉碎男孩）",
+        text="#Guideline 规范中的基础 #四连块，颜色为黄色\n是唯一旋转前后不变的块",
+    },
+    {
+        word="I块",
+        title="I块（不是英雄）",
+        text="#Guideline 规范中的基础 #四连块，颜色为青色\n是唯一能 #消四 的块",
+    },
+    {
         word="屋檐;枕头",
         title="屋檐/枕头",
         text="屋檐和枕头分别是典型的T3/S3(Z3)中为了让方块能触发对应踢墙的局部结构\n另见 #T3 #大外回旋",
+    },
+    {
+        word="克利夫兰z;罗德岛z;蓝色瑞克;橘色瑞克;橙色瑞克;小t;粉碎男孩;英雄;cleveland z;rhode island z;blue rick;blue ricky;orange rick;orange ricky;teewee;smashboy;hero",
+        text="该系列方块名称源自玩家的恶搞，七种块的官方名称都以单字母命名且只有这一种叫法",
     },
 }
 ---@type Zict.Entry[]
