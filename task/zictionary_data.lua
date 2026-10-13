@@ -51,7 +51,7 @@ local utils={
     {
         word="其他wiki;wiki列表;harddrop wiki;tetris wiki;fandom;wiki fandom;tetris wiki fandom",
         title="其他英文wiki",
-        text="harddrop.com/wiki（Hard Drop社区的百科）\nhttps://tetris.wiki（Myndzi在2015年创办）\ntetris.fandom.com\n另见 #wiki",
+        text="harddrop.com/wiki（侧重于技巧）\nhttps://tetris.wiki（侧重于收录游戏）\ntetris.fandom.com\n另见 #wiki",
     },
     {
         word="社区;导航;块群;社区导航;社区文档;导航文档;块群文档",
