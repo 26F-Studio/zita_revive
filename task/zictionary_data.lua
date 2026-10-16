@@ -1718,7 +1718,7 @@ local extra_mode={
     {
         word="EX;expert",
         title="[QP2模组] EX 专家 （皇帝 The Emperor）",
-        text="启用 #困难模式\n经验流失速度增加67%，抵消和消行不再增加经验\n垃圾行瞬间出现，混乱度+，易挖度-",
+        text="启用 #困难模式\n经验流失速度增加67%，抵消和消行不再增加经验\n垃圾行更快加载且瞬间出现，混乱度+，易挖度-",
     },
     {
         word="NH;nohold",
@@ -1733,7 +1733,7 @@ local extra_mode={
     {
         word="GV", -- gravity
         title="[QP2模组] GV 高重力 （塔 The Tower）",
-        text="0.5G开局，每上一层增加0.3G（格/帧）\n每层的锁定延迟：30 29 28 27 26 24 22 20 18 16 （帧）",
+        text="0.5G开局，每上一层增加0.3G（格/帧）\n锁定延迟从30F开始随层数减少到16F",
     },
     {
         word="VL;volatile",
@@ -1778,12 +1778,12 @@ local extra_mode={
     {
         word="rMS;loaded dice",
         title="[QP2模组] rMS 逆位混乱（铅骰 Loaded Dice）",
-        text="启用 #困难模式\n垃圾混乱度增加，消行延迟从0增加为1.15秒\n初始场地为六个圈的图案，启用 #垃圾行保护",
+        text="启用 #困难模式\n混乱度++，消行延迟1.15秒\n初始场地为六个圈的图案，启用 #垃圾行保护",
     },
     {
         word="rGV;freefall",
         title="[QP2模组] rGV 逆位高重力（自由落体 Freefall）",
-        text="启用 #困难模式\n一开局就立刻加速进入20G\n每层的锁定延迟：24 22 20 18 16 15 14 13 12 11 （帧）",
+        text="启用 #困难模式\n开局就立刻加速到20G\n锁定延迟从24F开始随层数减少到11F",
     },
     {
         word="rVL;last stand",
@@ -1798,12 +1798,12 @@ local extra_mode={
     {
         word="rIN;the exile;exile",
         title="[QP2模组] rIN 逆位隐形（流亡者 The Exile）",
-        text="启用 #困难模式\n自己放置的方块会隐形，垃圾行只能看到最浅层的三行，开局会收系统3行垃圾",
+        text="启用 #困难模式\n自己放置的方块会隐形，垃圾行只能看到最浅层的三行，开局收系统3行垃圾",
     },
     {
         word="rAS;the warlock;warlock",
         title="[QP2模组] rAS 逆位全旋（邪术师 The Warlock）",
-        text="启用 #困难模式\n所有非Spin消除都视为消一，名称改为VOID\n连续相同消除判定更苛刻，两次Spin同行数就算同名，直接罚20行结束游戏\nB2B×4时从4充能开始且B2B加伤提升到+2，消0行的Spin也会触发消行结算加伤加B2B\n开局会收系统10行垃圾，垃圾混乱度增加，启用 #垃圾行保护\n【反机心】到800m但挖掘垃圾行数小于5时禁止获得经验",
+        text="启用 #困难模式\n所有非Spin消除都视为消一并改名为VOID\n连续相同消除判定改为同行数Spin就算同名，直接罚20行结束游戏\nB2B×4时从4充能开始且B2B加伤提升到+2，消0行的Spin也加B2B有伤害\n开局收10行散垃圾，混乱度++，启用 #垃圾行保护\n【反机心】到800m但挖掘垃圾行数小于5时禁止获得经验",
     },
     {
         word="r2P;bleeding hearts;bleeding heart;rDP",
