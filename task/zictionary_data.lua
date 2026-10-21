@@ -1888,7 +1888,7 @@ local contributor={
     {
         word="T0325;T325;幻灭;汉化;io汉化;io翻译;io中文",
         text="T0325.幻灭，制作了TETR.IO汉化插件",
-        link="插件安装教程 b23.tv/BV1Sz4y187Cd\nspace.bilibili.com/8933681",
+        link="插件安装教程 b23.tv/BV1wBJB68EYq\nspace.bilibili.com/8933681",
     },
     {
         word="T0812;T812;scdhh;呵呵",
