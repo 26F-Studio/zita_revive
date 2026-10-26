@@ -856,7 +856,7 @@ local main={
         word="tetris",
         title="Tetris™",
         text="#TTC 的商标，同时也是“消除四行”的名字\n另见 #消四",
-        detail="含义是Tetra（四，古希腊语词根）+Tennis（网球 游戏原作者喜欢的运动）\n现在商标权在TTC (The Tetris Company)手上，任天堂、是获得TTC授权才开发方块游戏的，并不拥有Tetris这一商标",
+        detail="含义是Tetra（四，古希腊语词根）+Tennis（网球 游戏原作者喜欢的运动）\n现在商标权在TTC (The Tetris Company)手上，任天堂、世嘉、EA等公司只是获得了TTC授权才开发游戏，并不拥有Tetris这一商标",
     },
     {
         word="tetris plus;tetris+",
