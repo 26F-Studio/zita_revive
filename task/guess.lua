@@ -762,6 +762,7 @@ return {
             D.mode=keyword.start[mes]
             D.guessHis={}
             D.textHis=""
+            math.randomseed(tonumber(os.date('%Y%m%d%H%M%S')) or 26)
             if D.mode=='easy' then
                 D.chances=6
                 D.answer=randomGuess()
