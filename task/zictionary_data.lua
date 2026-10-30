@@ -833,6 +833,12 @@ local main={
         text="一个AI的名字\n由研究群群友zzz（奏之章）开发，运行效率极高",
     },
     {
+        word="moch;mochbot",
+        title="Moch (Bot)",
+        text="一个AI的名字\n由国外块友luke开发",
+        link="https://discord.gg/quFzc7BHxM"
+    },
+    {
         word="延迟",
         text="你可能在找：#延迟块 #输入延迟 #锁定延迟 #消行延迟 #生成延迟",
     },
