@@ -30,11 +30,13 @@ local utils={
     {
         word="新人;新手;入门;萌新;教程;新手入门;新手教程;入门教程",
         title="新手入门",
-        text="俄罗斯方块游戏有两个共通的必备技能：\n堆叠能力：能想象当前块放在各种位置并思考后续几个块的安排\n操作效率：想好放哪再操作，并通过 #双旋 和 #极简 等方法减少所需的操作量\n另见 #新人自测",
+        text=CQ.img(Config.extraData.imgPath.."新人引导.png").."注：T-spin等技巧一般需要先完成上述内容，打好基础才能高效理解运用\n另见 #基本哲学",
     },
     {
-        word="新人自测",
-        text=CQ.img(Config.extraData.imgPath.."新人引导.png").."注：T-spin等技巧一般需要先完成上述内容，打好基础才能高效理解运用",
+        word="基本哲学;哲学",
+        title="俄罗斯方块的基本哲学",
+        text="所有Tetris-like游戏基本都会考验一个共通技能“堆叠能力”：能想象当前块放在各种位置并思考后续几个块的安排\n另外对于竞技向的游戏通常还会考验“操作效率”：想好放哪再操作，并通过 #双旋 和 #极简 等方法减少所需的操作量",
+        detail="注：本词条的“俄罗斯方块”指符合 #现代块 词条中的文章的游戏。Tricky Tower、1010等游戏不在此列",
     },
     {
         word="t旋学习;tspin学习",
@@ -836,7 +838,7 @@ local main={
         word="moch;mochbot",
         title="Moch (Bot)",
         text="一个AI的名字\n由国外块友luke开发",
-        link="https://discord.gg/quFzc7BHxM"
+        link="https://discord.gg/quFzc7BHxM",
     },
     {
         word="延迟",
