@@ -1844,7 +1844,7 @@ local contributor={
     {
         word="26f studio;26f;26楼;26楼工作室",
         text="是我家喵",
-        link="studio26f.org",
+        link="26f.studio",
     },
     {
         word="T626;626;小z;Zita",
